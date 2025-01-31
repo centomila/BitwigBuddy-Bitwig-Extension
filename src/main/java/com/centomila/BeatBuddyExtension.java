@@ -79,19 +79,41 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
       int x = 0;
       int y = GmDrums.BASS_DRUM;
       int insertVelocity = 100;
-      double insertDuration = 0.25;
 
+      // Use the value from noteDuration to determine the duration of the note. Options are "1/4", "1/8", "1/16", "1/32", "1/64", "1/128". 1/4 = 1.0. 1/8 = 0.5, etc.
+      double durationValue = 1.0;
+      switch (selectedNoteDuration) {
+         case "1/4":
+            durationValue = 1.0;
+            break;
+         case "1/8":
+            durationValue = 0.5;
+            break;
+         case "1/16":
+            durationValue = 0.25;
+            break;
+         case "1/32":
+            durationValue = 0.125;
+            break;
+         case "1/64":
+            durationValue = 0.0625;
+            break;
+         case "1/128":
+            durationValue = 0.03125;
+            break;
+      }
 
-      cursorClip.setStep(channel, 0, y, insertVelocity, insertDuration);
-      cursorClip.setStep(channel+1, 4, y, insertVelocity, insertDuration);
-      cursorClip.setStep(channel+1, 8, y, insertVelocity, insertDuration);
-      cursorClip.setStep(channel+1, 12, y, insertVelocity, insertDuration);
-      
+      for (int i = 0; i < 16; i++) {
+         cursorClip.clearStep(i, y);
+      }
 
-      
+      final int[] fourOnFour = { 127, 0, 0, 0, 100, 0, 0, 0, 127, 0, 0, 0, 100, 0, 0, 0 };
 
-      // // Clear the cursor track
-      // cursorClip.setStep(x, y,velocity, duration);
+      for (int i = 0; i < fourOnFour.length; i++) {
+         if (fourOnFour[i] > 0) {
+            cursorClip.setStep(channel, i, y, fourOnFour[i], durationValue);
+         }
+      }
 
    }
    
