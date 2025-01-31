@@ -2,6 +2,9 @@ package com.centomila;
 
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.Transport;
+
+import java.util.Arrays;
+
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.BooleanValue;
@@ -43,28 +46,27 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
 
       final String[] NOTEDURATION_OPTIONS = new String[] { "1/4", "1/8", "1/16", "1/32", "1/64", "1/128" };
       // Define pattern settings
-      String[] pattern = new String[] { "Four on the Floor", "Pattern 2", "Pattern 3", "Pattern 4", "Pattern 5" };
 
-      patternSelector = (Setting) documentState.getEnumSetting("Pattern (TBI)", "Pattern", pattern,
-            "Four on the Floor");
+      final String[] PATTERN_OPTIONS = Arrays.stream(DrumPatterns.patterns)
+            .map(pattern -> pattern[0].toString())
+            .toArray(String[]::new);
+
+      patternSelector = (Setting) documentState.getEnumSetting("Pattern (TBI)", "Pattern", PATTERN_OPTIONS,
+            PATTERN_OPTIONS[0]);
 
       // Note Step Destination
-      String[] NOTEDESTINATION_OPTIONS = new String[GmDrums.drumSounds.length];
-      for (int i = 0; i < GmDrums.drumSounds.length; i++) {
-         String drumSound = "";
-         for (Object value : GmDrums.drumSounds[i]) {
-            drumSound += value.toString() + " ";
-         }
-         drumSound = drumSound.trim();
-         if (drumSound != null) {
-            NOTEDESTINATION_OPTIONS[i] = drumSound;
-         }
-      }
+      String[] NOTEDESTINATION_OPTIONS = Arrays.stream(GmDrums.drumSounds)
+            .map(drumSoundArray -> Arrays.stream(drumSoundArray)
+                  .map(Object::toString)
+                  .reduce("", (a, b) -> a + " " + b).trim())
+            .toArray(String[]::new);
+
       noteDestination = (Setting) documentState.getEnumSetting("Note Destination", "Clip", NOTEDESTINATION_OPTIONS,
             NOTEDESTINATION_OPTIONS[1]);
 
       // Define clip settings
-      // clipLength = (Setting) documentState.getNumberSetting("Clip Length (Bars) (TBI)", "Clip", 1, 16, 4, "Bar(s)", 1);
+      // clipLength = (Setting) documentState.getNumberSetting("Clip Length (Bars)
+      // (TBI)", "Clip", 1, 16, 4, "Bar(s)", 1);
       noteDuration = (Setting) documentState.getEnumSetting("Step Duration", "Clip", NOTEDURATION_OPTIONS, "1/16");
 
       velocityVariation = (Setting) documentState.getBooleanSetting("Velocity Variation (TBI)", "Clip", true);
@@ -74,23 +76,21 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
       });
 
    }
-   
+
    private int getCurrentNoteDestination() {
-      String selectedNoteDestination = ((EnumValue) noteDestination).get(); // Get the current selected value of noteDestination
+      String[] noteDestinationStrings = ((EnumValue) noteDestination).get().split(" ");
       int currentNoteDestination = 0;
-      if (selectedNoteDestination != null) {
-         String[] noteDestinationStrings = selectedNoteDestination.split(" ");
-         if (noteDestinationStrings.length > 0 && noteDestinationStrings[0] != null) {
-            try {
-               currentNoteDestination = Integer.parseInt(noteDestinationStrings[0]);
-            } catch (NumberFormatException e) {
-               getHost().showPopupNotification("Error: Note destination is not a valid number");
-            }
-         }
+      if (noteDestinationStrings.length > 0 && noteDestinationStrings[0] != null) {
+         currentNoteDestination = Integer.parseInt(noteDestinationStrings[0]);
       }
 
       return currentNoteDestination;
-      
+   }
+
+   private int[] getCurrentPattern() {
+      // Find the pattern in DrumPatterns.patterns using map
+      String selectedPattern = ((EnumValue) patternSelector).get();
+
    }
 
    private void generateDrumPattern() {
@@ -103,8 +103,10 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
       getHost().showPopupNotification(settingsString);
 
       // channel - the channel of the new note
-      // x - the x position within the note grid, defining the step/time of the new note
-      // y - the y position within the note grid, defining the key of the new note. Use GMDrums constants to define the note number
+      // x - the x position within the note grid, defining the step/time of the new
+      // note
+      // y - the y position within the note grid, defining the key of the new note.
+      // Use GMDrums constants to define the note number
       // insertVelocity - the velocity of the new note. Default is 100
       // insertDuration - the duration of the new note. Default is 1.
 
@@ -112,7 +114,9 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
       int x = 0;
       int y = getCurrentNoteDestination();
 
-      // Use the value from noteDuration to determine the duration of the note. Options are "1/4", "1/8", "1/16", "1/32", "1/64", "1/128". 1/4 = 1.0. 1/8 = 0.5, etc.
+      // Use the value from noteDuration to determine the duration of the note.
+      // Options are "1/4", "1/8", "1/16", "1/32", "1/64", "1/128". 1/4 = 1.0. 1/8 =
+      // 0.5, etc.
       double durationValue = 1.0;
       switch (selectedNoteDuration) {
          case "1/4":
@@ -148,8 +152,6 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
       }
 
    }
-   
-
 
    @Override
    public void exit() {
