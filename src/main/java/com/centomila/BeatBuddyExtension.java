@@ -93,27 +93,7 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
 
    }
 
-   private void generateDrumPattern() {
-      String selectedGenre = ((EnumValue) patternSelector).get(); // Get the current selected value of genreSelector
-      String selectedNoteDuration = ((EnumValue) noteDuration).get(); // Get the current selected value of noteDuration
-
-      String settingsString = "Genre: " + selectedGenre;
-      settingsString += " - noteDuration: " + selectedNoteDuration;
-
-      getHost().showPopupNotification(settingsString);
-
-      // channel - the channel of the new note
-      // x - the x position within the note grid, defining the step/time of the new
-      // note
-      // y - the y position within the note grid, defining the key of the new note.
-      // Use GMDrums constants to define the note number
-      // insertVelocity - the velocity of the new note. Default is 100
-      // insertDuration - the duration of the new note. Default is 1.
-
-      int channel = 0;
-      int x = 0;
-      int y = getCurrentNoteDestination();
-
+   private double selectedDurationValue(String selectedNoteDuration) {
       // Use the value from noteDuration to determine the duration of the note.
       // Options are "1/4", "1/8", "1/16", "1/32", "1/64", "1/128". 1/4 = 1.0. 1/8 =
       // 0.5, etc.
@@ -138,6 +118,30 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
             durationValue = 0.03125;
             break;
       }
+      return durationValue;
+   }
+
+   private void generateDrumPattern() {
+      String selectedGenre = ((EnumValue) patternSelector).get(); // Get the current selected value of genreSelector
+      String selectedNoteDuration = ((EnumValue) noteDuration).get(); // Get the current selected value of noteDuration
+
+      String settingsString = "Genre: " + selectedGenre;
+      settingsString += " - noteDuration: " + selectedNoteDuration;
+
+      getHost().showPopupNotification(settingsString);
+
+      // channel - the channel of the new note
+      // x - the x position within the note grid, defining the step/time of the new
+      // note
+      // y - the y position within the note grid, defining the key of the new note.
+      // Use GMDrums constants to define the note number
+      // insertVelocity - the velocity of the new note. Default is 100
+      // insertDuration - the duration of the new note. Default is 1.
+
+      int channel = 0;
+      int x = 0;
+      int y = getCurrentNoteDestination();
+      double durationValue = selectedDurationValue(selectedNoteDuration);
 
       for (int i = 0; i < 16; i++) {
          cursorClip.clearStep(i, y);
