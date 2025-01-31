@@ -17,11 +17,12 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
    private Clip clip;
    private CursorTrack cursorTrack;
    private DocumentState documentState;
-   private Setting genreSelector;
+   private Setting patternSelector;
    private Setting clipLength;
    private Setting noteDuration;
    private Setting velocityVariation;
    private Setting humanization;
+   private Setting noteDestination;
 
    protected BeatBuddyExtension(final BeatBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
@@ -42,26 +43,58 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
 
       final String[] NOTEDURATION_OPTIONS = new String[] { "1/4", "1/8", "1/16", "1/32", "1/64", "1/128" };
       // Define pattern settings
-      String[] genres = new String[] { "Techno", "House", "Deep House", "Dubstep" };
-      
-      genreSelector = (Setting) documentState.getEnumSetting("Genre", "Genre", genres, "Techno");
-      
-      clipLength = (Setting) documentState.getNumberSetting("Clip Length (Bars)", "Clip", 1, 16, 4, "Bar(s)", 1);
-      noteDuration = (Setting) documentState.getEnumSetting("noteDuration", "Clip", NOTEDURATION_OPTIONS, "1/16");
-      
-      velocityVariation = (Setting) documentState.getBooleanSetting("Velocity Variation", "Clip", true);
-      humanization = (Setting) documentState.getBooleanSetting("Humanization", "Clip", true);
+      String[] pattern = new String[] { "Four on the Floor", "Pattern 2", "Pattern 3", "Pattern 4", "Pattern 5" };
 
+      patternSelector = (Setting) documentState.getEnumSetting("Pattern (TBI)", "Pattern", pattern,
+            "Four on the Floor");
 
+      // Note Step Destination
+      String[] NOTEDESTINATION_OPTIONS = new String[GmDrums.drumSounds.length];
+      for (int i = 0; i < GmDrums.drumSounds.length; i++) {
+         String drumSound = "";
+         for (Object value : GmDrums.drumSounds[i]) {
+            drumSound += value.toString() + " ";
+         }
+         drumSound = drumSound.trim();
+         if (drumSound != null) {
+            NOTEDESTINATION_OPTIONS[i] = drumSound;
+         }
+      }
+      noteDestination = (Setting) documentState.getEnumSetting("Note Destination", "Clip", NOTEDESTINATION_OPTIONS,
+            NOTEDESTINATION_OPTIONS[1]);
+
+      // Define clip settings
+      // clipLength = (Setting) documentState.getNumberSetting("Clip Length (Bars) (TBI)", "Clip", 1, 16, 4, "Bar(s)", 1);
+      noteDuration = (Setting) documentState.getEnumSetting("Step Duration", "Clip", NOTEDURATION_OPTIONS, "1/16");
+
+      velocityVariation = (Setting) documentState.getBooleanSetting("Velocity Variation (TBI)", "Clip", true);
 
       documentState.getSignalSetting("Generate!", "Generate", "Generate!").addSignalObserver(() -> {
          generateDrumPattern();
       });
 
    }
+   
+   private int getCurrentNoteDestination() {
+      String selectedNoteDestination = ((EnumValue) noteDestination).get(); // Get the current selected value of noteDestination
+      int currentNoteDestination = 0;
+      if (selectedNoteDestination != null) {
+         String[] noteDestinationStrings = selectedNoteDestination.split(" ");
+         if (noteDestinationStrings.length > 0 && noteDestinationStrings[0] != null) {
+            try {
+               currentNoteDestination = Integer.parseInt(noteDestinationStrings[0]);
+            } catch (NumberFormatException e) {
+               getHost().showPopupNotification("Error: Note destination is not a valid number");
+            }
+         }
+      }
+
+      return currentNoteDestination;
+      
+   }
 
    private void generateDrumPattern() {
-      String selectedGenre = ((EnumValue) genreSelector).get(); // Get the current selected value of genreSelector
+      String selectedGenre = ((EnumValue) patternSelector).get(); // Get the current selected value of genreSelector
       String selectedNoteDuration = ((EnumValue) noteDuration).get(); // Get the current selected value of noteDuration
 
       String settingsString = "Genre: " + selectedGenre;
@@ -77,8 +110,7 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
 
       int channel = 0;
       int x = 0;
-      int y = GmDrums.BASS_DRUM;
-      int insertVelocity = 100;
+      int y = getCurrentNoteDestination();
 
       // Use the value from noteDuration to determine the duration of the note. Options are "1/4", "1/8", "1/16", "1/32", "1/64", "1/128". 1/4 = 1.0. 1/8 = 0.5, etc.
       double durationValue = 1.0;
