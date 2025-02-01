@@ -1,13 +1,19 @@
 Version 0.3
 
-Installation:
-[] Download BeatBuddy.bwextension
-[] Copy to /Bitwig Studio/Extensions folder
-[] Settings > Controller > Add Extension > Centomila > BeatBuddy
+# BeatBuddy - Bitwig Studio Extension to generator drum patterns
 
-TODO:
-[] Support for clips in the arranger
-[] Support for multiple length patterns
-[] Alternate default destination notes (now is using GM Drums standard)
-[] MOAR PATTERNS!
-[] Make a decent Readme!
+# ⚙️ Installation:
+
+1. ⬇️ Download _BeatBuddy.bwextension_
+2. 📂 Copy _BeatBuddy.bwextension_ to _/Bitwig Studio/Extensions_ folder
+3. 🟧 In Bitwig go to Settings > Controller > Add Extension > Centomila > BeatBuddy
+
+---
+
+# ✅ TODO:
+
+1. Support for clips in the arranger
+2. Support for multiple length patterns
+3. Alternate default destination notes (now is using GM Drums standard)
+4. MOAR PATTERNS!
+5. Make a decent Readme!
