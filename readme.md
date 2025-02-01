@@ -9,4 +9,5 @@ TODO:
 [] Support for clips in the arranger
 [] Support for multiple length patterns
 [] Alternate default destination notes (now is using GM Drums standard)
-[] Readme!
+[] MOAR PATTERNS!
+[] Make a decent Readme!
