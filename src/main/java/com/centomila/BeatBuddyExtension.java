@@ -13,8 +13,13 @@ import com.bitwig.extension.controller.api.CursorTrack;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.DoubleValue;
 import com.bitwig.extension.controller.api.EnumValue;
-import com.bitwig.extension.controller.api.IntegerValue;
+import com.bitwig.extension.controller.api.RangedValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
+import com.bitwig.extension.controller.api.SettableIntegerValue;
+import com.bitwig.extension.controller.api.SettableDoubleValue;
+
+import com.bitwig.extension.controller.api.Value;
+import com.bitwig.extension.controller.api.IntegerValue;
 import com.bitwig.extension.controller.api.Channel;
 import com.bitwig.extension.controller.api.Setting;
 
@@ -25,12 +30,24 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
    private CursorTrack cursorTrack;
    private DocumentState documentState;
    private Setting patternSelector;
-   private Setting clipLength;
    private Setting noteDuration;
-   private Setting velocityVariation;
-   private Setting humanization;
    private Setting noteDestination;
    private Setting noteChannel;
+   // settings for separate notes
+   private Setting noteKick;
+   private Setting noteSnare;
+   private Setting noteRim;
+   private Setting noteClosedHiHat;
+   private Setting noteOpenHiHat;
+   private Setting noteCymbal;
+   private Setting noteTom1;
+   private Setting noteTom2;
+   private Setting noteTom3;
+   private Setting noteTom4;
+   private Setting notePerc1;
+   private Setting notePerc2;
+   private Setting notePerc3;
+   private Setting notePerc4;
 
    protected BeatBuddyExtension(final BeatBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
@@ -57,41 +74,48 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       patternSelector = (Setting) documentState.getEnumSetting("Pattern", "Pattern", PATTERN_OPTIONS,
             PATTERN_OPTIONS[0]);
 
+      noteKick = (Setting) documentState.getNumberSetting("Kick", "Notes", 0, 128, 1, "Note Number", 36);
+      noteSnare = (Setting) documentState.getNumberSetting("Snare", "Notes", 0, 128, 1, "Note Number", 37);
+      noteClosedHiHat = (Setting) documentState.getNumberSetting("Hi-Hat Open", "Notes", 0, 128, 1, "Note Number", 42);
+      noteOpenHiHat = (Setting) documentState.getNumberSetting("Hi-Hat Closed", "Notes", 0, 128, 1, "Note Number", 46);
+      noteCymbal = (Setting) documentState.getNumberSetting("Cymbal", "Notes", 0, 128, 1, "Note Number", 59);
+      noteTom1 = (Setting) documentState.getNumberSetting("Tom 1", "Notes", 0, 128, 1, "Note Number", 47);
+      noteTom2 = (Setting) documentState.getNumberSetting("Tom 2", "Notes", 0, 128, 1, "Note Number", 53);
+      noteTom3 = (Setting) documentState.getNumberSetting("Tom 3", "Notes", 0, 128, 1, "Note Number", 54);
+      noteTom4 = (Setting) documentState.getNumberSetting("Tom 4", "Notes", 0, 128, 1, "Note Number", 55);
+      notePerc1 = (Setting) documentState.getNumberSetting("Percussion 1", "Notes", 0, 128, 1, "Note Number", 38);
+      notePerc2 = (Setting) documentState.getNumberSetting("Percussion 2", "Notes", 0, 128, 1, "Note Number", 40);
+      notePerc3 = (Setting) documentState.getNumberSetting("Percussion 3", "Notes", 0, 128, 1, "Note Number", 41);
+      notePerc4 = (Setting) documentState.getNumberSetting("Percussion 4", "Notes", 0, 128, 1, "Note Number", 56);
+
+      
+
       // Note Step Destination
-      String[] NOTEDESTINATION_OPTIONS = Arrays.stream(DrumsNotes.gmDrums)
-            .map(drumSoundArray -> Arrays.stream(drumSoundArray)
-                  .map(Object::toString)
-                  .reduce("", (a, b) -> a + " " + b).trim())
-            .toArray(String[]::new);
+      String[] NOTEDESTINATION_OPTIONS = { "Kick", "Snare", "Hi-Hat Closed", "Hi-Hat Open", "Cymbal", "Tom 1", "Tom 2",
+            "Tom 3", "Tom 4", "Percussion 1", "Percussion 2", "Percussion 3", "Percussion 4" };
 
       noteDestination = (Setting) documentState.getEnumSetting("Note Destination", "Clip", NOTEDESTINATION_OPTIONS,
             NOTEDESTINATION_OPTIONS[1]);
-
-      // Define clip settings
-      // clipLength = (Setting) documentState.getNumberSetting("Clip Length (Bars)
-      // (TBI)", "Clip", 1, 16, 4, "Bar(s)", 1);
 
       final String[] NOTEDURATION_OPTIONS = new String[] { "1/4", "1/8", "1/16", "1/32", "1/64", "1/128" };
       noteDuration = (Setting) documentState.getEnumSetting("Step Duration", "Clip", NOTEDURATION_OPTIONS, "1/16");
 
       noteChannel = (Setting) documentState.getNumberSetting("Note Channel", "Clip", 1, 16, 1, "", 1);
 
-      velocityVariation = (Setting) documentState.getBooleanSetting("Velocity Variation (TBI)", "Clip", true);
-
       // Generate button
       documentState.getSignalSetting("Generate!", "Generate", "Generate!").addSignalObserver(() -> {
+         // getCurrentNoteDestination();
          generateDrumPattern();
       });
 
    }
 
    private int getCurrentNoteDestination() {
-      String[] noteDestinationStrings = ((EnumValue) noteDestination).get().split(" ");
-      int currentNoteDestination = 0;
-      if (noteDestinationStrings.length > 0 && noteDestinationStrings[0] != null) {
-         currentNoteDestination = Integer.parseInt(noteDestinationStrings[0]);
-      }
-      return currentNoteDestination;
+      Double currentValue = ((SettableRangedValue) noteKick).getRaw();
+      int currentValueInt = (int) Math.round(currentValue);
+
+      getHost().showPopupNotification(currentValueInt + " selected");
+      return currentValueInt;
    }
 
    private int getCurrentChannel() {
@@ -104,7 +128,7 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       int channel = (int) Math.round(1 + (fraction * 15));
 
       getHost().println("Fraction = " + fraction + ", Channel = " + channel);
-      return channel-1;
+      return channel - 1;
    }
 
    private double selectedDurationValue(String selectedNoteDuration) {
@@ -139,13 +163,13 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       String selectedNoteDuration = ((EnumValue) noteDuration).get(); // Get the current selected value of noteDuration
 
       // popout notification
-      
+
       int channel = getCurrentChannel();
       int x = 0;
       int y = getCurrentNoteDestination();
       double durationValue = selectedDurationValue(selectedNoteDuration);
-      
-      getHost().showPopupNotification( "Channel: " + channel + " Note: " + y + " Duration: " + durationValue);
+
+      getHost().showPopupNotification("Channel: " + channel + " Note: " + y + " Duration: " + durationValue);
 
       for (int i = 0; i < 16; i++) {
          cursorClip.clearStep(i, y);

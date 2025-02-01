@@ -53,16 +53,5 @@ public interface DrumsNotes {
             { 80, "Mute Triangle", "G#4" },
             { 81, "Open Triangle", "A4" }
     };
-    
 
-    // Example static method to look up the MIDI note (int) by drum name:
-    static int getDrumNumberByName(String drumName) {
-        for (Object[] row : gmDrums) {
-            // row[0] is the int, row[1] is the name, row[2] is the note like "C1"
-            if (row[1].equals(drumName)) {
-                return (Integer) row[0];
-            }
-        }
-        throw new IllegalArgumentException("No drum with name: " + drumName);
-    }
 }
