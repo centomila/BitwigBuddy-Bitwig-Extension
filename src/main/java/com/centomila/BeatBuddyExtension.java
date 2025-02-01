@@ -88,8 +88,6 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       notePerc3 = (Setting) documentState.getNumberSetting("Percussion 3", "Notes", 0, 128, 1, "Note Number", 41);
       notePerc4 = (Setting) documentState.getNumberSetting("Percussion 4", "Notes", 0, 128, 1, "Note Number", 56);
 
-      
-
       // Note Step Destination
       String[] NOTEDESTINATION_OPTIONS = { "Kick", "Snare", "Hi-Hat Closed", "Hi-Hat Open", "Cymbal", "Tom 1", "Tom 2",
             "Tom 3", "Tom 4", "Percussion 1", "Percussion 2", "Percussion 3", "Percussion 4" };
@@ -111,24 +109,59 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
    }
 
    private int getCurrentNoteDestination() {
-      Double currentValue = ((SettableRangedValue) noteKick).getRaw();
-      int currentValueInt = (int) Math.round(currentValue);
+      String currentNoteString = ((EnumValue) noteDestination).get();
+      int currentValueInt = 0;
+      switch (currentNoteString) {
+         case "Kick":
+            currentValueInt = (int) Math.round(((SettableRangedValue) noteKick).getRaw());
+            break;
+         case "Snare":
+            currentValueInt = (int) Math.round(((SettableRangedValue) noteSnare).getRaw());
+            break;
+         case "Hi-Hat Closed":
+            currentValueInt = (int) Math.round(((SettableRangedValue) noteClosedHiHat).getRaw());
+            break;
+         case "Hi-Hat Open":
+            currentValueInt = (int) Math.round(((SettableRangedValue) noteOpenHiHat).getRaw());
+            break;
+         case "Cymbal":
+            currentValueInt = (int) Math.round(((SettableRangedValue) noteCymbal).getRaw());
+            break;
+         case "Tom 1":
+            currentValueInt = (int) Math.round(((SettableRangedValue) noteTom1).getRaw());
+            break;
+         case "Tom 2":
+            currentValueInt = (int) Math.round(((SettableRangedValue) noteTom2).getRaw());
+            break;
+         case "Tom 3":
+            currentValueInt = (int) Math.round(((SettableRangedValue) noteTom3).getRaw());
+            break;
+         case "Tom 4":
+            currentValueInt = (int) Math.round(((SettableRangedValue) noteTom4).getRaw());
+            break;
+         case "Percussion 1":
+            currentValueInt = (int) Math.round(((SettableRangedValue) notePerc1).getRaw());
+            break;
+         case "Percussion 2":
+            currentValueInt = (int) Math.round(((SettableRangedValue) notePerc2).getRaw());
+            break;
+         case "Percussion 3":
+            currentValueInt = (int) Math.round(((SettableRangedValue) notePerc3).getRaw());
+            break;
+         case "Percussion 4":
+            currentValueInt = (int) Math.round(((SettableRangedValue) notePerc4).getRaw());
+            break;
+         default:
+            break;
+      }
 
       getHost().showPopupNotification(currentValueInt + " selected");
       return currentValueInt;
    }
 
    private int getCurrentChannel() {
-      // The raw fraction between 0.0 and 1.0
-      double fraction = ((SettableRangedValue) noteChannel).get();
-
-      // Convert fraction to your desired 1..16 range.
-      // Range span is (16 - 1) = 15
-      // So fraction=0 => 1, fraction=1 => 16, fraction=0.333 => ~6, etc.
-      int channel = (int) Math.round(1 + (fraction * 15));
-
-      getHost().println("Fraction = " + fraction + ", Channel = " + channel);
-      return channel - 1;
+      int channel = (int) Math.round(((SettableRangedValue) noteChannel).getRaw());
+      return channel;
    }
 
    private double selectedDurationValue(String selectedNoteDuration) {
