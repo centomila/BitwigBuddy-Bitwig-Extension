@@ -6,4 +6,7 @@ Installation:
 [] Settings > Controller > Add Extension > Centomila > BeatBuddy
 
 TODO:
+[] Support for clips in the arranger
+[] Support for multiple length patterns
+[] Alternate default destination notes (now is using GM Drums standard)
 [] Readme!
