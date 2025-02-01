@@ -11,10 +11,14 @@ import com.bitwig.extension.controller.api.BooleanValue;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.CursorTrack;
 import com.bitwig.extension.controller.api.DocumentState;
+import com.bitwig.extension.controller.api.DoubleValue;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.IntegerValue;
+import com.bitwig.extension.controller.api.SettableRangedValue;
+import com.bitwig.extension.controller.api.Channel;
 import com.bitwig.extension.controller.api.Setting;
 
-public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
+public class BeatBuddyExtension extends ControllerExtension implements DrumsNotes {
    private Application application;
    private Clip cursorClip;
    private Clip clip;
@@ -26,6 +30,7 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
    private Setting velocityVariation;
    private Setting humanization;
    private Setting noteDestination;
+   private Setting noteChannel;
 
    protected BeatBuddyExtension(final BeatBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
@@ -44,18 +49,16 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
       cursorTrack = host.createCursorTrack((16 * 8), 128);
       documentState = host.getDocumentState();
 
-      final String[] NOTEDURATION_OPTIONS = new String[] { "1/4", "1/8", "1/16", "1/32", "1/64", "1/128" };
       // Define pattern settings
-
       final String[] PATTERN_OPTIONS = Arrays.stream(DrumPatterns.patterns)
             .map(pattern -> pattern[0].toString())
             .toArray(String[]::new);
 
-      patternSelector = (Setting) documentState.getEnumSetting("Pattern (TBI)", "Pattern", PATTERN_OPTIONS,
+      patternSelector = (Setting) documentState.getEnumSetting("Pattern", "Pattern", PATTERN_OPTIONS,
             PATTERN_OPTIONS[0]);
 
       // Note Step Destination
-      String[] NOTEDESTINATION_OPTIONS = Arrays.stream(GmDrums.drumSounds)
+      String[] NOTEDESTINATION_OPTIONS = Arrays.stream(DrumsNotes.gmDrums)
             .map(drumSoundArray -> Arrays.stream(drumSoundArray)
                   .map(Object::toString)
                   .reduce("", (a, b) -> a + " " + b).trim())
@@ -67,10 +70,15 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
       // Define clip settings
       // clipLength = (Setting) documentState.getNumberSetting("Clip Length (Bars)
       // (TBI)", "Clip", 1, 16, 4, "Bar(s)", 1);
+
+      final String[] NOTEDURATION_OPTIONS = new String[] { "1/4", "1/8", "1/16", "1/32", "1/64", "1/128" };
       noteDuration = (Setting) documentState.getEnumSetting("Step Duration", "Clip", NOTEDURATION_OPTIONS, "1/16");
+
+      noteChannel = (Setting) documentState.getNumberSetting("Note Channel", "Clip", 1, 16, 1, "", 1);
 
       velocityVariation = (Setting) documentState.getBooleanSetting("Velocity Variation (TBI)", "Clip", true);
 
+      // Generate button
       documentState.getSignalSetting("Generate!", "Generate", "Generate!").addSignalObserver(() -> {
          generateDrumPattern();
       });
@@ -83,14 +91,20 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
       if (noteDestinationStrings.length > 0 && noteDestinationStrings[0] != null) {
          currentNoteDestination = Integer.parseInt(noteDestinationStrings[0]);
       }
-
       return currentNoteDestination;
    }
 
-   private int[] getCurrentPattern() {
-      // Find the pattern in DrumPatterns.patterns using map
-      String selectedPattern = ((EnumValue) patternSelector).get();
+   private int getCurrentChannel() {
+      // The raw fraction between 0.0 and 1.0
+      double fraction = ((SettableRangedValue) noteChannel).get();
 
+      // Convert fraction to your desired 1..16 range.
+      // Range span is (16 - 1) = 15
+      // So fraction=0 => 1, fraction=1 => 16, fraction=0.333 => ~6, etc.
+      int channel = (int) Math.round(1 + (fraction * 15));
+
+      getHost().println("Fraction = " + fraction + ", Channel = " + channel);
+      return channel-1;
    }
 
    private double selectedDurationValue(String selectedNoteDuration) {
@@ -122,36 +136,27 @@ public class BeatBuddyExtension extends ControllerExtension implements GmDrums {
    }
 
    private void generateDrumPattern() {
-      String selectedGenre = ((EnumValue) patternSelector).get(); // Get the current selected value of genreSelector
       String selectedNoteDuration = ((EnumValue) noteDuration).get(); // Get the current selected value of noteDuration
 
-      String settingsString = "Genre: " + selectedGenre;
-      settingsString += " - noteDuration: " + selectedNoteDuration;
-
-      getHost().showPopupNotification(settingsString);
-
-      // channel - the channel of the new note
-      // x - the x position within the note grid, defining the step/time of the new
-      // note
-      // y - the y position within the note grid, defining the key of the new note.
-      // Use GMDrums constants to define the note number
-      // insertVelocity - the velocity of the new note. Default is 100
-      // insertDuration - the duration of the new note. Default is 1.
-
-      int channel = 0;
+      // popout notification
+      
+      int channel = getCurrentChannel();
       int x = 0;
       int y = getCurrentNoteDestination();
       double durationValue = selectedDurationValue(selectedNoteDuration);
+      
+      getHost().showPopupNotification( "Channel: " + channel + " Note: " + y + " Duration: " + durationValue);
 
       for (int i = 0; i < 16; i++) {
          cursorClip.clearStep(i, y);
       }
 
-      final int[] fourOnFour = { 127, 0, 0, 0, 100, 0, 0, 0, 127, 0, 0, 0, 100, 0, 0, 0 };
+      String selectedPattern = ((EnumValue) patternSelector).get();
+      int[] currentPattern = DrumPatterns.getPatternByName(selectedPattern);
 
-      for (int i = 0; i < fourOnFour.length; i++) {
-         if (fourOnFour[i] > 0) {
-            cursorClip.setStep(channel, i, y, fourOnFour[i], durationValue);
+      for (int i = 0; i < currentPattern.length; i++) {
+         if (currentPattern[i] > 0) {
+            cursorClip.setStep(channel, i, y, currentPattern[i], durationValue);
          }
       }
 
