@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Random;
 
 import com.bitwig.extension.controller.api.ControllerHost;
-
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Clip;
@@ -12,7 +11,6 @@ import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.Setting;
-
 
 public class BeatBuddyExtension extends ControllerExtension implements DrumsNotes {
    private Application application;
@@ -24,9 +22,11 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
    private Setting noteDestination;
    private Setting noteChannel;
    private Setting toggleLauncherArranger;
+   private Setting velocitySetting;
    // settings for separate notes
    private Setting toggleNoteFields;
    private Setting noteKick;
+   private String noteUnit = "MIDI Note";
    private Setting noteSnare;
    private Setting noteRim;
    private Setting noteClosedHiHat;
@@ -59,10 +59,10 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
          generateDrumPattern();
       });
 
-      final String[] CLIP_OPTIONS = new String[] { "Launcher", "Arranger",};
-      toggleLauncherArranger = (Setting) documentState.getEnumSetting("Launcher/Arranger", "Clip", 
-            CLIP_OPTIONS,
-            CLIP_OPTIONS[0]);
+      final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] { "Launcher", "Arranger", };
+      toggleLauncherArranger = (Setting) documentState.getEnumSetting("Launcher/Arranger", "Clip",
+            TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
+            TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
 
       // Define pattern settings
       final String[] PATTERN_OPTIONS = Arrays.stream(DrumPatterns.patterns)
@@ -70,7 +70,14 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
             .toArray(String[]::new);
 
       patternSelector = (Setting) documentState.getEnumSetting("Pattern", "Pattern", PATTERN_OPTIONS,
-            PATTERN_OPTIONS[0]);
+            "Random");
+
+
+      // Velocity
+      final String[] VELOCITY_OPTIONS = new String[] { "From Pattern", "Fixed", "Random" };
+      velocitySetting = (Setting) documentState.getEnumSetting("Velocity", "Clip",
+            VELOCITY_OPTIONS,
+            VELOCITY_OPTIONS[0]);
 
       // Pattern destination dropdown
       String[] NOTEDESTINATION_OPTIONS = { "Kick", "Snare", "Hi-Hat Closed", "Hi-Hat Open", "Cymbal", "Tom 1", "Tom 2",
@@ -91,19 +98,19 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
 
       // Fields for note destination
 
-      noteKick = (Setting) documentState.getNumberSetting("Kick", "Notes", 0, 128, 1, "Note Number", 36);
-      noteSnare = (Setting) documentState.getNumberSetting("Snare", "Notes", 0, 128, 1, "Note Number", 37);
-      noteClosedHiHat = (Setting) documentState.getNumberSetting("Hi-Hat Open", "Notes", 0, 128, 1, "Note Number", 42);
-      noteOpenHiHat = (Setting) documentState.getNumberSetting("Hi-Hat Closed", "Notes", 0, 128, 1, "Note Number", 46);
-      noteCymbal = (Setting) documentState.getNumberSetting("Cymbal", "Notes", 0, 128, 1, "Note Number", 59);
-      noteTom1 = (Setting) documentState.getNumberSetting("Tom 1", "Notes", 0, 128, 1, "Note Number", 47);
-      noteTom2 = (Setting) documentState.getNumberSetting("Tom 2", "Notes", 0, 128, 1, "Note Number", 53);
-      noteTom3 = (Setting) documentState.getNumberSetting("Tom 3", "Notes", 0, 128, 1, "Note Number", 54);
-      noteTom4 = (Setting) documentState.getNumberSetting("Tom 4", "Notes", 0, 128, 1, "Note Number", 55);
-      notePerc1 = (Setting) documentState.getNumberSetting("Percussion 1", "Notes", 0, 128, 1, "Note Number", 38);
-      notePerc2 = (Setting) documentState.getNumberSetting("Percussion 2", "Notes", 0, 128, 1, "Note Number", 40);
-      notePerc3 = (Setting) documentState.getNumberSetting("Percussion 3", "Notes", 0, 128, 1, "Note Number", 41);
-      notePerc4 = (Setting) documentState.getNumberSetting("Percussion 4", "Notes", 0, 128, 1, "Note Number", 56);
+      noteKick = (Setting) documentState.getNumberSetting("Kick", "Notes", 0, 128, 1, noteUnit, 36);
+      noteSnare = (Setting) documentState.getNumberSetting("Snare", "Notes", 0, 128, 1, noteUnit, 37);
+      noteClosedHiHat = (Setting) documentState.getNumberSetting("Hi-Hat Open", "Notes", 0, 128, 1, noteUnit, 42);
+      noteOpenHiHat = (Setting) documentState.getNumberSetting("Hi-Hat Closed", "Notes", 0, 128, 1, noteUnit, 46);
+      noteCymbal = (Setting) documentState.getNumberSetting("Cymbal", "Notes", 0, 128, 1, noteUnit, 59);
+      noteTom1 = (Setting) documentState.getNumberSetting("Tom 1", "Notes", 0, 128, 1, noteUnit, 47);
+      noteTom2 = (Setting) documentState.getNumberSetting("Tom 2", "Notes", 0, 128, 1, noteUnit, 53);
+      noteTom3 = (Setting) documentState.getNumberSetting("Tom 3", "Notes", 0, 128, 1, noteUnit, 54);
+      noteTom4 = (Setting) documentState.getNumberSetting("Tom 4", "Notes", 0, 128, 1, noteUnit, 55);
+      notePerc1 = (Setting) documentState.getNumberSetting("Percussion 1", "Notes", 0, 128, 1, noteUnit, 38);
+      notePerc2 = (Setting) documentState.getNumberSetting("Percussion 2", "Notes", 0, 128, 1, noteUnit, 40);
+      notePerc3 = (Setting) documentState.getNumberSetting("Percussion 3", "Notes", 0, 128, 1, noteUnit, 41);
+      notePerc4 = (Setting) documentState.getNumberSetting("Percussion 4", "Notes", 0, 128, 1, noteUnit, 56);
 
       // Show/Hide note fields
       Setting[] allNoteFields = { noteKick, noteSnare, noteClosedHiHat, noteOpenHiHat, noteCymbal, noteTom1, noteTom2,
@@ -111,7 +118,8 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
 
       for (Setting noteSetting : allNoteFields) {
          ((SettableRangedValue) noteSetting).addValueObserver(newValue -> {
-            getHost().showPopupNotification(noteSetting.getLabel() + ": " + Utils.getNoteNameAsString(getNoteValue(noteSetting)));
+            getHost().showPopupNotification(
+                  noteSetting.getLabel() + ": " + Utils.getNoteNameAsString(getNoteValue(noteSetting)));
          });
       }
 
@@ -130,8 +138,6 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       host.showPopupNotification("BeatBuddy Initialized");
 
    }
-
-
 
    private int getNoteValue(Setting noteSetting) {
       return (int) Math.round(((SettableRangedValue) noteSetting).getRaw());
@@ -192,7 +198,7 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
 
    private int getCurrentChannelAsDouble() {
       int channel = (int) Math.round(((SettableRangedValue) noteChannel).getRaw());
-      return channel-1;
+      return channel - 1;
    }
 
    private double getSelectedDurationAsDouble(String selectedNoteDuration) {
@@ -270,8 +276,6 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       }
 
    }
-
-
 
    @Override
    public void exit() {
