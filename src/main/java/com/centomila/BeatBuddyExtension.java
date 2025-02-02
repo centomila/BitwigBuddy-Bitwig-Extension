@@ -1,6 +1,7 @@
 package com.centomila;
 
 import java.util.Arrays;
+import java.util.Random;
 
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.CursorDevice;
@@ -235,7 +236,7 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
 
    private int getCurrentChannel() {
       int channel = (int) Math.round(((SettableRangedValue) noteChannel).getRaw());
-      return channel;
+      return channel-1;
    }
 
    private double selectedDurationValue(String selectedNoteDuration) {
@@ -284,6 +285,18 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
 
       String selectedPattern = ((EnumValue) patternSelector).get();
       int[] currentPattern = DrumPatterns.getPatternByName(selectedPattern);
+
+      // if selected pattern = "random", generate a random pattern
+      if (selectedPattern.equals("Random")) {
+         Random random = new Random();
+         for (int i = 0; i < 16; i++) {
+            currentPattern[i] = random.nextInt(128);
+            // randomly change the value to 0
+            if (random.nextInt(4) == 0) {
+               currentPattern[i] = 0;
+            }
+         }
+      }
 
       for (int i = 0; i < currentPattern.length; i++) {
          if (currentPattern[i] > 0) {

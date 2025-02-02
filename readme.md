@@ -23,6 +23,7 @@ Super alpha version!
 - Removed _Track Cursor_  
 - Moved the Generate button to the top of the UI  
 - Refactored the code  
+- Added Random pattern!
 
 ---
 
@@ -32,6 +33,5 @@ Super alpha version!
 2. Support for multiple length patterns
 3. MOAR PATTERNS!
 4. Selector for multilane patterns
-5. Random generator!
-6. Support for triplets!
-7. Make a decent Readme!
+5. Support for triplets!
+6. Make a decent Readme!
