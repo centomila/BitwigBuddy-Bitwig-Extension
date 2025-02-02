@@ -1,9 +1,9 @@
 package com.centomila;
 
+import java.util.Arrays;
+
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.Transport;
-
-import java.util.Arrays;
 
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
@@ -22,6 +22,14 @@ import com.bitwig.extension.controller.api.Value;
 import com.bitwig.extension.controller.api.IntegerValue;
 import com.bitwig.extension.controller.api.Channel;
 import com.bitwig.extension.controller.api.Setting;
+import com.bitwig.extension.controller.api.DirectParameterValueDisplayObserver;
+import com.bitwig.extension.controller.api.ObjectArrayValue;
+
+import com.bitwig.extension.callback.Callback;
+import com.bitwig.extension.callback.EnumValueChangedCallback;
+import com.bitwig.extension.callback.ValueChangedCallback;
+import com.bitwig.extension.callback.IntegerValueChangedCallback;
+import com.bitwig.extension.callback.DoubleValueChangedCallback;
 
 public class BeatBuddyExtension extends ControllerExtension implements DrumsNotes {
    private Application application;
@@ -34,6 +42,7 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
    private Setting noteDestination;
    private Setting noteChannel;
    // settings for separate notes
+   private Setting toggleNoteFields;
    private Setting noteKick;
    private Setting noteSnare;
    private Setting noteRim;
@@ -66,6 +75,11 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       cursorTrack = host.createCursorTrack((16 * 8), 128);
       documentState = host.getDocumentState();
 
+      // Generate button
+      documentState.getSignalSetting("Generate!", "Generate", "Generate!").addSignalObserver(() -> {
+         generateDrumPattern();
+      });
+
       // Define pattern settings
       final String[] PATTERN_OPTIONS = Arrays.stream(DrumPatterns.patterns)
             .map(pattern -> pattern[0].toString())
@@ -73,6 +87,25 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
 
       patternSelector = (Setting) documentState.getEnumSetting("Pattern", "Pattern", PATTERN_OPTIONS,
             PATTERN_OPTIONS[0]);
+
+      // Pattern destination dropdown
+      String[] NOTEDESTINATION_OPTIONS = { "Kick", "Snare", "Hi-Hat Closed", "Hi-Hat Open", "Cymbal", "Tom 1", "Tom 2",
+            "Tom 3", "Tom 4", "Percussion 1", "Percussion 2", "Percussion 3", "Percussion 4" };
+      noteDestination = (Setting) documentState.getEnumSetting("Note Destination", "Clip", NOTEDESTINATION_OPTIONS,
+            NOTEDESTINATION_OPTIONS[1]);
+
+      final String[] NOTEDURATION_OPTIONS = new String[] { "1/4", "1/8", "1/16", "1/32", "1/64", "1/128" };
+      noteDuration = (Setting) documentState.getEnumSetting("Step Duration", "Clip", NOTEDURATION_OPTIONS, "1/16");
+
+      noteChannel = (Setting) documentState.getNumberSetting("Note Channel", "Clip", 1, 16, 1, "", 1);
+
+      // Note destination options
+      // Toggle note field
+      final String[] TOGGLE_NOTE_OPTIONS = new String[] { "Show", "Hide" };
+      toggleNoteFields = (Setting) documentState.getEnumSetting("Show Options", "Notes", TOGGLE_NOTE_OPTIONS,
+            TOGGLE_NOTE_OPTIONS[0]);
+
+      // Fields for note destination
 
       noteKick = (Setting) documentState.getNumberSetting("Kick", "Notes", 0, 128, 1, "Note Number", 36);
       noteSnare = (Setting) documentState.getNumberSetting("Snare", "Notes", 0, 128, 1, "Note Number", 37);
@@ -88,74 +121,81 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       notePerc3 = (Setting) documentState.getNumberSetting("Percussion 3", "Notes", 0, 128, 1, "Note Number", 41);
       notePerc4 = (Setting) documentState.getNumberSetting("Percussion 4", "Notes", 0, 128, 1, "Note Number", 56);
 
-      // Note Step Destination
-      String[] NOTEDESTINATION_OPTIONS = { "Kick", "Snare", "Hi-Hat Closed", "Hi-Hat Open", "Cymbal", "Tom 1", "Tom 2",
-            "Tom 3", "Tom 4", "Percussion 1", "Percussion 2", "Percussion 3", "Percussion 4" };
-
-      noteDestination = (Setting) documentState.getEnumSetting("Note Destination", "Clip", NOTEDESTINATION_OPTIONS,
-            NOTEDESTINATION_OPTIONS[1]);
-
-      final String[] NOTEDURATION_OPTIONS = new String[] { "1/4", "1/8", "1/16", "1/32", "1/64", "1/128" };
-      noteDuration = (Setting) documentState.getEnumSetting("Step Duration", "Clip", NOTEDURATION_OPTIONS, "1/16");
-
-      noteChannel = (Setting) documentState.getNumberSetting("Note Channel", "Clip", 1, 16, 1, "", 1);
-
-      // Generate button
-      documentState.getSignalSetting("Generate!", "Generate", "Generate!").addSignalObserver(() -> {
-         // getCurrentNoteDestination();
-         generateDrumPattern();
+      ((SettableRangedValue) noteKick).addValueObserver(newValue -> {
+         getHost().showPopupNotification("Kick: " + getNoteValue(noteKick));
       });
 
+      // Show/Hide note fields
+      Setting[] allNoteFields = { noteKick, noteSnare, noteClosedHiHat, noteOpenHiHat, noteCymbal, noteTom1, noteTom2,
+            noteTom3, noteTom4, notePerc1, notePerc2, notePerc3, notePerc4 };
+
+      ((EnumValue) toggleNoteFields).addValueObserver((String newValue) -> {
+         for (Setting noteField : allNoteFields) {
+
+            if (newValue.equals("Show")) {
+               noteField.show();
+            } else {
+               noteField.hide();
+            }
+         }
+      });
+
+   }
+
+   private int getNoteValue(Setting noteSetting) {
+      return (int) Math.round(((SettableRangedValue) noteSetting).getRaw());
    }
 
    private int getCurrentNoteDestination() {
       String currentNoteString = ((EnumValue) noteDestination).get();
       int currentValueInt = 0;
+
       switch (currentNoteString) {
          case "Kick":
-            currentValueInt = (int) Math.round(((SettableRangedValue) noteKick).getRaw());
+            currentValueInt = getNoteValue(noteKick);
             break;
          case "Snare":
-            currentValueInt = (int) Math.round(((SettableRangedValue) noteSnare).getRaw());
+            currentValueInt = getNoteValue(noteSnare);
             break;
          case "Hi-Hat Closed":
-            currentValueInt = (int) Math.round(((SettableRangedValue) noteClosedHiHat).getRaw());
+            currentValueInt = getNoteValue(noteClosedHiHat);
             break;
          case "Hi-Hat Open":
-            currentValueInt = (int) Math.round(((SettableRangedValue) noteOpenHiHat).getRaw());
+            currentValueInt = getNoteValue(noteOpenHiHat);
             break;
          case "Cymbal":
-            currentValueInt = (int) Math.round(((SettableRangedValue) noteCymbal).getRaw());
+            currentValueInt = getNoteValue(noteCymbal);
             break;
          case "Tom 1":
-            currentValueInt = (int) Math.round(((SettableRangedValue) noteTom1).getRaw());
+            currentValueInt = getNoteValue(noteTom1);
             break;
          case "Tom 2":
-            currentValueInt = (int) Math.round(((SettableRangedValue) noteTom2).getRaw());
+            currentValueInt = getNoteValue(noteTom2);
             break;
          case "Tom 3":
-            currentValueInt = (int) Math.round(((SettableRangedValue) noteTom3).getRaw());
+            currentValueInt = getNoteValue(noteTom3);
             break;
          case "Tom 4":
-            currentValueInt = (int) Math.round(((SettableRangedValue) noteTom4).getRaw());
+            currentValueInt = getNoteValue(noteTom4);
             break;
          case "Percussion 1":
-            currentValueInt = (int) Math.round(((SettableRangedValue) notePerc1).getRaw());
+            currentValueInt = getNoteValue(notePerc1);
             break;
          case "Percussion 2":
-            currentValueInt = (int) Math.round(((SettableRangedValue) notePerc2).getRaw());
+            currentValueInt = getNoteValue(notePerc2);
             break;
          case "Percussion 3":
-            currentValueInt = (int) Math.round(((SettableRangedValue) notePerc3).getRaw());
+            currentValueInt = getNoteValue(notePerc3);
             break;
          case "Percussion 4":
-            currentValueInt = (int) Math.round(((SettableRangedValue) notePerc4).getRaw());
+            currentValueInt = getNoteValue(notePerc4);
             break;
          default:
+            getHost().showPopupNotification("Unknown note type: " + currentNoteString);
             break;
       }
 
-      getHost().showPopupNotification(currentValueInt + " selected");
+      getHost().showPopupNotification("Selected Note: " + currentValueInt);
       return currentValueInt;
    }
 
