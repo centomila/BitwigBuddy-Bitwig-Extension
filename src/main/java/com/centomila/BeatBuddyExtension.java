@@ -121,13 +121,15 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       notePerc3 = (Setting) documentState.getNumberSetting("Percussion 3", "Notes", 0, 128, 1, "Note Number", 41);
       notePerc4 = (Setting) documentState.getNumberSetting("Percussion 4", "Notes", 0, 128, 1, "Note Number", 56);
 
-      ((SettableRangedValue) noteKick).addValueObserver(newValue -> {
-         getHost().showPopupNotification("Kick: " + getNoteValue(noteKick));
-      });
-
       // Show/Hide note fields
       Setting[] allNoteFields = { noteKick, noteSnare, noteClosedHiHat, noteOpenHiHat, noteCymbal, noteTom1, noteTom2,
             noteTom3, noteTom4, notePerc1, notePerc2, notePerc3, notePerc4 };
+
+      for (Setting noteSetting : allNoteFields) {
+         ((SettableRangedValue) noteSetting).addValueObserver(newValue -> {
+            getHost().showPopupNotification(noteSetting.getLabel() + ": " + getNoteName(getNoteValue(noteSetting)));
+         });
+      }
 
       ((EnumValue) toggleNoteFields).addValueObserver((String newValue) -> {
          for (Setting noteField : allNoteFields) {
@@ -140,6 +142,13 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
          }
       });
 
+   }
+
+   private String getNoteName(int midiNote) {
+      String[] noteNames = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+      int octave = (midiNote / 12) - 2;
+      String note = noteNames[midiNote % 12];
+      return note + octave;
    }
 
    private int getNoteValue(Setting noteSetting) {
