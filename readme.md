@@ -31,4 +31,7 @@ Super alpha version!
 1. Support for clips in the arranger
 2. Support for multiple length patterns
 3. MOAR PATTERNS!
-4. Make a decent Readme!
+4. Selector for multilane patterns
+5. Random generator!
+6. Support for triplets!
+7. Make a decent Readme!
