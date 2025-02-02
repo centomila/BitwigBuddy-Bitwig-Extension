@@ -3,13 +3,21 @@ package com.centomila;
 import java.util.Arrays;
 
 import com.bitwig.extension.controller.api.ControllerHost;
+import com.bitwig.extension.controller.api.CursorDevice;
+import com.bitwig.extension.controller.api.CursorDeviceFollowMode;
 import com.bitwig.extension.controller.api.Transport;
+import com.bitwig.extension.controller.api.Track;
+import com.bitwig.extension.controller.api.DrumPad;
+import com.bitwig.extension.controller.api.DrumPadBank;
+import com.bitwig.extension.controller.api.Device;
+import com.bitwig.extension.controller.api.CursorDevice;
 
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.BooleanValue;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.CursorTrack;
+import com.bitwig.extension.controller.api.DeviceChain;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.DoubleValue;
 import com.bitwig.extension.controller.api.EnumValue;
@@ -22,6 +30,7 @@ import com.bitwig.extension.controller.api.Value;
 import com.bitwig.extension.controller.api.IntegerValue;
 import com.bitwig.extension.controller.api.Channel;
 import com.bitwig.extension.controller.api.Setting;
+import com.bitwig.extension.controller.api.TrackBank;
 import com.bitwig.extension.controller.api.DirectParameterValueDisplayObserver;
 import com.bitwig.extension.controller.api.ObjectArrayValue;
 
@@ -34,8 +43,9 @@ import com.bitwig.extension.callback.DoubleValueChangedCallback;
 public class BeatBuddyExtension extends ControllerExtension implements DrumsNotes {
    private Application application;
    private Clip cursorClip;
-   private Clip clip;
+   private Clip arrangerClip;
    private CursorTrack cursorTrack;
+   private CursorDevice cursorDevice;
    private DocumentState documentState;
    private Setting patternSelector;
    private Setting noteDuration;
@@ -57,6 +67,7 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
    private Setting notePerc2;
    private Setting notePerc3;
    private Setting notePerc4;
+   private Device lastTouchedDevice;
 
    protected BeatBuddyExtension(final BeatBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
@@ -65,14 +76,25 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
    @Override
    public void init() {
       final ControllerHost host = getHost();
+      // // Create a cursor track (to follow selected track)
+      // CursorTrack cursorTrack = host.createCursorTrack("cursorTrack", "Cursor
+      // Track", 0, 0, true);
 
-      // Show a notification to confirm initialization
-      host.showPopupNotification("BeatBuddy Initialized");
+      // // Create a cursor device (follows selected device)
+      // CursorDevice cursorDevice = cursorTrack.createCursorDevice("cursorDevice",
+      // "Selected Device", 0,
+      // CursorDeviceFollowMode.FOLLOW_SELECTION);
+
+      // // Listen for device selection changes & store the last touched device
+      // cursorDevice.name().addValueObserver(deviceName -> {
+      // lastTouchedDevice = cursorDevice;
+      // });
 
       // Initialize API objects
       application = host.createApplication();
       cursorClip = host.createLauncherCursorClip((16 * 8), 128);
-      cursorTrack = host.createCursorTrack((16 * 8), 128);
+      arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
+      // cursorTrack = host.createCursorTrack((16 * 8), 128);
       documentState = host.getDocumentState();
 
       // Generate button
@@ -92,7 +114,7 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       String[] NOTEDESTINATION_OPTIONS = { "Kick", "Snare", "Hi-Hat Closed", "Hi-Hat Open", "Cymbal", "Tom 1", "Tom 2",
             "Tom 3", "Tom 4", "Percussion 1", "Percussion 2", "Percussion 3", "Percussion 4" };
       noteDestination = (Setting) documentState.getEnumSetting("Note Destination", "Clip", NOTEDESTINATION_OPTIONS,
-            NOTEDESTINATION_OPTIONS[1]);
+            NOTEDESTINATION_OPTIONS[0]);
 
       final String[] NOTEDURATION_OPTIONS = new String[] { "1/4", "1/8", "1/16", "1/32", "1/64", "1/128" };
       noteDuration = (Setting) documentState.getEnumSetting("Step Duration", "Clip", NOTEDURATION_OPTIONS, "1/16");
@@ -141,6 +163,9 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
             }
          }
       });
+
+      // Show a notification to confirm initialization
+      host.showPopupNotification("BeatBuddy Initialized");
 
    }
 

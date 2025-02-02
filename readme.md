@@ -1,4 +1,4 @@
-Version 0.3
+Version 0.4
 
 # BeatBuddy - Bitwig Studio Extension to generator drum patterns
 
@@ -14,10 +14,21 @@ Super alpha version!
 
 ---
 
+# 📋 Changelog:
+
+0.4
+- Separated fields for changing the note destination  
+- Added a Show/Hide button for note destination fields  
+- Removed GMDrums as the default note destination selector  
+- Removed _Track Cursor_  
+- Moved the Generate button to the top of the UI  
+- Refactored the code  
+
+---
+
 # ✅ TODO:
 
 1. Support for clips in the arranger
 2. Support for multiple length patterns
-3. Alternate default destination notes selector (now is using GM Drums standard)
-4. MOAR PATTERNS!
-5. Make a decent Readme!
+3. MOAR PATTERNS!
+4. Make a decent Readme!
