@@ -16,6 +16,9 @@ Super alpha version!
 
 # 📋 Changelog:
 
+0.45
+- Support for clip in the arranger with the _Launcher/Arranger_ option
+
 0.4
 - Separated fields for changing the note destination  
 - Added a Show/Hide button for note destination fields  
@@ -29,10 +32,9 @@ Super alpha version!
 
 # ✅ TODO:
 
-1. Support for clips in the arranger
-2. Support for multiple length patterns
-3. MOAR PATTERNS!
-4. Selector for multilane patterns
-5. Support for triplets!
-6. Settings for random pattern.
-7. Make a decent Readme!
+- [ ] Support for multiple length patterns
+- [ ] MOAR PATTERNS!
+- [ ] Selector for multilane patterns
+- [ ] Support for triplets!
+- [ ] Settings for random pattern.
+- [ ] Make a decent Readme!
