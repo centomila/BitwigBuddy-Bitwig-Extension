@@ -7,21 +7,10 @@ import com.bitwig.extension.controller.api.ControllerHost;
 
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
-import com.bitwig.extension.controller.api.BooleanValue;
 import com.bitwig.extension.controller.api.Clip;
-import com.bitwig.extension.controller.api.CursorTrack;
-import com.bitwig.extension.controller.api.DeviceChain;
 import com.bitwig.extension.controller.api.DocumentState;
-import com.bitwig.extension.controller.api.DoubleValue;
 import com.bitwig.extension.controller.api.EnumValue;
-import com.bitwig.extension.controller.api.RangedValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
-import com.bitwig.extension.controller.api.SettableIntegerValue;
-import com.bitwig.extension.controller.api.SettableDoubleValue;
-
-import com.bitwig.extension.controller.api.Value;
-import com.bitwig.extension.controller.api.IntegerValue;
-import com.bitwig.extension.controller.api.Channel;
 import com.bitwig.extension.controller.api.Setting;
 
 
@@ -122,7 +111,7 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
 
       for (Setting noteSetting : allNoteFields) {
          ((SettableRangedValue) noteSetting).addValueObserver(newValue -> {
-            getHost().showPopupNotification(noteSetting.getLabel() + ": " + getNoteName(getNoteValue(noteSetting)));
+            getHost().showPopupNotification(noteSetting.getLabel() + ": " + Utils.getNoteNameAsString(getNoteValue(noteSetting)));
          });
       }
 
@@ -142,18 +131,13 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
 
    }
 
-   private String getNoteName(int midiNote) {
-      String[] noteNames = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-      int octave = (midiNote / 12) - 2;
-      String note = noteNames[midiNote % 12];
-      return note + octave;
-   }
+
 
    private int getNoteValue(Setting noteSetting) {
       return (int) Math.round(((SettableRangedValue) noteSetting).getRaw());
    }
 
-   private int getCurrentNoteDestination() {
+   private int getCurrentNoteDestinationAsInt() {
       String currentNoteString = ((EnumValue) noteDestination).get();
       int currentValueInt = 0;
 
@@ -206,12 +190,12 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       return currentValueInt;
    }
 
-   private int getCurrentChannel() {
+   private int getCurrentChannelAsDouble() {
       int channel = (int) Math.round(((SettableRangedValue) noteChannel).getRaw());
       return channel-1;
    }
 
-   private double selectedDurationValue(String selectedNoteDuration) {
+   private double getSelectedDurationAsDouble(String selectedNoteDuration) {
       // Use the value from noteDuration to determine the duration of the note.
       // Options are "1/4", "1/8", "1/16", "1/32", "1/64", "1/128". 1/4 = 1.0. 1/8 =
       // 0.5, etc.
@@ -239,7 +223,7 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       return durationValue;
    }
 
-   private Clip getLauncherArrangerOption() {
+   private Clip getLauncherArrangerAsClip() {
       String selectedLauncherArranger = ((EnumValue) toggleLauncherArranger).get();
       if (selectedLauncherArranger.equals("Arranger")) {
          return arrangerClip;
@@ -253,15 +237,15 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
 
       // popout notification
 
-      int channel = getCurrentChannel();
+      int channel = getCurrentChannelAsDouble();
       int x = 0;
-      int y = getCurrentNoteDestination();
-      double durationValue = selectedDurationValue(selectedNoteDuration);
+      int y = getCurrentNoteDestinationAsInt();
+      double durationValue = getSelectedDurationAsDouble(selectedNoteDuration);
 
       getHost().showPopupNotification("Channel: " + channel + " Note: " + y + " Duration: " + selectedNoteDuration);
 
       for (int i = 0; i < 16; i++) {
-         getLauncherArrangerOption().clearStep(i, y);
+         getLauncherArrangerAsClip().clearStep(i, y);
       }
 
       String selectedPattern = ((EnumValue) patternSelector).get();
@@ -281,11 +265,13 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
 
       for (int i = 0; i < currentPattern.length; i++) {
          if (currentPattern[i] > 0) {
-            getLauncherArrangerOption().setStep(channel, i, y, currentPattern[i], durationValue);
+            getLauncherArrangerAsClip().setStep(channel, i, y, currentPattern[i], durationValue);
          }
       }
 
    }
+
+
 
    @Override
    public void exit() {
