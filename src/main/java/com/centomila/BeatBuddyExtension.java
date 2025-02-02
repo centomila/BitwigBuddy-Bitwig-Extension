@@ -4,14 +4,6 @@ import java.util.Arrays;
 import java.util.Random;
 
 import com.bitwig.extension.controller.api.ControllerHost;
-import com.bitwig.extension.controller.api.CursorDevice;
-import com.bitwig.extension.controller.api.CursorDeviceFollowMode;
-import com.bitwig.extension.controller.api.Transport;
-import com.bitwig.extension.controller.api.Track;
-import com.bitwig.extension.controller.api.DrumPad;
-import com.bitwig.extension.controller.api.DrumPadBank;
-import com.bitwig.extension.controller.api.Device;
-import com.bitwig.extension.controller.api.CursorDevice;
 
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
@@ -31,27 +23,18 @@ import com.bitwig.extension.controller.api.Value;
 import com.bitwig.extension.controller.api.IntegerValue;
 import com.bitwig.extension.controller.api.Channel;
 import com.bitwig.extension.controller.api.Setting;
-import com.bitwig.extension.controller.api.TrackBank;
-import com.bitwig.extension.controller.api.DirectParameterValueDisplayObserver;
-import com.bitwig.extension.controller.api.ObjectArrayValue;
 
-import com.bitwig.extension.callback.Callback;
-import com.bitwig.extension.callback.EnumValueChangedCallback;
-import com.bitwig.extension.callback.ValueChangedCallback;
-import com.bitwig.extension.callback.IntegerValueChangedCallback;
-import com.bitwig.extension.callback.DoubleValueChangedCallback;
 
 public class BeatBuddyExtension extends ControllerExtension implements DrumsNotes {
    private Application application;
    private Clip cursorClip;
    private Clip arrangerClip;
-   private CursorTrack cursorTrack;
-   private CursorDevice cursorDevice;
    private DocumentState documentState;
    private Setting patternSelector;
    private Setting noteDuration;
    private Setting noteDestination;
    private Setting noteChannel;
+   private Setting toggleLauncherArranger;
    // settings for separate notes
    private Setting toggleNoteFields;
    private Setting noteKick;
@@ -68,7 +51,6 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
    private Setting notePerc2;
    private Setting notePerc3;
    private Setting notePerc4;
-   private Device lastTouchedDevice;
 
    protected BeatBuddyExtension(final BeatBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
@@ -77,31 +59,21 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
    @Override
    public void init() {
       final ControllerHost host = getHost();
-      // // Create a cursor track (to follow selected track)
-      // CursorTrack cursorTrack = host.createCursorTrack("cursorTrack", "Cursor
-      // Track", 0, 0, true);
-
-      // // Create a cursor device (follows selected device)
-      // CursorDevice cursorDevice = cursorTrack.createCursorDevice("cursorDevice",
-      // "Selected Device", 0,
-      // CursorDeviceFollowMode.FOLLOW_SELECTION);
-
-      // // Listen for device selection changes & store the last touched device
-      // cursorDevice.name().addValueObserver(deviceName -> {
-      // lastTouchedDevice = cursorDevice;
-      // });
-
       // Initialize API objects
       application = host.createApplication();
       cursorClip = host.createLauncherCursorClip((16 * 8), 128);
       arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
-      // cursorTrack = host.createCursorTrack((16 * 8), 128);
       documentState = host.getDocumentState();
 
       // Generate button
       documentState.getSignalSetting("Generate!", "Generate", "Generate!").addSignalObserver(() -> {
          generateDrumPattern();
       });
+
+      final String[] CLIP_OPTIONS = new String[] { "Launcher", "Arranger",};
+      toggleLauncherArranger = (Setting) documentState.getEnumSetting("Launcher/Arranger", "Clip", 
+            CLIP_OPTIONS,
+            CLIP_OPTIONS[0]);
 
       // Define pattern settings
       final String[] PATTERN_OPTIONS = Arrays.stream(DrumPatterns.patterns)
@@ -267,6 +239,15 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       return durationValue;
    }
 
+   private Clip getLauncherArrangerOption() {
+      String selectedLauncherArranger = ((EnumValue) toggleLauncherArranger).get();
+      if (selectedLauncherArranger.equals("Arranger")) {
+         return arrangerClip;
+      } else {
+         return cursorClip;
+      }
+   }
+
    private void generateDrumPattern() {
       String selectedNoteDuration = ((EnumValue) noteDuration).get(); // Get the current selected value of noteDuration
 
@@ -277,10 +258,10 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       int y = getCurrentNoteDestination();
       double durationValue = selectedDurationValue(selectedNoteDuration);
 
-      getHost().showPopupNotification("Channel: " + channel + " Note: " + y + " Duration: " + durationValue);
+      getHost().showPopupNotification("Channel: " + channel + " Note: " + y + " Duration: " + selectedNoteDuration);
 
       for (int i = 0; i < 16; i++) {
-         cursorClip.clearStep(i, y);
+         getLauncherArrangerOption().clearStep(i, y);
       }
 
       String selectedPattern = ((EnumValue) patternSelector).get();
@@ -300,7 +281,7 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
 
       for (int i = 0; i < currentPattern.length; i++) {
          if (currentPattern[i] > 0) {
-            cursorClip.setStep(channel, i, y, currentPattern[i], durationValue);
+            getLauncherArrangerOption().setStep(channel, i, y, currentPattern[i], durationValue);
          }
       }
 
