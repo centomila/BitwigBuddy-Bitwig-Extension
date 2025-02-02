@@ -34,4 +34,5 @@ Super alpha version!
 3. MOAR PATTERNS!
 4. Selector for multilane patterns
 5. Support for triplets!
-6. Make a decent Readme!
+6. Settings for random pattern.
+7. Make a decent Readme!
