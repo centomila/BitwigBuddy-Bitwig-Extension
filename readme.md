@@ -1,6 +1,4 @@
-Version 0.4
-
-# BeatBuddy - Bitwig Studio Extension to generator drum patterns
+# BeatBuddy - Bitwig Studio Extension to generator drum patterns v0.52
 
 Super alpha version!
 
