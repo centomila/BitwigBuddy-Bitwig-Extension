@@ -4,7 +4,7 @@ Version 0.4
 
 Super alpha version!
 
-![alt text](image.png)
+![Screenshot v0.52](image.png)
 
 # ⚙️ Installation:
 
