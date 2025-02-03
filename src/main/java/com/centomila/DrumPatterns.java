@@ -4,7 +4,7 @@ public interface DrumPatterns {
 
     void init();
 
-    final Object[][] patterns = {
+    final static Object[][] patterns = {
             // --- KICK-ONLY PATTERNS ---
             {
                     "Kick: Four on the Floor",
