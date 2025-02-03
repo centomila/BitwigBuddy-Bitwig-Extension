@@ -1,6 +1,9 @@
 # 📋 Changelog:
 
-**0.52**
+**0.53**
+- [X] Added more patterns
+
+0.52
 - [X] Replaced the old method to select note destination with a new method to select note destination based on Note Name+Octave
 
 0.5
