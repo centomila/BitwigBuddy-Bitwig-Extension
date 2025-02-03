@@ -16,7 +16,10 @@ Super alpha version!
 
 # 📋 Changelog:
 
-**0.5**
+**0.52**
+- [X] Replaced the old method to select note destination with a new method to select note destination based on Note Name+Octave
+
+0.5
 - [X] Support for multiple step sizes and note lengths in the pattern!
   - 1/2  |  1/4  |  1/8  |  1/8  |  1/16  |  1/32  |  1/32  |  1/64  |  1/128
   - 1/2 - 3t  |  1/4 - 3t  | 1/8 - 3t  |  1/16 - 3t  |  1/32 - 3t  |  1/32 - 3t  |  1/64 - 3t  |  1/128 - 3t
@@ -42,7 +45,6 @@ Super alpha version!
 
 - [ ] Support for multiple length patterns
 - [ ] MOAR PATTERNS!
-- [ ] Selector for multilane patterns
 - [ ] Settings for random pattern.
 - [ ] Option to Remove notes in excess if the user generate a pattern longer than the clip
 - [ ] Automatically change the note length based on the step size (not the other way around)

@@ -12,7 +12,7 @@ import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.Setting;
 
-public class BeatBuddyExtension extends ControllerExtension implements DrumsNotes {
+public class BeatBuddyExtension extends ControllerExtension {
    private Application application;
    private Clip cursorClip;
    private Clip arrangerClip;
@@ -21,25 +21,12 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
    private Setting noteLengthSetting; // How long each note should be
    private Setting stepSizSetting;
    private Setting noteDestinationSetting;
+   private Setting noteOctaveSetting;
    private Setting noteChannelSetting;
    private Setting toggleLauncherArrangerSetting;
-   // settings for separate notes
-   private String noteUnitSetting = "MIDI Note";
-   private Setting toggleNoteFields;
-   private Setting noteKickSetting;
-   private Setting noteSnareSetting;
-   private Setting noteRimshotSetting;
-   private Setting noteClosedHiHatSetting;
-   private Setting noteOpenHiHatSetting;
-   private Setting noteCymbalSetting;
-   private Setting noteTom1Setting;
-   private Setting noteTom2Setting;
-   private Setting noteTom3Setting;
-   private Setting noteTom4Setting;
-   private Setting notePerc1Setting;
-   private Setting notePerc2Setting;
-   private Setting notePerc3Setting;
-   private Setting notePerc4Setting;
+   private String currentNoteAsString;
+   private int currentOctaveAsInt;
+
 
    private Setting spacerSetting;
 
@@ -69,17 +56,30 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
             "Random");
 
       // Pattern destination dropdown
-      String[] NOTEDESTINATION_OPTIONS = { "Kick", "Snare", "Rimshot", "Hi-Hat Closed", "Hi-Hat Open", "Cymbal",
-            "Tom 1", "Tom 2",
-            "Tom 3", "Tom 4", "Percussion 1", "Percussion 2", "Percussion 3", "Percussion 4" };
+      String[] NOTEDESTINATION_OPTIONS = Utils.NOTE_NAMES;
       noteDestinationSetting = (Setting) documentState.getEnumSetting("Note Destination", "Clip",
             NOTEDESTINATION_OPTIONS,
             NOTEDESTINATION_OPTIONS[0]);
 
       ((EnumValue) noteDestinationSetting).addValueObserver(newValue -> {
-         getHost().showPopupNotification(
-               newValue + ": " + Utils.getNoteNameAsString(getCurrentNoteDestinationAsInt()));
+         currentNoteAsString = newValue;
+         getCurrentNoteDestinationAsInt();
       });
+
+      // Pattern destination dropdown
+      String[] OCTAVEDESTINATION_OPTIONS = Arrays.stream(Utils.NOTE_OCTAVES)
+            .mapToObj(String::valueOf)
+            .toArray(String[]::new);
+      noteOctaveSetting = (Setting) documentState.getEnumSetting("Note Octave", "Clip",
+            OCTAVEDESTINATION_OPTIONS,
+            OCTAVEDESTINATION_OPTIONS[3]);
+
+      ((EnumValue) noteOctaveSetting).addValueObserver(newValue -> {
+         currentOctaveAsInt = Integer.parseInt(newValue);
+         getCurrentNoteDestinationAsInt();
+      });
+
+
 
       // Pattern step size
       final String[] STEPSIZE_OPTIONS = new String[] { "1/2", "1/4", "1/8", "1/8", "1/16", "1/32", "1/32", "1/64",
@@ -106,7 +106,7 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       // Initialize launcher/arranger toggle
       initToggleLauncherArrangerSetting();
       // Initialize note fields
-      initAllNoteFieldsSettings();
+      // initAllNoteFieldsSettings();
       // Show a notification to confirm initialization
       host.showPopupNotification("BeatBuddy Initialized");
 
@@ -120,73 +120,6 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
             TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
    }
 
-   /**
-    * Initialize all note fields in the UI, including the toggle to show/hide and
-    * the individual note fields.
-    */
-   private void initAllNoteFieldsSettings() {
-      // Note destination options
-      // Toggle note field
-      final String[] TOGGLE_NOTE_OPTIONS = new String[] { "Show", "Hide" };
-      toggleNoteFields = (Setting) documentState.getEnumSetting("Show Options", "Notes", TOGGLE_NOTE_OPTIONS,
-            TOGGLE_NOTE_OPTIONS[0]);
-      // Fields for note destination
-
-      noteKickSetting = (Setting) documentState.getNumberSetting("Kick", "Notes", 0, 128, 1, noteUnitSetting, 36);
-      noteSnareSetting = (Setting) documentState.getNumberSetting("Snare", "Notes", 0, 128, 1, noteUnitSetting, 37);
-      noteRimshotSetting = (Setting) documentState.getNumberSetting("Rimshot", "Notes", 0, 128, 1, noteUnitSetting, 38);
-      noteClosedHiHatSetting = (Setting) documentState.getNumberSetting("Hi-Hat Open", "Notes", 0, 128, 1,
-            noteUnitSetting, 42);
-      noteOpenHiHatSetting = (Setting) documentState.getNumberSetting("Hi-Hat Closed", "Notes", 0, 128, 1,
-            noteUnitSetting, 46);
-      noteCymbalSetting = (Setting) documentState.getNumberSetting("Cymbal", "Notes", 0, 128, 1, noteUnitSetting, 59);
-      noteTom1Setting = (Setting) documentState.getNumberSetting("Tom 1", "Notes", 0, 128, 1, noteUnitSetting, 47);
-      noteTom2Setting = (Setting) documentState.getNumberSetting("Tom 2", "Notes", 0, 128, 1, noteUnitSetting, 53);
-      noteTom3Setting = (Setting) documentState.getNumberSetting("Tom 3", "Notes", 0, 128, 1, noteUnitSetting, 54);
-      noteTom4Setting = (Setting) documentState.getNumberSetting("Tom 4", "Notes", 0, 128, 1, noteUnitSetting, 55);
-      notePerc1Setting = (Setting) documentState.getNumberSetting("Percussion 1", "Notes", 0, 128, 1, noteUnitSetting,
-            38);
-      notePerc2Setting = (Setting) documentState.getNumberSetting("Percussion 2", "Notes", 0, 128, 1, noteUnitSetting,
-            40);
-      notePerc3Setting = (Setting) documentState.getNumberSetting("Percussion 3", "Notes", 0, 128, 1, noteUnitSetting,
-            41);
-      notePerc4Setting = (Setting) documentState.getNumberSetting("Percussion 4", "Notes", 0, 128, 1, noteUnitSetting,
-            56);
-
-      // Show/Hide note fields
-      Setting[] allNoteFields = { noteKickSetting, noteSnareSetting, noteRimshotSetting, noteClosedHiHatSetting,
-            noteOpenHiHatSetting, noteCymbalSetting,
-            noteTom1Setting, noteTom2Setting,
-            noteTom3Setting, noteTom4Setting, notePerc1Setting, notePerc2Setting, notePerc3Setting, notePerc4Setting };
-
-      for (Setting noteSetting : allNoteFields) {
-         ((SettableRangedValue) noteSetting).addValueObserver(newValue -> {
-            getHost().showPopupNotification(
-                  noteSetting.getLabel() + ": " + Utils.getNoteNameAsString(getNoteValue(noteSetting)));
-         });
-      }
-
-      ((EnumValue) toggleNoteFields).addValueObserver((String newValue) -> {
-         for (Setting noteField : allNoteFields) {
-
-            if (newValue.equals("Show")) {
-               noteField.show();
-            } else {
-               noteField.hide();
-            }
-         }
-      });
-   }
-
-   /**
-    * Returns the MIDI note value of the given note setting.
-    * 
-    * @param noteSetting The note setting to get the value of.
-    * @return The MIDI note value of the given note setting.
-    */
-   private int getNoteValue(Setting noteSetting) {
-      return (int) Math.round(((SettableRangedValue) noteSetting).getRaw());
-   }
 
    /**
     * Returns the MIDI note value of the currently selected note destination.
@@ -203,55 +136,8 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
     */
 
    private int getCurrentNoteDestinationAsInt() {
-      String currentNoteString = ((EnumValue) noteDestinationSetting).get();
-      int currentValueInt = 0;
-
-      switch (currentNoteString) {
-         case "Kick":
-            currentValueInt = getNoteValue(noteKickSetting);
-            break;
-         case "Snare":
-            currentValueInt = getNoteValue(noteSnareSetting);
-            break;
-         case "Hi-Hat Closed":
-            currentValueInt = getNoteValue(noteClosedHiHatSetting);
-            break;
-         case "Hi-Hat Open":
-            currentValueInt = getNoteValue(noteOpenHiHatSetting);
-            break;
-         case "Cymbal":
-            currentValueInt = getNoteValue(noteCymbalSetting);
-            break;
-         case "Tom 1":
-            currentValueInt = getNoteValue(noteTom1Setting);
-            break;
-         case "Tom 2":
-            currentValueInt = getNoteValue(noteTom2Setting);
-            break;
-         case "Tom 3":
-            currentValueInt = getNoteValue(noteTom3Setting);
-            break;
-         case "Tom 4":
-            currentValueInt = getNoteValue(noteTom4Setting);
-            break;
-         case "Percussion 1":
-            currentValueInt = getNoteValue(notePerc1Setting);
-            break;
-         case "Percussion 2":
-            currentValueInt = getNoteValue(notePerc2Setting);
-            break;
-         case "Percussion 3":
-            currentValueInt = getNoteValue(notePerc3Setting);
-            break;
-         case "Percussion 4":
-            currentValueInt = getNoteValue(notePerc4Setting);
-            break;
-         default:
-            getHost().showPopupNotification("Unknown note type: " + currentNoteString);
-            break;
-      }
-
-      getHost().showPopupNotification("Selected Note: " + currentNoteString);
+      getHost().showPopupNotification("Selected Note: " + currentNoteAsString + currentOctaveAsInt);
+      int currentValueInt = Utils.getMIDINoteNumberFromStringAndOctave(currentNoteAsString, currentOctaveAsInt);
       return currentValueInt;
    }
 
