@@ -61,8 +61,6 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
          generateDrumPattern();
       });
 
-
-
       // Define pattern settings
       final String[] PATTERN_OPTIONS = Arrays.stream(DrumPatterns.patterns)
             .map(pattern -> pattern[0].toString())
@@ -86,7 +84,7 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
       // Pattern step size
       final String[] STEPSIZE_OPTIONS = new String[] { "1/2", "1/4", "1/8", "1/8", "1/16", "1/32", "1/32", "1/64",
             "1/128",
-            "1/2 - 3t", "1/4 - 3t", "1/8 - 3t", "1/8 - 3t", "1/16 - 3t", "1/32 - 3t", "1/32 - 3t", "1/64 - 3t",
+            "1/2 - 3t", "1/4 - 3t", "1/8 - 3t", "1/16 - 3t", "1/32 - 3t", "1/32 - 3t", "1/64 - 3t",
             "1/128 - 3t" };
       stepSizSetting = (Setting) documentState.getEnumSetting("Step Size", "Clip", STEPSIZE_OPTIONS, "1/16");
 
@@ -95,16 +93,9 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
 
       noteChannelSetting = (Setting) documentState.getNumberSetting("Note Channel", "Clip", 1, 16, 1, "", 1);
 
-      initAllNoteFieldsSettings();
-
-      // Launcher/Arranger toggle
-      final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] { "Launcher", "Arranger", };
-      toggleLauncherArrangerSetting = (Setting) documentState.getEnumSetting("Destination Launcher/Arranger", "Z",
-            TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
-            TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
-
       // Empty button
-      spacerSetting = (Setting) documentState.getStringSetting(" ", "Z", 0, "--------------------------------------");
+      spacerSetting = (Setting) documentState.getStringSetting("----", "Z", 0,
+            "---------------------------------------------------");
       spacerSetting.disable();
 
       // Clear current clip
@@ -112,14 +103,26 @@ public class BeatBuddyExtension extends ControllerExtension implements DrumsNote
          getLauncherArrangerAsClip().clearSteps();
       });
 
+      // Initialize launcher/arranger toggle
+      initToggleLauncherArrangerSetting();
+      // Initialize note fields
+      initAllNoteFieldsSettings();
       // Show a notification to confirm initialization
       host.showPopupNotification("BeatBuddy Initialized");
 
    }
 
+   private void initToggleLauncherArrangerSetting() {
+      // Launcher/Arranger toggle
+      final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] { "Launcher", "Arranger", };
+      toggleLauncherArrangerSetting = (Setting) documentState.getEnumSetting("Destination Launcher/Arranger", "Z",
+            TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
+            TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
+   }
 
    /**
-    * Initialize all note fields in the UI, including the toggle to show/hide and the individual note fields.
+    * Initialize all note fields in the UI, including the toggle to show/hide and
+    * the individual note fields.
     */
    private void initAllNoteFieldsSettings() {
       // Note destination options
