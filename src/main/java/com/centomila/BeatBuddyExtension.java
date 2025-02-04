@@ -18,11 +18,11 @@ import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.SettableIntegerValue;
 import com.bitwig.extension.controller.api.SettableBooleanValue;
 import com.bitwig.extension.controller.api.SettableStringArrayValue;
+import com.bitwig.extension.controller.api.SettableBeatTimeValue;
 
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.bitwig.extension.controller.api.BooleanValue;
-
 
 public class BeatBuddyExtension extends ControllerExtension {
    private Application application;
@@ -40,7 +40,6 @@ public class BeatBuddyExtension extends ControllerExtension {
    private String currentNoteAsString;
    private Setting testSignal;
    private int currentOctaveAsInt;
-
 
    private Setting spacerSetting;
 
@@ -102,8 +101,6 @@ public class BeatBuddyExtension extends ControllerExtension {
          getCurrentNoteDestinationAsInt();
       });
 
-
-
       // Pattern step size
       final String[] STEPSIZE_OPTIONS = new String[] { "1/2", "1/4", "1/8", "1/8", "1/16", "1/32", "1/32", "1/64",
             "1/128",
@@ -147,7 +144,6 @@ public class BeatBuddyExtension extends ControllerExtension {
             TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
             TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
    }
-
 
    /**
     * Returns the MIDI note value of the currently selected note destination.
@@ -265,7 +261,7 @@ public class BeatBuddyExtension extends ControllerExtension {
     */
    private void generateDrumPattern() {
       // if the clip doesn't exist, create it
-         // track.createNewLauncherClip(0, 1);
+      // track.createNewLauncherClip(0, 1);
 
       String selectedNoteLength = ((EnumValue) noteLengthSetting).get(); // Get the current selected value of noteLength
       double durationValue = getNoteLengthAsDouble(selectedNoteLength);
@@ -301,11 +297,21 @@ public class BeatBuddyExtension extends ControllerExtension {
          }
       }
 
-      
-      application.zoomToFit();
-      
-   
+      setLoopLength(0.0, 16.0);
+   }
 
+   private void setLoopLength(Double loopStart, Double loopEnd) {
+      Clip clip = getLauncherArrangerAsClip();
+
+      // These access the SettableRangedValue objects for loop start and loop length.
+      SettableBeatTimeValue clipLoopStart = clip.getLoopStart();
+      SettableBeatTimeValue clipLoopEnd = clip.getLoopLength();
+
+      // Set loop to start at 0.0 beats
+      clipLoopStart.set(0);
+
+      // Set loop length to 16.0 beats
+      clipLoopEnd.set(32.0);
    }
 
    @Override
