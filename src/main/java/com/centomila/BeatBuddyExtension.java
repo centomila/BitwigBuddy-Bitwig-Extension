@@ -38,7 +38,6 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting noteChannelSetting;
    private Setting toggleLauncherArrangerSetting;
    private String currentNoteAsString;
-   private Setting testSignal;
    private int currentOctaveAsInt;
 
    private Setting spacerSetting;
@@ -56,17 +55,10 @@ public class BeatBuddyExtension extends ControllerExtension {
       arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
       documentState = host.getDocumentState();
 
-      // Test button
-      // Create a signal setting (button)
-      Signal testSignal = documentState.getSignalSetting("Test", "Test", "Test");
-
-      // Add observer to change dropdown value when button is pressed
-      testSignal.addSignalObserver(() -> {
-         ((SettableEnumValue) noteDestinationSetting).set("A");
-      });
-
       // Generate button
-      documentState.getSignalSetting("Generate!", "Generate", "Generate!").addSignalObserver(() -> {
+      Signal generateButton = documentState.getSignalSetting("Generate!", "Generate", "Generate!");
+
+      generateButton.addSignalObserver(() -> {
          generateDrumPattern();
       });
 
@@ -102,23 +94,53 @@ public class BeatBuddyExtension extends ControllerExtension {
       });
 
       // Pattern step size
-      final String[] STEPSIZE_OPTIONS = new String[] { "1/2", "1/4", "1/8", "1/8", "1/16", "1/32", "1/32", "1/64",
-            "1/128",
-            "1/2 - 3t", "1/4 - 3t", "1/8 - 3t", "1/16 - 3t", "1/32 - 3t", "1/32 - 3t", "1/64 - 3t",
-            "1/128 - 3t" };
+      final String[] STEPSIZE_OPTIONS = new String[] {
+            "Straight", "1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1/128",
+            "Dotted", "1/2.", "1/4.", "1/8.", "1/16.", "1/32.", "1/64.", "1/128.",
+            "Triplets", "1/2 - 3t", "1/4 - 3t", "1/8 - 3t", "1/16 - 3t", "1/32 - 3t", "1/64 - 3t", "1/128 - 3t"
+      };
       stepSizSetting = (Setting) documentState.getEnumSetting("Step Size", "Clip", STEPSIZE_OPTIONS, "1/16");
 
       // set the note length equal to the selected step size
       ((EnumValue) stepSizSetting).addValueObserver(newValue -> {
+         switch (newValue) {
+            case "Straight":
+               newValue = "1/16";
+               break;
+            case "Dotted":
+               newValue = "1/16.";
+               break;
+            case "Triplets":
+               newValue = "1/16 - 3t";
+               break;
+         }
+         // Set both note length and step size
+         ((SettableEnumValue) stepSizSetting).set(newValue);
          ((SettableEnumValue) noteLengthSetting).set(newValue);
       });
 
       // Pattern note length
       noteLengthSetting = (Setting) documentState.getEnumSetting("Note Length", "Clip", STEPSIZE_OPTIONS, "1/16");
 
+      ((EnumValue) noteLengthSetting).addValueObserver(newValue -> {
+         switch (newValue) {
+            case "Straight":
+               newValue = "1/16";
+               break;
+            case "Dotted":
+               newValue = "1/16.";
+               break;
+            case "Triplets":
+               newValue = "1/16 - 3t";
+               break;
+         }
+
+         ((SettableEnumValue) noteLengthSetting).set(newValue);
+      });
+
       noteChannelSetting = (Setting) documentState.getNumberSetting("Note Channel", "Clip", 1, 16, 1, "", 1);
 
-      // Empty button
+      // Empty string for spacing
       spacerSetting = (Setting) documentState.getStringSetting("----", "Z", 0,
             "---------------------------------------------------");
       spacerSetting.disable();
@@ -130,8 +152,7 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       // Initialize launcher/arranger toggle
       initToggleLauncherArrangerSetting();
-      // Initialize note fields
-      // initAllNoteFieldsSettings();
+
       // Show a notification to confirm initialization
       host.showPopupNotification("BeatBuddy Initialized");
 
@@ -176,70 +197,6 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Converts a note length selected by the user to a duration value.
-    *
-    * @param selectedNoteLength The note length selected by the user. Valid values
-    *                           are:
-    *                           1/2, 1/4, 1/8, 1/16, 1/32, 1/64, 1/128, 1/2 - 3t,
-    *                           1/4 - 3t, 1/8 - 3t, 1/16 - 3t, 1/32 - 3t, 1/64 -
-    *                           3t, 1/128 - 3t.
-    * @return A double representing the duration value of the selected note length.
-    */
-   private double getNoteLengthAsDouble(String selectedNoteLength) {
-      double duration = 1.0;
-      switch (selectedNoteLength) {
-         case "1/2":
-            duration = 2.0;
-            break;
-         case "1/4":
-            duration = 1.0;
-            break;
-         case "1/8":
-            duration = 0.5;
-            break;
-         case "1/16":
-            duration = 0.25;
-            break;
-         case "1/32":
-            duration = 0.125;
-            break;
-         case "1/64":
-            duration = 0.0625;
-            break;
-         case "1/128":
-            duration = 0.03125;
-            break;
-         case "1/2 - 3t":
-            duration = 2.0 * (2.0 / 3.0); // 1.3333...
-            break;
-         case "1/4 - 3t":
-            duration = 1.0 * (2.0 / 3.0); // 0.6667...
-            break;
-         case "1/8 - 3t":
-            duration = 0.5 * (2.0 / 3.0); // 0.3333...
-            break;
-         case "1/16 - 3t":
-            duration = 0.25 * (2.0 / 3.0); // 0.1667...
-            break;
-         case "1/32 - 3t":
-            duration = 0.125 * (2.0 / 3.0); // 0.08333...
-            break;
-         case "1/64 - 3t":
-            duration = 0.0625 * (2.0 / 3.0); // 0.04167...
-            break;
-         case "1/128 - 3t":
-            duration = 0.03125 * (2.0 / 3.0); // 0.02083...
-            break;
-         default:
-            // Handle unexpected stepSize values.
-            duration = 1.0;
-            break;
-      }
-
-      return duration;
-   }
-
-   /**
     * Returns the Clip object for either the Arranger Clip Launcher or the Launcher
     * Clip depending on the value of the "Launcher/Arranger" setting.
     * 
@@ -260,21 +217,21 @@ public class BeatBuddyExtension extends ControllerExtension {
     * Arranger) at the currently selected note destination and channel.
     */
    private void generateDrumPattern() {
+      Clip clip = getLauncherArrangerAsClip();
       // if the clip doesn't exist, create it
       // track.createNewLauncherClip(0, 1);
 
       String selectedNoteLength = ((EnumValue) noteLengthSetting).get(); // Get the current selected value of noteLength
-      double durationValue = getNoteLengthAsDouble(selectedNoteLength);
+      double durationValue = Utils.getNoteLengthAsDouble(selectedNoteLength);
 
       String selectedStepSize = ((EnumValue) stepSizSetting).get(); // Get the current selected value of stepSize
-      double stepSize = getNoteLengthAsDouble(selectedStepSize);
-      getLauncherArrangerAsClip().setStepSize(stepSize);
+      double stepSize = Utils.getNoteLengthAsDouble(selectedStepSize);
+      clip.setStepSize(stepSize);
 
       int channel = getCurrentChannelAsDouble();
       int y = getCurrentNoteDestinationAsInt();
-      // getLauncherArrangerAsClip().scrollToKey(y);
 
-      getLauncherArrangerAsClip().clearStepsAtY(channel, y);
+      clip.clearStepsAtY(channel, y);
 
       String selectedPattern = ((EnumValue) patternSelectorSetting).get();
       int[] currentPattern = DrumPatterns.getPatternByName(selectedPattern);
@@ -290,14 +247,22 @@ public class BeatBuddyExtension extends ControllerExtension {
             }
          }
       }
-      // getLauncherArrangerAsClip().setStepSize(3);
+
       for (int i = 0; i < currentPattern.length; i++) {
          if (currentPattern[i] > 0) {
-            getLauncherArrangerAsClip().setStep(channel, i, y, currentPattern[i], durationValue);
+            clip.setStep(channel, i, y, currentPattern[i], durationValue);
          }
       }
 
-      setLoopLength(0.0, 16.0);
+      // Calculate the beat length of the pattern
+      double beatLength = stepSize * currentPattern.length;
+      double loopStart = 0.0;
+      double loopEnd = loopStart + beatLength;
+
+      setLoopLength(loopStart, loopEnd);
+      clip.selectStepContents(channel, y, false);
+      // application.zoomToFit();
+
    }
 
    private void setLoopLength(Double loopStart, Double loopEnd) {
@@ -306,12 +271,15 @@ public class BeatBuddyExtension extends ControllerExtension {
       // These access the SettableRangedValue objects for loop start and loop length.
       SettableBeatTimeValue clipLoopStart = clip.getLoopStart();
       SettableBeatTimeValue clipLoopEnd = clip.getLoopLength();
+      SettableBeatTimeValue playbackStart = clip.getPlayStart();
+      SettableBeatTimeValue playbackEnd = clip.getPlayStop();
 
       // Set loop to start at 0.0 beats
-      clipLoopStart.set(0);
+      clipLoopStart.set(loopStart);
+      clipLoopEnd.set(loopEnd);
 
-      // Set loop length to 16.0 beats
-      clipLoopEnd.set(32.0);
+      playbackStart.set(loopStart);
+      playbackEnd.set(loopEnd);
    }
 
    @Override
