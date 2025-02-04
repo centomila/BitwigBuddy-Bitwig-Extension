@@ -2,7 +2,7 @@
 
 Super alpha version!
 
-![Screenshot v0.52](image.png)
+![Screenshot v0.6.0](image.png)
 
 ## ⚙️ Installation:
 
@@ -12,6 +12,16 @@ Super alpha version!
 
 ---
 
-[View Changelog](CHANGELOG.md)  
 
-[View TODO](TODO.md)  
+# 🚀 Coming Soon
+
+- [ ] Setting for custom clip length  
+- [ ] Setting for random patterns  
+- [ ] Option to remove excess notes if the user generates a pattern longer than the clip  
+- [ ] MOAAAR PATTERNS!
+- [ ] Support for quintuplets, sextuplets, septuplets
+- [ ] Support for custom patterns via TXT files  
+- [ ] A decent README!
+
+
+[View Changelog](CHANGELOG.md)  

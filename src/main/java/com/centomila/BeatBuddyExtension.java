@@ -3,32 +3,32 @@ package com.centomila;
 import java.util.Arrays;
 import java.util.Random;
 
-import com.bitwig.extension.controller.api.Action;
+// import com.bitwig.extension.controller.api.Action;
 
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Clip;
-import com.bitwig.extension.controller.api.Cursor;
-import com.bitwig.extension.controller.api.Track;
+// import com.bitwig.extension.controller.api.Cursor;
+// import com.bitwig.extension.controller.api.Track;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
-import com.bitwig.extension.controller.api.SettableIntegerValue;
-import com.bitwig.extension.controller.api.SettableBooleanValue;
-import com.bitwig.extension.controller.api.SettableStringArrayValue;
+// import com.bitwig.extension.controller.api.SettableIntegerValue;
+// import com.bitwig.extension.controller.api.SettableBooleanValue;
+// import com.bitwig.extension.controller.api.SettableStringArrayValue;
+// import com.bitwig.extension.controller.api.BooleanValue;
 import com.bitwig.extension.controller.api.SettableBeatTimeValue;
 
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
-import com.bitwig.extension.controller.api.BooleanValue;
 
 public class BeatBuddyExtension extends ControllerExtension {
-   private Application application;
+   // private Application application;
    private Clip cursorClip;
    private Clip arrangerClip;
-   private Track track;
+   // private Track track;
    private DocumentState documentState;
    private Setting patternSelectorSetting;
    private Setting noteLengthSetting; // How long each note should be
@@ -37,6 +37,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting noteOctaveSetting;
    private Setting noteChannelSetting;
    private Setting toggleLauncherArrangerSetting;
+   private Setting autoResizeLoopLengthSetting;
    private String currentNoteAsString;
    private int currentOctaveAsInt;
 
@@ -50,7 +51,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    public void init() {
       final ControllerHost host = getHost();
       // Initialize API objects
-      application = host.createApplication();
+      // application = host.createApplication();
       cursorClip = host.createLauncherCursorClip((16 * 8), 128);
       arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
       documentState = host.getDocumentState();
@@ -140,6 +141,9 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       noteChannelSetting = (Setting) documentState.getNumberSetting("Note Channel", "Clip", 1, 16, 1, "", 1);
 
+      autoResizeLoopLengthSetting = (Setting) documentState.getEnumSetting("Auto resize loop length", "Clip",
+            new String[] { "On", "Off" }, "On");
+
       // Empty string for spacing
       spacerSetting = (Setting) documentState.getStringSetting("----", "Z", 0,
             "---------------------------------------------------");
@@ -209,12 +213,23 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Generates a drum pattern with the selected step size and note length.
-    * 
-    * If the selected pattern is "Random", a random pattern is generated.
-    * 
-    * The pattern is then written to the currently selected clip (Launcher or
-    * Arranger) at the currently selected note destination and channel.
+    * Generates a drum pattern based on user-selected settings and applies it to
+    * the current clip.
+    *
+    * This method utilizes various settings, such as note length, step size, and
+    * pattern selection,
+    * to generate and apply a drum pattern to the active clip in the Bitwig Studio
+    * environment.
+    * If a random pattern is selected, a randomized pattern is created.
+    *
+    * It also provides functionality to automatically resize the loop length of the
+    * clip
+    * to fit the length of the generated pattern if the auto-resize option is
+    * enabled.
+    *
+    * The steps are set for a specific channel and note destination within the
+    * clip,
+    * and the current step contents are selected for further manipulation.
     */
    private void generateDrumPattern() {
       Clip clip = getLauncherArrangerAsClip();
@@ -254,17 +269,28 @@ public class BeatBuddyExtension extends ControllerExtension {
          }
       }
 
-      // Calculate the beat length of the pattern
-      double beatLength = stepSize * currentPattern.length;
-      double loopStart = 0.0;
-      double loopEnd = loopStart + beatLength;
+      // if autoResizeLoopLength is "On", resize the loop length to fit the pattern
+      if (((EnumValue) autoResizeLoopLengthSetting).get().equals("On")) {
+         // Calculate the beat length of the pattern
+         double beatLength = stepSize * currentPattern.length;
+         double loopStart = 0.0;
+         double loopEnd = loopStart + beatLength;
+         setLoopLength(loopStart, loopEnd);
+      }
 
-      setLoopLength(loopStart, loopEnd);
       clip.selectStepContents(channel, y, false);
       // application.zoomToFit();
 
    }
 
+   /**
+    * Sets the loop length of the currently selected clip to a given start and
+    * end time in beats. Additionally sets the playback start and end times to
+    * the same values.
+    * 
+    * @param loopStart the desired start time of the loop in beats
+    * @param loopEnd   the desired end time of the loop in beats
+    */
    private void setLoopLength(Double loopStart, Double loopEnd) {
       Clip clip = getLauncherArrangerAsClip();
 

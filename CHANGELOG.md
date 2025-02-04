@@ -1,12 +1,21 @@
 # 📋 Changelog:
 
-**0.53**
+**0.6.0**
+- [X] Added more patterns  
+- [X] Support for dotted notes in note length and step size  
+- [X] Note length now automatically follows the step size  
+- [X] The clip is automatically resized to match the pattern length  
+  - [X] Option to disable this behavior  
+- [X] Button to manually clear the clip completely  
+- [X] Extracted some generic methods in Utils class
+
+0.5.3
 - [X] Added more patterns
 
-0.52
+0.5.2
 - [X] Replaced the old method to select note destination with a new method to select note destination based on Note Name+Octave
 
-0.5
+0.5.0
 - [X] Support for multiple step sizes and note lengths in the pattern!
   - 1/2  |  1/4  |  1/8  |  1/8  |  1/16  |  1/32  |  1/32  |  1/64  |  1/128
   - 1/2 - 3t  |  1/4 - 3t  | 1/8 - 3t  |  1/16 - 3t  |  1/32 - 3t  |  1/32 - 3t  |  1/64 - 3t  |  1/128 - 3t
@@ -14,7 +23,7 @@
 - [X] Renamed some fields for clarity
 - [X] Tooltip notification with the current note name when the user change the note destination or a MIDI Note number.
 
-0.45
+0.4.5
 - [X] Support for clip in the arranger with the _Launcher/Arranger_ option
 
 0.4

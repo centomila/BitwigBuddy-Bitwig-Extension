@@ -8,8 +8,10 @@ public class Utils {
     public static int[] NOTE_OCTAVES = { -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8 };
 
     /**
-     * Returns a string representation of a MIDI note number as a note name and octave.
+     * Returns a string representation of a MIDI note number as a note name and
+     * octave.
      * Example: 60 is returned as "C4"
+     * 
      * @param midiNote the MIDI note number
      * @return a string representation of the MIDI note number
      */
@@ -20,14 +22,15 @@ public class Utils {
         return note + octave;
     }
 
-    
     /**
      * Converts a note name and octave into a MIDI note number.
-     * The note name should be one of the standard note names (e.g., "C", "C#", "D").
-     * The octave is an integer representing the octave range, where 0 is the MIDI octave 2.
+     * The note name should be one of the standard note names (e.g., "C", "C#",
+     * "D").
+     * The octave is an integer representing the octave range, where 0 is the MIDI
+     * octave 2.
      * 
      * @param noteName the name of the note (e.g., "C", "C#", "D")
-     * @param octave the octave number (e.g., 4 for "C4")
+     * @param octave   the octave number (e.g., 4 for "C4")
      * @return the MIDI note number corresponding to the given note name and octave
      */
 
@@ -43,16 +46,17 @@ public class Utils {
         return (octave + 2) * 12 + note;
     }
 
-    /**
-     * Converts a musical note length specified as a string to its corresponding
-     * duration in beats as a double. The input can be a straight note, a dotted
-     * note, or a triplet note. If the input does not match any known note length,
-     * a default duration of 1.0 is returned.
-     *
-     * @param selectedNoteLength the note length as a string (e.g., "1/4", "1/8 - dot", "1/16 - 3t")
-     * @return the corresponding duration in beats as a double
-     */
 
+    /**
+     * Returns the duration of a note length as a double value.
+     * This method takes a string representation of a note length and returns the
+     * duration as a double value. The duration is in beats, where 1.0 is one beat.
+     * The method supports note lengths from 1/128 to 1/2, including dotted and
+     * triplet note lengths.
+     *
+     * @param selectedNoteLength the note length to convert to a duration
+     * @return the duration of the given note length as a double value
+     */
     public static double getNoteLengthAsDouble(String selectedNoteLength) {
         double duration;
         switch (selectedNoteLength) {
@@ -80,25 +84,25 @@ public class Utils {
                 break;
 
             // Dotted notes (1.5 times the straight note)
-            case "1/2 - dot":
+            case "1/2.":
                 duration = 2.0 * 1.5; // 3.0
                 break;
-            case "1/4 - dot":
+            case "1/4.":
                 duration = 1.0 * 1.5; // 1.5
                 break;
-            case "1/8 - dot":
+            case "1/8.":
                 duration = 0.5 * 1.5; // 0.75
                 break;
-            case "1/16 - dot":
+            case "1/16.":
                 duration = 0.25 * 1.5; // 0.375
                 break;
-            case "1/32 - dot":
+            case "1/32.":
                 duration = 0.125 * 1.5; // 0.1875
                 break;
-            case "1/64 - dot":
+            case "1/64.":
                 duration = 0.0625 * 1.5; // 0.09375
                 break;
-            case "1/128 - dot":
+            case "1/128.":
                 duration = 0.03125 * 1.5; // 0.046875
                 break;
 
