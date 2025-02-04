@@ -3,19 +3,32 @@ package com.centomila;
 import java.util.Arrays;
 import java.util.Random;
 
+import com.bitwig.extension.controller.api.Action;
+
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Clip;
+import com.bitwig.extension.controller.api.Cursor;
+import com.bitwig.extension.controller.api.Track;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
+import com.bitwig.extension.controller.api.SettableIntegerValue;
+import com.bitwig.extension.controller.api.SettableBooleanValue;
+import com.bitwig.extension.controller.api.SettableStringArrayValue;
+
 import com.bitwig.extension.controller.api.Setting;
+import com.bitwig.extension.controller.api.Signal;
+import com.bitwig.extension.controller.api.BooleanValue;
+
 
 public class BeatBuddyExtension extends ControllerExtension {
    private Application application;
    private Clip cursorClip;
    private Clip arrangerClip;
+   private Track track;
    private DocumentState documentState;
    private Setting patternSelectorSetting;
    private Setting noteLengthSetting; // How long each note should be
@@ -25,6 +38,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting noteChannelSetting;
    private Setting toggleLauncherArrangerSetting;
    private String currentNoteAsString;
+   private Setting testSignal;
    private int currentOctaveAsInt;
 
 
@@ -42,6 +56,15 @@ public class BeatBuddyExtension extends ControllerExtension {
       cursorClip = host.createLauncherCursorClip((16 * 8), 128);
       arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
       documentState = host.getDocumentState();
+
+      // Test button
+      // Create a signal setting (button)
+      Signal testSignal = documentState.getSignalSetting("Test", "Test", "Test");
+
+      // Add observer to change dropdown value when button is pressed
+      testSignal.addSignalObserver(() -> {
+         ((SettableEnumValue) noteDestinationSetting).set("A");
+      });
 
       // Generate button
       documentState.getSignalSetting("Generate!", "Generate", "Generate!").addSignalObserver(() -> {
@@ -87,6 +110,11 @@ public class BeatBuddyExtension extends ControllerExtension {
             "1/2 - 3t", "1/4 - 3t", "1/8 - 3t", "1/16 - 3t", "1/32 - 3t", "1/32 - 3t", "1/64 - 3t",
             "1/128 - 3t" };
       stepSizSetting = (Setting) documentState.getEnumSetting("Step Size", "Clip", STEPSIZE_OPTIONS, "1/16");
+
+      // set the note length equal to the selected step size
+      ((EnumValue) stepSizSetting).addValueObserver(newValue -> {
+         ((SettableEnumValue) noteLengthSetting).set(newValue);
+      });
 
       // Pattern note length
       noteLengthSetting = (Setting) documentState.getEnumSetting("Note Length", "Clip", STEPSIZE_OPTIONS, "1/16");
@@ -236,6 +264,9 @@ public class BeatBuddyExtension extends ControllerExtension {
     * Arranger) at the currently selected note destination and channel.
     */
    private void generateDrumPattern() {
+      // if the clip doesn't exist, create it
+         // track.createNewLauncherClip(0, 1);
+
       String selectedNoteLength = ((EnumValue) noteLengthSetting).get(); // Get the current selected value of noteLength
       double durationValue = getNoteLengthAsDouble(selectedNoteLength);
 
@@ -269,6 +300,11 @@ public class BeatBuddyExtension extends ControllerExtension {
             getLauncherArrangerAsClip().setStep(channel, i, y, currentPattern[i], durationValue);
          }
       }
+
+      
+      application.zoomToFit();
+      
+   
 
    }
 
