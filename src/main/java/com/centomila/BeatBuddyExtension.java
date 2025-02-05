@@ -9,6 +9,7 @@ import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Clip;
+import com.bitwig.extension.controller.api.NoteStep;
 // import com.bitwig.extension.controller.api.Cursor;
 // import com.bitwig.extension.controller.api.Track;
 import com.bitwig.extension.controller.api.DocumentState;
@@ -64,7 +65,38 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       Signal testButton = documentState.getSignalSetting("Test", "Generate", "Test");
       testButton.addSignalObserver(() -> {
-         application.getAction("reverse").invoke();
+
+         Clip clip = getLauncherOrArrangerAsClip();
+
+         // Create an array with a copy of all the current note steps
+         NoteStep[] steps = new NoteStep[16];
+         for (int i = 0; i < steps.length; i++) {
+            steps[i] = clip.getStep(getCurrentChannelAsInt(), 0 + i, getCurrentNoteDestinationAsInt());
+         }
+
+         // clear all the note steps
+         for (int i = 0; i < 16; i++) {
+            clip.clearStep(getCurrentChannelAsInt(), i, getCurrentNoteDestinationAsInt());
+         }
+
+         // Recreate all the note steps
+         // void setStep(int channel,
+         // int x,
+         // int y,
+         // int insertVelocity,
+         // double insertDuration)
+
+         for (int i = 0; i < steps.length; i++) {
+            host.println(
+                  "Duration: " + steps[i].duration() + ", Velocity: " + steps[i].velocity() + ", X: " + steps[i].x());
+            int velocity = (int) (steps[i].velocity() * 127);
+            if (steps[i].duration() > 0.0) {
+               clip.setStepSize(steps[i].duration());
+               clip.setStep(steps[i].x() + 1, steps[i].y(), velocity, steps[i].duration());
+
+            }
+         }
+
       });
 
       // Generate button
@@ -101,6 +133,7 @@ public class BeatBuddyExtension extends ControllerExtension {
       ((EnumValue) noteDestinationSetting).addValueObserver(newValue -> {
          currentNoteAsString = newValue;
          getCurrentNoteDestinationAsInt();
+         notifyNoteDestination();
       });
 
       // Pattern destination dropdown
@@ -114,9 +147,8 @@ public class BeatBuddyExtension extends ControllerExtension {
       ((EnumValue) noteOctaveSetting).addValueObserver(newValue -> {
          currentOctaveAsInt = Integer.parseInt(newValue);
          getCurrentNoteDestinationAsInt();
+         notifyNoteDestination();
       });
-
-
 
       noteChannelSetting = (Setting) documentState.getNumberSetting("Note Channel", "Note Destination", 1, 16, 1,
             "Channel MIDI", 1);
@@ -155,8 +187,6 @@ public class BeatBuddyExtension extends ControllerExtension {
       autoResizeLoopLengthSetting = (Setting) documentState.getEnumSetting("Auto resize loop length", "Post Actions",
             new String[] { "Off", "On" }, "On");
 
-
-
       // Empty string for spacing
       spacer4 = (Setting) documentState.getStringSetting("----", "Z", 0,
             "---------------------------------------------------");
@@ -164,7 +194,7 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       // Clear current clip
       documentState.getSignalSetting("Clear current clip", "Z", "Clear current clip").addSignalObserver(() -> {
-         getLauncherArrangerAsClip().clearSteps();
+         getLauncherOrArrangerAsClip().clearSteps();
       });
 
       // Initialize launcher/arranger toggle
@@ -198,9 +228,12 @@ public class BeatBuddyExtension extends ControllerExtension {
     */
 
    private int getCurrentNoteDestinationAsInt() {
-      getHost().showPopupNotification("Note Destination: " + currentNoteAsString + currentOctaveAsInt);
       int currentValueInt = Utils.getMIDINoteNumberFromStringAndOctave(currentNoteAsString, currentOctaveAsInt);
       return currentValueInt;
+   }
+
+   private void notifyNoteDestination() {
+      getHost().showPopupNotification("Note Destination: " + currentNoteAsString + currentOctaveAsInt);
    }
 
    /**
@@ -220,7 +253,7 @@ public class BeatBuddyExtension extends ControllerExtension {
     * @return A Clip object, either the Arranger Clip Launcher or the Launcher
     *         Clip.
     */
-   private Clip getLauncherArrangerAsClip() {
+   private Clip getLauncherOrArrangerAsClip() {
       String launcherArrangerSelection = ((EnumValue) toggleLauncherArrangerSetting).get();
       return launcherArrangerSelection.equals("Arranger") ? arrangerClip : cursorClip;
    }
@@ -245,15 +278,15 @@ public class BeatBuddyExtension extends ControllerExtension {
     * and the current step contents are selected for further manipulation.
     */
    private void generateDrumPattern() {
-      Clip clip = getLauncherArrangerAsClip();
+      Clip clip = getLauncherOrArrangerAsClip();
       // if the clip doesn't exist, create it
       // track.createNewLauncherClip(0, 1);
 
       String selectedNoteLength = ((EnumValue) noteLengthSetting).get(); // Get the current selected value of noteLength
       String selectedSubdivision = ((EnumValue) stepSizSubdivisionSetting).get();
+      String selectedStepSize = ((EnumValue) stepSizSetting).get(); // Get the current selected value of stepSize
       double durationValue = Utils.getNoteLengthAsDouble(selectedNoteLength, selectedSubdivision);
 
-      String selectedStepSize = ((EnumValue) stepSizSetting).get(); // Get the current selected value of stepSize
       double stepSize = Utils.getNoteLengthAsDouble(selectedStepSize, selectedSubdivision);
       clip.setStepSize(stepSize);
 
@@ -274,7 +307,7 @@ public class BeatBuddyExtension extends ControllerExtension {
             currentPattern[i] = currentPattern[currentPattern.length - 1 - i];
             currentPattern[currentPattern.length - 1 - i] = temp;
          }
-         
+
       }
 
       // if selected pattern = "random", generate a random pattern
@@ -308,7 +341,6 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       // clip.selectStepContents(channel, y, false);
 
-
       // application.zoomToFit();
 
    }
@@ -322,7 +354,7 @@ public class BeatBuddyExtension extends ControllerExtension {
     * @param loopEnd   the desired end time of the loop in beats
     */
    private void setLoopLength(Double loopStart, Double loopEnd) {
-      Clip clip = getLauncherArrangerAsClip();
+      Clip clip = getLauncherOrArrangerAsClip();
 
       // These access the SettableRangedValue objects for loop start and loop length.
       SettableBeatTimeValue clipLoopStart = clip.getLoopStart();
