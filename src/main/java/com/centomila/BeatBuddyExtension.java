@@ -25,10 +25,11 @@ import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 
 public class BeatBuddyExtension extends ControllerExtension {
-   // private Application application;
+   private Application application;
    private Clip cursorClip;
    private Clip arrangerClip;
    // private Track track;
+
    private DocumentState documentState;
    private Setting patternSelectorSetting;
    private Setting noteLengthSetting; // How long each note should be
@@ -39,10 +40,14 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting noteChannelSetting;
    private Setting toggleLauncherArrangerSetting;
    private Setting autoResizeLoopLengthSetting;
+   private Setting autoReversePatternSetting;
    private String currentNoteAsString;
    private int currentOctaveAsInt;
 
-   private Setting spacerSetting;
+   private Setting spacer1;
+   private Setting spacer2;
+   private Setting spacer3;
+   private Setting spacer4;
 
    protected BeatBuddyExtension(final BeatBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
@@ -52,10 +57,15 @@ public class BeatBuddyExtension extends ControllerExtension {
    public void init() {
       final ControllerHost host = getHost();
       // Initialize API objects
-      // application = host.createApplication();
+      application = host.createApplication();
       cursorClip = host.createLauncherCursorClip((16 * 8), 128);
       arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
       documentState = host.getDocumentState();
+
+      Signal testButton = documentState.getSignalSetting("Test", "Generate", "Test");
+      testButton.addSignalObserver(() -> {
+         application.getAction("reverse").invoke();
+      });
 
       // Generate button
       Signal generateButton = documentState.getSignalSetting("Generate!", "Generate", "Generate!");
@@ -70,10 +80,21 @@ public class BeatBuddyExtension extends ControllerExtension {
             .toArray(String[]::new);
       patternSelectorSetting = (Setting) documentState.getEnumSetting("Pattern", "Generate", PATTERN_OPTIONS,
             "Random");
+      ((EnumValue) patternSelectorSetting).addValueObserver(newValue -> {
+         host.showPopupNotification(newValue.toString());
+      });
+
+      autoReversePatternSetting = (Setting) documentState.getEnumSetting("Reverse Pattern", "Generate",
+            new String[] { "Normal", "Reverse" }, "Normal");
+
+      // Empty string for spacing
+      spacer1 = (Setting) documentState.getStringSetting("----", "Generate", 0,
+            "---------------------------------------------------");
+      spacer1.disable();
 
       // Pattern destination dropdown
       String[] NOTEDESTINATION_OPTIONS = Utils.NOTE_NAMES;
-      noteDestinationSetting = (Setting) documentState.getEnumSetting("Note Destination", "Clip",
+      noteDestinationSetting = (Setting) documentState.getEnumSetting("Note Destination", "Note Destination",
             NOTEDESTINATION_OPTIONS,
             NOTEDESTINATION_OPTIONS[0]);
 
@@ -86,7 +107,7 @@ public class BeatBuddyExtension extends ControllerExtension {
       String[] OCTAVEDESTINATION_OPTIONS = Arrays.stream(Utils.NOTE_OCTAVES)
             .mapToObj(String::valueOf)
             .toArray(String[]::new);
-      noteOctaveSetting = (Setting) documentState.getEnumSetting("Note Octave", "Clip",
+      noteOctaveSetting = (Setting) documentState.getEnumSetting("Note Octave", "Note Destination",
             OCTAVEDESTINATION_OPTIONS,
             OCTAVEDESTINATION_OPTIONS[3]);
 
@@ -95,12 +116,20 @@ public class BeatBuddyExtension extends ControllerExtension {
          getCurrentNoteDestinationAsInt();
       });
 
+
+
+      noteChannelSetting = (Setting) documentState.getNumberSetting("Note Channel", "Note Destination", 1, 16, 1,
+            "Channel MIDI", 1);
+
+      // Empty string for spacing
+      spacer2 = (Setting) documentState.getStringSetting("----", "Clip", 0,
+            "---------------------------------------------------");
+      spacer2.disable();
       // Pattern step size
 
       stepSizSetting = (Setting) documentState.getEnumSetting("Step Size", "Clip", Utils.STEPSIZE_OPTIONS, "1/16");
 
-  
-      stepSizSubdivisionSetting = (Setting) documentState.getEnumSetting("Subdivisions", "Clip", 
+      stepSizSubdivisionSetting = (Setting) documentState.getEnumSetting("Subdivisions", "Clip",
             Utils.STEPSIZE_CATEGORY_OPTIONS, "Straight");
 
       // set the note length equal to the selected step size
@@ -118,15 +147,20 @@ public class BeatBuddyExtension extends ControllerExtension {
          ((SettableEnumValue) noteLengthSetting).set(newValue);
       });
 
-      noteChannelSetting = (Setting) documentState.getNumberSetting("Note Channel", "Clip", 1, 16, 1, "", 1);
+      // Empty string for spacing
+      spacer3 = (Setting) documentState.getStringSetting("----", "Post Actions", 0,
+            "---------------------------------------------------");
+      spacer3.disable();
 
-      autoResizeLoopLengthSetting = (Setting) documentState.getEnumSetting("Auto resize loop length", "Clip",
-            new String[] { "On", "Off" }, "On");
+      autoResizeLoopLengthSetting = (Setting) documentState.getEnumSetting("Auto resize loop length", "Post Actions",
+            new String[] { "Off", "On" }, "On");
+
+
 
       // Empty string for spacing
-      spacerSetting = (Setting) documentState.getStringSetting("----", "Z", 0,
+      spacer4 = (Setting) documentState.getStringSetting("----", "Z", 0,
             "---------------------------------------------------");
-      spacerSetting.disable();
+      spacer4.disable();
 
       // Clear current clip
       documentState.getSignalSetting("Clear current clip", "Z", "Clear current clip").addSignalObserver(() -> {
@@ -164,7 +198,7 @@ public class BeatBuddyExtension extends ControllerExtension {
     */
 
    private int getCurrentNoteDestinationAsInt() {
-      getHost().showPopupNotification("Selected Note: " + currentNoteAsString + currentOctaveAsInt);
+      getHost().showPopupNotification("Note Destination: " + currentNoteAsString + currentOctaveAsInt);
       int currentValueInt = Utils.getMIDINoteNumberFromStringAndOctave(currentNoteAsString, currentOctaveAsInt);
       return currentValueInt;
    }
@@ -174,7 +208,7 @@ public class BeatBuddyExtension extends ControllerExtension {
     *
     * @return The currently selected channel as an integer, 0-indexed.
     */
-   private int getCurrentChannelAsDouble() {
+   private int getCurrentChannelAsInt() {
       int channel = (int) Math.round(((SettableRangedValue) noteChannelSetting).getRaw());
       return channel - 1;
    }
@@ -223,13 +257,25 @@ public class BeatBuddyExtension extends ControllerExtension {
       double stepSize = Utils.getNoteLengthAsDouble(selectedStepSize, selectedSubdivision);
       clip.setStepSize(stepSize);
 
-      int channel = getCurrentChannelAsDouble();
+      int channel = getCurrentChannelAsInt();
       int y = getCurrentNoteDestinationAsInt();
 
       clip.clearStepsAtY(channel, y);
 
       String selectedPattern = ((EnumValue) patternSelectorSetting).get();
       int[] currentPattern = DrumPatterns.getPatternByName(selectedPattern);
+
+      // COGLIONE! INVERTI L'ARRAY DELLE NOTE PRIMA INVECE DI FARLO DOPO!
+
+      if (((EnumValue) autoReversePatternSetting).get().equals("Reverse")) {
+         // reverse the currentPattern array using java arrays
+         for (int i = 0; i < currentPattern.length / 2; i++) {
+            int temp = currentPattern[i];
+            currentPattern[i] = currentPattern[currentPattern.length - 1 - i];
+            currentPattern[currentPattern.length - 1 - i] = temp;
+         }
+         
+      }
 
       // if selected pattern = "random", generate a random pattern
       if (selectedPattern.equals("Random")) {
@@ -249,6 +295,8 @@ public class BeatBuddyExtension extends ControllerExtension {
          }
       }
 
+      // Post generation actions
+
       // if autoResizeLoopLength is "On", resize the loop length to fit the pattern
       if (((EnumValue) autoResizeLoopLengthSetting).get().equals("On")) {
          // Calculate the beat length of the pattern
@@ -258,7 +306,9 @@ public class BeatBuddyExtension extends ControllerExtension {
          setLoopLength(loopStart, loopEnd);
       }
 
-      clip.selectStepContents(channel, y, false);
+      // clip.selectStepContents(channel, y, false);
+
+
       // application.zoomToFit();
 
    }
