@@ -33,6 +33,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting patternSelectorSetting;
    private Setting noteLengthSetting; // How long each note should be
    private Setting stepSizSetting;
+   private Setting stepSizSubdivisionSetting;
    private Setting noteDestinationSetting;
    private Setting noteOctaveSetting;
    private Setting noteChannelSetting;
@@ -95,47 +96,25 @@ public class BeatBuddyExtension extends ControllerExtension {
       });
 
       // Pattern step size
-      final String[] STEPSIZE_OPTIONS = new String[] {
-            "Straight", "1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1/128",
-            "Dotted", "1/2.", "1/4.", "1/8.", "1/16.", "1/32.", "1/64.", "1/128.",
-            "Triplets", "1/2 - 3t", "1/4 - 3t", "1/8 - 3t", "1/16 - 3t", "1/32 - 3t", "1/64 - 3t", "1/128 - 3t"
-      };
-      stepSizSetting = (Setting) documentState.getEnumSetting("Step Size", "Clip", STEPSIZE_OPTIONS, "1/16");
+
+      stepSizSetting = (Setting) documentState.getEnumSetting("Step Size", "Clip", Utils.STEPSIZE_OPTIONS, "1/16");
+
+  
+      stepSizSubdivisionSetting = (Setting) documentState.getEnumSetting("Subdivisions", "Clip", 
+            Utils.STEPSIZE_CATEGORY_OPTIONS, "Straight");
 
       // set the note length equal to the selected step size
       ((EnumValue) stepSizSetting).addValueObserver(newValue -> {
-         switch (newValue) {
-            case "Straight":
-               newValue = "1/16";
-               break;
-            case "Dotted":
-               newValue = "1/16.";
-               break;
-            case "Triplets":
-               newValue = "1/16 - 3t";
-               break;
-         }
+
          // Set both note length and step size
          ((SettableEnumValue) stepSizSetting).set(newValue);
          ((SettableEnumValue) noteLengthSetting).set(newValue);
       });
 
       // Pattern note length
-      noteLengthSetting = (Setting) documentState.getEnumSetting("Note Length", "Clip", STEPSIZE_OPTIONS, "1/16");
+      noteLengthSetting = (Setting) documentState.getEnumSetting("Note Length", "Clip", Utils.STEPSIZE_OPTIONS, "1/16");
 
       ((EnumValue) noteLengthSetting).addValueObserver(newValue -> {
-         switch (newValue) {
-            case "Straight":
-               newValue = "1/16";
-               break;
-            case "Dotted":
-               newValue = "1/16.";
-               break;
-            case "Triplets":
-               newValue = "1/16 - 3t";
-               break;
-         }
-
          ((SettableEnumValue) noteLengthSetting).set(newValue);
       });
 
@@ -237,10 +216,11 @@ public class BeatBuddyExtension extends ControllerExtension {
       // track.createNewLauncherClip(0, 1);
 
       String selectedNoteLength = ((EnumValue) noteLengthSetting).get(); // Get the current selected value of noteLength
-      double durationValue = Utils.getNoteLengthAsDouble(selectedNoteLength);
+      String selectedSubdivision = ((EnumValue) stepSizSubdivisionSetting).get();
+      double durationValue = Utils.getNoteLengthAsDouble(selectedNoteLength, selectedSubdivision);
 
       String selectedStepSize = ((EnumValue) stepSizSetting).get(); // Get the current selected value of stepSize
-      double stepSize = Utils.getNoteLengthAsDouble(selectedStepSize);
+      double stepSize = Utils.getNoteLengthAsDouble(selectedStepSize, selectedSubdivision);
       clip.setStepSize(stepSize);
 
       int channel = getCurrentChannelAsDouble();

@@ -29,7 +29,7 @@ public class BeatBuddyExtensionDefinition extends ControllerExtensionDefinition
    @Override
    public String getVersion()
    {
-      return "0.6.0";
+      return "0.6.2";
    }
 
    @Override

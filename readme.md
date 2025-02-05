@@ -17,7 +17,6 @@
 - [ ] Setting for random patterns  
 - [ ] Option to remove excess notes if the user generates a pattern longer than the clip  
 - [ ] MOAAAR PATTERNS!
-- [ ] Support for quintuplets, sextuplets, septuplets
 - [ ] Support for custom patterns via TXT files  
 - [ ] A decent README!
 

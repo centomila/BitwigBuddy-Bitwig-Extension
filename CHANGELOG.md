@@ -1,7 +1,8 @@
 # 📋 Changelog:
 
-**0.6.1**
+**0.6.2**
 - [X] Link to github project in the extension panel
+- [X] Support for Quintuplets (5t) and Septuplets (7t)
 
 0.6.0
 - [X] Added more patterns  

@@ -1,5 +1,7 @@
 package com.centomila;
 
+import java.util.Arrays;
+
 public class Utils {
 
     // Constant with all noteNames
@@ -46,94 +48,59 @@ public class Utils {
         return (octave + 2) * 12 + note;
     }
 
+    public static String[] STEPSIZE_OPTIONS = new String[] {
+            "1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1/128"
+    };
 
-    /**
-     * Returns the duration of a note length as a double value.
-     * This method takes a string representation of a note length and returns the
-     * duration as a double value. The duration is in beats, where 1.0 is one beat.
-     * The method supports note lengths from 1/128 to 1/2, including dotted and
-     * triplet note lengths.
-     *
-     * @param selectedNoteLength the note length to convert to a duration
-     * @return the duration of the given note length as a double value
-     */
-    public static double getNoteLengthAsDouble(String selectedNoteLength) {
-        double duration;
-        switch (selectedNoteLength) {
-            // Straight (non-triplet, non-dotted)
-            case "1/2":
-                duration = 2.0;
-                break;
-            case "1/4":
-                duration = 1.0;
-                break;
-            case "1/8":
-                duration = 0.5;
-                break;
-            case "1/16":
-                duration = 0.25;
-                break;
-            case "1/32":
-                duration = 0.125;
-                break;
-            case "1/64":
-                duration = 0.0625;
-                break;
-            case "1/128":
-                duration = 0.03125;
-                break;
+    public static String[] STEPSIZE_CATEGORY_OPTIONS = new String[] {
+            "Straight", ".", "3t", "5t", "7t"
+    };
 
-            // Dotted notes (1.5 times the straight note)
-            case "1/2.":
-                duration = 2.0 * 1.5; // 3.0
-                break;
-            case "1/4.":
-                duration = 1.0 * 1.5; // 1.5
-                break;
-            case "1/8.":
-                duration = 0.5 * 1.5; // 0.75
-                break;
-            case "1/16.":
-                duration = 0.25 * 1.5; // 0.375
-                break;
-            case "1/32.":
-                duration = 0.125 * 1.5; // 0.1875
-                break;
-            case "1/64.":
-                duration = 0.0625 * 1.5; // 0.09375
-                break;
-            case "1/128.":
-                duration = 0.03125 * 1.5; // 0.046875
-                break;
+/**
+ * Converts a note length and subdivision into a double representing the duration.
+ * 
+ * The method takes a note length in string format and a subdivision to determine
+ * the duration of a note in terms of beats. The note length must be a valid entry
+ * from the predefined STEPSIZE_OPTIONS array, and the subdivision can be one of
+ * the standard musical subdivisions ("." for dotted, "3t" for triplet, "5t" for
+ * quintuplet, "7t" for septuplet). The method calculates the duration using
+ * these values.
+ * 
+ * @param selectedNoteLength    the selected note length as a string (e.g., "1/4", "1/8")
+ * @param selectedSubdivision   the selected subdivision as a string (e.g., ".", "3t")
+ * @return                      the calculated duration of the note as a double
+ * @throws IllegalArgumentException if the selectedNoteLength is invalid
+ */
 
-            // Triplet notes (2/3 times the straight note)
-            case "1/2 - 3t":
-                duration = 2.0 * (2.0 / 3.0); // ~1.3333
-                break;
-            case "1/4 - 3t":
-                duration = 1.0 * (2.0 / 3.0); // ~0.6667
-                break;
-            case "1/8 - 3t":
-                duration = 0.5 * (2.0 / 3.0); // ~0.3333
-                break;
-            case "1/16 - 3t":
-                duration = 0.25 * (2.0 / 3.0); // ~0.1667
-                break;
-            case "1/32 - 3t":
-                duration = 0.125 * (2.0 / 3.0); // ~0.0833
-                break;
-            case "1/64 - 3t":
-                duration = 0.0625 * (2.0 / 3.0); // ~0.0417
-                break;
-            case "1/128 - 3t":
-                duration = 0.03125 * (2.0 / 3.0); // ~0.0208
-                break;
+    public static double getNoteLengthAsDouble(String selectedNoteLength, String selectedSubdivision) {
+        double duration = 0.0;
 
-            // Default
+        double noteLengths[] = { 2.0, 1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125 };
+
+        int index = Arrays.asList(STEPSIZE_OPTIONS).indexOf(selectedNoteLength);
+        if (index == -1) {
+            throw new IllegalArgumentException("Invalid note length: " + selectedNoteLength);
+        }
+
+        double multiplier = 1.0;
+        switch (selectedSubdivision) {
+            case ".":
+                multiplier = 1.5;
+                break;
+            case "3t":
+                multiplier = 2.0 / 3.0;
+                break;
+            case "5t":
+                multiplier = 2.0 / 5.0;
+                break;
+            case "7t":
+                multiplier = 2.0 / 7.0;
+                break;
             default:
-                duration = 1.0;
                 break;
         }
+
+        duration = noteLengths[index] * multiplier;
 
         return duration;
     }
