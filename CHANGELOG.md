@@ -1,6 +1,9 @@
 # 📋 Changelog:
 
-**0.6.0**
+**0.6.1**
+- [X] Link to github project in the extension panel
+
+0.6.0
 - [X] Added more patterns  
 - [X] Support for dotted notes in note length and step size  
 - [X] Note length now automatically follows the step size  

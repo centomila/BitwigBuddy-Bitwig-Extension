@@ -50,6 +50,12 @@ public class BeatBuddyExtensionDefinition extends ControllerExtensionDefinition
       return "BeatBuddy";
    }
 
+   /** {@inheritDoc} */
+   @Override
+   public String getHelpFilePath() {
+      return "https://github.com/centomila/BeatBuddy-Bitwig-Extension-MIDI-Drum-Generator";
+   }
+
    @Override
    public int getRequiredAPIVersion()
    {
