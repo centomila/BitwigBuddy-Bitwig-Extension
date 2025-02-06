@@ -2,6 +2,7 @@
 
 **0.7.0**
 - [X] Fixed Quintuplets (5t) and Septuplets (7t).
+- [X] Added 1/1 step size/note length.
 - [X] Added a "Move Steps" button to shift the pattern by one step in the x-direction.
   - ⚠️ This creates a lot of actions! Once done, you will not be able to undo any action prior to the "Move Steps" action.
 - [X] Added a "Reverse Pattern" checkbox to reverse the pattern before it is generated.
