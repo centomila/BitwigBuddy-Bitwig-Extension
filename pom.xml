@@ -6,7 +6,7 @@
 	<artifactId>beatbuddy</artifactId>
 	<packaging>jar</packaging>
 	<name>BeatBuddy</name>
-	<version>0.6.2</version>
+	<version>0.7.0</version>
 	
 	<repositories>
        <repository>

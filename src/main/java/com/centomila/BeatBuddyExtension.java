@@ -20,8 +20,8 @@ import com.bitwig.extension.controller.api.SettableRangedValue;
 // import com.bitwig.extension.controller.api.SettableBooleanValue;
 // import com.bitwig.extension.controller.api.SettableStringArrayValue;
 // import com.bitwig.extension.controller.api.BooleanValue;
+// import com.bitwig.extension.controller.api.SettableDoubleValue;
 import com.bitwig.extension.controller.api.SettableBeatTimeValue;
-import com.bitwig.extension.controller.api.SettableDoubleValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 
@@ -67,55 +67,66 @@ public class BeatBuddyExtension extends ControllerExtension {
       // Signal testButton = documentState.getSignalSetting("Test", "Generate",
       // "Test");
       // testButton.addSignalObserver(() -> {
-
       // });
 
-      moveStepsSetting = (Setting) documentState.getEnumSetting("Move Steps", "Generate",
-            new String[] { "<<<", "|", ">>>" }, "|");
+      initMoveStepsSetting();
 
-      ((EnumValue) moveStepsSetting).addValueObserver(newValue -> {
-         switch (newValue) {
-            case ">>>":
-               moveSteps(1);
-               break;
+      initPatternSetting();
 
-            case "<<<":
-               moveSteps(-1);
-               break;
+      initNoteDestinationSetting();
 
-            default:
-               break;
-         }
-         // Reset the button position
-         ((SettableEnumValue) moveStepsSetting).set("|");
+      initStepSizeSetting();
+
+      initPostActionSetting();
+
+      initClearClipSetting();
+
+      // Initialize launcher/arranger toggle
+      initToggleLauncherArrangerSetting();
+
+      // Show a notification to confirm initialization
+      host.showPopupNotification("BeatBuddy Initialized");
+
+   }
+
+   /**
+    * Sets up the Step Size setting and the Note Length setting. 
+    * When the user changes the Step Size, the Note Length is automatically updated to match the selected step size.
+    * The user can also change the Note Length independently of the Step Size.
+    */
+   private void initStepSizeSetting() {
+      stepSizSetting = (Setting) documentState.getEnumSetting("Step Size", "Clip", Utils.STEPSIZE_OPTIONS, "1/16");
+
+      stepSizSubdivisionSetting = (Setting) documentState.getEnumSetting("Subdivisions", "Clip",
+            Utils.STEPSIZE_CATEGORY_OPTIONS, "Straight");
+
+      // set the note length equal to the selected step size
+      ((EnumValue) stepSizSetting).addValueObserver(newValue -> {
+
+         // Set both note length and step size
+         ((SettableEnumValue) stepSizSetting).set(newValue);
+         ((SettableEnumValue) noteLengthSetting).set(newValue);
       });
 
-      // Generate button
-      Signal generateButton = documentState.getSignalSetting("Generate!", "Generate", "Generate!");
+      // Steps note length
+      noteLengthSetting = (Setting) documentState.getEnumSetting("Note Length", "Clip", Utils.STEPSIZE_OPTIONS, "1/16");
 
-      generateButton.addSignalObserver(() -> {
-         generateDrumPattern();
+      ((EnumValue) noteLengthSetting).addValueObserver(newValue -> {
+         ((SettableEnumValue) noteLengthSetting).set(newValue);
       });
+   }
 
-      // Define pattern settings
-      final String[] PATTERN_OPTIONS = Arrays.stream(DrumPatterns.patterns)
-            .map(pattern -> pattern[0].toString())
-            .toArray(String[]::new);
-      patternSelectorSetting = (Setting) documentState.getEnumSetting("Pattern", "Generate", PATTERN_OPTIONS,
-            "Random");
-      ((EnumValue) patternSelectorSetting).addValueObserver(newValue -> {
-         host.showPopupNotification(newValue.toString());
-      });
-
-      autoReversePatternSetting = (Setting) documentState.getEnumSetting("Reverse Pattern", "Generate",
-            new String[] { "Normal", "Reverse" }, "Normal");
-
-      // Empty string for spacing
-      spacer1 = (Setting) documentState.getStringSetting("----", "Generate", 0,
-            "---------------------------------------------------");
-      spacer1.disable();
-
-      // Pattern destination dropdown
+   /**
+    * Initializes the note destination setting, which includes the note destination dropdown, note octave dropdown, and note channel number setting.
+    * 
+    * The note destination dropdown has options for all 12 notes, and the value of the dropdown is stored in the currentNoteAsString variable.
+    * 
+    * The note octave dropdown has options for all octaves from -2 to 8, and the value of the dropdown is stored in the currentOctaveAsInt variable.
+    * 
+    * The note channel setting is a number setting that allows the user to select a channel from 1 to 16.
+    */
+   private void initNoteDestinationSetting() {
+      // Note destination dropdown
       String[] NOTEDESTINATION_OPTIONS = Utils.NOTE_NAMES;
       noteDestinationSetting = (Setting) documentState.getEnumSetting("Note Destination", "Note Destination",
             NOTEDESTINATION_OPTIONS,
@@ -127,7 +138,7 @@ public class BeatBuddyExtension extends ControllerExtension {
          notifyNoteDestination();
       });
 
-      // Pattern destination dropdown
+      // Note OCT destination dropdown
       String[] OCTAVEDESTINATION_OPTIONS = Arrays.stream(Utils.NOTE_OCTAVES)
             .mapToObj(String::valueOf)
             .toArray(String[]::new);
@@ -149,27 +160,89 @@ public class BeatBuddyExtension extends ControllerExtension {
             "---------------------------------------------------");
       spacer2.disable();
       // Pattern step size
+   }
 
-      stepSizSetting = (Setting) documentState.getEnumSetting("Step Size", "Clip", Utils.STEPSIZE_OPTIONS, "1/16");
+   /**
+    * Initializes the pattern setting, which includes the generate button, pattern dropdown, and reverse pattern checkbox.
+    * 
+    * The generate button is a signal that triggers the generateDrumPattern method when clicked.
+    * 
+    * The pattern dropdown has options for all patterns that are defined in the DrumPatterns class.
+    * 
+    * The reverse pattern checkbox is a pseudo-boolean setting that is used to reverse the pattern before applying it to the clip.
+    * 
+    * The spacer1 setting is an empty string used for spacing.
+    */
+   private void initPatternSetting() {
+      // Generate button
+      Signal generateButton = documentState.getSignalSetting("Generate!", "Generate", "Generate!");
 
-      stepSizSubdivisionSetting = (Setting) documentState.getEnumSetting("Subdivisions", "Clip",
-            Utils.STEPSIZE_CATEGORY_OPTIONS, "Straight");
-
-      // set the note length equal to the selected step size
-      ((EnumValue) stepSizSetting).addValueObserver(newValue -> {
-
-         // Set both note length and step size
-         ((SettableEnumValue) stepSizSetting).set(newValue);
-         ((SettableEnumValue) noteLengthSetting).set(newValue);
+      generateButton.addSignalObserver(() -> {
+         generateDrumPattern();
       });
 
-      // Pattern note length
-      noteLengthSetting = (Setting) documentState.getEnumSetting("Note Length", "Clip", Utils.STEPSIZE_OPTIONS, "1/16");
-
-      ((EnumValue) noteLengthSetting).addValueObserver(newValue -> {
-         ((SettableEnumValue) noteLengthSetting).set(newValue);
+      // Define pattern settings
+      final String[] PATTERN_OPTIONS = Arrays.stream(DrumPatterns.patterns)
+            .map(pattern -> pattern[0].toString())
+            .toArray(String[]::new);
+      patternSelectorSetting = (Setting) documentState.getEnumSetting("Pattern", "Generate", PATTERN_OPTIONS,
+            "Random");
+      ((EnumValue) patternSelectorSetting).addValueObserver(newValue -> {
+         getHost().showPopupNotification(newValue.toString());
       });
 
+      autoReversePatternSetting = (Setting) documentState.getEnumSetting("Reverse Pattern", "Generate",
+            new String[] { "Normal", "Reverse" }, "Normal");
+
+      // Empty string for spacing
+      spacer1 = (Setting) documentState.getStringSetting("----", "Generate", 0,
+            "---------------------------------------------------");
+      spacer1.disable();
+   }
+
+   /**
+    * Initializes the move steps setting, which includes the move steps button, a
+    * toggleable button that moves the pattern by one step when clicked.
+    * 
+    * The button has three states: "<<<", "|", and ">>>". The "|"
+    * state is the default, and the other two states are used to move the pattern
+    * backwards or forwards by one step respectively.
+    * 
+    * When the button is clicked, the moveSteps method is called with the
+    * corresponding argument, and the button is reset to the "|" state.
+    */
+   private void initMoveStepsSetting() {
+      moveStepsSetting = (Setting) documentState.getEnumSetting("Move Steps", "Move Steps",
+            new String[] { "<<<", "|", ">>>" }, "|");
+
+      ((EnumValue) moveStepsSetting).addValueObserver(newValue -> {
+         switch (newValue) {
+            case ">>>":
+               moveSteps(1);
+               break;
+
+            case "<<<":
+               moveSteps(-1);
+               break;
+
+            default:
+               break;
+         }
+         // Reset the button position
+         ((SettableEnumValue) moveStepsSetting).set("|");
+      });
+   }
+
+   /**
+    * Initializes the post action setting, which includes an empty string spacer
+    * and the auto resize loop length setting.
+    * 
+    * The auto resize loop length setting is a toggleable setting that allows the
+    * user to automatically resize the clip length after generating a pattern.
+    * 
+    * The spacer is an empty string setting that is used for spacing.
+    */
+   private void initPostActionSetting() {
       // Empty string for spacing
       spacer3 = (Setting) documentState.getStringSetting("----", "Post Actions", 0,
             "---------------------------------------------------");
@@ -177,69 +250,36 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       autoResizeLoopLengthSetting = (Setting) documentState.getEnumSetting("Auto resize loop length", "Post Actions",
             new String[] { "Off", "On" }, "On");
+   }
 
+   /**
+    * Initializes the clear clip setting, which includes an empty string spacer and the clear
+    * current clip setting.
+    * 
+    * The clear current clip setting is a button that, when clicked, will clear the current
+    * clip of all notes.
+    * 
+    * The spacer is an empty string setting that is used for spacing.
+    */
+   private void initClearClipSetting() {
       // Empty string for spacing
-      spacer4 = (Setting) documentState.getStringSetting("----", "Z", 0,
+      spacer4 = (Setting) documentState.getStringSetting("----", "Clear Clip", 0,
             "---------------------------------------------------");
       spacer4.disable();
 
       // Clear current clip
-      documentState.getSignalSetting("Clear current clip", "Z", "Clear current clip").addSignalObserver(() -> {
+      documentState.getSignalSetting("Clear current clip", "Clear Clip", "Clear current clip").addSignalObserver(() -> {
          getLauncherOrArrangerAsClip().clearSteps();
       });
-
-      // Initialize launcher/arranger toggle
-      initToggleLauncherArrangerSetting();
-
-      // Show a notification to confirm initialization
-      host.showPopupNotification("BeatBuddy Initialized");
-
    }
 
    /**
-    * Move all steps in the current clip by a specified number of steps in the
-    * x-direction.
-    *
-    * @param xOffset the number of steps to move in the x-direction
+    * Initializes the Launcher/Arranger toggle setting, which determines whether the
+    * drum pattern is generated in the Launcher or Arranger clip.
+    * 
+    * The setting is an EnumValue that can be set to either "Launcher" or
+    * "Arranger".
     */
-   private void moveSteps(int xOffset) {
-      Clip clip = getLauncherOrArrangerAsClip();
-
-      // Create an array with a copy of all the current note steps
-      NoteStep[] steps = new NoteStep[128];
-      for (int i = 0; i < steps.length; i++) {
-         steps[i] = clip.getStep(getCurrentChannelAsInt(), 0 + i, getCurrentNoteDestinationAsInt());
-      }
-
-      // Clear the current clip
-      clip.clearStepsAtY(getCurrentChannelAsInt(), getCurrentNoteDestinationAsInt());
-
-      for (int i = 0; i < steps.length; i++) {
-
-         getHost().println(
-               "Duration: " + steps[i].duration() + ", Velocity: " + steps[i].velocity() + ", X: "
-                     + steps[i].x());
-         if (steps[i].duration() > 0.0) {
-            if (steps[i] != null && steps[i].duration() > 0.0) {
-               int velocity = (int) (steps[i].velocity() * 127);
-
-               // break in case of steps[i].x = 0 and xOffset < 0
-
-               // clip.moveStep(steps[i].channel(), steps[i].x(), steps[i].y(), xOffset, 0);
-               if (steps[i].x() == 0 && xOffset < 0) {
-                  xOffset = 0;
-                  getHost().showPopupNotification("Cannot move steps before the start of the clip");
-               }
-
-               clip.setStep(getCurrentChannelAsInt(), steps[i].x() + xOffset, steps[i].y(),
-                     velocity, steps[i].duration());
-
-            }
-         }
-      }
-
-   }
-
    private void initToggleLauncherArrangerSetting() {
       // Launcher/Arranger toggle
       final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] { "Launcher", "Arranger", };
@@ -267,6 +307,10 @@ public class BeatBuddyExtension extends ControllerExtension {
       return currentValueInt;
    }
 
+   /**
+    * Notifies the user with a popup notification of the currently selected note
+    * destination. The notification is in the format "Note Destination: <note name><octave>".
+    */
    private void notifyNoteDestination() {
       getHost().showPopupNotification("Note Destination: " + currentNoteAsString + currentOctaveAsInt);
    }
@@ -279,18 +323,6 @@ public class BeatBuddyExtension extends ControllerExtension {
    private int getCurrentChannelAsInt() {
       int channel = (int) Math.round(((SettableRangedValue) noteChannelSetting).getRaw());
       return channel - 1;
-   }
-
-   /**
-    * Returns the Clip object for either the Arranger Clip Launcher or the Launcher
-    * Clip depending on the value of the "Launcher/Arranger" setting.
-    * 
-    * @return A Clip object, either the Arranger Clip Launcher or the Launcher
-    *         Clip.
-    */
-   private Clip getLauncherOrArrangerAsClip() {
-      String launcherArrangerSelection = ((EnumValue) toggleLauncherArrangerSetting).get();
-      return launcherArrangerSelection.equals("Arranger") ? arrangerClip : cursorClip;
    }
 
    /**
@@ -375,6 +407,62 @@ public class BeatBuddyExtension extends ControllerExtension {
       // clip.selectStepContents(channel, y, false);
 
       // application.zoomToFit();
+
+   }
+
+   /**
+    * Returns the Clip object for either the Arranger Clip Launcher or the Launcher
+    * Clip depending on the value of the "Launcher/Arranger" setting.
+    * 
+    * @return A Clip object, either the Arranger Clip Launcher or the Launcher
+    *         Clip.
+    */
+   private Clip getLauncherOrArrangerAsClip() {
+      String launcherArrangerSelection = ((EnumValue) toggleLauncherArrangerSetting).get();
+      return launcherArrangerSelection.equals("Arranger") ? arrangerClip : cursorClip;
+   }
+
+   /**
+    * Move all steps in the current clip by a specified number of steps in the
+    * x-direction.
+    *
+    * @param xOffset the number of steps to move in the x-direction
+    */
+   private void moveSteps(int xOffset) {
+      Clip clip = getLauncherOrArrangerAsClip();
+
+      // Create an array with a copy of all the current note steps
+      NoteStep[] steps = new NoteStep[128];
+      for (int i = 0; i < steps.length; i++) {
+         steps[i] = clip.getStep(getCurrentChannelAsInt(), 0 + i, getCurrentNoteDestinationAsInt());
+      }
+
+      // Clear the current clip
+      clip.clearStepsAtY(getCurrentChannelAsInt(), getCurrentNoteDestinationAsInt());
+
+      for (int i = 0; i < steps.length; i++) {
+
+         getHost().println(
+               "Duration: " + steps[i].duration() + ", Velocity: " + steps[i].velocity() + ", X: "
+                     + steps[i].x());
+         if (steps[i].duration() > 0.0) {
+            if (steps[i] != null && steps[i].duration() > 0.0) {
+               int velocity = (int) (steps[i].velocity() * 127);
+
+               // break in case of steps[i].x = 0 and xOffset < 0
+
+               // clip.moveStep(steps[i].channel(), steps[i].x(), steps[i].y(), xOffset, 0);
+               if (steps[i].x() == 0 && xOffset < 0) {
+                  xOffset = 0;
+                  getHost().showPopupNotification("Cannot move steps before the start of the clip");
+               }
+
+               clip.setStep(getCurrentChannelAsInt(), steps[i].x() + xOffset, steps[i].y(),
+                     velocity, steps[i].duration());
+
+            }
+         }
+      }
 
    }
 
