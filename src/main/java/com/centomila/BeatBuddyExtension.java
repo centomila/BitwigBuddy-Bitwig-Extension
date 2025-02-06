@@ -21,7 +21,7 @@ import com.bitwig.extension.controller.api.SettableRangedValue;
 // import com.bitwig.extension.controller.api.SettableStringArrayValue;
 // import com.bitwig.extension.controller.api.BooleanValue;
 import com.bitwig.extension.controller.api.SettableBeatTimeValue;
-
+import com.bitwig.extension.controller.api.SettableDoubleValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 
@@ -42,6 +42,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting toggleLauncherArrangerSetting;
    private Setting autoResizeLoopLengthSetting;
    private Setting autoReversePatternSetting;
+   private Setting moveStepsSetting;
    private String currentNoteAsString;
    private int currentOctaveAsInt;
 
@@ -63,40 +64,30 @@ public class BeatBuddyExtension extends ControllerExtension {
       arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
       documentState = host.getDocumentState();
 
-      Signal testButton = documentState.getSignalSetting("Test", "Generate", "Test");
-      testButton.addSignalObserver(() -> {
+      // Signal testButton = documentState.getSignalSetting("Test", "Generate",
+      // "Test");
+      // testButton.addSignalObserver(() -> {
 
-         Clip clip = getLauncherOrArrangerAsClip();
+      // });
 
-         // Create an array with a copy of all the current note steps
-         NoteStep[] steps = new NoteStep[16];
-         for (int i = 0; i < steps.length; i++) {
-            steps[i] = clip.getStep(getCurrentChannelAsInt(), 0 + i, getCurrentNoteDestinationAsInt());
+      moveStepsSetting = (Setting) documentState.getEnumSetting("Move Steps", "Generate",
+            new String[] { "<<<", "|", ">>>" }, "|");
+
+      ((EnumValue) moveStepsSetting).addValueObserver(newValue -> {
+         switch (newValue) {
+            case ">>>":
+               moveSteps(1);
+               break;
+
+            case "<<<":
+               moveSteps(-1);
+               break;
+
+            default:
+               break;
          }
-
-         // clear all the note steps
-         for (int i = 0; i < 16; i++) {
-            clip.clearStep(getCurrentChannelAsInt(), i, getCurrentNoteDestinationAsInt());
-         }
-
-         // Recreate all the note steps
-         // void setStep(int channel,
-         // int x,
-         // int y,
-         // int insertVelocity,
-         // double insertDuration)
-
-         for (int i = 0; i < steps.length; i++) {
-            host.println(
-                  "Duration: " + steps[i].duration() + ", Velocity: " + steps[i].velocity() + ", X: " + steps[i].x());
-            int velocity = (int) (steps[i].velocity() * 127);
-            if (steps[i].duration() > 0.0) {
-               clip.setStepSize(steps[i].duration());
-               clip.setStep(steps[i].x() + 1, steps[i].y(), velocity, steps[i].duration());
-
-            }
-         }
-
+         // Reset the button position
+         ((SettableEnumValue) moveStepsSetting).set("|");
       });
 
       // Generate button
@@ -205,6 +196,50 @@ public class BeatBuddyExtension extends ControllerExtension {
 
    }
 
+   /**
+    * Move all steps in the current clip by a specified number of steps in the
+    * x-direction.
+    *
+    * @param xOffset the number of steps to move in the x-direction
+    */
+   private void moveSteps(int xOffset) {
+      Clip clip = getLauncherOrArrangerAsClip();
+
+      // Create an array with a copy of all the current note steps
+      NoteStep[] steps = new NoteStep[128];
+      for (int i = 0; i < steps.length; i++) {
+         steps[i] = clip.getStep(getCurrentChannelAsInt(), 0 + i, getCurrentNoteDestinationAsInt());
+      }
+
+      // Clear the current clip
+      clip.clearStepsAtY(getCurrentChannelAsInt(), getCurrentNoteDestinationAsInt());
+
+      for (int i = 0; i < steps.length; i++) {
+
+         getHost().println(
+               "Duration: " + steps[i].duration() + ", Velocity: " + steps[i].velocity() + ", X: "
+                     + steps[i].x());
+         if (steps[i].duration() > 0.0) {
+            if (steps[i] != null && steps[i].duration() > 0.0) {
+               int velocity = (int) (steps[i].velocity() * 127);
+
+               // break in case of steps[i].x = 0 and xOffset < 0
+
+               // clip.moveStep(steps[i].channel(), steps[i].x(), steps[i].y(), xOffset, 0);
+               if (steps[i].x() == 0 && xOffset < 0) {
+                  xOffset = 0;
+                  getHost().showPopupNotification("Cannot move steps before the start of the clip");
+               }
+
+               clip.setStep(getCurrentChannelAsInt(), steps[i].x() + xOffset, steps[i].y(),
+                     velocity, steps[i].duration());
+
+            }
+         }
+      }
+
+   }
+
    private void initToggleLauncherArrangerSetting() {
       // Launcher/Arranger toggle
       final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] { "Launcher", "Arranger", };
@@ -297,8 +332,6 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       String selectedPattern = ((EnumValue) patternSelectorSetting).get();
       int[] currentPattern = DrumPatterns.getPatternByName(selectedPattern);
-
-      // COGLIONE! INVERTI L'ARRAY DELLE NOTE PRIMA INVECE DI FARLO DOPO!
 
       if (((EnumValue) autoReversePatternSetting).get().equals("Reverse")) {
          // reverse the currentPattern array using java arrays
