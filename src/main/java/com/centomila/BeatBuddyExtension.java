@@ -330,52 +330,47 @@ public class BeatBuddyExtension extends ControllerExtension {
       return channel - 1;
    }
 
+
    /**
-    * Generates a drum pattern based on user-selected settings and applies it to
-    * the current clip.
-    *
-    * This method utilizes various settings, such as note length, step size, and
-    * pattern selection,
-    * to generate and apply a drum pattern to the active clip in the Bitwig Studio
-    * environment.
-    * If a random pattern is selected, a randomized pattern is created.
-    *
-    * It also provides functionality to automatically resize the loop length of the
-    * clip
-    * to fit the length of the generated pattern if the auto-resize option is
-    * enabled.
-    *
-    * The steps are set for a specific channel and note destination within the
-    * clip,
-    * and the current step contents are selected for further manipulation.
+    * Generates a drum pattern in the currently selected clip.
+    * 
+    * The pattern is determined by the currently selected pattern, note length, and
+    * step size.
+    * 
+    * If the currently selected pattern is "Random", a random pattern is generated.
+    * 
+    * If the auto reverse pattern setting is "On", the pattern is reversed.
+    * 
+    * If the auto resize loop length setting is "On", the loop length is resized to fit
+    * the generated pattern.
     */
    private void generateDrumPattern() {
       Clip clip = getLauncherOrArrangerAsClip();
       // if the clip doesn't exist, create it
       // track.createNewLauncherClip(0, 1);
 
-      String selectedNoteLength = ((EnumValue) noteLengthSetting).get(); // Get the current selected value of noteLength
-      String selectedSubdivision = ((EnumValue) stepSizSubdivisionSetting).get();
-      String selectedStepSize = ((EnumValue) stepSizSetting).get(); // Get the current selected value of stepSize
-      double durationValue = Utils.getNoteLengthAsDouble(selectedNoteLength, selectedSubdivision);
+      String noteLength = ((EnumValue) noteLengthSetting).get(); // Get the current selected value of noteLength
+      String subdivision = ((EnumValue) stepSizSubdivisionSetting).get();
+      String stepSize = ((EnumValue) stepSizSetting).get(); // Get the current selected value of stepSize
+      double duration = Utils.getNoteLengthAsDouble(noteLength, subdivision);
 
-      double stepSize = Utils.getNoteLengthAsDouble(selectedStepSize, selectedSubdivision);
-      clip.setStepSize(stepSize);
+      double patternStepSize = Utils.getNoteLengthAsDouble(stepSize, subdivision);
+      clip.setStepSize(patternStepSize);
 
       int channel = getCurrentChannelAsInt();
-      int y = getCurrentNoteDestinationAsInt();
+      int noteDestination = getCurrentNoteDestinationAsInt();
 
-      clip.clearStepsAtY(channel, y);
+      clip.clearStepsAtY(channel, noteDestination);
 
       String selectedPattern = ((EnumValue) patternSelectorSetting).get();
-      int[] currentPattern = DrumPatterns.getPatternByName(selectedPattern);
+      int[] pattern = DrumPatterns.getPatternByName(selectedPattern);
 
       if (((EnumValue) autoReversePatternSetting).get().equals("Reverse")) {
-         // reverse the currentPattern array using java arrays
-         for (int i = 0; i < currentPattern.length / 2; i++) {
-            int temp = currentPattern[i];
-            currentPattern[i] = currentPattern[currentPattern.length - 1 - i];
-            currentPattern[currentPattern.length - 1 - i] = temp;
+         // reverse the pattern array using java arrays
+         for (int i = 0; i < pattern.length / 2; i++) {
+            int temp = pattern[i];
+            pattern[i] = pattern[pattern.length - 1 - i];
+            pattern[pattern.length - 1 - i] = temp;
          }
 
       }
@@ -384,17 +379,17 @@ public class BeatBuddyExtension extends ControllerExtension {
       if (selectedPattern.equals("Random")) {
          Random random = new Random();
          for (int i = 0; i < 16; i++) {
-            currentPattern[i] = random.nextInt(128);
+            pattern[i] = random.nextInt(128);
             // randomly change the value to 0
             if (random.nextInt(4) == 0) {
-               currentPattern[i] = 0;
+               pattern[i] = 0;
             }
          }
       }
 
-      for (int i = 0; i < currentPattern.length; i++) {
-         if (currentPattern[i] > 0) {
-            clip.setStep(channel, i, y, currentPattern[i], durationValue);
+      for (int i = 0; i < pattern.length; i++) {
+         if (pattern[i] > 0) {
+            clip.setStep(channel, i, noteDestination, pattern[i], duration);
          }
       }
 
@@ -403,13 +398,13 @@ public class BeatBuddyExtension extends ControllerExtension {
       // if autoResizeLoopLength is "On", resize the loop length to fit the pattern
       if (((EnumValue) autoResizeLoopLengthSetting).get().equals("On")) {
          // Calculate the beat length of the pattern
-         double beatLength = stepSize * currentPattern.length;
+         double beatLength = patternStepSize * pattern.length;
          double loopStart = 0.0;
          double loopEnd = loopStart + beatLength;
          setLoopLength(loopStart, loopEnd);
       }
 
-      clip.selectStepContents(channel, y, false);
+      clip.selectStepContents(channel, noteDestination, false);
 
       application.zoomToFit();
 

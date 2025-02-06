@@ -91,10 +91,10 @@ public class Utils {
                 multiplier = 2.0 / 3.0;
                 break;
             case "5t":
-                multiplier = 2.0 / 5.0;
+                multiplier = 4.0 / 5.0;
                 break;
             case "7t":
-                multiplier = 2.0 / 7.0;
+                multiplier = 4.0 / 7.0;
                 break;
             default:
                 break;

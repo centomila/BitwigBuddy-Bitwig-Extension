@@ -1,6 +1,14 @@
 # 📋 Changelog:
 
-**0.6.2**
+**0.7.0**
+- [X] Fixed Quintuplets (5t) and Septuplets (7t).
+- [X] Added a "Move Steps" button to shift the pattern by one step in the x-direction.
+  - ⚠️ This creates a lot of actions! Once done, you will not be able to undo any action prior to the "Move Steps" action.
+- [X] Added a "Reverse Pattern" checkbox to reverse the pattern before it is generated.
+  - This is not the _Reverse_ or _Reverse Pattern_ action in Bitwig Studio. It simply flips the order of the pattern selected by the user.
+
+
+0.6.2
 - [X] Link to github project in the extension panel
 - [X] Support for Quintuplets (5t) and Septuplets (7t)
 
