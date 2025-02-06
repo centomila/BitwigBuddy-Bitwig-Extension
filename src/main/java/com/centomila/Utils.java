@@ -49,7 +49,7 @@ public class Utils {
     }
 
     public static String[] STEPSIZE_OPTIONS = new String[] {
-            "1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1/128"
+            "1/1", "1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1/128"
     };
 
     public static String[] STEPSIZE_CATEGORY_OPTIONS = new String[] {
@@ -75,7 +75,7 @@ public class Utils {
     public static double getNoteLengthAsDouble(String selectedNoteLength, String selectedSubdivision) {
         double duration = 0.0;
 
-        double noteLengths[] = { 2.0, 1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125 };
+        double noteLengths[] = { 4.0, 2.0, 1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125 };
 
         int index = Arrays.asList(STEPSIZE_OPTIONS).indexOf(selectedNoteLength);
         if (index == -1) {
@@ -106,3 +106,4 @@ public class Utils {
     }
 
 }
+

@@ -75,7 +75,7 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       initNoteDestinationSetting();
 
-      initStepSizeSetting();
+      initStepSizeSetting(); 
 
       initPostActionSetting();
 
@@ -231,6 +231,11 @@ public class BeatBuddyExtension extends ControllerExtension {
          // Reset the button position
          ((SettableEnumValue) moveStepsSetting).set("|");
       });
+
+      // Empty string for spacing
+      Setting spacerMoverSetting = (Setting) documentState.getStringSetting("----", "Move Steps", 0,
+            "---------------------------------------------------");
+      spacerMoverSetting.disable();
    }
 
    /**
@@ -404,9 +409,9 @@ public class BeatBuddyExtension extends ControllerExtension {
          setLoopLength(loopStart, loopEnd);
       }
 
-      // clip.selectStepContents(channel, y, false);
+      clip.selectStepContents(channel, y, false);
 
-      // application.zoomToFit();
+      application.zoomToFit();
 
    }
 
@@ -426,69 +431,53 @@ public class BeatBuddyExtension extends ControllerExtension {
     * Move all steps in the current clip by a specified number of steps in the
     * x-direction.
     *
-    * @param xOffset the number of steps to move in the x-direction
+    * @param stepOffset the number of steps to move in the x-direction
     */
-   private void moveSteps(int xOffset) {
+   private void moveSteps(int stepOffset) {
       Clip clip = getLauncherOrArrangerAsClip();
+      int channel = getCurrentChannelAsInt();
+      int noteDestination = getCurrentNoteDestinationAsInt();
 
       // Create an array with a copy of all the current note steps
       NoteStep[] steps = new NoteStep[128];
       for (int i = 0; i < steps.length; i++) {
-         steps[i] = clip.getStep(getCurrentChannelAsInt(), 0 + i, getCurrentNoteDestinationAsInt());
+         steps[i] = clip.getStep(channel, i, noteDestination);
       }
 
       // Clear the current clip
-      clip.clearStepsAtY(getCurrentChannelAsInt(), getCurrentNoteDestinationAsInt());
+      clip.clearStepsAtY(channel, noteDestination);
 
       for (int i = 0; i < steps.length; i++) {
+         if (steps[i] != null && steps[i].duration() > 0.0) {
+            int velocity = (int) (steps[i].velocity() * 127);
 
-         getHost().println(
-               "Duration: " + steps[i].duration() + ", Velocity: " + steps[i].velocity() + ", X: "
-                     + steps[i].x());
-         if (steps[i].duration() > 0.0) {
-            if (steps[i] != null && steps[i].duration() > 0.0) {
-               int velocity = (int) (steps[i].velocity() * 127);
-
-               // break in case of steps[i].x = 0 and xOffset < 0
-
-               // clip.moveStep(steps[i].channel(), steps[i].x(), steps[i].y(), xOffset, 0);
-               if (steps[i].x() == 0 && xOffset < 0) {
-                  xOffset = 0;
-                  getHost().showPopupNotification("Cannot move steps before the start of the clip");
-               }
-
-               clip.setStep(getCurrentChannelAsInt(), steps[i].x() + xOffset, steps[i].y(),
-                     velocity, steps[i].duration());
-
+            if (steps[i].x() == 0 && stepOffset < 0) {
+               stepOffset = 0;
+               getHost().showPopupNotification("Cannot move steps before the start of the clip");
             }
+
+            clip.setStep(channel, steps[i].x() + stepOffset, steps[i].y(), velocity, steps[i].duration());
          }
       }
-
    }
 
    /**
     * Sets the loop length of the currently selected clip to a given start and
     * end time in beats. Additionally sets the playback start and end times to
     * the same values.
-    * 
+    *
     * @param loopStart the desired start time of the loop in beats
     * @param loopEnd   the desired end time of the loop in beats
     */
-   private void setLoopLength(Double loopStart, Double loopEnd) {
+   private void setLoopLength(double loopStart, double loopEnd) {
       Clip clip = getLauncherOrArrangerAsClip();
 
-      // These access the SettableRangedValue objects for loop start and loop length.
-      SettableBeatTimeValue clipLoopStart = clip.getLoopStart();
-      SettableBeatTimeValue clipLoopEnd = clip.getLoopLength();
-      SettableBeatTimeValue playbackStart = clip.getPlayStart();
-      SettableBeatTimeValue playbackEnd = clip.getPlayStop();
-
       // Set loop to start at 0.0 beats
-      clipLoopStart.set(loopStart);
-      clipLoopEnd.set(loopEnd);
+      clip.getLoopStart().set(loopStart);
+      clip.getLoopLength().set(loopEnd);
 
-      playbackStart.set(loopStart);
-      playbackEnd.set(loopEnd);
+      clip.getPlayStart().set(loopStart);
+      clip.getPlayStop().set(loopEnd);
    }
 
    @Override
