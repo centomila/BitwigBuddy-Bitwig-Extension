@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
+import com.centomila.ReadFile;
+
 // import com.bitwig.extension.controller.api.Action;
 
 import com.bitwig.extension.controller.api.ControllerHost;
@@ -13,10 +15,13 @@ import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.NoteStep;
+import com.bitwig.extension.controller.api.Preferences;
 // import com.bitwig.extension.controller.api.Cursor;
 // import com.bitwig.extension.controller.api.Track;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.EnumDefinition;
+import com.bitwig.extension.controller.api.RangedValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 // import com.bitwig.extension.controller.api.SettableIntegerValue;
@@ -26,6 +31,7 @@ import com.bitwig.extension.controller.api.SettableRangedValue;
 // import com.bitwig.extension.controller.api.SettableDoubleValue;
 import com.bitwig.extension.controller.api.SettableBeatTimeValue;
 import com.bitwig.extension.controller.api.Setting;
+import com.bitwig.extension.controller.api.StringValue;
 import com.bitwig.extension.controller.api.Signal;
 
 public class BeatBuddyExtension extends ControllerExtension {
@@ -67,10 +73,19 @@ public class BeatBuddyExtension extends ControllerExtension {
       arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
       documentState = host.getDocumentState();
 
-      // Signal testButton = documentState.getSignalSetting("Test", "Generate",
-      // "Test");
-      // testButton.addSignalObserver(() -> {
-      // });
+      // Inside your extension's initialization method
+      Preferences preferences = getHost().getPreferences();
+      Setting filePathSetting = (Setting) preferences.getStringSetting("Test File Path", "File Settings", 1024,
+            "C:\\Users\\Bach\\OneDrive\\Documenti\\Bitwig Studio\\Extensions\\test.txt");
+
+      Signal testButton = documentState.getSignalSetting("Test", "Generate", "Test");
+      testButton.addSignalObserver(() -> {
+         String path = ((StringValue) filePathSetting).get();
+         getHost().println("File path: " + path);
+         ReadFile readFile = new ReadFile(path);
+         String fileContent = readFile.readFileAsString();
+         getHost().println("File content: " + fileContent);
+      });
 
       initMoveStepsSetting();
 
