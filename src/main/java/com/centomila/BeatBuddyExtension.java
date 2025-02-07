@@ -509,22 +509,31 @@ public class BeatBuddyExtension extends ControllerExtension {
          }
 
          for (NoteStep step : stepsToRotate) {
-            if (step.x() == 0 && stepOffset < 0) { // rotate backwards
-               stepOffset = 0;
-               getHost().showPopupNotification("Cannot move steps before the start of the clip");
+            if (stepOffset < 0) { // rotate backwards
+               // consider that you can never put a step at position -1 and you can't place a
+               // step where a step is already present. Use the space after the loop to
+               // temporarily store the step
+               // 1) store the first step in the first available space after the loop. Use
+               // moveStep and never use setStep
+               NoteStep firstStep = stepsToRotate.get(0);
+               clip.moveStep(channel, firstStep.x(), firstStep.y(), loopLengthInt, 0);
+
             } else { // rotate forwards (advance then move the last step at position 0)
                clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
             }
          }
 
          for (NoteStep step : stepsToRotate) {
-            if (step.x() == 0 && stepOffset < 0) { // rotate backwards
-               stepOffset = 0;
-               getHost().showPopupNotification("Cannot move steps before the start of the clip");
+            if (stepOffset < 0) { // rotate backwards
+               // 2) move the second step to the first step position and so on
+               clip.moveStep(channel, step.x() + -stepOffset, step.y(), stepOffset, 0);
+
+          
+
             } else { // rotate forwards (advance then move the last step at position 0)
                // Check if the step is after the end of the loop
                if (step.x() + stepOffset >= loopLengthInt) {
-                  clip.moveStep(channel, step.x() + stepOffset, step.y(), -loopLengthInt+1 - 1, 0);
+                  clip.moveStep(channel, step.x() + stepOffset, step.y(), -loopLengthInt + 1 - 1, 0);
                }
             }
          }
