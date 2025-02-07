@@ -52,6 +52,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting autoResizeLoopLengthSetting;
    private Setting autoReversePatternSetting;
    private Setting moveStepsSetting;
+   private Setting moveRotateStepsSetting;
    private String currentNoteAsString;
    private int currentOctaveAsInt;
 
@@ -72,6 +73,14 @@ public class BeatBuddyExtension extends ControllerExtension {
       cursorClip = host.createLauncherCursorClip((16 * 8), 128);
       arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
       documentState = host.getDocumentState();
+      cursorClip.getLoopLength().markInterested();
+      cursorClip.getLoopStart().markInterested();
+      cursorClip.getPlayStart().markInterested();
+      cursorClip.getPlayStop().markInterested();
+      arrangerClip.getLoopLength().markInterested();
+      arrangerClip.getLoopStart().markInterested();
+      arrangerClip.getPlayStart().markInterested();
+      arrangerClip.getPlayStop().markInterested();
 
       // Inside your extension's initialization method
       Preferences preferences = getHost().getPreferences();
@@ -239,6 +248,8 @@ public class BeatBuddyExtension extends ControllerExtension {
     * corresponding argument, and the button is reset to the "|" state.
     */
    private void initMoveStepsSetting() {
+      moveRotateStepsSetting = (Setting) documentState.getEnumSetting("Move/Rotate", "Move Steps",
+            new String[] { "Move", "Rotate" }, "Move");
 
       Signal moveFwd = documentState.getSignalSetting("Move Steps Forward", "Move Steps",
             ">>>");
@@ -432,7 +443,7 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       clip.selectStepContents(channel, noteDestination, false);
 
-      application.zoomToFit();
+      // application.zoomToFit();
 
    }
 
@@ -464,27 +475,81 @@ public class BeatBuddyExtension extends ControllerExtension {
       Clip clip = getLauncherOrArrangerAsClip();
       int channel = getCurrentChannelAsInt();
       int noteDestination = getCurrentNoteDestinationAsInt();
+      double loopLength = clip.getLoopLength().get();
+      int loopLengthInt = (int) (loopLength * 4); // Convert loop length from bars to steps
+      getHost().showPopupNotification("Moving steps by " + stepOffset + " steps" + " Channel: " + channel
+            + " Note Destination: " + noteDestination + " Loop Length: " + loopLength);
 
-      List<NoteStep> steps = new ArrayList<>();
+      List<NoteStep> stepsToMove = new ArrayList<>();
       for (int i = 0; i < 128; i++) {
          NoteStep step = clip.getStep(channel, i, noteDestination);
          if (step != null && step.duration() > 0.0) {
-            steps.add(step);
+            stepsToMove.add(step);
+         }
+      }
+      List<NoteStep> stepsToRotate = new ArrayList<>();
+      for (int i = 0; i < 128; i++) {
+         NoteStep step = clip.getStep(channel, i, noteDestination);
+         if (step != null && step.duration() > 0.0) {
+            stepsToRotate.add(step);
          }
       }
 
-      if (stepOffset > 0) {
-         steps.sort(Comparator.comparingInt(NoteStep::x).reversed());
-      } else {
-         steps.sort(Comparator.comparingInt(NoteStep::x));
-      }
-
-      for (NoteStep step : steps) {
-         if (step.x() == 0 && stepOffset < 0) {
-            stepOffset = 0;
-            getHost().showPopupNotification("Cannot move steps before the start of the clip");
+      if (((EnumValue) moveRotateStepsSetting).get().equals("Rotate")) {
+         // void moveStep(int channel,
+         // int x,
+         // int y,
+         // int dx,
+         // int dy)
+         // Original move behavior
+         if (stepOffset > 0) {
+            stepsToRotate.sort(Comparator.comparingInt(NoteStep::x).reversed());
          } else {
-            clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
+            stepsToRotate.sort(Comparator.comparingInt(NoteStep::x));
+         }
+
+         for (NoteStep step : stepsToRotate) {
+            if (step.x() == 0 && stepOffset < 0) { // rotate backwards
+               stepOffset = 0;
+               getHost().showPopupNotification("Cannot move steps before the start of the clip");
+            } else { // rotate forwards (advance then move the last step at position 0)
+               clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
+            }
+         }
+
+         for (NoteStep step : stepsToRotate) {
+            if (step.x() == 0 && stepOffset < 0) { // rotate backwards
+               stepOffset = 0;
+               getHost().showPopupNotification("Cannot move steps before the start of the clip");
+            } else { // rotate forwards (advance then move the last step at position 0)
+               // Check if the step is after the end of the loop
+               if (step.x() + stepOffset >= loopLengthInt) {
+                  clip.moveStep(channel, step.x() + stepOffset, step.y(), -loopLengthInt+1 - 1, 0);
+               }
+            }
+         }
+
+      } else {
+
+         // void moveStep(int channel,
+         // int x,
+         // int y,
+         // int dx,
+         // int dy)
+         // Original move behavior
+         if (stepOffset > 0) {
+            stepsToMove.sort(Comparator.comparingInt(NoteStep::x).reversed());
+         } else {
+            stepsToMove.sort(Comparator.comparingInt(NoteStep::x));
+         }
+
+         for (NoteStep step : stepsToMove) {
+            if (step.x() == 0 && stepOffset < 0) {
+               stepOffset = 0;
+               getHost().showPopupNotification("Cannot move steps before the start of the clip");
+            } else {
+               clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
+            }
          }
       }
    }
