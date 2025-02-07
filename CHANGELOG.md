@@ -1,5 +1,11 @@
 # 📋 Changelog:
 
+**0.7.1**  
+- [X] The single line buttons for moving the pattern by one step were causing problems. Now, there are two separate buttons: <<< and >>>.  
+  - This fixes the problem of the broken undo action.
+- [X] Fixed a bug that caused unpredictable step movement if the length of the individual steps was different.  
+
+
 **0.7.0**
 - [X] Fixed Quintuplets (5t) and Septuplets (7t).
 - [X] Added 1/1 step size/note length.

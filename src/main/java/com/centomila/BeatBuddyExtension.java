@@ -1,6 +1,9 @@
 package com.centomila;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 
 // import com.bitwig.extension.controller.api.Action;
@@ -75,7 +78,7 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       initNoteDestinationSetting();
 
-      initStepSizeSetting(); 
+      initStepSizeSetting();
 
       initPostActionSetting();
 
@@ -90,8 +93,9 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Sets up the Step Size setting and the Note Length setting. 
-    * When the user changes the Step Size, the Note Length is automatically updated to match the selected step size.
+    * Sets up the Step Size setting and the Note Length setting.
+    * When the user changes the Step Size, the Note Length is automatically updated
+    * to match the selected step size.
     * The user can also change the Note Length independently of the Step Size.
     */
    private void initStepSizeSetting() {
@@ -117,13 +121,17 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Initializes the note destination setting, which includes the note destination dropdown, note octave dropdown, and note channel number setting.
+    * Initializes the note destination setting, which includes the note destination
+    * dropdown, note octave dropdown, and note channel number setting.
     * 
-    * The note destination dropdown has options for all 12 notes, and the value of the dropdown is stored in the currentNoteAsString variable.
+    * The note destination dropdown has options for all 12 notes, and the value of
+    * the dropdown is stored in the currentNoteAsString variable.
     * 
-    * The note octave dropdown has options for all octaves from -2 to 8, and the value of the dropdown is stored in the currentOctaveAsInt variable.
+    * The note octave dropdown has options for all octaves from -2 to 8, and the
+    * value of the dropdown is stored in the currentOctaveAsInt variable.
     * 
-    * The note channel setting is a number setting that allows the user to select a channel from 1 to 16.
+    * The note channel setting is a number setting that allows the user to select a
+    * channel from 1 to 16.
     */
    private void initNoteDestinationSetting() {
       // Note destination dropdown
@@ -163,13 +171,17 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Initializes the pattern setting, which includes the generate button, pattern dropdown, and reverse pattern checkbox.
+    * Initializes the pattern setting, which includes the generate button, pattern
+    * dropdown, and reverse pattern checkbox.
     * 
-    * The generate button is a signal that triggers the generateDrumPattern method when clicked.
+    * The generate button is a signal that triggers the generateDrumPattern method
+    * when clicked.
     * 
-    * The pattern dropdown has options for all patterns that are defined in the DrumPatterns class.
+    * The pattern dropdown has options for all patterns that are defined in the
+    * DrumPatterns class.
     * 
-    * The reverse pattern checkbox is a pseudo-boolean setting that is used to reverse the pattern before applying it to the clip.
+    * The reverse pattern checkbox is a pseudo-boolean setting that is used to
+    * reverse the pattern before applying it to the clip.
     * 
     * The spacer1 setting is an empty string used for spacing.
     */
@@ -212,24 +224,19 @@ public class BeatBuddyExtension extends ControllerExtension {
     * corresponding argument, and the button is reset to the "|" state.
     */
    private void initMoveStepsSetting() {
-      moveStepsSetting = (Setting) documentState.getEnumSetting("Move Steps", "Move Steps",
-            new String[] { "<<<", "|", ">>>" }, "|");
 
-      ((EnumValue) moveStepsSetting).addValueObserver(newValue -> {
-         switch (newValue) {
-            case ">>>":
-               moveSteps(1);
-               break;
+      Signal moveFwd = documentState.getSignalSetting("Move Steps Forward", "Move Steps",
+            ">>>");
+      moveFwd.addSignalObserver(() -> {
+         moveSteps(1);
 
-            case "<<<":
-               moveSteps(-1);
-               break;
+      });
 
-            default:
-               break;
-         }
-         // Reset the button position
-         ((SettableEnumValue) moveStepsSetting).set("|");
+      Signal moveBwd = documentState.getSignalSetting("Move Steps Backward", "Move Steps",
+            "<<<");
+      moveBwd.addSignalObserver(() -> {
+         moveSteps(-1);
+
       });
 
       // Empty string for spacing
@@ -258,10 +265,12 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Initializes the clear clip setting, which includes an empty string spacer and the clear
+    * Initializes the clear clip setting, which includes an empty string spacer and
+    * the clear
     * current clip setting.
     * 
-    * The clear current clip setting is a button that, when clicked, will clear the current
+    * The clear current clip setting is a button that, when clicked, will clear the
+    * current
     * clip of all notes.
     * 
     * The spacer is an empty string setting that is used for spacing.
@@ -279,7 +288,8 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Initializes the Launcher/Arranger toggle setting, which determines whether the
+    * Initializes the Launcher/Arranger toggle setting, which determines whether
+    * the
     * drum pattern is generated in the Launcher or Arranger clip.
     * 
     * The setting is an EnumValue that can be set to either "Launcher" or
@@ -314,7 +324,8 @@ public class BeatBuddyExtension extends ControllerExtension {
 
    /**
     * Notifies the user with a popup notification of the currently selected note
-    * destination. The notification is in the format "Note Destination: <note name><octave>".
+    * destination. The notification is in the format "Note Destination: <note
+    * name><octave>".
     */
    private void notifyNoteDestination() {
       getHost().showPopupNotification("Note Destination: " + currentNoteAsString + currentOctaveAsInt);
@@ -330,7 +341,6 @@ public class BeatBuddyExtension extends ControllerExtension {
       return channel - 1;
    }
 
-
    /**
     * Generates a drum pattern in the currently selected clip.
     * 
@@ -341,7 +351,8 @@ public class BeatBuddyExtension extends ControllerExtension {
     * 
     * If the auto reverse pattern setting is "On", the pattern is reversed.
     * 
-    * If the auto resize loop length setting is "On", the loop length is resized to fit
+    * If the auto resize loop length setting is "On", the loop length is resized to
+    * fit
     * the generated pattern.
     */
    private void generateDrumPattern() {
@@ -423,35 +434,42 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Move all steps in the current clip by a specified number of steps in the
-    * x-direction.
-    *
-    * @param stepOffset the number of steps to move in the x-direction
+    * Moves all the notes in the clip by the given number of steps. Negative
+    * values move the notes backwards, positive values move them forwards.
+    * 
+    * The notes are moved in the order they appear in the clip, so moving a note
+    * that is earlier in the clip will move all the notes after it.
+    * 
+    * If the user tries to move a note before the start of the clip, a popup
+    * notification is shown, and no notes are moved.
+    * 
+    * @param stepOffset the number of steps to move the notes
     */
-   private void moveSteps(int stepOffset) {
+   public void moveSteps(int stepOffset) {
       Clip clip = getLauncherOrArrangerAsClip();
       int channel = getCurrentChannelAsInt();
       int noteDestination = getCurrentNoteDestinationAsInt();
 
-      // Create an array with a copy of all the current note steps
-      NoteStep[] steps = new NoteStep[128];
-      for (int i = 0; i < steps.length; i++) {
-         steps[i] = clip.getStep(channel, i, noteDestination);
+      List<NoteStep> steps = new ArrayList<>();
+      for (int i = 0; i < 128; i++) {
+         NoteStep step = clip.getStep(channel, i, noteDestination);
+         if (step != null && step.duration() > 0.0) {
+            steps.add(step);
+         }
       }
 
-      // Clear the current clip
-      clip.clearStepsAtY(channel, noteDestination);
+      if (stepOffset > 0) {
+         steps.sort(Comparator.comparingInt(NoteStep::x).reversed());
+      } else {
+         steps.sort(Comparator.comparingInt(NoteStep::x));
+      }
 
-      for (int i = 0; i < steps.length; i++) {
-         if (steps[i] != null && steps[i].duration() > 0.0) {
-            int velocity = (int) (steps[i].velocity() * 127);
-
-            if (steps[i].x() == 0 && stepOffset < 0) {
-               stepOffset = 0;
-               getHost().showPopupNotification("Cannot move steps before the start of the clip");
-            }
-
-            clip.setStep(channel, steps[i].x() + stepOffset, steps[i].y(), velocity, steps[i].duration());
+      for (NoteStep step : steps) {
+         if (step.x() == 0 && stepOffset < 0) {
+            stepOffset = 0;
+            getHost().showPopupNotification("Cannot move steps before the start of the clip");
+         } else {
+            clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
          }
       }
    }
