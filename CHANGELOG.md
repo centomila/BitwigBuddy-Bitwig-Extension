@@ -6,7 +6,7 @@
 - [X] Fixed a bug that caused unpredictable step movement if the length of the individual steps was different.  
 
 
-**0.7.0**
+0.7.0
 - [X] Fixed Quintuplets (5t) and Septuplets (7t).
 - [X] Added 1/1 step size/note length.
 - [X] Added a "Move Steps" button to shift the pattern by one step in the x-direction.
