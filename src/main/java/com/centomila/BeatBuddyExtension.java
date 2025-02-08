@@ -73,6 +73,10 @@ public class BeatBuddyExtension extends ControllerExtension {
       cursorClip = host.createLauncherCursorClip((16 * 8), 128);
       arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
       documentState = host.getDocumentState();
+      
+      // Initialize test file reader
+      new TestFileReader(host, documentState);
+
       cursorClip.getLoopLength().markInterested();
       cursorClip.getLoopStart().markInterested();
       cursorClip.getPlayStart().markInterested();
@@ -81,8 +85,6 @@ public class BeatBuddyExtension extends ControllerExtension {
       arrangerClip.getLoopStart().markInterested();
       arrangerClip.getPlayStart().markInterested();
       arrangerClip.getPlayStop().markInterested();
-
-      // initTestButton();
 
       initMoveStepsSetting();
 
@@ -102,22 +104,6 @@ public class BeatBuddyExtension extends ControllerExtension {
       // Show a notification to confirm initialization
       host.showPopupNotification("BeatBuddy Initialized");
 
-   }
-
-   private void initTestButton() {
-      // Inside your extension's initialization method
-      Preferences preferences = getHost().getPreferences();
-      Setting filePathSetting = (Setting) preferences.getStringSetting("Test File Path", "File Settings", 1024,
-            "C:\\Users\\Bach\\OneDrive\\Documenti\\Bitwig Studio\\Extensions\\test.txt");
-
-      Signal testButton = documentState.getSignalSetting("Test", "Generate", "Test");
-      testButton.addSignalObserver(() -> {
-         String path = ((StringValue) filePathSetting).get();
-         getHost().println("File path: " + path);
-         ReadFile readFile = new ReadFile(path);
-         String fileContent = readFile.readFileAsString();
-         getHost().println("File content: " + fileContent);
-      });
    }
 
    /**
@@ -435,14 +421,9 @@ public class BeatBuddyExtension extends ControllerExtension {
       }
 
       // Post generation actions
-
-      // if autoResizeLoopLength is "On", resize the loop length to fit the pattern
       if (((EnumValue) autoResizeLoopLengthSetting).get().equals("On")) {
-         // Calculate the beat length of the pattern
          double beatLength = patternStepSize * pattern.length;
-         double loopStart = 0.0;
-         double loopEnd = loopStart + beatLength;
-         setLoopLength(loopStart, loopEnd);
+         ClipUtils.setLoopLength(clip, 0.0, beatLength);
       }
 
       clip.selectStepContents(channel, noteDestination, false);
@@ -459,8 +440,7 @@ public class BeatBuddyExtension extends ControllerExtension {
     *         Clip.
     */
    private Clip getLauncherOrArrangerAsClip() {
-      String launcherArrangerSelection = ((EnumValue) toggleLauncherArrangerSetting).get();
-      return launcherArrangerSelection.equals("Arranger") ? arrangerClip : cursorClip;
+      return ClipUtils.getLauncherOrArrangerAsClip(toggleLauncherArrangerSetting, arrangerClip, cursorClip);
    }
 
    /**
@@ -484,8 +464,6 @@ public class BeatBuddyExtension extends ControllerExtension {
       String subdivision = ((EnumValue) stepSizSubdivisionSetting).get();
       double stepsPerBeat = 1.0 / Utils.getNoteLengthAsDouble(stepSize, subdivision);
       int loopLengthInt = (int) Math.round(loopLength * stepsPerBeat); // Convert loop length from beats to steps
-      // getHost().showPopupNotification("Moving steps by " + stepOffset + " steps" + " Channel: " + channel
-      //       + " Note Destination: " + noteDestination + " Loop Length: " + loopLength);
 
       List<NoteStep> stepsToMove = new ArrayList<>();
       for (int i = 0; i < 128; i++) {
@@ -496,80 +474,10 @@ public class BeatBuddyExtension extends ControllerExtension {
       }
 
       if (((EnumValue) moveRotateStepsSetting).get().equals("Rotate")) {
-         rotateSteps(stepsToMove, stepOffset, loopLengthInt, channel);
+         ClipUtils.rotateSteps(clip, stepsToMove, stepOffset, loopLengthInt, channel);
       } else {
-         moveSteps(stepsToMove, stepOffset, channel);
+         ClipUtils.moveSteps(clip, stepsToMove, stepOffset, channel, getHost());
       }
-   }
-
-   private void moveSteps(List<NoteStep> stepsToMove, int stepOffset, int channel) {
-      Clip clip = getLauncherOrArrangerAsClip();
-
-      if (stepOffset > 0) {
-         stepsToMove.sort(Comparator.comparingInt(NoteStep::x).reversed());
-      } else {
-         stepsToMove.sort(Comparator.comparingInt(NoteStep::x));
-      }
-
-      for (NoteStep step : stepsToMove) {
-         if (step.x() == 0 && stepOffset < 0) {
-            stepOffset = 0;
-            getHost().showPopupNotification("Cannot move steps before the start of the clip");
-         } else {
-            clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
-         }
-      }
-   }
-
-   private void rotateSteps(List<NoteStep> stepsToRotate, int stepOffset, int loopLengthInt, int channel) {
-      Clip clip = getLauncherOrArrangerAsClip();
-
-      stepsToRotate.sort(Comparator.comparingInt(NoteStep::x).reversed());
-
-      if (stepOffset > 0) { // rotate fowards
-         for (NoteStep step : stepsToRotate) {
-            clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
-         }
-
-         for (NoteStep step : stepsToRotate) {
-            if (step.x() + stepOffset >= loopLengthInt) {
-               clip.moveStep(channel, step.x() + stepOffset, step.y(), -loopLengthInt + 1 - 1, 0);
-            }
-         }
-      }
-
-      if (stepOffset < 0) { // rotate backwards 
-         stepOffset = (loopLengthInt) - 1;
-         for (NoteStep step : stepsToRotate) {
-            clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
-         }
-
-         for (NoteStep step : stepsToRotate) {
-            if (step.x() + stepOffset >= loopLengthInt) {
-               clip.moveStep(channel, step.x() + stepOffset, step.y(), -loopLengthInt + 1 - 1, 0);
-            }
-         }
-      }
-
-   }
-
-   /**
-    * Sets the loop length of the currently selected clip to a given start and
-    * end time in beats. Additionally sets the playback start and end times to
-    * the same values.
-    *
-    * @param loopStart the desired start time of the loop in beats
-    * @param loopEnd   the desired end time of the loop in beats
-    */
-   private void setLoopLength(double loopStart, double loopEnd) {
-      Clip clip = getLauncherOrArrangerAsClip();
-
-      // Set loop to start at 0.0 beats
-      clip.getLoopStart().set(loopStart);
-      clip.getLoopLength().set(loopEnd);
-
-      clip.getPlayStart().set(loopStart);
-      clip.getPlayStop().set(loopEnd);
    }
 
    @Override
