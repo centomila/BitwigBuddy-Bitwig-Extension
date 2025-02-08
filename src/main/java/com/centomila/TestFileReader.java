@@ -23,10 +23,10 @@ public class TestFileReader {
             "Test File Path", 
             "File Settings", 
             1024,
-            "C:\\Users\\Bach\\OneDrive\\Documenti\\Bitwig Studio\\Extensions\\test.txt"
+            "test.txt"
         );
 
-        initTestButton();
+        // initTestButton(); // Uncomment this line to enable the test button
     }
 
     private void initTestButton() {

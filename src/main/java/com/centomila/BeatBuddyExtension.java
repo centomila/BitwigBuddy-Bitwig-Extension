@@ -51,7 +51,6 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting toggleLauncherArrangerSetting;
    private Setting autoResizeLoopLengthSetting;
    private Setting autoReversePatternSetting;
-   private Setting moveStepsSetting;
    private Setting moveRotateStepsSetting;
    private NoteDestinationSettings noteDestSettings;
 
@@ -75,7 +74,7 @@ public class BeatBuddyExtension extends ControllerExtension {
       documentState = host.getDocumentState();
       
       // Initialize test file reader
-      new TestFileReader(host, documentState);
+      // new TestFileReader(host, documentState);
 
       cursorClip.getLoopLength().markInterested();
       cursorClip.getLoopStart().markInterested();
@@ -102,7 +101,7 @@ public class BeatBuddyExtension extends ControllerExtension {
       initToggleLauncherArrangerSetting();
 
       // Show a notification to confirm initialization
-      host.showPopupNotification("BeatBuddy Initialized");
+      PopupUtils.showPopup("BeatBuddy Initialized");
 
    }
 
@@ -213,7 +212,7 @@ public class BeatBuddyExtension extends ControllerExtension {
       patternSelectorSetting = (Setting) documentState.getEnumSetting("Pattern", "Generate", PATTERN_OPTIONS,
             "Random");
       ((EnumValue) patternSelectorSetting).addValueObserver(newValue -> {
-         getHost().showPopupNotification(newValue.toString());
+         PopupUtils.showPopup(newValue.toString());
       });
 
       autoReversePatternSetting = (Setting) documentState.getEnumSetting("Reverse Pattern", "Generate",
@@ -444,7 +443,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    @Override
    public void exit() {
       // Cleanup on exit
-      getHost().showPopupNotification("BeatBuddy Exited");
+      PopupUtils.showPopup("BeatBuddy Exited");
    }
 
    @Override
