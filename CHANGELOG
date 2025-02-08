@@ -1,5 +1,8 @@
 # 📋 Changelog:
 
+**0.7.6**
+- [X] Code refactoring and split in multiple files. No changes to the bwextension.
+
 **0.7.5**
 - [X] Added rotate patterns
   - New buttons to rotate notes left or right
