@@ -403,41 +403,15 @@ public class BeatBuddyExtension extends ControllerExtension {
       return ClipUtils.getLauncherOrArrangerAsClip(toggleLauncherArrangerSetting, arrangerClip, cursorClip);
    }
 
-   /**
-    * Moves all the notes in the clip by the given number of steps. Negative
-    * values move the notes backwards, positive values move them forwards.
-    * 
-    * The notes are moved in the order they appear in the clip, so moving a note
-    * that is earlier in the clip will move all the notes after it.
-    * 
-    * If the user tries to move a note before the start of the clip, a popup
-    * notification is shown, and no notes are moved.
-    * 
-    * @param stepOffset the number of steps to move the notes
-    */
    public void moveSteps(int stepOffset) {
       Clip clip = getLauncherOrArrangerAsClip();
       int channel = noteDestSettings.getCurrentChannelAsInt();
       int noteDestination = noteDestSettings.getCurrentNoteDestinationAsInt();
-      double loopLength = clip.getLoopLength().get();
       String stepSize = ((EnumValue) stepSizSetting).get();
       String subdivision = ((EnumValue) stepSizSubdivisionSetting).get();
-      double stepsPerBeat = 1.0 / Utils.getNoteLengthAsDouble(stepSize, subdivision);
-      int loopLengthInt = (int) Math.round(loopLength * stepsPerBeat); // Convert loop length from beats to steps
+      boolean isRotate = ((EnumValue) moveRotateStepsSetting).get().equals("Rotate");
 
-      List<NoteStep> stepsToMove = new ArrayList<>();
-      for (int i = 0; i < 128; i++) {
-         NoteStep step = clip.getStep(channel, i, noteDestination);
-         if (step != null && step.duration() > 0.0) {
-            stepsToMove.add(step);
-         }
-      }
-
-      if (((EnumValue) moveRotateStepsSetting).get().equals("Rotate")) {
-         ClipUtils.rotateSteps(clip, stepsToMove, stepOffset, loopLengthInt, channel);
-      } else {
-         ClipUtils.moveSteps(clip, stepsToMove, stepOffset, channel);
-      }
+      ClipUtils.handleStepMovement(clip, channel, noteDestination, stepSize, subdivision, stepOffset, isRotate);
    }
 
    @Override

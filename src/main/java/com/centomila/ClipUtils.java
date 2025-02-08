@@ -1,5 +1,6 @@
 package com.centomila;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -83,6 +84,30 @@ public class ClipUtils {
                     clip.moveStep(channel, step.x() + stepOffset, step.y(), -loopLengthInt + 1 - 1, 0);
                 }
             }
+        }
+    }
+
+    /**
+     * Handles moving or rotating steps in a clip based on the given parameters.
+     */
+    public static void handleStepMovement(Clip clip, int channel, int noteDestination, 
+            String stepSize, String subdivision, int stepOffset, boolean isRotate) {
+        double loopLength = clip.getLoopLength().get();
+        double stepsPerBeat = 1.0 / Utils.getNoteLengthAsDouble(stepSize, subdivision);
+        int loopLengthInt = (int) Math.round(loopLength * stepsPerBeat);
+
+        List<NoteStep> stepsToMove = new ArrayList<>();
+        for (int i = 0; i < 128; i++) {
+            NoteStep step = clip.getStep(channel, i, noteDestination);
+            if (step != null && step.duration() > 0.0) {
+                stepsToMove.add(step);
+            }
+        }
+
+        if (isRotate) {
+            rotateSteps(clip, stepsToMove, stepOffset, loopLengthInt, channel);
+        } else {
+            moveSteps(clip, stepsToMove, stepOffset, channel);
         }
     }
 }
