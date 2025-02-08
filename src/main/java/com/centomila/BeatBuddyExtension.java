@@ -1,44 +1,27 @@
 package com.centomila;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
-
-import com.centomila.ReadFile;
-
-// import com.bitwig.extension.controller.api.Action;
-
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Clip;
-import com.bitwig.extension.controller.api.NoteStep;
-import com.bitwig.extension.controller.api.Preferences;
-// import com.bitwig.extension.controller.api.Cursor;
-// import com.bitwig.extension.controller.api.Track;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
-import com.bitwig.extension.controller.api.EnumDefinition;
-import com.bitwig.extension.controller.api.RangedValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
-import com.bitwig.extension.controller.api.SettableRangedValue;
-// import com.bitwig.extension.controller.api.SettableIntegerValue;
-// import com.bitwig.extension.controller.api.SettableBooleanValue;
-// import com.bitwig.extension.controller.api.SettableStringArrayValue;
-// import com.bitwig.extension.controller.api.BooleanValue;
-// import com.bitwig.extension.controller.api.SettableDoubleValue;
-import com.bitwig.extension.controller.api.SettableBeatTimeValue;
 import com.bitwig.extension.controller.api.Setting;
-import com.bitwig.extension.controller.api.StringValue;
 import com.bitwig.extension.controller.api.Signal;
 
+import java.util.Arrays;
+
+/**
+ * BeatBuddy Extension for Bitwig Studio.
+ * This extension provides functionality for generating and manipulating drum patterns
+ * in both launcher and arranger clips. It features pattern generation, step movement,
+ * and various clip manipulation tools.
+ */
 public class BeatBuddyExtension extends ControllerExtension {
    private Application application;
    private Clip cursorClip;
    private Clip arrangerClip;
-   // private Track track;
 
    private DocumentState documentState;
    private Setting patternSelectorSetting;
@@ -106,10 +89,10 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Sets up the Step Size setting and the Note Length setting.
-    * When the user changes the Step Size, the Note Length is automatically updated
-    * to match the selected step size.
-    * The user can also change the Note Length independently of the Step Size.
+    * Initializes step size and note length settings.
+    * The step size setting determines the grid resolution for pattern generation,
+    * while the note length setting controls the duration of generated notes.
+    * Both settings are synchronized by default but can be adjusted independently.
     */
    private void initStepSizeSetting() {
       stepSizSetting = (Setting) documentState.getEnumSetting("Step Size", "Clip", Utils.STEPSIZE_OPTIONS, "1/16");
@@ -134,17 +117,11 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Initializes the note destination setting, which includes the note destination
-    * dropdown, note octave dropdown, and note channel number setting.
-    * 
-    * The note destination dropdown has options for all 12 notes, and the value of
-    * the dropdown is stored in the currentNoteAsString variable.
-    * 
-    * The note octave dropdown has options for all octaves from -2 to 8, and the
-    * value of the dropdown is stored in the currentOctaveAsInt variable.
-    * 
-    * The note channel setting is a number setting that allows the user to select a
-    * channel from 1 to 16.
+    * Initializes note destination settings including note pitch, octave, and MIDI channel.
+    * These settings determine where the generated notes will be placed in terms of:
+    * - Note pitch (C, C#, D, etc.)
+    * - Octave (-2 to 8)
+    * - MIDI channel (1-16)
     */
    private void initNoteDestinationSetting() {
       // Note destination dropdown
@@ -183,19 +160,11 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Initializes the pattern setting, which includes the generate button, pattern
-    * dropdown, and reverse pattern checkbox.
-    * 
-    * The generate button is a signal that triggers the generateDrumPattern method
-    * when clicked.
-    * 
-    * The pattern dropdown has options for all patterns that are defined in the
-    * DrumPatterns class.
-    * 
-    * The reverse pattern checkbox is a pseudo-boolean setting that is used to
-    * reverse the pattern before applying it to the clip.
-    * 
-    * The spacer1 setting is an empty string used for spacing.
+    * Initializes pattern generation settings.
+    * Includes:
+    * - Generate button to trigger pattern creation
+    * - Pattern selection dropdown with predefined patterns
+    * - Pattern direction control (normal/reverse)
     */
    private void initPatternSetting() {
       // Generate button
@@ -225,15 +194,11 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Initializes the move steps setting, which includes the move steps button, a
-    * toggleable button that moves the pattern by one step when clicked.
-    * 
-    * The button has three states: "<<<", "|", and ">>>". The "|"
-    * state is the default, and the other two states are used to move the pattern
-    * backwards or forwards by one step respectively.
-    * 
-    * When the button is clicked, the moveSteps method is called with the
-    * corresponding argument, and the button is reset to the "|" state.
+    * Initializes step movement controls.
+    * Provides functionality to move or rotate the pattern forward or backward.
+    * Supports two modes:
+    * - Move: shifts pattern and adds empty space
+    * - Rotate: shifts pattern in a circular manner
     */
    private void initMoveStepsSetting() {
       moveRotateStepsSetting = (Setting) documentState.getEnumSetting("Move/Rotate", "Move Steps",
@@ -260,13 +225,8 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Initializes the post action setting, which includes an empty string spacer
-    * and the auto resize loop length setting.
-    * 
-    * The auto resize loop length setting is a toggleable setting that allows the
-    * user to automatically resize the clip length after generating a pattern.
-    * 
-    * The spacer is an empty string setting that is used for spacing.
+    * Initializes post-generation action settings.
+    * Currently supports automatic loop length adjustment after pattern generation.
     */
    private void initPostActionSetting() {
       // Empty string for spacing
@@ -279,15 +239,8 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Initializes the clear clip setting, which includes an empty string spacer and
-    * the clear
-    * current clip setting.
-    * 
-    * The clear current clip setting is a button that, when clicked, will clear the
-    * current
-    * clip of all notes.
-    * 
-    * The spacer is an empty string setting that is used for spacing.
+    * Initializes clip clearing functionality.
+    * Provides a button to remove all notes from the current clip.
     */
    private void initClearClipSetting() {
       // Empty string for spacing
@@ -302,12 +255,9 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Initializes the Launcher/Arranger toggle setting, which determines whether
-    * the
-    * drum pattern is generated in the Launcher or Arranger clip.
-    * 
-    * The setting is an EnumValue that can be set to either "Launcher" or
-    * "Arranger".
+    * Initializes the clip destination toggle.
+    * Allows switching between launcher and arranger clip modes,
+    * determining where patterns will be generated.
     */
    private void initToggleLauncherArrangerSetting() {
       // Launcher/Arranger toggle
@@ -318,91 +268,31 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Generates a drum pattern in the currently selected clip.
-    * 
-    * The pattern is determined by the currently selected pattern, note length, and
-    * step size.
-    * 
-    * If the currently selected pattern is "Random", a random pattern is generated.
-    * 
-    * If the auto reverse pattern setting is "On", the pattern is reversed.
-    * 
-    * If the auto resize loop length setting is "On", the loop length is resized to
-    * fit
-    * the generated pattern.
+    * Generates a drum pattern based on current settings.
+    * Uses the selected pattern template, note destination, and timing settings
+    * to create a new pattern in the active clip.
     */
    private void generateDrumPattern() {
       Clip clip = getLauncherOrArrangerAsClip();
-      // if the clip doesn't exist, create it
-      // track.createNewLauncherClip(0, 1);
-
-      String noteLength = ((EnumValue) noteLengthSetting).get(); // Get the current selected value of noteLength
-      String subdivision = ((EnumValue) stepSizSubdivisionSetting).get();
-      String stepSize = ((EnumValue) stepSizSetting).get(); // Get the current selected value of stepSize
-      double duration = Utils.getNoteLengthAsDouble(noteLength, subdivision);
-
-      double patternStepSize = Utils.getNoteLengthAsDouble(stepSize, subdivision);
-      clip.setStepSize(patternStepSize);
-
-      int channel = noteDestSettings.getCurrentChannelAsInt();
-      int noteDestination = noteDestSettings.getCurrentNoteDestinationAsInt();
-
-      clip.clearStepsAtY(channel, noteDestination);
-
-      String selectedPattern = ((EnumValue) patternSelectorSetting).get();
-      int[] pattern = DrumPatterns.getPatternByName(selectedPattern);
-
-      if (((EnumValue) autoReversePatternSetting).get().equals("Reverse")) {
-         // reverse the pattern array using java arrays
-         for (int i = 0; i < pattern.length / 2; i++) {
-            int temp = pattern[i];
-            pattern[i] = pattern[pattern.length - 1 - i];
-            pattern[pattern.length - 1 - i] = temp;
-         }
-
-      }
-
-      // if selected pattern = "random", generate a random pattern
-      if (selectedPattern.equals("Random")) {
-         Random random = new Random();
-         for (int i = 0; i < 16; i++) {
-            pattern[i] = random.nextInt(128);
-            // randomly change the value to 0
-            if (random.nextInt(4) == 0) {
-               pattern[i] = 0;
-            }
-         }
-      }
-
-      for (int i = 0; i < pattern.length; i++) {
-         if (pattern[i] > 0) {
-            clip.setStep(channel, i, noteDestination, pattern[i], duration);
-         }
-      }
-
-      // Post generation actions
-      if (((EnumValue) autoResizeLoopLengthSetting).get().equals("On")) {
-         double beatLength = patternStepSize * pattern.length;
-         ClipUtils.setLoopLength(clip, 0.0, beatLength);
-      }
-
-      clip.selectStepContents(channel, noteDestination, false);
-
-      // application.zoomToFit();
-
+      DrumPatternGenerator.generatePattern(clip, noteLengthSetting, stepSizSubdivisionSetting, 
+            stepSizSetting, noteDestSettings, patternSelectorSetting,
+            autoReversePatternSetting, autoResizeLoopLengthSetting);
    }
 
    /**
-    * Returns the Clip object for either the Arranger Clip Launcher or the Launcher
-    * Clip depending on the value of the "Launcher/Arranger" setting.
+    * Returns the currently active clip based on the launcher/arranger toggle setting.
     * 
-    * @return A Clip object, either the Arranger Clip Launcher or the Launcher
-    *         Clip.
+    * @return The active Clip object (either launcher or arranger clip)
     */
    private Clip getLauncherOrArrangerAsClip() {
       return ClipUtils.getLauncherOrArrangerAsClip(toggleLauncherArrangerSetting, arrangerClip, cursorClip);
    }
 
+   /**
+    * Moves or rotates steps in the current pattern.
+    * 
+    * @param stepOffset The number of steps to move/rotate (positive for forward, negative for backward)
+    */
    public void moveSteps(int stepOffset) {
       Clip clip = getLauncherOrArrangerAsClip();
       int channel = noteDestSettings.getCurrentChannelAsInt();
