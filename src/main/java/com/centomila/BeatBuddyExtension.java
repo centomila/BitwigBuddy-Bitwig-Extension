@@ -476,7 +476,10 @@ public class BeatBuddyExtension extends ControllerExtension {
       int channel = getCurrentChannelAsInt();
       int noteDestination = getCurrentNoteDestinationAsInt();
       double loopLength = clip.getLoopLength().get();
-      int loopLengthInt = (int) (loopLength * 4); // Convert loop length from bars to steps
+      String stepSize = ((EnumValue) stepSizSetting).get();
+      String subdivision = ((EnumValue) stepSizSubdivisionSetting).get();
+      double stepsPerBeat = 1.0 / Utils.getNoteLengthAsDouble(stepSize, subdivision);
+      int loopLengthInt = (int) Math.round(loopLength * stepsPerBeat); // Convert loop length from beats to steps
       // getHost().showPopupNotification("Moving steps by " + stepOffset + " steps" + " Channel: " + channel
       //       + " Note Destination: " + noteDestination + " Loop Length: " + loopLength);
 
@@ -531,8 +534,8 @@ public class BeatBuddyExtension extends ControllerExtension {
          }
       }
 
-      if (stepOffset < 0) { // rotate backwards
-         stepOffset = loopLengthInt - 1;
+      if (stepOffset < 0) { // rotate backwards 
+         stepOffset = (loopLengthInt) - 1;
          for (NoteStep step : stepsToRotate) {
             clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
          }
