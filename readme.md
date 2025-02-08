@@ -2,7 +2,7 @@
 
 # BeatBuddy - Bitwig Studio Extension for Generating Drum Patterns (v0.7.1)
 
-![Screenshot v0.7.1](image.png)
+![Screenshot v0.7.5](image.png)
 
 ## ⚙️ Installation:
 
@@ -19,8 +19,15 @@ BeatBuddy is a Bitwig extension for creating and manipulating single lane MIDI p
 ### Main Interface Controls
 
 #### Move Steps
-- **<<<**: Move steps to the left.
-- **>>>**: Move steps to the right.
+- **<<<**: Move notes on channel 1 to the left by one step.
+- **>>>**: Move notes on channel 1 to the right by one step.
+
+#### Rotate Steps
+- **<<<**: Rotate notes on channel 1 to the left by one step (the leftmost note wraps to the end).
+- **<<<**: Rotate notes on channel 1 to the right by one step (the rightmost note wraps to the beginning).
+
+⚠️ Note: Move and Rotate operations currently only work with notes on MIDI channel 1. This might be related to a bug in the Bitwig Controller API - investigation is ongoing.
+
 
 ---
 
@@ -44,7 +51,7 @@ BeatBuddy is a Bitwig extension for creating and manipulating single lane MIDI p
 ---
 
 #### Note Octave
-- Buttons to set the octave (-2 to 7).
+- Buttons to set the octave (-2 to 8).
 
 ---
 
@@ -75,8 +82,8 @@ BeatBuddy is a Bitwig extension for creating and manipulating single lane MIDI p
 ---
 
 #### Auto Resize Loop Length
-- **Off**: Disable automatic resizing of the loop length.
-- **On**: Enable automatic resizing of the loop length.
+- **Off**: Disable automatic resizing of the loop length after pattern generation.
+- **On**: Enable automatic resizing of the loop length after pattern generation.
 
 ---
 

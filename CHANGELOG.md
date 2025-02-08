@@ -1,5 +1,13 @@
 # 📋 Changelog:
 
+**0.7.5**
+- [X] Added rotate patterns
+  - New buttons to rotate notes left or right
+  - Unlike move steps, rotating wraps the notes around (the leftmost note moves to the rightmost position or vice versa)
+  - Useful for creating variations of existing patterns
+- ⚠️ Note: Move and Rotate operations currently only work with notes on MIDI channel 1. This might be related to a bug in the Bitwig Controller API - investigation is ongoing.
+
+
 **0.7.1**  
 - [X] The single line buttons for moving the pattern by one step were causing problems. Now, there are two separate buttons: <<< and >>>.  
   - This fixes the problem of the broken undo action.
