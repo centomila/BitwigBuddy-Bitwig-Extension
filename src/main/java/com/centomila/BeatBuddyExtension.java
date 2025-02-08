@@ -82,19 +82,7 @@ public class BeatBuddyExtension extends ControllerExtension {
       arrangerClip.getPlayStart().markInterested();
       arrangerClip.getPlayStop().markInterested();
 
-      // Inside your extension's initialization method
-      Preferences preferences = getHost().getPreferences();
-      Setting filePathSetting = (Setting) preferences.getStringSetting("Test File Path", "File Settings", 1024,
-            "C:\\Users\\Bach\\OneDrive\\Documenti\\Bitwig Studio\\Extensions\\test.txt");
-
-      Signal testButton = documentState.getSignalSetting("Test", "Generate", "Test");
-      testButton.addSignalObserver(() -> {
-         String path = ((StringValue) filePathSetting).get();
-         getHost().println("File path: " + path);
-         ReadFile readFile = new ReadFile(path);
-         String fileContent = readFile.readFileAsString();
-         getHost().println("File content: " + fileContent);
-      });
+      // initTestButton();
 
       initMoveStepsSetting();
 
@@ -114,6 +102,22 @@ public class BeatBuddyExtension extends ControllerExtension {
       // Show a notification to confirm initialization
       host.showPopupNotification("BeatBuddy Initialized");
 
+   }
+
+   private void initTestButton() {
+      // Inside your extension's initialization method
+      Preferences preferences = getHost().getPreferences();
+      Setting filePathSetting = (Setting) preferences.getStringSetting("Test File Path", "File Settings", 1024,
+            "C:\\Users\\Bach\\OneDrive\\Documenti\\Bitwig Studio\\Extensions\\test.txt");
+
+      Signal testButton = documentState.getSignalSetting("Test", "Generate", "Test");
+      testButton.addSignalObserver(() -> {
+         String path = ((StringValue) filePathSetting).get();
+         getHost().println("File path: " + path);
+         ReadFile readFile = new ReadFile(path);
+         String fileContent = readFile.readFileAsString();
+         getHost().println("File content: " + fileContent);
+      });
    }
 
    /**
