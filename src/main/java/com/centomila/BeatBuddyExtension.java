@@ -53,8 +53,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting autoReversePatternSetting;
    private Setting moveStepsSetting;
    private Setting moveRotateStepsSetting;
-   private String currentNoteAsString;
-   private int currentOctaveAsInt;
+   private NoteDestinationSettings noteDestSettings;
 
    private Setting spacer1;
    private Setting spacer2;
@@ -154,12 +153,6 @@ public class BeatBuddyExtension extends ControllerExtension {
             NOTEDESTINATION_OPTIONS,
             NOTEDESTINATION_OPTIONS[0]);
 
-      ((EnumValue) noteDestinationSetting).addValueObserver(newValue -> {
-         currentNoteAsString = newValue;
-         getCurrentNoteDestinationAsInt();
-         notifyNoteDestination();
-      });
-
       // Note OCT destination dropdown
       String[] OCTAVEDESTINATION_OPTIONS = Arrays.stream(Utils.NOTE_OCTAVES)
             .mapToObj(String::valueOf)
@@ -168,14 +161,19 @@ public class BeatBuddyExtension extends ControllerExtension {
             OCTAVEDESTINATION_OPTIONS,
             OCTAVEDESTINATION_OPTIONS[3]);
 
-      ((EnumValue) noteOctaveSetting).addValueObserver(newValue -> {
-         currentOctaveAsInt = Integer.parseInt(newValue);
-         getCurrentNoteDestinationAsInt();
-         notifyNoteDestination();
-      });
-
       noteChannelSetting = (Setting) documentState.getNumberSetting("Note Channel", "Note Destination", 1, 16, 1,
             "Channel MIDI", 1);
+
+      // Initialize NoteDestinationSettings
+      noteDestSettings = new NoteDestinationSettings(getHost(), noteChannelSetting, NOTEDESTINATION_OPTIONS[0], 3);
+
+      ((EnumValue) noteDestinationSetting).addValueObserver(newValue -> {
+         noteDestSettings.setCurrentNote(newValue);
+      });
+
+      ((EnumValue) noteOctaveSetting).addValueObserver(newValue -> {
+         noteDestSettings.setCurrentOctave(Integer.parseInt(newValue));
+      });
 
       // Empty string for spacing
       spacer2 = (Setting) documentState.getStringSetting("----", "Clip", 0,
@@ -320,44 +318,6 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Returns the MIDI note value of the currently selected note destination.
-    *
-    * The note destination is determined based on user settings, which can be one
-    * of the following:
-    * "Kick", "Snare", "Hi-Hat Closed", "Hi-Hat Open", "Cymbal", "Tom 1", "Tom 2",
-    * "Tom 3", "Tom 4",
-    * "Percussion 1", "Percussion 2", "Percussion 3", or "Percussion 4".
-    * 
-    * If an unrecognized note type is selected, a notification is displayed.
-    *
-    * @return The MIDI note value for the selected note destination.
-    */
-
-   private int getCurrentNoteDestinationAsInt() {
-      int currentValueInt = Utils.getMIDINoteNumberFromStringAndOctave(currentNoteAsString, currentOctaveAsInt);
-      return currentValueInt;
-   }
-
-   /**
-    * Notifies the user with a popup notification of the currently selected note
-    * destination. The notification is in the format "Note Destination: <note
-    * name><octave>".
-    */
-   private void notifyNoteDestination() {
-      getHost().showPopupNotification("Note Destination: " + currentNoteAsString + currentOctaveAsInt);
-   }
-
-   /**
-    * Returns the currently selected channel as an integer, 0-indexed.
-    *
-    * @return The currently selected channel as an integer, 0-indexed.
-    */
-   private int getCurrentChannelAsInt() {
-      int channel = (int) Math.round(((SettableRangedValue) noteChannelSetting).getRaw());
-      return channel - 1;
-   }
-
-   /**
     * Generates a drum pattern in the currently selected clip.
     * 
     * The pattern is determined by the currently selected pattern, note length, and
@@ -384,8 +344,8 @@ public class BeatBuddyExtension extends ControllerExtension {
       double patternStepSize = Utils.getNoteLengthAsDouble(stepSize, subdivision);
       clip.setStepSize(patternStepSize);
 
-      int channel = getCurrentChannelAsInt();
-      int noteDestination = getCurrentNoteDestinationAsInt();
+      int channel = noteDestSettings.getCurrentChannelAsInt();
+      int noteDestination = noteDestSettings.getCurrentNoteDestinationAsInt();
 
       clip.clearStepsAtY(channel, noteDestination);
 
@@ -457,8 +417,8 @@ public class BeatBuddyExtension extends ControllerExtension {
     */
    public void moveSteps(int stepOffset) {
       Clip clip = getLauncherOrArrangerAsClip();
-      int channel = getCurrentChannelAsInt();
-      int noteDestination = getCurrentNoteDestinationAsInt();
+      int channel = noteDestSettings.getCurrentChannelAsInt();
+      int noteDestination = noteDestSettings.getCurrentNoteDestinationAsInt();
       double loopLength = clip.getLoopLength().get();
       String stepSize = ((EnumValue) stepSizSetting).get();
       String subdivision = ((EnumValue) stepSizSubdivisionSetting).get();
