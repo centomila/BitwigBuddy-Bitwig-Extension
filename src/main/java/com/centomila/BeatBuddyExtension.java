@@ -477,8 +477,8 @@ public class BeatBuddyExtension extends ControllerExtension {
       int noteDestination = getCurrentNoteDestinationAsInt();
       double loopLength = clip.getLoopLength().get();
       int loopLengthInt = (int) (loopLength * 4); // Convert loop length from bars to steps
-      getHost().showPopupNotification("Moving steps by " + stepOffset + " steps" + " Channel: " + channel
-            + " Note Destination: " + noteDestination + " Loop Length: " + loopLength);
+      // getHost().showPopupNotification("Moving steps by " + stepOffset + " steps" + " Channel: " + channel
+      //       + " Note Destination: " + noteDestination + " Loop Length: " + loopLength);
 
       List<NoteStep> stepsToMove = new ArrayList<>();
       for (int i = 0; i < 128; i++) {
@@ -487,80 +487,63 @@ public class BeatBuddyExtension extends ControllerExtension {
             stepsToMove.add(step);
          }
       }
-      List<NoteStep> stepsToRotate = new ArrayList<>();
-      for (int i = 0; i < 128; i++) {
-         NoteStep step = clip.getStep(channel, i, noteDestination);
-         if (step != null && step.duration() > 0.0) {
-            stepsToRotate.add(step);
-         }
-      }
 
       if (((EnumValue) moveRotateStepsSetting).get().equals("Rotate")) {
-         // void moveStep(int channel,
-         // int x,
-         // int y,
-         // int dx,
-         // int dy)
-         // Original move behavior
-         if (stepOffset > 0) {
-            stepsToRotate.sort(Comparator.comparingInt(NoteStep::x).reversed());
-         } else {
-            stepsToRotate.sort(Comparator.comparingInt(NoteStep::x));
-         }
-
-         for (NoteStep step : stepsToRotate) {
-            if (stepOffset < 0) { // rotate backwards
-               // consider that you can never put a step at position -1 and you can't place a
-               // step where a step is already present. Use the space after the loop to
-               // temporarily store the step
-               // 1) store the first step in the first available space after the loop. Use
-               // moveStep and never use setStep
-               NoteStep firstStep = stepsToRotate.get(0);
-               clip.moveStep(channel, firstStep.x(), firstStep.y(), loopLengthInt, 0);
-
-            } else { // rotate forwards (advance then move the last step at position 0)
-               clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
-            }
-         }
-
-         for (NoteStep step : stepsToRotate) {
-            if (stepOffset < 0) { // rotate backwards
-               // 2) move the second step to the first step position and so on
-               clip.moveStep(channel, step.x() + -stepOffset, step.y(), stepOffset, 0);
-
-          
-
-            } else { // rotate forwards (advance then move the last step at position 0)
-               // Check if the step is after the end of the loop
-               if (step.x() + stepOffset >= loopLengthInt) {
-                  clip.moveStep(channel, step.x() + stepOffset, step.y(), -loopLengthInt + 1 - 1, 0);
-               }
-            }
-         }
-
+         rotateSteps(stepsToMove, stepOffset, loopLengthInt, channel);
       } else {
+         moveSteps(stepsToMove, stepOffset, channel);
+      }
+   }
 
-         // void moveStep(int channel,
-         // int x,
-         // int y,
-         // int dx,
-         // int dy)
-         // Original move behavior
-         if (stepOffset > 0) {
-            stepsToMove.sort(Comparator.comparingInt(NoteStep::x).reversed());
+   private void moveSteps(List<NoteStep> stepsToMove, int stepOffset, int channel) {
+      Clip clip = getLauncherOrArrangerAsClip();
+
+      if (stepOffset > 0) {
+         stepsToMove.sort(Comparator.comparingInt(NoteStep::x).reversed());
+      } else {
+         stepsToMove.sort(Comparator.comparingInt(NoteStep::x));
+      }
+
+      for (NoteStep step : stepsToMove) {
+         if (step.x() == 0 && stepOffset < 0) {
+            stepOffset = 0;
+            getHost().showPopupNotification("Cannot move steps before the start of the clip");
          } else {
-            stepsToMove.sort(Comparator.comparingInt(NoteStep::x));
+            clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
+         }
+      }
+   }
+
+   private void rotateSteps(List<NoteStep> stepsToRotate, int stepOffset, int loopLengthInt, int channel) {
+      Clip clip = getLauncherOrArrangerAsClip();
+
+      stepsToRotate.sort(Comparator.comparingInt(NoteStep::x).reversed());
+
+      if (stepOffset > 0) { // rotate fowards
+         for (NoteStep step : stepsToRotate) {
+            clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
          }
 
-         for (NoteStep step : stepsToMove) {
-            if (step.x() == 0 && stepOffset < 0) {
-               stepOffset = 0;
-               getHost().showPopupNotification("Cannot move steps before the start of the clip");
-            } else {
-               clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
+         for (NoteStep step : stepsToRotate) {
+            if (step.x() + stepOffset >= loopLengthInt) {
+               clip.moveStep(channel, step.x() + stepOffset, step.y(), -loopLengthInt + 1 - 1, 0);
             }
          }
       }
+
+      if (stepOffset < 0) { // rotate backwards
+         stepOffset = loopLengthInt - 1;
+         for (NoteStep step : stepsToRotate) {
+            clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
+         }
+
+         for (NoteStep step : stepsToRotate) {
+            if (step.x() + stepOffset >= loopLengthInt) {
+               clip.moveStep(channel, step.x() + stepOffset, step.y(), -loopLengthInt + 1 - 1, 0);
+            }
+         }
+      }
+
    }
 
    /**
