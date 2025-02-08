@@ -37,7 +37,7 @@ public class ClipUtils {
      * Moves steps in a clip by the given offset. The order of movement depends on the
      * direction to prevent overlapping.
      */
-    public static void moveSteps(Clip clip, List<NoteStep> stepsToMove, int stepOffset, int channel, ControllerHost host) {
+    public static void moveSteps(Clip clip, List<NoteStep> stepsToMove, int stepOffset, int channel) {
         if (stepOffset > 0) {
             stepsToMove.sort(Comparator.comparingInt(NoteStep::x).reversed());
         } else {
@@ -47,7 +47,7 @@ public class ClipUtils {
         for (NoteStep step : stepsToMove) {
             if (step.x() == 0 && stepOffset < 0) {
                 stepOffset = 0;
-                host.showPopupNotification("Cannot move steps before the start of the clip");
+                PopupUtils.showPopup("Cannot move steps before the start of the clip");
             } else {
                 clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
             }

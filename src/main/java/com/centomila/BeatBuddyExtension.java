@@ -67,6 +67,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    @Override
    public void init() {
       final ControllerHost host = getHost();
+      PopupUtils.initialize(host);
       // Initialize API objects
       application = host.createApplication();
       cursorClip = host.createLauncherCursorClip((16 * 8), 128);
@@ -436,7 +437,7 @@ public class BeatBuddyExtension extends ControllerExtension {
       if (((EnumValue) moveRotateStepsSetting).get().equals("Rotate")) {
          ClipUtils.rotateSteps(clip, stepsToMove, stepOffset, loopLengthInt, channel);
       } else {
-         ClipUtils.moveSteps(clip, stepsToMove, stepOffset, channel, getHost());
+         ClipUtils.moveSteps(clip, stepsToMove, stepOffset, channel);
       }
    }
 
