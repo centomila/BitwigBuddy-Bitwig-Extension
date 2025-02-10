@@ -42,6 +42,8 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting spacer3;
    private Setting spacer4;
 
+   private BeatBuddyPreferences preferences;
+
    protected BeatBuddyExtension(final BeatBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
    }
@@ -49,15 +51,13 @@ public class BeatBuddyExtension extends ControllerExtension {
    @Override
    public void init() {
       final ControllerHost host = getHost();
+      preferences = new BeatBuddyPreferences(host);
       PopupUtils.initialize(host);
       // Initialize API objects
       application = host.createApplication();
       cursorClip = host.createLauncherCursorClip((16 * 8), 128);
       arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
       documentState = host.getDocumentState();
-      
-      // Initialize test file reader
-      // new TestFileReader(host, documentState);
 
       cursorClip.getLoopLength().markInterested();
       cursorClip.getLoopStart().markInterested();
