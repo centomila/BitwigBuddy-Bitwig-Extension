@@ -24,6 +24,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Clip arrangerClip;
 
    private DocumentState documentState;
+   private Setting patternTypeSetting;
    private Setting patternSelectorSetting;
    private Setting noteLengthSetting; // How long each note should be
    private Setting stepSizSetting;
@@ -172,6 +173,18 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       generateButton.addSignalObserver(() -> {
          generateDrumPattern();
+      });
+
+      // Pattern type selector
+      patternTypeSetting = (Setting) documentState.getEnumSetting("Pattern Type", "Generate",
+            new String[] { "Presets", "Random", "Custom" }, "Presets");
+
+      ((EnumValue) patternTypeSetting).addValueObserver(newValue -> {
+         if (newValue.equals("Presets")) {
+            patternSelectorSetting.enable();
+         } else {
+            patternSelectorSetting.disable();
+         }
       });
 
       // Define pattern settings
