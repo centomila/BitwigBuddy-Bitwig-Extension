@@ -15,6 +15,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class BeatBuddyPreferences {
     private static final String PRESETS_PATH_KEY = "presetsPath";
@@ -164,33 +166,67 @@ public class BeatBuddyPreferences {
         return folder != null && folder.exists() && folder.isDirectory();
     }
 
+    private File getValidInitialDirectory() {
+        // Try current preset path first
+        String currentPathStr = presetsPath.get();
+        if (currentPathStr != null) {
+            File currentPath = new File(currentPathStr);
+            if (isValidPresetsFolder(currentPath)) {
+                return currentPath;
+            }
+        }
+
+        // Try Bitwig Extensions folder
+        String userHome = System.getProperty("user.home");
+        File extensionsFolder = Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions").toFile();
+        if (isValidPresetsFolder(extensionsFolder)) {
+            host.println("Using Bitwig Extensions folder: " + extensionsFolder);
+            return extensionsFolder;
+        }
+
+        // Fallback to user home
+        File homeFolder = new File(userHome);
+        host.println("Using home folder: " + homeFolder);
+        return homeFolder;
+    }
+
     private void browseForPresetsFolder() {
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<File> chosenFile = new AtomicReference<>();
+        AtomicReference<String> errorMessage = new AtomicReference<>();
+
         try {
             initializeJavaFX();
-
-            CountDownLatch latch = new CountDownLatch(1);
-            AtomicReference<File> chosenFile = new AtomicReference<>();
 
             Platform.runLater(() -> {
                 try {
                     DirectoryChooser directoryChooser = new DirectoryChooser();
                     directoryChooser.setTitle("Select BeatBuddy Presets Folder");
-
-                    // Only set initial directory if current path is valid
-                    File currentPath = new File(presetsPath.get());
-                    if (isValidPresetsFolder(currentPath)) {
-                        directoryChooser.setInitialDirectory(currentPath);
+                    File initialDir = getValidInitialDirectory();
+                    if (initialDir != null) {
+                        directoryChooser.setInitialDirectory(initialDir);
                     }
 
                     Stage stage = new Stage();
                     File selectedDirectory = directoryChooser.showDialog(stage);
                     chosenFile.set(selectedDirectory);
+                } catch (Exception e) {
+                    errorMessage.set(e.getMessage());
+                    host.errorln("Error in directory chooser: " + e.getMessage());
                 } finally {
-                    latch.countDown();
+                    latch.countDown(); // Ensure latch is always counted down
                 }
             });
 
-            latch.await();
+            // Wait with timeout
+            if (!latch.await(10, TimeUnit.SECONDS)) {
+                throw new TimeoutException("Folder selection dialog timed out");
+            }
+
+            // Check if there was an error
+            if (errorMessage.get() != null) {
+                throw new Exception("Directory chooser error: " + errorMessage.get());
+            }
 
             File selectedDirectory = chosenFile.get();
             if (selectedDirectory != null) {
@@ -198,8 +234,7 @@ public class BeatBuddyPreferences {
                     setPresetsPath(selectedDirectory.getAbsolutePath());
                     host.showPopupNotification("Presets folder updated to: " + selectedDirectory.getAbsolutePath());
                 } else {
-                    host.showPopupNotification(
-                            "Invalid presets folder selected: " + selectedDirectory.getAbsolutePath());
+                    host.showPopupNotification("Invalid presets folder selected: " + selectedDirectory.getAbsolutePath());
                 }
             }
 
