@@ -39,7 +39,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting toggleLauncherArrangerSetting;
    private Setting autoResizeLoopLengthSetting;
    private Setting reversePatternSetting;
-   private Setting moveRotateStepsSetting;
+   private MoveStepsHandler moveStepsHandler;
    private NoteDestinationSettings noteDestSettings;
 
    private Setting spacer1;
@@ -73,7 +73,8 @@ public class BeatBuddyExtension extends ControllerExtension {
       arrangerClip.getPlayStart().markInterested();
       arrangerClip.getPlayStop().markInterested();
 
-      initMoveStepsSetting();
+      moveStepsHandler = new MoveStepsHandler(this);
+      moveStepsHandler.init(documentState);
 
       initPatternSetting();
 
@@ -242,37 +243,6 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Initializes step movement controls.
-    * Provides functionality to move or rotate the pattern forward or backward.
-    * Supports two modes:
-    * - Move: shifts pattern and adds empty space
-    * - Rotate: shifts pattern in a circular manner
-    */
-   private void initMoveStepsSetting() {
-      moveRotateStepsSetting = (Setting) documentState.getEnumSetting("Move/Rotate", "Move Steps",
-            new String[] { "Move", "Rotate" }, "Move");
-
-      Signal moveFwd = documentState.getSignalSetting("Move Steps Forward", "Move Steps",
-            ">>>");
-      moveFwd.addSignalObserver(() -> {
-         moveSteps(1);
-
-      });
-
-      Signal moveBwd = documentState.getSignalSetting("Move Steps Backward", "Move Steps",
-            "<<<");
-      moveBwd.addSignalObserver(() -> {
-         moveSteps(-1);
-
-      });
-
-      // Empty string for spacing
-      Setting spacerMoverSetting = (Setting) documentState.getStringSetting("----", "Move Steps", 0,
-            "---------------------------------------------------");
-      spacerMoverSetting.disable();
-   }
-
-   /**
     * Initializes post-generation action settings.
     * Currently supports automatic loop length adjustment after pattern generation.
     */
@@ -333,25 +303,8 @@ public class BeatBuddyExtension extends ControllerExtension {
     * 
     * @return The active Clip object (either launcher or arranger clip)
     */
-   private Clip getLauncherOrArrangerAsClip() {
+   public Clip getLauncherOrArrangerAsClip() {
       return ClipUtils.getLauncherOrArrangerAsClip(toggleLauncherArrangerSetting, arrangerClip, cursorClip);
-   }
-
-   /**
-    * Moves or rotates steps in the current pattern.
-    * 
-    * @param stepOffset The number of steps to move/rotate (positive for forward,
-    *                   negative for backward)
-    */
-   public void moveSteps(int stepOffset) {
-      Clip clip = getLauncherOrArrangerAsClip();
-      int channel = noteDestSettings.getCurrentChannelAsInt();
-      int noteDestination = noteDestSettings.getCurrentNoteDestinationAsInt();
-      String stepSize = ((EnumValue) stepSizSetting).get();
-      String subdivision = ((EnumValue) stepSizSubdivisionSetting).get();
-      boolean isRotate = ((EnumValue) moveRotateStepsSetting).get().equals("Rotate");
-
-      ClipUtils.handleStepMovement(clip, channel, noteDestination, stepSize, subdivision, stepOffset, isRotate);
    }
 
    @Override
@@ -363,5 +316,189 @@ public class BeatBuddyExtension extends ControllerExtension {
    @Override
    public void flush() {
       // Update logic if necessary
+   }
+
+   public Application getApplication() {
+      return application;
+   }
+
+   public void setApplication(Application application) {
+      this.application = application;
+   }
+
+   public Clip getCursorClip() {
+      return cursorClip;
+   }
+
+   public void setCursorClip(Clip cursorClip) {
+      this.cursorClip = cursorClip;
+   }
+
+   public Clip getArrangerClip() {
+      return arrangerClip;
+   }
+
+   public void setArrangerClip(Clip arrangerClip) {
+      this.arrangerClip = arrangerClip;
+   }
+
+   public DocumentState getDocumentState() {
+      return documentState;
+   }
+
+   public void setDocumentState(DocumentState documentState) {
+      this.documentState = documentState;
+   }
+
+   public Setting getPatternTypeSetting() {
+      return patternTypeSetting;
+   }
+
+   public void setPatternTypeSetting(Setting patternTypeSetting) {
+      this.patternTypeSetting = patternTypeSetting;
+   }
+
+   public Setting getPatternSelectorSetting() {
+      return patternSelectorSetting;
+   }
+
+   public void setPatternSelectorSetting(Setting patternSelectorSetting) {
+      this.patternSelectorSetting = patternSelectorSetting;
+   }
+
+   public Setting getCustomPresetSetting() {
+      return customPresetSetting;
+   }
+
+   public void setCustomPresetSetting(Setting customPresetSetting) {
+      this.customPresetSetting = customPresetSetting;
+   }
+
+   public Setting getNoteLengthSetting() {
+      return noteLengthSetting;
+   }
+
+   public void setNoteLengthSetting(Setting noteLengthSetting) {
+      this.noteLengthSetting = noteLengthSetting;
+   }
+
+   public Setting getStepSizSetting() {
+      return stepSizSetting;
+   }
+
+   public void setStepSizSetting(Setting stepSizSetting) {
+      this.stepSizSetting = stepSizSetting;
+   }
+
+   public Setting getStepSizSubdivisionSetting() {
+      return stepSizSubdivisionSetting;
+   }
+
+   public void setStepSizSubdivisionSetting(Setting stepSizSubdivisionSetting) {
+      this.stepSizSubdivisionSetting = stepSizSubdivisionSetting;
+   }
+
+   public Setting getNoteDestinationSetting() {
+      return noteDestinationSetting;
+   }
+
+   public void setNoteDestinationSetting(Setting noteDestinationSetting) {
+      this.noteDestinationSetting = noteDestinationSetting;
+   }
+
+   public Setting getNoteOctaveSetting() {
+      return noteOctaveSetting;
+   }
+
+   public void setNoteOctaveSetting(Setting noteOctaveSetting) {
+      this.noteOctaveSetting = noteOctaveSetting;
+   }
+
+   public Setting getNoteChannelSetting() {
+      return noteChannelSetting;
+   }
+
+   public void setNoteChannelSetting(Setting noteChannelSetting) {
+      this.noteChannelSetting = noteChannelSetting;
+   }
+
+   public Setting getToggleLauncherArrangerSetting() {
+      return toggleLauncherArrangerSetting;
+   }
+
+   public void setToggleLauncherArrangerSetting(Setting toggleLauncherArrangerSetting) {
+      this.toggleLauncherArrangerSetting = toggleLauncherArrangerSetting;
+   }
+
+   public Setting getAutoResizeLoopLengthSetting() {
+      return autoResizeLoopLengthSetting;
+   }
+
+   public void setAutoResizeLoopLengthSetting(Setting autoResizeLoopLengthSetting) {
+      this.autoResizeLoopLengthSetting = autoResizeLoopLengthSetting;
+   }
+
+   public Setting getReversePatternSetting() {
+      return reversePatternSetting;
+   }
+
+   public void setReversePatternSetting(Setting reversePatternSetting) {
+      this.reversePatternSetting = reversePatternSetting;
+   }
+
+   public MoveStepsHandler getMoveStepsHandler() {
+      return moveStepsHandler;
+   }
+
+   public void setMoveStepsHandler(MoveStepsHandler moveStepsHandler) {
+      this.moveStepsHandler = moveStepsHandler;
+   }
+
+   public NoteDestinationSettings getNoteDestSettings() {
+      return noteDestSettings;
+   }
+
+   public void setNoteDestSettings(NoteDestinationSettings noteDestSettings) {
+      this.noteDestSettings = noteDestSettings;
+   }
+
+   public Setting getSpacer1() {
+      return spacer1;
+   }
+
+   public void setSpacer1(Setting spacer1) {
+      this.spacer1 = spacer1;
+   }
+
+   public Setting getSpacer2() {
+      return spacer2;
+   }
+
+   public void setSpacer2(Setting spacer2) {
+      this.spacer2 = spacer2;
+   }
+
+   public Setting getSpacer3() {
+      return spacer3;
+   }
+
+   public void setSpacer3(Setting spacer3) {
+      this.spacer3 = spacer3;
+   }
+
+   public Setting getSpacer4() {
+      return spacer4;
+   }
+
+   public void setSpacer4(Setting spacer4) {
+      this.spacer4 = spacer4;
+   }
+
+   public BeatBuddyPreferences getPreferences() {
+      return preferences;
+   }
+
+   public void setPreferences(BeatBuddyPreferences preferences) {
+      this.preferences = preferences;
    }
 }
