@@ -84,10 +84,10 @@
   </repositories>
   <properties>
     <bitwig.extension.directory.onedrive.ita>${env.USERPROFILE}/OneDrive/Documenti/Bitwig Studio/Extensions</bitwig.extension.directory.onedrive.ita>
-    <maven.compiler.target>11</maven.compiler.target>
-    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javafx.version>17.0.2</javafx.version>
+    <javafx.version>23.0.2</javafx.version>
     <bitwig.extension.directory>${env.USERPROFILE}/Documents/Bitwig Studio/Extensions</bitwig.extension.directory>
   </properties>
 </project>
