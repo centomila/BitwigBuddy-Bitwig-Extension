@@ -14,8 +14,10 @@ import java.util.Arrays;
 
 /**
  * BeatBuddy Extension for Bitwig Studio.
- * This extension provides functionality for generating and manipulating drum patterns
- * in both launcher and arranger clips. It features pattern generation, step movement,
+ * This extension provides functionality for generating and manipulating drum
+ * patterns
+ * in both launcher and arranger clips. It features pattern generation, step
+ * movement,
  * and various clip manipulation tools.
  */
 public class BeatBuddyExtension extends ControllerExtension {
@@ -26,6 +28,8 @@ public class BeatBuddyExtension extends ControllerExtension {
    private DocumentState documentState;
    public Setting patternTypeSetting;
    private Setting patternSelectorSetting;
+   // New field for the custom presets dropdown
+   private Setting customPresetSetting;
    private Setting noteLengthSetting; // How long each note should be
    private Setting stepSizSetting;
    private Setting stepSizSubdivisionSetting;
@@ -34,7 +38,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting noteChannelSetting;
    private Setting toggleLauncherArrangerSetting;
    private Setting autoResizeLoopLengthSetting;
-   private Setting autoReversePatternSetting;
+   private Setting reversePatternSetting;
    private Setting moveRotateStepsSetting;
    private NoteDestinationSettings noteDestSettings;
 
@@ -118,8 +122,10 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    /**
-    * Initializes note destination settings including note pitch, octave, and MIDI channel.
-    * These settings determine where the generated notes will be placed in terms of:
+    * Initializes note destination settings including note pitch, octave, and MIDI
+    * channel.
+    * These settings determine where the generated notes will be placed in terms
+    * of:
     * - Note pitch (C, C#, D, etc.)
     * - Octave (-2 to 8)
     * - MIDI channel (1-16)
@@ -180,10 +186,31 @@ public class BeatBuddyExtension extends ControllerExtension {
             new String[] { "Presets", "Random", "Custom" }, "Presets");
 
       ((EnumValue) patternTypeSetting).addValueObserver(newValue -> {
-         if (newValue.equals("Presets")) {
-            patternSelectorSetting.enable();
-         } else {
-            patternSelectorSetting.disable();
+         switch (newValue) {
+            case "Presets":
+               patternSelectorSetting.enable();
+               patternSelectorSetting.show();
+               customPresetSetting.disable(); // Disable custom presets
+               customPresetSetting.hide(); // Disable custom presets
+               reversePatternSetting.enable();
+               reversePatternSetting.show();
+               break;
+            case "Custom":
+               customPresetSetting.enable();
+               customPresetSetting.show();
+               patternSelectorSetting.disable(); // Disable pattern selector
+               patternSelectorSetting.hide(); // Disable pattern selector
+               reversePatternSetting.enable();
+               reversePatternSetting.show();
+               break;
+            case "Random":
+               patternSelectorSetting.disable(); // Disable pattern selector
+               patternSelectorSetting.hide(); // Disable pattern selector
+               customPresetSetting.disable(); // Disable custom presets
+               customPresetSetting.hide(); // Disable custom presets
+               reversePatternSetting.disable(); // Disable reverse pattern
+               reversePatternSetting.hide(); // Disable reverse pattern
+               break;
          }
       });
 
@@ -197,7 +224,15 @@ public class BeatBuddyExtension extends ControllerExtension {
          PopupUtils.showPopup(newValue.toString());
       });
 
-      autoReversePatternSetting = (Setting) documentState.getEnumSetting("Reverse Pattern", "Generate",
+      // New Custom Presets dropdown (for Custom)
+      customPresetSetting = (Setting) documentState.getEnumSetting("Custom Presets", "Generate",
+            new String[] { "TO BE IMPLEMENTED" }, "TO BE IMPLEMENTED");
+      customPresetSetting.disable();
+      ((EnumValue) customPresetSetting).addValueObserver(newValue -> {
+         PopupUtils.showPopup("Custom Preset selected: " + newValue.toString());
+      });
+
+      reversePatternSetting = (Setting) documentState.getEnumSetting("Reverse Pattern", "Generate",
             new String[] { "Normal", "Reverse" }, "Normal");
 
       // Empty string for spacing
@@ -287,13 +322,14 @@ public class BeatBuddyExtension extends ControllerExtension {
     */
    private void generateDrumPattern() {
       Clip clip = getLauncherOrArrangerAsClip();
-      DrumPatternGenerator.generatePattern(clip, noteLengthSetting, stepSizSubdivisionSetting, 
+      DrumPatternGenerator.generatePattern(clip, noteLengthSetting, stepSizSubdivisionSetting,
             stepSizSetting, noteDestSettings, patternSelectorSetting, patternTypeSetting,
-            autoReversePatternSetting, autoResizeLoopLengthSetting);
+            reversePatternSetting, autoResizeLoopLengthSetting);
    }
 
    /**
-    * Returns the currently active clip based on the launcher/arranger toggle setting.
+    * Returns the currently active clip based on the launcher/arranger toggle
+    * setting.
     * 
     * @return The active Clip object (either launcher or arranger clip)
     */
@@ -304,7 +340,8 @@ public class BeatBuddyExtension extends ControllerExtension {
    /**
     * Moves or rotates steps in the current pattern.
     * 
-    * @param stepOffset The number of steps to move/rotate (positive for forward, negative for backward)
+    * @param stepOffset The number of steps to move/rotate (positive for forward,
+    *                   negative for backward)
     */
    public void moveSteps(int stepOffset) {
       Clip clip = getLauncherOrArrangerAsClip();
