@@ -79,7 +79,8 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       initPatternSetting();
 
-      initNoteDestinationSetting();
+      // Call relocated initNoteDestinationSetting from NoteDestinationInitializer
+      NoteDestinationInitializer.initNoteDestinationSetting(this);
 
       StepSizeSettings.initStepSizeSetting(documentState, this);
 
@@ -93,51 +94,6 @@ public class BeatBuddyExtension extends ControllerExtension {
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BeatBuddy Initialized");
 
-   }
-
-   /**
-    * Initializes note destination settings including note pitch, octave, and MIDI
-    * channel.
-    * These settings determine where the generated notes will be placed in terms
-    * of:
-    * - Note pitch (C, C#, D, etc.)
-    * - Octave (-2 to 8)
-    * - MIDI channel (1-16)
-    */
-   private void initNoteDestinationSetting() {
-      // Note destination dropdown
-      String[] NOTEDESTINATION_OPTIONS = Utils.NOTE_NAMES;
-      noteDestinationSetting = (Setting) documentState.getEnumSetting("Note Destination", "Note Destination",
-            NOTEDESTINATION_OPTIONS,
-            NOTEDESTINATION_OPTIONS[0]);
-
-      // Note OCT destination dropdown
-      String[] OCTAVEDESTINATION_OPTIONS = Arrays.stream(Utils.NOTE_OCTAVES)
-            .mapToObj(String::valueOf)
-            .toArray(String[]::new);
-      noteOctaveSetting = (Setting) documentState.getEnumSetting("Note Octave", "Note Destination",
-            OCTAVEDESTINATION_OPTIONS,
-            OCTAVEDESTINATION_OPTIONS[3]);
-
-      noteChannelSetting = (Setting) documentState.getNumberSetting("Note Channel", "Note Destination", 1, 16, 1,
-            "Channel MIDI", 1);
-
-      // Initialize NoteDestinationSettings
-      noteDestSettings = new NoteDestinationSettings(getHost(), noteChannelSetting, NOTEDESTINATION_OPTIONS[0], 3);
-
-      ((EnumValue) noteDestinationSetting).addValueObserver(newValue -> {
-         noteDestSettings.setCurrentNote(newValue);
-      });
-
-      ((EnumValue) noteOctaveSetting).addValueObserver(newValue -> {
-         noteDestSettings.setCurrentOctave(Integer.parseInt(newValue));
-      });
-
-      // Empty string for spacing
-      spacer2 = (Setting) documentState.getStringSetting("----", "Clip", 0,
-            "---------------------------------------------------");
-      spacer2.disable();
-      // Pattern step size
    }
 
    /**
