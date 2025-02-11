@@ -11,6 +11,7 @@ import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 
 import java.util.Arrays;
+import com.centomila.StepSizeSettings;
 
 /**
  * BeatBuddy Extension for Bitwig Studio.
@@ -80,7 +81,7 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       initNoteDestinationSetting();
 
-      initStepSizeSetting();
+      StepSizeSettings.initStepSizeSetting(documentState, this);
 
       initPostActionSetting();
 
@@ -92,34 +93,6 @@ public class BeatBuddyExtension extends ControllerExtension {
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BeatBuddy Initialized");
 
-   }
-
-   /**
-    * Initializes step size and note length settings.
-    * The step size setting determines the grid resolution for pattern generation,
-    * while the note length setting controls the duration of generated notes.
-    * Both settings are synchronized by default but can be adjusted independently.
-    */
-   private void initStepSizeSetting() {
-      stepSizSetting = (Setting) documentState.getEnumSetting("Step Size", "Clip", Utils.STEPSIZE_OPTIONS, "1/16");
-
-      stepSizSubdivisionSetting = (Setting) documentState.getEnumSetting("Subdivisions", "Clip",
-            Utils.STEPSIZE_CATEGORY_OPTIONS, "Straight");
-
-      // set the note length equal to the selected step size
-      ((EnumValue) stepSizSetting).addValueObserver(newValue -> {
-
-         // Set both note length and step size
-         ((SettableEnumValue) stepSizSetting).set(newValue);
-         ((SettableEnumValue) noteLengthSetting).set(newValue);
-      });
-
-      // Steps note length
-      noteLengthSetting = (Setting) documentState.getEnumSetting("Note Length", "Clip", Utils.STEPSIZE_OPTIONS, "1/16");
-
-      ((EnumValue) noteLengthSetting).addValueObserver(newValue -> {
-         ((SettableEnumValue) noteLengthSetting).set(newValue);
-      });
    }
 
    /**
