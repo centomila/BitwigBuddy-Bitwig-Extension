@@ -4,12 +4,26 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.awt.Desktop;
+import java.awt.FileDialog;
+import java.awt.Frame;
 import java.nio.file.Paths;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.Preferences;
 import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Signal;
+
+import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
+import java.lang.reflect.InvocationTargetException;
+
+import javafx.application.Platform;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class BeatBuddyPreferences {
     private static final String PRESETS_PATH_KEY = "presetsPath";
@@ -55,7 +69,10 @@ public class BeatBuddyPreferences {
     private final SettableStringValue presetsPath;
     private final Signal openPresetsFolder;
     private final Signal openPatreon;
+    private final Signal browseFolderButton;
     private final ControllerHost host;
+
+    private boolean jfxInitialized = false;
 
     public BeatBuddyPreferences(ControllerHost host) {
         this.host = host;
@@ -80,6 +97,12 @@ public class BeatBuddyPreferences {
                 "Go to Patreon.com/Centomila");
 
         openPatreon.addSignalObserver(this::openPatreonPage);
+
+        browseFolderButton = preferences.getSignalSetting(
+                "Browse...",
+                "BeatBuddy",
+                "Select presets folder location");
+        browseFolderButton.addSignalObserver(this::browseForPresetsFolder);
     }
 
     private void openPresetsFolderInExplorer() {
@@ -122,6 +145,55 @@ public class BeatBuddyPreferences {
             host.errorln("Failed to open Patreon page: " + e.getMessage());
             // Fallback: Show the URL to the user
             host.showPopupNotification("Please visit " + patreonUrl + " in your web browser.");
+        }
+    }
+
+    private void initializeJavaFX() {
+        if (!jfxInitialized) {
+            try {
+                Platform.startup(() -> {
+                    // Initialize JavaFX
+                });
+                jfxInitialized = true;
+            } catch (IllegalStateException e) {
+                // JavaFX already initialized
+                jfxInitialized = true;
+            }
+        }
+    }
+
+    private void browseForPresetsFolder() {
+        try {
+            initializeJavaFX();
+            
+            CountDownLatch latch = new CountDownLatch(1);
+            AtomicReference<File> chosenFile = new AtomicReference<>();
+            
+            Platform.runLater(() -> {
+                try {
+                    DirectoryChooser directoryChooser = new DirectoryChooser();
+                    directoryChooser.setTitle("Select BeatBuddy Presets Folder");
+                    directoryChooser.setInitialDirectory(new File(presetsPath.get()));
+                    
+                    Stage stage = new Stage();
+                    File selectedDirectory = directoryChooser.showDialog(stage);
+                    chosenFile.set(selectedDirectory);
+                } finally {
+                    latch.countDown();
+                }
+            });
+            
+            latch.await();
+            
+            File selectedDirectory = chosenFile.get();
+            if (selectedDirectory != null) {
+                setPresetsPath(selectedDirectory.getAbsolutePath());
+                host.showPopupNotification("Presets folder updated to: " + selectedDirectory.getAbsolutePath());
+            }
+            
+        } catch (Exception e) {
+            host.errorln("Failed to open folder browser: " + e.getMessage());
+            host.showPopupNotification("Failed to open folder browser");
         }
     }
 
