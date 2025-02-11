@@ -79,16 +79,16 @@ public class BeatBuddyPreferences {
                 defaultPresetsPath);
 
         openPresetsFolder = preferences.getSignalSetting(
-                "Open Presets Folder",
+                "Opens the presets folder in system file explorer",
                 "Preset Path",
-                "Opens the presets folder in system file explorer");
+                "Explore Preset Folder");
 
         openPresetsFolder.addSignalObserver(this::openPresetsFolderInExplorer);
 
         browseFolderButton = preferences.getSignalSetting(
-                "Browse...",
+                "Select presets folder location",
                 "Preset Path",
-                "Select presets folder location");
+                "Browse");
         browseFolderButton.addSignalObserver(this::browseForPresetsFolder);
 
         resetToDefaultButton = preferences.getSignalSetting(
