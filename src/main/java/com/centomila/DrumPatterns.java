@@ -2,8 +2,6 @@ package com.centomila;
 
 public interface DrumPatterns {
 
-        void init();
-
         final static Object[][] patterns = {
                         // --- Various ---
                         {
@@ -38,7 +36,8 @@ public interface DrumPatterns {
                                                         100, 0, 0, 0,
                                                         100, 0, 0, 0,
                                                         100, 0, 0, 0
-                                        }
+                                        },
+                                        "C1"
                         },
                         {
                                         "Kick: 1 and 3",
@@ -47,7 +46,8 @@ public interface DrumPatterns {
                                                         0, 0, 0, 0,
                                                         100, 0, 0, 0,
                                                         0, 0, 0, 0
-                                        }
+                                        },
+                                        "C1"
                         },
                         {
                                         "Kick: Syncopated (1, & of 2, 3)",
@@ -56,7 +56,8 @@ public interface DrumPatterns {
                                                         0, 0, 100, 0,
                                                         100, 0, 0, 0,
                                                         0, 0, 0, 0
-                                        }
+                                        },
+                                        "C1"
                         },
                         {
                                         "Kick: Off-Beats (2 and 4)",
@@ -65,7 +66,8 @@ public interface DrumPatterns {
                                                         100, 0, 0, 0,
                                                         0, 0, 0, 0,
                                                         100, 0, 0, 0
-                                        }
+                                        },
+                                        "C1"
                         },
                         {
                                         "Kick: Driving 8th Notes",
@@ -74,7 +76,8 @@ public interface DrumPatterns {
                                                         100, 0, 100, 0,
                                                         100, 0, 100, 0,
                                                         100, 0, 100, 0
-                                        }
+                                        },
+                                        "C1"
                         },
 
                         // --- SNARE-ONLY PATTERNS ---
@@ -85,7 +88,8 @@ public interface DrumPatterns {
                                                         100, 0, 0, 0,
                                                         0, 0, 0, 0,
                                                         100, 0, 0, 0
-                                        }
+                                        },
+                                        "C#1"
                         },
                         {
                                         "Snare: Only on Beat 2",
@@ -94,7 +98,8 @@ public interface DrumPatterns {
                                                         100, 0, 0, 0,
                                                         0, 0, 0, 0,
                                                         0, 0, 0, 0
-                                        }
+                                        },
+                                        "C#1"
                         },
                         {
                                         "Snare: Half-Time (3)",
@@ -103,7 +108,8 @@ public interface DrumPatterns {
                                                         0, 0, 0, 0,
                                                         100, 0, 0, 0,
                                                         0, 0, 0, 0
-                                        }
+                                        },
+                                        "C#1"
                         },
                         {
                                         "Snare: 16th Ghost Notes",
@@ -112,7 +118,8 @@ public interface DrumPatterns {
                                                         100, 0, 20, 0,
                                                         20, 0, 20, 0,
                                                         100, 0, 20, 0
-                                        }
+                                        },
+                                        "C#1"
                         },
                         {
                                         "Snare: 16th Machine Gun",
@@ -121,7 +128,8 @@ public interface DrumPatterns {
                                                         100, 100, 100, 100,
                                                         100, 100, 100, 100,
                                                         100, 100, 100, 100
-                                        }
+                                        },
+                                        "C#1"
                         },
 
                         // --- HI-HAT-ONLY PATTERNS ---
@@ -191,4 +199,6 @@ public interface DrumPatterns {
                 // Handle not found case appropriately
                 throw new IllegalArgumentException("No pattern found with name: " + name);
         }
+
+        void init();
 }

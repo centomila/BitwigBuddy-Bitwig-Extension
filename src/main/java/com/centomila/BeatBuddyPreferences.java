@@ -19,53 +19,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class BeatBuddyPreferences {
-    private static final String PRESETS_PATH_KEY = "presetsPath";
-
-    private String getDefaultExtensionsPath() {
-        String userHome = System.getProperty("user.home");
-
-        if (host.platformIsWindows()) {
-            String[] possibleDocNames = {
-                    "Documents", "Documenti", "Documentos", "Dokumente",
-                    "文档", "文書", "문서", "Документы"
-            };
-
-            // First check OneDrive paths
-            File oneDriveBase = new File(userHome, "OneDrive");
-            if (oneDriveBase.exists()) {
-                for (String docName : possibleDocNames) {
-                    File path = Paths.get(userHome, "OneDrive", docName, "Bitwig Studio", "Extensions", "BeatBuddy").toFile();
-                    if (path.exists()) {
-                        return path.toString();
-                    }
-                }
-            }
-
-            // Then check regular Documents folders
-            for (String docName : possibleDocNames) {
-                File path = Paths.get(userHome, docName, "Bitwig Studio", "Extensions", "BeatBuddy").toFile();
-                if (path.exists()) {
-                    return path.toString();
-                }
-            }
-        } else if (host.platformIsMac()) {
-            return Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions", "BeatBuddy").toString();
-        }
-
-        // Linux or fallback for Windows
-        return Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions", "BeatBuddy").toString();
-    }
-
     private String defaultPresetsPath;
 
     private final Preferences preferences;
+
     private final SettableStringValue presetsPath;
     private final Signal openPresetsFolder;
     private final Signal openPatreon;
     private final Signal browseFolderButton;
     private final Signal resetToDefaultButton;
     private final ControllerHost host;
-
     private boolean jfxInitialized = false;
 
     public BeatBuddyPreferences(ControllerHost host) {
@@ -103,6 +66,49 @@ public class BeatBuddyPreferences {
                 "Support",
                 "Go to Patreon.com/Centomila");
         openPatreon.addSignalObserver(this::openPatreonPage);
+    }
+
+    public String getPresetsPath() {
+        return presetsPath.get();
+    }
+
+    public void setPresetsPath(String path) {
+        presetsPath.set(path);
+    }
+
+    private String getDefaultExtensionsPath() {
+        String userHome = System.getProperty("user.home");
+
+        if (host.platformIsWindows()) {
+            String[] possibleDocNames = {
+                    "Documents", "Documenti", "Documentos", "Dokumente",
+                    "文档", "文書", "문서", "Документы"
+            };
+
+            // First check OneDrive paths
+            File oneDriveBase = new File(userHome, "OneDrive");
+            if (oneDriveBase.exists()) {
+                for (String docName : possibleDocNames) {
+                    File path = Paths.get(userHome, "OneDrive", docName, "Bitwig Studio", "Extensions", "BeatBuddy").toFile();
+                    if (path.exists()) {
+                        return path.toString();
+                    }
+                }
+            }
+
+            // Then check regular Documents folders
+            for (String docName : possibleDocNames) {
+                File path = Paths.get(userHome, docName, "Bitwig Studio", "Extensions", "BeatBuddy").toFile();
+                if (path.exists()) {
+                    return path.toString();
+                }
+            }
+        } else if (host.platformIsMac()) {
+            return Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions", "BeatBuddy").toString();
+        }
+
+        // Linux or fallback for Windows
+        return Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions", "BeatBuddy").toString();
     }
 
     private void openPresetsFolderInExplorer() {
@@ -254,13 +260,5 @@ public class BeatBuddyPreferences {
         } else {
             host.showPopupNotification("Default presets folder not found: " + defaultPath);
         }
-    }
-
-    public String getPresetsPath() {
-        return presetsPath.get();
-    }
-
-    public void setPresetsPath(String path) {
-        presetsPath.set(path);
     }
 }
