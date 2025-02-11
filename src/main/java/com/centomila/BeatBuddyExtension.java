@@ -24,7 +24,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Clip arrangerClip;
 
    private DocumentState documentState;
-   private Setting patternTypeSetting;
+   public Setting patternTypeSetting;
    private Setting patternSelectorSetting;
    private Setting noteLengthSetting; // How long each note should be
    private Setting stepSizSetting;
@@ -192,7 +192,7 @@ public class BeatBuddyExtension extends ControllerExtension {
             .map(pattern -> pattern[0].toString())
             .toArray(String[]::new);
       patternSelectorSetting = (Setting) documentState.getEnumSetting("Pattern", "Generate", PATTERN_OPTIONS,
-            "Random");
+            "Kick: Four on the Floor");
       ((EnumValue) patternSelectorSetting).addValueObserver(newValue -> {
          PopupUtils.showPopup(newValue.toString());
       });
@@ -288,7 +288,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    private void generateDrumPattern() {
       Clip clip = getLauncherOrArrangerAsClip();
       DrumPatternGenerator.generatePattern(clip, noteLengthSetting, stepSizSubdivisionSetting, 
-            stepSizSetting, noteDestSettings, patternSelectorSetting,
+            stepSizSetting, noteDestSettings, patternSelectorSetting, patternTypeSetting,
             autoReversePatternSetting, autoResizeLoopLengthSetting);
    }
 

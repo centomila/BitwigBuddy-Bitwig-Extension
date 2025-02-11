@@ -6,10 +6,11 @@ import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
 
 public class DrumPatternGenerator {
+
     
     public static void generatePattern(Clip clip, Setting noteLengthSetting, Setting stepSizSubdivisionSetting, 
             Setting stepSizSetting, NoteDestinationSettings noteDestSettings, Setting patternSelectorSetting,
-            Setting autoReversePatternSetting, Setting autoResizeLoopLengthSetting) {
+            Setting patternTypeSetting, Setting autoReversePatternSetting, Setting autoResizeLoopLengthSetting) {
             
         String noteLength = ((EnumValue) noteLengthSetting).get();
         String subdivision = ((EnumValue) stepSizSubdivisionSetting).get();
@@ -24,15 +25,22 @@ public class DrumPatternGenerator {
 
         clip.clearStepsAtY(channel, noteDestination);
 
-        String selectedPattern = ((EnumValue) patternSelectorSetting).get();
-        int[] pattern = DrumPatterns.getPatternByName(selectedPattern);
+        int[] pattern;
+        String patternType = ((EnumValue) patternTypeSetting).get();
+        
+        if (patternType.equals("Random")) {
+            pattern = new int[16];
+            generateRandomPattern(pattern);
+        } else if (patternType.equals("Custom")) {
+            // TODO: Implement custom pattern generation
+            pattern = new int[16];
+        } else {
+            String selectedPattern = ((EnumValue) patternSelectorSetting).get();
+            pattern = DrumPatterns.getPatternByName(selectedPattern);
+        }
 
         if (((EnumValue) autoReversePatternSetting).get().equals("Reverse")) {
             reversePattern(pattern);
-        }
-
-        if (selectedPattern.equals("Random")) {
-            generateRandomPattern(pattern);
         }
 
         applyPatternToClip(clip, pattern, channel, noteDestination, duration);
