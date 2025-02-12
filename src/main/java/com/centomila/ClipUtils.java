@@ -9,6 +9,7 @@ import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.NoteStep;
 import com.bitwig.extension.controller.api.Setting;
+import com.bitwig.extension.controller.api.DocumentState;
 
 public class ClipUtils {
     /**
@@ -109,5 +110,18 @@ public class ClipUtils {
         } else {
             moveSteps(clip, stepsToMove, stepOffset, channel);
         }
+    }
+
+    public static void initClearClipSetting(BeatBuddyExtension extension) {
+        DocumentState documentState = extension.getDocumentState();
+        Setting spacer4 = (Setting) documentState.getStringSetting("----", "Clear Clip", 0,
+                "---------------------------------------------------");
+        spacer4.disable();
+        extension.setSpacer4(spacer4);
+        
+        documentState.getSignalSetting("Clear current clip", "Clear Clip", "Clear current clip")
+            .addSignalObserver(() -> {
+                extension.getLauncherOrArrangerAsClip().clearSteps();
+            });
     }
 }

@@ -79,14 +79,15 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       initPatternSetting();
 
-      // Call relocated initNoteDestinationSetting from NoteDestinationInitializer
+      
       NoteDestinationInitializer.initNoteDestinationSetting(this);
 
       StepSizeSettings.initStepSizeSetting(documentState, this);
 
-      initPostActionSetting();
+      PostActionInitializer.initPostActionSetting(this);
 
-      initClearClipSetting();
+      // Replace removed method call with external initializer
+      ClipUtils.initClearClipSetting(this);
 
       // Initialize launcher/arranger toggle
       initToggleLauncherArrangerSetting();
@@ -169,36 +170,6 @@ public class BeatBuddyExtension extends ControllerExtension {
       spacer1 = (Setting) documentState.getStringSetting("----", "Generate", 0,
             "---------------------------------------------------");
       spacer1.disable();
-   }
-
-   /**
-    * Initializes post-generation action settings.
-    * Currently supports automatic loop length adjustment after pattern generation.
-    */
-   private void initPostActionSetting() {
-      // Empty string for spacing
-      spacer3 = (Setting) documentState.getStringSetting("----", "Post Actions", 0,
-            "---------------------------------------------------");
-      spacer3.disable();
-
-      autoResizeLoopLengthSetting = (Setting) documentState.getEnumSetting("Auto resize loop length", "Post Actions",
-            new String[] { "Off", "On" }, "On");
-   }
-
-   /**
-    * Initializes clip clearing functionality.
-    * Provides a button to remove all notes from the current clip.
-    */
-   private void initClearClipSetting() {
-      // Empty string for spacing
-      spacer4 = (Setting) documentState.getStringSetting("----", "Clear Clip", 0,
-            "---------------------------------------------------");
-      spacer4.disable();
-
-      // Clear current clip
-      documentState.getSignalSetting("Clear current clip", "Clear Clip", "Clear current clip").addSignalObserver(() -> {
-         getLauncherOrArrangerAsClip().clearSteps();
-      });
    }
 
    /**

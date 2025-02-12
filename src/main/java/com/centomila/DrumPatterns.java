@@ -189,6 +189,13 @@ public interface DrumPatterns {
                         }
         };
 
+        /**
+         * Retrieves a drum pattern by its name.
+         *
+         * @param name the name of the drum pattern to retrieve
+         * @return the drum pattern as an array of integers
+         * @throws IllegalArgumentException if no pattern is found with the specified name
+         */
         static int[] getPatternByName(String name) {
                 for (Object[] pattern : patterns) {
                         if (pattern[0].equals(name)) {
