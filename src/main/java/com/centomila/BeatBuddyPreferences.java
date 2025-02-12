@@ -23,7 +23,7 @@ public class BeatBuddyPreferences {
 
     private final Preferences preferences;
 
-    private final SettableStringValue presetsPath;
+    public final SettableStringValue presetsPath;
     private final Signal openPresetsFolder;
     private final Signal openPatreon;
     private final Signal browseFolderButton;
@@ -300,5 +300,22 @@ public class BeatBuddyPreferences {
 
     public void setJfxInitialized(boolean jfxInitialized) {
         this.jfxInitialized = jfxInitialized;
+    }
+    
+    /**
+     * Reads all files in the current presets folder, sorts them in natural numeric order, 
+     * and returns their names.
+     * @return an array of file names from the presets folder, or an empty array if none are found.
+     */
+    public String[] getCustomPresets() {
+        File presetsDir = new File(getPresetsPath());
+        if (presetsDir.exists() && presetsDir.isDirectory()) {
+            String[] files = presetsDir.list();
+            if (files != null) {
+                java.util.Arrays.sort(files, Utils::naturalCompare);
+                return files;
+            }
+        }
+        return new String[0];
     }
 }

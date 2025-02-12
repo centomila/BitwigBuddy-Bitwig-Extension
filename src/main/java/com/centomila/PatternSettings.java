@@ -4,12 +4,14 @@ import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
+import com.bitwig.extension.controller.api.StringValue;
+import com.centomila.BeatBuddyPreferences;
 
 import java.util.Arrays;
 
 public class PatternSettings {
     private final BeatBuddyExtension extension;
-    
+
     public PatternSettings(BeatBuddyExtension extension) {
         this.extension = extension;
     }
@@ -66,15 +68,18 @@ public class PatternSettings {
         final String[] PATTERN_OPTIONS = Arrays.stream(DrumPatterns.patterns)
                 .map(pattern -> pattern[0].toString())
                 .toArray(String[]::new);
-        extension.setPatternSelectorSetting((Setting) documentState.getEnumSetting("Pattern", "Generate", PATTERN_OPTIONS,
-                "Kick: Four on the Floor"));
+        extension.setPatternSelectorSetting(
+                (Setting) documentState.getEnumSetting("Pattern", "Generate", PATTERN_OPTIONS,
+                        "Kick: Four on the Floor"));
         ((EnumValue) extension.getPatternSelectorSetting()).addValueObserver(newValue -> {
             PopupUtils.showPopup(newValue.toString());
         });
 
         // New Custom Presets dropdown (for Custom)
+        String[] customPresets = extension.getPreferences().getCustomPresets();
+
         extension.setCustomPresetSetting((Setting) documentState.getEnumSetting("Custom Presets", "Generate",
-                new String[] { "TO BE IMPLEMENTED" }, "TO BE IMPLEMENTED"));
+                customPresets, customPresets[0]));
         extension.getCustomPresetSetting().disable();
         ((EnumValue) extension.getCustomPresetSetting()).addValueObserver(newValue -> {
             PopupUtils.showPopup("Custom Preset selected: " + newValue.toString());
@@ -89,6 +94,4 @@ public class PatternSettings {
         extension.getSpacer1().disable();
     }
 
-    public void generateDrumPattern() {
-    }
 }
