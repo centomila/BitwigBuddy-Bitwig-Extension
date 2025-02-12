@@ -85,7 +85,7 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       initPatternSetting();
 
-      NoteDestinationInitializer.initNoteDestinationSetting(this);
+      NoteDestinationSettings.init(this);
 
       StepSizeSettings.initStepSizeSetting(this);
 
