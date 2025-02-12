@@ -83,7 +83,7 @@ public class BeatBuddyExtension extends ControllerExtension {
       moveStepsHandler = new MoveStepsHandler(this);
       moveStepsHandler.init(documentState);
 
-      initPatternSetting();
+      PatternSettings.init(this);
 
       NoteDestinationSettings.init(this);
 
@@ -102,81 +102,6 @@ public class BeatBuddyExtension extends ControllerExtension {
 
    }
 
-   /**
-    * Initializes pattern generation settings.
-    * Includes:
-    * - Generate button to trigger pattern creation
-    * - Pattern selection dropdown with predefined patterns
-    * - Pattern direction control (normal/reverse)
-    */
-   private void initPatternSetting() {
-      // Generate button
-      Signal generateButton = documentState.getSignalSetting("Generate!", "Generate", "Generate!");
-
-      generateButton.addSignalObserver(() -> {
-         generateDrumPattern();
-      });
-
-      // Pattern type selector
-      patternTypeSetting = (Setting) documentState.getEnumSetting("Pattern Type", "Generate",
-            new String[] { "Presets", "Random", "Custom" }, "Presets");
-
-      ((EnumValue) patternTypeSetting).addValueObserver(newValue -> {
-         switch (newValue) {
-            case "Presets":
-               patternSelectorSetting.enable();
-               patternSelectorSetting.show();
-               customPresetSetting.disable(); // Disable custom presets
-               customPresetSetting.hide(); // Disable custom presets
-               reversePatternSetting.enable();
-               reversePatternSetting.show();
-               break;
-            case "Custom":
-               customPresetSetting.enable();
-               customPresetSetting.show();
-               patternSelectorSetting.disable(); // Disable pattern selector
-               patternSelectorSetting.hide(); // Disable pattern selector
-               reversePatternSetting.enable();
-               reversePatternSetting.show();
-               break;
-            case "Random":
-               patternSelectorSetting.disable(); // Disable pattern selector
-               patternSelectorSetting.hide(); // Disable pattern selector
-               customPresetSetting.disable(); // Disable custom presets
-               customPresetSetting.hide(); // Disable custom presets
-               reversePatternSetting.disable(); // Disable reverse pattern
-               reversePatternSetting.hide(); // Disable reverse pattern
-               break;
-         }
-      });
-
-
-      // Define pattern settings
-      final String[] PATTERN_OPTIONS = Arrays.stream(DrumPatterns.patterns)
-            .map(pattern -> pattern[0].toString())
-            .toArray(String[]::new);
-      patternSelectorSetting = (Setting) documentState.getEnumSetting("Pattern", "Generate", PATTERN_OPTIONS,
-            "Kick: Four on the Floor");
-      ((EnumValue) patternSelectorSetting).addValueObserver(newValue -> {
-         PopupUtils.showPopup(newValue.toString());
-      });
-
-      // New Custom Presets dropdown (for Custom)
-      customPresetSetting = (Setting) documentState.getEnumSetting("Custom Presets", "Generate",
-            new String[] { "TO BE IMPLEMENTED" }, "TO BE IMPLEMENTED");
-      customPresetSetting.disable();
-      ((EnumValue) customPresetSetting).addValueObserver(newValue -> {
-         PopupUtils.showPopup("Custom Preset selected: " + newValue.toString());
-      });
-
-      reversePatternSetting = (Setting) documentState.getEnumSetting("Reverse Pattern", "Generate",
-            new String[] { "Normal", "Reverse" }, "Normal");
-
-      // Empty string for spacing
-      spacer1 = (Setting) documentState.getStringSetting("----", "Generate", 0,
-            "---------------------------------------------------");
-      spacer1.disable();
-   }
 
    /**
     * Initializes the clip destination toggle.
@@ -196,7 +121,7 @@ public class BeatBuddyExtension extends ControllerExtension {
     * Uses the selected pattern template, note destination, and timing settings
     * to create a new pattern in the active clip.
     */
-   private void generateDrumPattern() {
+   public void generateDrumPattern() {
       Clip clip = getLauncherOrArrangerAsClip();
       DrumPatternGenerator.generatePattern(
             this, clip, noteLengthSetting, stepSizSubdivisionSetting,
