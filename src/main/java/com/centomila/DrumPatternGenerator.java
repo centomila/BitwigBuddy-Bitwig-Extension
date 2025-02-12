@@ -7,28 +7,36 @@ import com.bitwig.extension.controller.api.Setting;
 
 public class DrumPatternGenerator {
 
-    public static void generatePattern(BeatBuddyExtension extension, Clip clip, Setting noteLengthSetting,
-            Setting stepSizSubdivisionSetting,
-            Setting stepSizSetting, NoteDestinationSettings noteDestSettings, Setting patternSelectorSetting,
-            Setting patternTypeSetting, Setting autoReversePatternSetting, Setting autoResizeLoopLengthSetting,
-            Setting zoomToFitAfterGenerateSetting) {
+    public static void generatePattern(BeatBuddyExtension extension,
+                                       Clip clip,
+                                       Setting noteLengthSetting,
+                                       Setting stepSizSubdivisionSetting,
+                                       Setting stepSizSetting,
+                                       NoteDestinationSettings noteDestSettings,
+                                       Setting patternSelectorSetting,
+                                       Setting patternTypeSetting,
+                                       Setting autoReversePatternSetting,
+                                       Setting autoResizeLoopLengthSetting,
+                                       Setting zoomToFitAfterGenerateSetting) {
 
+        // Retrieve note length and subdivision settings
         String noteLength = ((EnumValue) noteLengthSetting).get();
         String subdivision = ((EnumValue) stepSizSubdivisionSetting).get();
-        String stepSize = ((EnumValue) stepSizSetting).get();
         double duration = Utils.getNoteLengthAsDouble(noteLength, subdivision);
 
+        // Retrieve and set step size based on note settings
+        String stepSize = ((EnumValue) stepSizSetting).get();
         double patternStepSize = Utils.getNoteLengthAsDouble(stepSize, subdivision);
         clip.setStepSize(patternStepSize);
 
+        // Get channel and note destination values
         int channel = noteDestSettings.getCurrentChannelAsInt();
         int noteDestination = noteDestSettings.getCurrentNoteDestinationAsInt();
-
         clip.clearStepsAtY(channel, noteDestination);
 
+        // Determine the type of pattern to generate
         int[] pattern;
         String patternType = ((EnumValue) patternTypeSetting).get();
-
         if (patternType.equals("Random")) {
             pattern = new int[16];
             generateRandomPattern(pattern);
@@ -40,24 +48,32 @@ public class DrumPatternGenerator {
             pattern = DrumPatterns.getPatternByName(selectedPattern);
         }
 
+        // Optionally reverse the pattern if required
         if (((EnumValue) autoReversePatternSetting).get().equals("Reverse")) {
             reversePattern(pattern);
         }
 
+        // Apply pattern to the clip
         applyPatternToClip(clip, pattern, channel, noteDestination, duration);
 
+        // Resize clip loop length if the option is enabled
         if (((EnumValue) autoResizeLoopLengthSetting).get().equals("On")) {
             double beatLength = patternStepSize * pattern.length;
             ClipUtils.setLoopLength(clip, 0.0, beatLength);
         }
 
+        // Cleanup: deselect steps and zoom to fit if enabled in settings   
         clip.selectStepContents(channel, noteDestination, false);
-
         if (((EnumValue) zoomToFitAfterGenerateSetting).get().equals("On")) {
             extension.getApplication().zoomToFit();
         }
     }
 
+    /**
+     * Reverses the given pattern array in-place.
+     *
+     * @param pattern the pattern array to reverse.
+     */
     private static void reversePattern(int[] pattern) {
         for (int i = 0; i < pattern.length / 2; i++) {
             int temp = pattern[i];
@@ -66,9 +82,16 @@ public class DrumPatternGenerator {
         }
     }
 
+    /**
+     * Generates a randomized pattern with 16 steps.
+     * Each step is assigned a random value between 0 and 127.
+     * Occasionally, a step is set to 0.
+     *
+     * @param pattern the pattern array to populate.
+     */
     private static void generateRandomPattern(int[] pattern) {
         Random random = new Random();
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < pattern.length; i++) {
             pattern[i] = random.nextInt(128);
             if (random.nextInt(4) == 0) {
                 pattern[i] = 0;
@@ -76,8 +99,21 @@ public class DrumPatternGenerator {
         }
     }
 
-    private static void applyPatternToClip(Clip clip, int[] pattern, int channel, int noteDestination,
-            double duration) {
+    /**
+     * Applies the provided pattern to the clip.
+     * Only non-zero pattern values are used to set steps.
+     *
+     * @param clip         the clip on which to apply the pattern.
+     * @param pattern      the pattern array.
+     * @param channel      the channel to use.
+     * @param noteDestination the destination note value.
+     * @param duration     the duration of each step.
+     */
+    private static void applyPatternToClip(Clip clip,
+                                           int[] pattern,
+                                           int channel,
+                                           int noteDestination,
+                                           double duration) {
         for (int i = 0; i < pattern.length; i++) {
             if (pattern[i] > 0) {
                 clip.setStep(channel, i, noteDestination, pattern[i], duration);
