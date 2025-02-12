@@ -41,13 +41,6 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting autoResizeLoopLengthSetting;
    private Setting reversePatternSetting;
    private Setting zoomToFitAfterGenerateSetting;
-   public Setting getZoomToFitAfterGenerateSetting() {
-      return zoomToFitAfterGenerateSetting;
-   }
-
-   public void setZoomToFitAfterGenerateSetting(Setting zoomToFitAfterGenerateSetting) {
-      this.zoomToFitAfterGenerateSetting = zoomToFitAfterGenerateSetting;
-   }
 
    private MoveStepsHandler moveStepsHandler;
    private NoteDestinationSettings noteDestSettings;
@@ -88,7 +81,6 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       initPatternSetting();
 
-      
       NoteDestinationInitializer.initNoteDestinationSetting(this);
 
       StepSizeSettings.initStepSizeSetting(documentState, this);
@@ -201,9 +193,10 @@ public class BeatBuddyExtension extends ControllerExtension {
     */
    private void generateDrumPattern() {
       Clip clip = getLauncherOrArrangerAsClip();
-      DrumPatternGenerator.generatePattern(clip, noteLengthSetting, stepSizSubdivisionSetting,
+      DrumPatternGenerator.generatePattern(
+            this, clip, noteLengthSetting, stepSizSubdivisionSetting,
             stepSizSetting, noteDestSettings, patternSelectorSetting, patternTypeSetting,
-            reversePatternSetting, autoResizeLoopLengthSetting);
+            reversePatternSetting, autoResizeLoopLengthSetting, zoomToFitAfterGenerateSetting);
    }
 
    /**
@@ -409,5 +402,13 @@ public class BeatBuddyExtension extends ControllerExtension {
 
    public void setPreferences(BeatBuddyPreferences preferences) {
       this.preferences = preferences;
+   }
+
+   public Setting getZoomToFitAfterGenerateSetting() {
+      return zoomToFitAfterGenerateSetting;
+   }
+
+   public void setZoomToFitAfterGenerateSetting(Setting zoomToFitAfterGenerateSetting) {
+      this.zoomToFitAfterGenerateSetting = zoomToFitAfterGenerateSetting;
    }
 }

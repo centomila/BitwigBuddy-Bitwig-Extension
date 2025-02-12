@@ -5,13 +5,16 @@ import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
 
+import com.bitwig.extension.controller.api.Application;
+
 public class DrumPatternGenerator {
 
-    
-    public static void generatePattern(Clip clip, Setting noteLengthSetting, Setting stepSizSubdivisionSetting, 
+    public static void generatePattern(BeatBuddyExtension extension, Clip clip, Setting noteLengthSetting,
+            Setting stepSizSubdivisionSetting,
             Setting stepSizSetting, NoteDestinationSettings noteDestSettings, Setting patternSelectorSetting,
-            Setting patternTypeSetting, Setting autoReversePatternSetting, Setting autoResizeLoopLengthSetting) {
-            
+            Setting patternTypeSetting, Setting autoReversePatternSetting, Setting autoResizeLoopLengthSetting,
+            Setting zoomToFitAfterGenerateSetting) {
+
         String noteLength = ((EnumValue) noteLengthSetting).get();
         String subdivision = ((EnumValue) stepSizSubdivisionSetting).get();
         String stepSize = ((EnumValue) stepSizSetting).get();
@@ -27,7 +30,7 @@ public class DrumPatternGenerator {
 
         int[] pattern;
         String patternType = ((EnumValue) patternTypeSetting).get();
-        
+
         if (patternType.equals("Random")) {
             pattern = new int[16];
             generateRandomPattern(pattern);
@@ -51,6 +54,10 @@ public class DrumPatternGenerator {
         }
 
         clip.selectStepContents(channel, noteDestination, false);
+
+        if (((EnumValue) zoomToFitAfterGenerateSetting).get().equals("On")) {
+            extension.getApplication().zoomToFit();
+        }
     }
 
     private static void reversePattern(int[] pattern) {
@@ -71,7 +78,8 @@ public class DrumPatternGenerator {
         }
     }
 
-    private static void applyPatternToClip(Clip clip, int[] pattern, int channel, int noteDestination, double duration) {
+    private static void applyPatternToClip(Clip clip, int[] pattern, int channel, int noteDestination,
+            double duration) {
         for (int i = 0; i < pattern.length; i++) {
             if (pattern[i] > 0) {
                 clip.setStep(channel, i, noteDestination, pattern[i], duration);
