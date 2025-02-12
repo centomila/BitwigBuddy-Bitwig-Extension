@@ -38,9 +38,13 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting noteOctaveSetting;
    private Setting noteChannelSetting;
    private Setting toggleLauncherArrangerSetting;
-   private Setting autoResizeLoopLengthSetting;
+   
+
    private Setting reversePatternSetting;
+
+   private Setting autoResizeLoopLengthSetting;
    private Setting zoomToFitAfterGenerateSetting;
+   private Setting postActionsSetting;
 
    private MoveStepsHandler moveStepsHandler;
    private NoteDestinationSettings noteDestSettings;
@@ -83,7 +87,7 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       NoteDestinationInitializer.initNoteDestinationSetting(this);
 
-      StepSizeSettings.initStepSizeSetting(documentState, this);
+      StepSizeSettings.initStepSizeSetting(this);
 
       PostActionInitializer.initPostActionSetting(this);
 
@@ -145,6 +149,7 @@ public class BeatBuddyExtension extends ControllerExtension {
                break;
          }
       });
+
 
       // Define pattern settings
       final String[] PATTERN_OPTIONS = Arrays.stream(DrumPatterns.patterns)
@@ -410,5 +415,13 @@ public class BeatBuddyExtension extends ControllerExtension {
 
    public void setZoomToFitAfterGenerateSetting(Setting zoomToFitAfterGenerateSetting) {
       this.zoomToFitAfterGenerateSetting = zoomToFitAfterGenerateSetting;
+   }
+
+   public Setting getPostActionsSetting() {
+      return postActionsSetting;
+   }
+
+   public void setPostActionsSetting(Setting postActionsSetting) {
+      this.postActionsSetting = postActionsSetting;
    }
 }

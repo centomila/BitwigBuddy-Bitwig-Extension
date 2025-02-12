@@ -5,8 +5,6 @@ import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
 
-import com.bitwig.extension.controller.api.Application;
-
 public class DrumPatternGenerator {
 
     public static void generatePattern(BeatBuddyExtension extension, Clip clip, Setting noteLengthSetting,
