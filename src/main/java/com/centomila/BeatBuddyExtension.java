@@ -87,12 +87,12 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       NoteDestinationSettings.init(this);
 
-      StepSizeSettings.initStepSizeSetting(this);
+      StepSizeSettings.init(this);
 
-      PostActionInitializer.initPostActionSetting(this);
+      PostActionSettings.init(this);
 
       // Replace removed method call with external initializer
-      ClipUtils.initClearClipSetting(this);
+      ClipUtils.init(this);
 
       // Initialize launcher/arranger toggle
       initToggleLauncherArrangerSetting();

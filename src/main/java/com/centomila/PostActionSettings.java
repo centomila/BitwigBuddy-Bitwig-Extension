@@ -4,8 +4,8 @@ import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
 
-public class PostActionInitializer {
-        public static void initPostActionSetting(BeatBuddyExtension extension) {
+public class PostActionSettings {
+        public static void init(BeatBuddyExtension extension) {
                 DocumentState documentState = extension.getDocumentState();
 
                 // Initialize spacer3 for "Post Actions"

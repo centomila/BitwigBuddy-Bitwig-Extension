@@ -141,7 +141,7 @@ public class ClipUtils {
      *
      * @param extension The BeatBuddyExtension instance.
      */
-    public static void initClearClipSetting(BeatBuddyExtension extension) {
+    public static void init(BeatBuddyExtension extension) {
         DocumentState documentState = extension.getDocumentState();
         Setting spacer4 = (Setting) documentState.getStringSetting(
             "----", "Clear Clip", 0, "---------------------------------------------------"
