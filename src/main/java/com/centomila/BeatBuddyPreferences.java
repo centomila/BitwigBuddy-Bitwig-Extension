@@ -261,4 +261,44 @@ public class BeatBuddyPreferences {
             host.showPopupNotification("Default presets folder not found: " + defaultPath);
         }
     }
+
+    public String getDefaultPresetsPath() {
+        return defaultPresetsPath;
+    }
+
+    public void setDefaultPresetsPath(String defaultPresetsPath) {
+        this.defaultPresetsPath = defaultPresetsPath;
+    }
+
+    public Preferences getPreferences() {
+        return preferences;
+    }
+
+    public Signal getOpenPresetsFolder() {
+        return openPresetsFolder;
+    }
+
+    public Signal getOpenPatreon() {
+        return openPatreon;
+    }
+
+    public Signal getBrowseFolderButton() {
+        return browseFolderButton;
+    }
+
+    public Signal getResetToDefaultButton() {
+        return resetToDefaultButton;
+    }
+
+    public ControllerHost getHost() {
+        return host;
+    }
+
+    public boolean isJfxInitialized() {
+        return jfxInitialized;
+    }
+
+    public void setJfxInitialized(boolean jfxInitialized) {
+        this.jfxInitialized = jfxInitialized;
+    }
 }
