@@ -17,5 +17,12 @@ public class PostActionInitializer {
         Setting autoResizeLoopLengthSetting = (Setting) documentState.getEnumSetting("Auto resize loop length", "Post Actions",
                 new String[] { "Off", "On" }, "On");
         extension.setAutoResizeLoopLengthSetting(autoResizeLoopLengthSetting);
+
+
+        Setting zoomToFitAfterGenerateSetting = (Setting) documentState.getEnumSetting("Zoom to fit after generate",
+            "Post Actions", new String[] { "Off", "On" }, "On");
+        extension.setZoomToFitAfterGenerateSetting(zoomToFitAfterGenerateSetting);
+
+        
     }
 }

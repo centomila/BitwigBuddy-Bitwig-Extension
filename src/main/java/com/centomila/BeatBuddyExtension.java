@@ -40,6 +40,15 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting toggleLauncherArrangerSetting;
    private Setting autoResizeLoopLengthSetting;
    private Setting reversePatternSetting;
+   private Setting zoomToFitAfterGenerateSetting;
+   public Setting getZoomToFitAfterGenerateSetting() {
+      return zoomToFitAfterGenerateSetting;
+   }
+
+   public void setZoomToFitAfterGenerateSetting(Setting zoomToFitAfterGenerateSetting) {
+      this.zoomToFitAfterGenerateSetting = zoomToFitAfterGenerateSetting;
+   }
+
    private MoveStepsHandler moveStepsHandler;
    private NoteDestinationSettings noteDestSettings;
 
