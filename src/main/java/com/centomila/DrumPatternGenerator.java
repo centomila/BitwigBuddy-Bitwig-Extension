@@ -133,9 +133,9 @@ public class DrumPatternGenerator {
      * @param patternName The name of the pattern to find
      * @return The pattern sequence as an integer array, or null if not found
      */
-    public int[] getPatternByName(String patternName) {
-        GlobalPreferences.CustomPreset[] presets = preferences.getCustomPresets();
-        for (GlobalPreferences.CustomPreset preset : presets) {
+    public int[] getCustomPatternByName(String patternName) {
+        CustomPresetsHandler.CustomPreset[] presets = preferences.getCustomPresets();
+        for (CustomPresetsHandler.CustomPreset preset : presets) {
             if (preset.getName().equals(patternName)) {
                 return preset.getPattern();
             }

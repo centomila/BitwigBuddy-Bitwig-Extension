@@ -30,6 +30,7 @@ public class GlobalPreferences {
     private final Signal resetToDefaultButton;
     private final ControllerHost host;
     private boolean jfxInitialized = false;
+    private final CustomPresetsHandler presetsHandler;
 
     public GlobalPreferences(ControllerHost host) {
         this.host = host;
@@ -66,6 +67,8 @@ public class GlobalPreferences {
                 "Support",
                 "Go to Patreon.com/Centomila");
         openPatreon.addSignalObserver(this::openPatreonPage);
+
+        this.presetsHandler = new CustomPresetsHandler(host, this);
     }
 
     public String getPresetsPath() {
@@ -302,146 +305,7 @@ public class GlobalPreferences {
         this.jfxInitialized = jfxInitialized;
     }
     
-    /**
-     * Reads all files in the current presets folder, parses their content and returns an array of CustomPreset.
-     * Each file is expected to contain lines like:
-     *   Name: "Kick Four On The Floor"
-     *   DefaultNote: "C1"
-     *   Pattern: [100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0]
-     * @return an array of CustomPreset objects, or an empty array if none are found.
-     */
-    public CustomPreset[] getCustomPresets() {
-        File presetsDir = new File(getPresetsPath());
-        if (presetsDir.exists() && presetsDir.isDirectory()) {
-            File[] files = presetsDir.listFiles();
-            if (files != null) {
-                java.util.Arrays.sort(files, (f1, f2) -> Utils.naturalCompare(f1.getName(), f2.getName()));
-                java.util.List<CustomPreset> presetList = new java.util.ArrayList<>();
-                for (File file : files) {
-                    if (file.isFile()) {
-                        try {
-                            java.util.List<String> lines = java.nio.file.Files.readAllLines(file.toPath());
-                            String name = "";
-                            String defaultNote = "";
-                            int[] pattern = new int[0];
-                            for (String line : lines) {
-                                line = line.trim();
-                                if (line.startsWith("Name:")) {
-                                    name = extractValue(line);
-                                } else if (line.startsWith("DefaultNote:")) {
-                                    defaultNote = extractValue(line);
-                                } else if (line.startsWith("Pattern:")) {
-                                    pattern = extractIntArray(line);
-                                }
-                            }
-                            presetList.add(new CustomPreset(file.getName(), name, defaultNote, pattern));
-                        } catch (IOException e) {
-                            host.errorln("Failed to read file " + file.getName() + ": " + e.getMessage());
-                        }
-                    }
-                }
-                return presetList.toArray(new CustomPreset[0]);
-            }
-        }
-        return new CustomPreset[0];
-    }
-
-    // Helper method to extract the value between quotes
-    private String extractValue(String line) {
-        int firstQuote = line.indexOf('"');
-        int lastQuote = line.lastIndexOf('"');
-        if (firstQuote >= 0 && lastQuote > firstQuote) {
-            return line.substring(firstQuote + 1, lastQuote);
-        }
-        return "";
-    }
-
-    // Helper method to extract an integer array from a line such as: Pattern: [100, 0, 0, 0, ...]
-    private int[] extractIntArray(String line) {
-        int start = line.indexOf('[');
-        int end = line.indexOf(']');
-        if (start < 0 || end < 0 || end <= start) {
-            return new int[0];
-        }
-        String numbers = line.substring(start + 1, end);
-        String[] parts = numbers.split(",");
-        java.util.List<Integer> ints = new java.util.ArrayList<>();
-        for (String part : parts) {
-            part = part.trim();
-            if (!part.isEmpty()) {
-                try {
-                    ints.add(Integer.parseInt(part));
-                } catch (NumberFormatException e) {
-                    host.errorln("Failed to parse number from part: " + part);
-                }
-            }
-        }
-        int[] intArray = new int[ints.size()];
-        for (int i = 0; i < ints.size(); i++) {
-            intArray[i] = ints.get(i);
-        }
-        return intArray;
-    }
-
-    /**
-     * Represents a custom preset for the BeatBuddy extension.
-     * Each preset contains a file name, display name, default MIDI note, and a pattern sequence.
-     */
-    public final class CustomPreset {
-        private final String fileName;
-        private final String name;
-        private final String defaultNote;
-        private final int[] pattern;
-
-        /**
-         * Creates a new CustomPreset instance.
-         * 
-         * @param fileName The name of the file containing the preset
-         * @param name The display name of the preset
-         * @param defaultNote The default MIDI note (e.g., "C1")
-         * @param pattern An array of integers representing the pattern sequence
-         */
-        public CustomPreset(String fileName, String name, String defaultNote, int[] pattern) {
-            this.fileName = fileName;
-            this.name = name;
-            this.defaultNote = defaultNote;
-            this.pattern = pattern;
-        }
-
-        /**
-         * Gets the default MIDI note for this preset.
-         * 
-         * @return The default note value as a string (e.g., "C1")
-         */
-        public String getDefaultNote() {
-            return defaultNote;
-        }
-
-        /**
-         * Gets the file name of this preset.
-         * 
-         * @return The name of the file containing this preset
-         */
-        public String getFileName() {
-            return fileName;
-        }
-
-        /**
-         * Gets the display name of this preset.
-         * 
-         * @return The human-readable name of the preset
-         */
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * Gets the pattern sequence for this preset.
-         * 
-         * @return An array of integers representing the pattern sequence
-         */
-        public int[] getPattern() {
-            return pattern;
-        }
+    public CustomPresetsHandler.CustomPreset[] getCustomPresets() {
+        return presetsHandler.getCustomPresets();
     }
 }
