@@ -4,7 +4,7 @@ import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
-import com.centomila.BeatBuddyPreferences.CustomPreset;
+import com.centomila.GlobalPreferences.CustomPreset;
 import java.util.Arrays;
 
 /**

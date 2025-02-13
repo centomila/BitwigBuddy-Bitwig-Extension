@@ -7,9 +7,9 @@ import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
 
 public class DrumPatternGenerator {
-    private final BeatBuddyPreferences preferences;
+    private final GlobalPreferences preferences;
 
-    public DrumPatternGenerator(BeatBuddyPreferences preferences, ControllerHost host) {
+    public DrumPatternGenerator(GlobalPreferences preferences, ControllerHost host) {
         this.preferences = preferences;
     }
 
@@ -134,8 +134,8 @@ public class DrumPatternGenerator {
      * @return The pattern sequence as an integer array, or null if not found
      */
     public int[] getPatternByName(String patternName) {
-        BeatBuddyPreferences.CustomPreset[] presets = preferences.getCustomPresets();
-        for (BeatBuddyPreferences.CustomPreset preset : presets) {
+        GlobalPreferences.CustomPreset[] presets = preferences.getCustomPresets();
+        for (GlobalPreferences.CustomPreset preset : presets) {
             if (preset.getName().equals(patternName)) {
                 return preset.getPattern();
             }

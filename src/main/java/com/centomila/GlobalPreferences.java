@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class BeatBuddyPreferences {
+public class GlobalPreferences {
     private String defaultPresetsPath;
 
     private final Preferences preferences;
@@ -31,7 +31,7 @@ public class BeatBuddyPreferences {
     private final ControllerHost host;
     private boolean jfxInitialized = false;
 
-    public BeatBuddyPreferences(ControllerHost host) {
+    public GlobalPreferences(ControllerHost host) {
         this.host = host;
         this.defaultPresetsPath = getDefaultExtensionsPath();
         preferences = host.getPreferences();

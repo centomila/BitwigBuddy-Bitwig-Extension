@@ -54,7 +54,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting spacer3;
    private Setting spacer4;
 
-   private BeatBuddyPreferences preferences;
+   private GlobalPreferences preferences;
 
    protected BeatBuddyExtension(final BeatBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
@@ -63,7 +63,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    @Override
    public void init() {
       final ControllerHost host = getHost();
-      preferences = new BeatBuddyPreferences(host);
+      preferences = new GlobalPreferences(host);
       PopupUtils.initialize(host);
       // Initialize API objects
       application = host.createApplication();
@@ -326,11 +326,11 @@ public class BeatBuddyExtension extends ControllerExtension {
       this.spacer4 = spacer4;
    }
 
-   public BeatBuddyPreferences getPreferences() {
+   public GlobalPreferences getPreferences() {
       return preferences;
    }
 
-   public void setPreferences(BeatBuddyPreferences preferences) {
+   public void setPreferences(GlobalPreferences preferences) {
       this.preferences = preferences;
    }
 
