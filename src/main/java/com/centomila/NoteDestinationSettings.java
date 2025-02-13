@@ -12,13 +12,13 @@ import java.util.Arrays;
  * Manages the note destination settings including note and octave.
  */
 public class NoteDestinationSettings {
-   private final ControllerHost host;
+   
    private String currentNoteAsString;
    private int currentOctaveAsInt;
    private final Setting noteChannelSetting;
 
-   public NoteDestinationSettings(ControllerHost host, Setting noteChannelSetting, String initialNote, int initialOctave) {
-      this.host = host;
+   public NoteDestinationSettings(Setting noteChannelSetting, String initialNote, int initialOctave) {
+      
       this.noteChannelSetting = noteChannelSetting;
       this.currentNoteAsString = initialNote;
       this.currentOctaveAsInt = initialOctave;
@@ -85,7 +85,7 @@ public class NoteDestinationSettings {
       ));
 
       // Create and assign NoteDestinationSettings.
-      extension.setNoteDestSettings(new NoteDestinationSettings(host, 
+      extension.setNoteDestSettings(new NoteDestinationSettings( 
             extension.getNoteChannelSetting(),
             noteDestinationOptions[0],
             3
