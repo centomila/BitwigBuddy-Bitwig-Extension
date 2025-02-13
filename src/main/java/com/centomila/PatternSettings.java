@@ -5,6 +5,8 @@ import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.centomila.CustomPresetsHandler.CustomPreset;
+import com.centomila.utils.PopupUtils;
+
 import java.util.Arrays;
 
 /**

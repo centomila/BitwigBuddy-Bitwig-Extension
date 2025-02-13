@@ -5,6 +5,7 @@ import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
+import com.centomila.utils.PopupUtils;
 
 /**
  * Handles the movement and rotation of steps in a Bitwig clip.
@@ -91,13 +92,13 @@ public class MoveStepsHandler {
      */
     private void handleStepMovement(int stepOffset) {
         if (Math.abs(stepOffset) > MAX_STEP_OFFSET) {
-            extension.getHost().showPopupNotification(ERROR_INVALID_STEP);
+            PopupUtils.showPopup(ERROR_INVALID_STEP);
             return;
         }
 
         Clip clip = extension.getLauncherOrArrangerAsClip();
         if (clip == null) {
-            extension.getHost().showPopupNotification(ERROR_NO_CLIP);
+            PopupUtils.showPopup(ERROR_NO_CLIP);
             return;
         }
 
@@ -109,7 +110,7 @@ public class MoveStepsHandler {
             EnumValue subdivisionSetting = (EnumValue) extension.getStepSizSubdivisionSetting();
             
             if (stepSizeSetting == null || subdivisionSetting == null) {
-                extension.getHost().showPopupNotification(ERROR_INVALID_SETTINGS);
+                PopupUtils.showPopup(ERROR_INVALID_SETTINGS);
                 return;
             }
 
@@ -128,10 +129,10 @@ public class MoveStepsHandler {
             );
         } catch (ClassCastException e) {
             extension.getHost().errorln("Settings type error: " + e.getMessage());
-            extension.getHost().showPopupNotification(ERROR_INVALID_SETTINGS);
+            PopupUtils.showPopup(ERROR_INVALID_SETTINGS);
         } catch (Exception e) {
             extension.getHost().errorln("Failed to move steps: " + e.getMessage());
-            extension.getHost().showPopupNotification("Error: " + e.getMessage());
+            PopupUtils.showPopup("Error: " + e.getMessage());
         }
     }
 }

@@ -12,6 +12,7 @@ import com.bitwig.extension.controller.api.Signal;
 
 import java.util.Arrays;
 import com.centomila.StepSizeSettings;
+import com.centomila.utils.PopupUtils;
 
 /**
  * BeatBuddy Extension for Bitwig Studio.

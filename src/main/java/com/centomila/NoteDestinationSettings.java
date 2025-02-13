@@ -3,6 +3,7 @@ package com.centomila;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.Setting;
+import com.centomila.utils.PopupUtils;
 import com.bitwig.extension.controller.api.EnumValue;
 
 import java.util.Arrays;
@@ -28,7 +29,7 @@ public class NoteDestinationSettings {
    }
 
    public void notifyNoteDestination() {
-      host.showPopupNotification("Note Destination: " + currentNoteAsString + currentOctaveAsInt);
+      PopupUtils.showPopup("Note Destination: " + currentNoteAsString + currentOctaveAsInt);
    }
 
    public int getCurrentChannelAsInt() {

@@ -9,6 +9,7 @@ import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.NoteStep;
 import com.bitwig.extension.controller.api.Setting;
+import com.centomila.utils.PopupUtils;
 import com.bitwig.extension.controller.api.DocumentState;
 
 public class ClipUtils {

@@ -9,6 +9,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
+import com.centomila.utils.PopupUtils;
 
 /**
  * Handles global preferences and settings for the BeatBuddy extension.
@@ -135,7 +136,7 @@ public class GlobalPreferences {
     private void openPresetsFolderInExplorer() {
         File directory = new File(presetsPath.get());
         if (!isValidPresetsFolder(directory)) {
-            host.showPopupNotification("Presets folder does not exist: " + directory.getAbsolutePath());
+            PopupUtils.showPopup("Presets folder does not exist: " + directory.getAbsolutePath());
             return;
         }
 
@@ -190,7 +191,7 @@ public class GlobalPreferences {
             Runtime.getRuntime().exec(command);
         } catch (IOException e) {
             host.errorln("Failed to open Patreon page: " + e.getMessage());
-            host.showPopupNotification("Please visit " + PATREON_URL + " in your web browser.");
+            PopupUtils.showPopup("Please visit " + PATREON_URL + " in your web browser.");
         }
     }
 
@@ -278,15 +279,15 @@ public class GlobalPreferences {
             if (selectedDirectory != null) {
                 if (isValidPresetsFolder(selectedDirectory)) {
                     setPresetsPath(selectedDirectory.getAbsolutePath());
-                    host.showPopupNotification("Presets folder updated to: " + selectedDirectory.getAbsolutePath());
+                    PopupUtils.showPopup("Presets folder updated to: " + selectedDirectory.getAbsolutePath());
                 } else {
-                    host.showPopupNotification("Invalid presets folder selected: " + selectedDirectory.getAbsolutePath());
+                    PopupUtils.showPopup("Invalid presets folder selected: " + selectedDirectory.getAbsolutePath());
                 }
             }
 
         } catch (Exception e) {
             host.errorln("Failed to open folder browser: " + e.getMessage());
-            host.showPopupNotification("Failed to open folder browser");
+            PopupUtils.showPopup("Failed to open folder browser");
         }
     }
 
@@ -296,9 +297,9 @@ public class GlobalPreferences {
 
         if (isValidPresetsFolder(defaultDir)) {
             setPresetsPath(defaultPath);
-            host.showPopupNotification("Presets folder reset to default: " + defaultPath);
+            PopupUtils.showPopup("Presets folder reset to default: " + defaultPath);
         } else {
-            host.showPopupNotification("Default presets folder not found: " + defaultPath);
+            PopupUtils.showPopup("Default presets folder not found: " + defaultPath);
         }
     }
 
