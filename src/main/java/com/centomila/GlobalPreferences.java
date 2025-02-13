@@ -2,28 +2,50 @@ package com.centomila;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.nio.file.Paths;
-
-import com.bitwig.extension.controller.api.ControllerHost;
-import com.bitwig.extension.controller.api.Preferences;
-import com.bitwig.extension.controller.api.SettableStringValue;
-import com.bitwig.extension.controller.api.Signal;
-
+import com.bitwig.extension.controller.api.*;
 import javafx.application.Platform;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
 
+/**
+ * Handles global preferences and settings for the BeatBuddy extension.
+ * Manages preset paths, UI interactions, and platform-specific operations.
+ */
 public class GlobalPreferences {
+    private static final String PRESETS_SETTING_CATEGORY = "Preset Path";
+    private static final String SUPPORT_CATEGORY = "Support";
+    private static final int MAX_PATH_LENGTH = 100;
+    private static final String PATREON_URL = "https://www.patreon.com/Centomila";
+    private static final long DIALOG_TIMEOUT_SECONDS = 10;
+    private static final String[] DOCUMENTS_LOCALIZED = {
+        "Documents", "Documenti", "Documentos", "Dokumente",
+        "文档", "文書", "문서", "Документы"
+    };
+
+    private enum PlatformCommand {
+        WINDOWS("explorer.exe", "cmd", "/c", "start"),
+        MAC("open", "open", "", ""),
+        LINUX("xdg-open", "xdg-open", "", "");
+
+        final String fileExplorer;
+        final String browserCommand;
+        final String browserParam1;
+        final String browserParam2;
+
+        PlatformCommand(String fileExplorer, String browserCommand, String browserParam1, String browserParam2) {
+            this.fileExplorer = fileExplorer;
+            this.browserCommand = browserCommand;
+            this.browserParam1 = browserParam1;
+            this.browserParam2 = browserParam2;
+        }
+    }
+
     private String defaultPresetsPath;
-
     private final Preferences preferences;
-
-    public final SettableStringValue presetsPath;
+    private final SettableStringValue presetsPath;
     private final Signal openPresetsFolder;
     private final Signal openPatreon;
     private final Signal browseFolderButton;
@@ -32,66 +54,107 @@ public class GlobalPreferences {
     private boolean jfxInitialized = false;
     private final CustomPresetsHandler presetsHandler;
 
+    /**
+     * Initializes the global preferences with the specified controller host.
+     * @param host The Bitwig controller host
+     */
     public GlobalPreferences(ControllerHost host) {
         this.host = host;
         this.defaultPresetsPath = getDefaultExtensionsPath();
-        preferences = host.getPreferences();
-        presetsPath = preferences.getStringSetting(
-                "Presets Path",
-                "Preset Path",
-                100,
-                defaultPresetsPath);
+        this.preferences = host.getPreferences();
+        
+        // Initialize preference settings
+        this.presetsPath = preferences.getStringSetting(
+            "Presets Path",
+            PRESETS_SETTING_CATEGORY,
+            MAX_PATH_LENGTH,
+            defaultPresetsPath
+        );
 
-        openPresetsFolder = preferences.getSignalSetting(
-                "Opens the presets folder in system file explorer",
-                "Preset Path",
-                "Explore Preset Folder");
-
-        openPresetsFolder.addSignalObserver(this::openPresetsFolderInExplorer);
-
-        browseFolderButton = preferences.getSignalSetting(
-                "Select presets folder location",
-                "Preset Path",
-                "Browse");
-        browseFolderButton.addSignalObserver(this::browseForPresetsFolder);
-
-        resetToDefaultButton = preferences.getSignalSetting(
-                "Reset to Default Extensions/BeatBuddy",
-                "Preset Path",
-                "Reset to default location");
-        resetToDefaultButton.addSignalObserver(this::resetToDefaultPath);
-
-        // Patreon link
-        openPatreon = preferences.getSignalSetting(
-                "Support BeatBuddy on Patreon!",
-                "Support",
-                "Go to Patreon.com/Centomila");
-        openPatreon.addSignalObserver(this::openPatreonPage);
-
+        // Initialize signals
+        this.openPresetsFolder = initializeOpenPresetsFolderSignal();
+        this.browseFolderButton = initializeBrowseFolderSignal();
+        this.resetToDefaultButton = initializeResetDefaultSignal();
+        this.openPatreon = initializePatreonSignal();
+        
         this.presetsHandler = new CustomPresetsHandler(host, this);
     }
 
-    public String getPresetsPath() {
-        return presetsPath.get();
+    private Signal initializeOpenPresetsFolderSignal() {
+        Signal signal = preferences.getSignalSetting(
+            "Opens the presets folder in system file explorer",
+            PRESETS_SETTING_CATEGORY,
+            "Explore Preset Folder"
+        );
+        signal.addSignalObserver(this::openPresetsFolderInExplorer);
+        return signal;
     }
 
-    public void setPresetsPath(String path) {
-        presetsPath.set(path);
+    private Signal initializeBrowseFolderSignal() {
+        Signal signal = preferences.getSignalSetting(
+            "Select presets folder location",
+            PRESETS_SETTING_CATEGORY,
+            "Browse"
+        );
+        signal.addSignalObserver(this::browseForPresetsFolder);
+        return signal;
+    }
+
+    private Signal initializeResetDefaultSignal() {
+        Signal signal = preferences.getSignalSetting(
+            "Reset to Default Extensions/BeatBuddy",
+            PRESETS_SETTING_CATEGORY,
+            "Reset to default location"
+        );
+        signal.addSignalObserver(this::resetToDefaultPath);
+        return signal;
+    }
+
+    private Signal initializePatreonSignal() {
+        Signal signal = preferences.getSignalSetting(
+            "Support BeatBuddy on Patreon!",
+            SUPPORT_CATEGORY,
+            "Go to Patreon.com/Centomila"
+        );
+        signal.addSignalObserver(this::openPatreonPage);
+        return signal;
+    }
+
+    /**
+     * Gets the current platform-specific command configuration.
+     */
+    private PlatformCommand getPlatformCommand() {
+        if (host.platformIsWindows()) return PlatformCommand.WINDOWS;
+        if (host.platformIsMac()) return PlatformCommand.MAC;
+        return PlatformCommand.LINUX;
+    }
+
+    /**
+     * Opens the current presets folder in the system's file explorer.
+     */
+    private void openPresetsFolderInExplorer() {
+        File directory = new File(presetsPath.get());
+        if (!isValidPresetsFolder(directory)) {
+            host.showPopupNotification("Presets folder does not exist: " + directory.getAbsolutePath());
+            return;
+        }
+
+        try {
+            PlatformCommand cmd = getPlatformCommand();
+            Runtime.getRuntime().exec(new String[]{cmd.fileExplorer, directory.getAbsolutePath()});
+        } catch (IOException e) {
+            host.errorln("Failed to open presets folder: " + e.getMessage());
+        }
     }
 
     private String getDefaultExtensionsPath() {
         String userHome = System.getProperty("user.home");
 
         if (host.platformIsWindows()) {
-            String[] possibleDocNames = {
-                    "Documents", "Documenti", "Documentos", "Dokumente",
-                    "文档", "文書", "문서", "Документы"
-            };
-
             // First check OneDrive paths
             File oneDriveBase = new File(userHome, "OneDrive");
             if (oneDriveBase.exists()) {
-                for (String docName : possibleDocNames) {
+                for (String docName : DOCUMENTS_LOCALIZED) {
                     File path = Paths.get(userHome, "OneDrive", docName, "Bitwig Studio", "Extensions", "BeatBuddy").toFile();
                     if (path.exists()) {
                         return path.toString();
@@ -100,7 +163,7 @@ public class GlobalPreferences {
             }
 
             // Then check regular Documents folders
-            for (String docName : possibleDocNames) {
+            for (String docName : DOCUMENTS_LOCALIZED) {
                 File path = Paths.get(userHome, docName, "Bitwig Studio", "Extensions", "BeatBuddy").toFile();
                 if (path.exists()) {
                     return path.toString();
@@ -114,46 +177,20 @@ public class GlobalPreferences {
         return Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions", "BeatBuddy").toString();
     }
 
-    private void openPresetsFolderInExplorer() {
-        try {
-            File directory = new File(presetsPath.get());
-            if (!directory.exists()) {
-                host.showPopupNotification("Presets folder does not exist: " + directory.getAbsolutePath());
-                return;
-            }
-
-            String[] command;
-            if (host.platformIsWindows()) {
-                command = new String[] { "explorer.exe", directory.getAbsolutePath() };
-            } else if (host.platformIsMac()) {
-                command = new String[] { "open", directory.getAbsolutePath() };
-            } else { // Linux
-                command = new String[] { "xdg-open", directory.getAbsolutePath() };
-            }
-
-            Runtime.getRuntime().exec(command);
-        } catch (IOException e) {
-            host.errorln("Failed to open presets folder: " + e.getMessage());
-        }
-    }
-
+    /**
+     * Opens the Patreon page in the default system browser.
+     */
     private void openPatreonPage() {
-        String patreonUrl = "https://www.patreon.com/Centomila";
         try {
-            String[] command;
-            if (host.platformIsWindows()) {
-                command = new String[] { "cmd", "/c", "start", patreonUrl };
-            } else if (host.platformIsMac()) {
-                command = new String[] { "open", patreonUrl };
-            } else { // Linux
-                command = new String[] { "xdg-open", patreonUrl };
-            }
-
+            PlatformCommand cmd = getPlatformCommand();
+            String[] command = cmd.browserParam1.isEmpty() 
+                ? new String[]{cmd.browserCommand, PATREON_URL}
+                : new String[]{cmd.browserCommand, cmd.browserParam1, cmd.browserParam2, PATREON_URL};
+            
             Runtime.getRuntime().exec(command);
         } catch (IOException e) {
             host.errorln("Failed to open Patreon page: " + e.getMessage());
-            // Fallback: Show the URL to the user
-            host.showPopupNotification("Please visit " + patreonUrl + " in your web browser.");
+            host.showPopupNotification("Please visit " + PATREON_URL + " in your web browser.");
         }
     }
 
@@ -228,7 +265,7 @@ public class GlobalPreferences {
             });
 
             // Wait with timeout
-            if (!latch.await(10, TimeUnit.SECONDS)) {
+            if (!latch.await(DIALOG_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
                 throw new TimeoutException("Folder selection dialog timed out");
             }
 
@@ -263,6 +300,14 @@ public class GlobalPreferences {
         } else {
             host.showPopupNotification("Default presets folder not found: " + defaultPath);
         }
+    }
+
+    public String getPresetsPath() {
+        return presetsPath.get();
+    }
+
+    public void setPresetsPath(String path) {
+        presetsPath.set(path);
     }
 
     public String getDefaultPresetsPath() {
