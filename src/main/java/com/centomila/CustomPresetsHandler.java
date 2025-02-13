@@ -5,103 +5,152 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import com.bitwig.extension.controller.api.ControllerHost;
 
+/**
+ * Handles the loading and parsing of custom presets for the BeatBuddy extension.
+ * Each preset is stored in a text file with a specific format containing name, default MIDI note,
+ * and pattern information.
+ */
 public class CustomPresetsHandler {
+    private static final String NAME_PREFIX = "Name:";
+    private static final String DEFAULT_NOTE_PREFIX = "DefaultNote:";
+    private static final String PATTERN_PREFIX = "Pattern:";
+    
     private final ControllerHost host;
     private final GlobalPreferences preferences;
 
+    /**
+     * Creates a new CustomPresetsHandler instance.
+     * @param host The Bitwig controller host for logging
+     * @param preferences Global preferences containing the presets path
+     * @throws NullPointerException if host or preferences is null
+     */
     public CustomPresetsHandler(ControllerHost host, GlobalPreferences preferences) {
-        this.host = host;
-        this.preferences = preferences;
+        this.host = Objects.requireNonNull(host, "Host cannot be null");
+        this.preferences = Objects.requireNonNull(preferences, "Preferences cannot be null");
     }
 
     /**
-     * Reads all files in the current presets folder, parses their content and returns an array of CustomPreset.
-     * Each file is expected to contain lines like:
-     *   Name: "Kick Four On The Floor"
-     *   DefaultNote: "C1"
-     *   Pattern: [100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0]
-     * @return an array of CustomPreset objects, or an empty array if none are found.
+     * Reads all preset files from the configured presets directory.
+     * Files are sorted naturally by name before processing.
+     * 
+     * @return Array of CustomPreset objects, empty array if no presets are found
      */
     public CustomPreset[] getCustomPresets() {
         File presetsDir = new File(preferences.getPresetsPath());
-        if (presetsDir.exists() && presetsDir.isDirectory()) {
-            File[] files = presetsDir.listFiles();
-            if (files != null) {
-                Arrays.sort(files, (f1, f2) -> Utils.naturalCompare(f1.getName(), f2.getName()));
-                List<CustomPreset> presetList = new ArrayList<>();
-                for (File file : files) {
-                    if (file.isFile()) {
-                        try {
-                            List<String> lines = java.nio.file.Files.readAllLines(file.toPath());
-                            String name = "";
-                            String defaultNote = "";
-                            int[] pattern = new int[0];
-                            for (String line : lines) {
-                                line = line.trim();
-                                if (line.startsWith("Name:")) {
-                                    name = extractValue(line);
-                                } else if (line.startsWith("DefaultNote:")) {
-                                    defaultNote = extractValue(line);
-                                } else if (line.startsWith("Pattern:")) {
-                                    pattern = extractIntArray(line);
-                                }
-                            }
-                            presetList.add(new CustomPreset(file.getName(), name, defaultNote, pattern));
-                        } catch (IOException e) {
-                            host.errorln("Failed to read file " + file.getName() + ": " + e.getMessage());
-                        }
-                    }
-                }
-                return presetList.toArray(new CustomPreset[0]);
-            }
+        if (!presetsDir.exists() || !presetsDir.isDirectory()) {
+            host.errorln("Presets directory does not exist or is not a directory: " + presetsDir);
+            return new CustomPreset[0];
         }
-        return new CustomPreset[0];
-    }
 
-    // Helper method to extract the value between quotes
-    private String extractValue(String line) {
-        int firstQuote = line.indexOf('"');
-        int lastQuote = line.lastIndexOf('"');
-        if (firstQuote >= 0 && lastQuote > firstQuote) {
-            return line.substring(firstQuote + 1, lastQuote);
+        File[] files = presetsDir.listFiles();
+        if (files == null) {
+            host.errorln("Failed to list files in presets directory: " + presetsDir);
+            return new CustomPreset[0];
         }
-        return "";
-    }
 
-    // Helper method to extract an integer array from a line such as: Pattern: [100, 0, 0, 0, ...]
-    private int[] extractIntArray(String line) {
-        int start = line.indexOf('[');
-        int end = line.indexOf(']');
-        if (start < 0 || end < 0 || end <= start) {
-            return new int[0];
-        }
-        String numbers = line.substring(start + 1, end);
-        String[] parts = numbers.split(",");
-        List<Integer> ints = new ArrayList<>();
-        for (String part : parts) {
-            part = part.trim();
-            if (!part.isEmpty()) {
+        Arrays.sort(files, (f1, f2) -> Utils.naturalCompare(f1.getName(), f2.getName()));
+        List<CustomPreset> presetList = new ArrayList<>();
+
+        for (File file : files) {
+            if (file.isFile()) {
                 try {
-                    ints.add(Integer.parseInt(part));
-                } catch (NumberFormatException e) {
-                    host.errorln("Failed to parse number from part: " + part);
+                    CustomPreset preset = readPresetFile(file);
+                    if (preset != null) {
+                        presetList.add(preset);
+                    }
+                } catch (IOException e) {
+                    host.errorln("Failed to read preset file " + file.getName() + ": " + e.getMessage());
                 }
             }
         }
-        int[] intArray = new int[ints.size()];
-        for (int i = 0; i < ints.size(); i++) {
-            intArray[i] = ints.get(i);
-        }
-        return intArray;
+
+        return presetList.toArray(new CustomPreset[0]);
     }
 
     /**
-     * Represents a custom preset for the BeatBuddy extension.
-     * Each preset contains a file name, display name, default MIDI note, and a pattern sequence.
+     * Reads and parses a single preset file.
+     * 
+     * @param file The preset file to read
+     * @return CustomPreset object if successful, null if parsing failed
+     * @throws IOException if file reading fails
      */
-    public final class CustomPreset {
+    private CustomPreset readPresetFile(File file) throws IOException {
+        List<String> lines = java.nio.file.Files.readAllLines(file.toPath());
+        String name = "";
+        String defaultNote = "";
+        int[] pattern = new int[0];
+
+        for (String line : lines) {
+            line = line.trim();
+            if (line.isEmpty()) continue;
+
+            try {
+                if (line.startsWith(NAME_PREFIX)) {
+                    name = extractQuotedValue(line);
+                } else if (line.startsWith(DEFAULT_NOTE_PREFIX)) {
+                    defaultNote = extractQuotedValue(line);
+                } else if (line.startsWith(PATTERN_PREFIX)) {
+                    pattern = parsePatternArray(line);
+                }
+            } catch (IllegalArgumentException e) {
+                host.errorln("Error parsing line in " + file.getName() + ": " + e.getMessage());
+                return null;
+            }
+        }
+
+        if (name.isEmpty() || defaultNote.isEmpty() || pattern.length == 0) {
+            host.errorln("Invalid preset file " + file.getName() + ": missing required fields");
+            return null;
+        }
+
+        return new CustomPreset(file.getName(), name, defaultNote, pattern);
+    }
+
+    /**
+     * Extracts a value enclosed in quotes from a line.
+     * @throws IllegalArgumentException if the format is invalid
+     */
+    private String extractQuotedValue(String line) {
+        int firstQuote = line.indexOf('"');
+        int lastQuote = line.lastIndexOf('"');
+        if (firstQuote < 0 || lastQuote <= firstQuote) {
+            throw new IllegalArgumentException("Invalid format - expected quoted value");
+        }
+        return line.substring(firstQuote + 1, lastQuote);
+    }
+
+    /**
+     * Parses a pattern array from a line containing comma-separated integers.
+     * @throws IllegalArgumentException if the format is invalid
+     */
+    private int[] parsePatternArray(String line) {
+        int start = line.indexOf('[');
+        int end = line.indexOf(']');
+        if (start < 0 || end <= start) {
+            throw new IllegalArgumentException("Invalid pattern format - expected [n1,n2,...]");
+        }
+
+        String[] parts = line.substring(start + 1, end).split(",");
+        return Arrays.stream(parts)
+            .map(String::trim)
+            .filter(s -> !s.isEmpty())
+            .mapToInt(s -> {
+                try {
+                    return Integer.parseInt(s);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid number format: " + s);
+                }
+            })
+            .toArray();
+    }
+
+    /**
+     * Immutable class representing a custom preset for the BeatBuddy extension.
+     */
+    public static final class CustomPreset {
         private final String fileName;
         private final String name;
         private final String defaultNote;
@@ -109,28 +158,18 @@ public class CustomPresetsHandler {
 
         /**
          * Creates a new CustomPreset instance.
+         * @throws NullPointerException if any parameter is null
          */
         public CustomPreset(String fileName, String name, String defaultNote, int[] pattern) {
-            this.fileName = fileName;
-            this.name = name;
-            this.defaultNote = defaultNote;
-            this.pattern = pattern;
+            this.fileName = Objects.requireNonNull(fileName, "fileName cannot be null");
+            this.name = Objects.requireNonNull(name, "name cannot be null");
+            this.defaultNote = Objects.requireNonNull(defaultNote, "defaultNote cannot be null");
+            this.pattern = Arrays.copyOf(Objects.requireNonNull(pattern, "pattern cannot be null"), pattern.length);
         }
 
-        public String getDefaultNote() {
-            return defaultNote;
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int[] getPattern() {
-            return pattern;
-        }
+        public String getFileName() { return fileName; }
+        public String getName() { return name; }
+        public String getDefaultNote() { return defaultNote; }
+        public int[] getPattern() { return Arrays.copyOf(pattern, pattern.length); }
     }
 }
