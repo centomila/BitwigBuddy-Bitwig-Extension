@@ -92,7 +92,7 @@ public class PatternSettings {
      * @param documentState The current document state.
      */
     private void initPatternSelectorSetting(DocumentState documentState) {
-        final String[] PATTERN_OPTIONS = Arrays.stream(DrumPatterns.patterns)
+        final String[] PATTERN_OPTIONS = Arrays.stream(DefaultPatterns.patterns)
                 .map(pattern -> pattern[0].toString())
                 .toArray(String[]::new);
 

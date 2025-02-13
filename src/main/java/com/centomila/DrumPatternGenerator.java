@@ -51,7 +51,7 @@ public class DrumPatternGenerator {
             pattern = new int[16];
         } else {
             String selectedPattern = ((EnumValue) patternSelectorSetting).get();
-            pattern = DrumPatterns.getPatternByName(selectedPattern);
+            pattern = DefaultPatterns.getPatternByName(selectedPattern);
         }
 
         // Optionally reverse the pattern if required

@@ -1,6 +1,6 @@
 package com.centomila;
 
-public interface DrumPatterns {
+public interface DefaultPatterns {
 
         final static Object[][] patterns = {
                         // --- Various ---
