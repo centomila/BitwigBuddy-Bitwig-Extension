@@ -24,9 +24,15 @@ public class PatternSettings {
     }
 
     /**
-     * Creates a PatternSettings instance and initializes all pattern-related settings.
-     *
-     * @param extension The BeatBuddyExtension instance.
+     * Creates and initializes pattern-related settings for the extension.
+     * Sets up UI controls including:
+     * - Generate button
+     * - Pattern type selector (Presets/Random/Custom)
+     * - Pattern preset selector
+     * - Custom preset selector
+     * - Pattern reversal option
+     * 
+     * @param extension The BeatBuddyExtension instance to configure settings for
      */
     public static void init(BeatBuddyExtension extension) {
         PatternSettings settings = new PatternSettings(extension);

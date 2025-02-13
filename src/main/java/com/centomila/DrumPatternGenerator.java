@@ -13,6 +13,28 @@ public class DrumPatternGenerator {
         this.preferences = preferences;
     }
 
+    /**
+     * Generates and applies a drum pattern to the specified clip.
+     * 
+     * @param extension The BeatBuddy extension instance
+     * @param clip Target clip for pattern generation
+     * @param noteLengthSetting Note duration setting
+     * @param stepSizSubdivisionSetting Step subdivision setting
+     * @param stepSizSetting Step size setting
+     * @param noteDestSettings Note destination and channel settings
+     * @param patternSelectorSetting Pattern preset selector
+     * @param patternTypeSetting Pattern type (Random/Custom/Predefined)
+     * @param autoReversePatternSetting Pattern reversal setting
+     * @param autoResizeLoopLengthSetting Loop length auto-adjust setting
+     * @param zoomToFitAfterGenerateSetting Zoom behavior setting
+     * 
+     * Process:
+     * 1. Configures note length and step size
+     * 2. Clears existing pattern
+     * 3. Generates new pattern based on selected type
+     * 4. Applies pattern to clip with optional reversal
+     * 5. Adjusts loop length and zoom if enabled
+     */
     public static void generatePattern(BeatBuddyExtension extension,
                                        Clip clip,
                                        Setting noteLengthSetting,
