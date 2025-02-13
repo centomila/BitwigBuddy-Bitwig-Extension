@@ -6,6 +6,7 @@ import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.bitwig.extension.controller.api.StringValue;
 import com.centomila.BeatBuddyPreferences;
+import com.centomila.BeatBuddyPreferences.CustomPreset;
 
 import java.util.Arrays;
 
@@ -76,10 +77,9 @@ public class PatternSettings {
         });
 
         // New Custom Presets dropdown (for Custom)
-        String[] customPresets = extension.getPreferences().getCustomPresets();
 
         extension.setCustomPresetSetting((Setting) documentState.getEnumSetting("Custom Presets", "Generate",
-                customPresets, customPresets[0]));
+                getCustomPresetsContentNameStrings(), getCustomPresetsContentNameStrings()[0]));
         extension.getCustomPresetSetting().disable();
         ((EnumValue) extension.getCustomPresetSetting()).addValueObserver(newValue -> {
             PopupUtils.showPopup("Custom Preset selected: " + newValue.toString());
@@ -92,6 +92,12 @@ public class PatternSettings {
         extension.setSpacer1((Setting) documentState.getStringSetting("----", "Generate", 0,
                 "---------------------------------------------------"));
         extension.getSpacer1().disable();
+    }
+    
+    private String[] getCustomPresetsContentNameStrings() {
+        return Arrays.stream(extension.getPreferences().getCustomPresets())
+                     .map(CustomPreset::getName)
+                     .toArray(String[]::new);
     }
 
 }
