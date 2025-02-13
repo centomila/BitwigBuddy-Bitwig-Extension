@@ -383,13 +383,24 @@ public class BeatBuddyPreferences {
         return intArray;
     }
 
-    // New inner class to hold the custom preset data
+    /**
+     * Represents a custom preset for the BeatBuddy extension.
+     * Each preset contains a file name, display name, default MIDI note, and a pattern sequence.
+     */
     public final class CustomPreset {
         private final String fileName;
         private final String name;
         private final String defaultNote;
         private final int[] pattern;
 
+        /**
+         * Creates a new CustomPreset instance.
+         * 
+         * @param fileName The name of the file containing the preset
+         * @param name The display name of the preset
+         * @param defaultNote The default MIDI note (e.g., "C1")
+         * @param pattern An array of integers representing the pattern sequence
+         */
         public CustomPreset(String fileName, String name, String defaultNote, int[] pattern) {
             this.fileName = fileName;
             this.name = name;
@@ -397,18 +408,38 @@ public class BeatBuddyPreferences {
             this.pattern = pattern;
         }
 
-        public String getFileName() {
-            return fileName;
-        }
-
-        public String getName() {
-            return name;
-        }
-
+        /**
+         * Gets the default MIDI note for this preset.
+         * 
+         * @return The default note value as a string (e.g., "C1")
+         */
         public String getDefaultNote() {
             return defaultNote;
         }
 
+        /**
+         * Gets the file name of this preset.
+         * 
+         * @return The name of the file containing this preset
+         */
+        public String getFileName() {
+            return fileName;
+        }
+
+        /**
+         * Gets the display name of this preset.
+         * 
+         * @return The human-readable name of the preset
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * Gets the pattern sequence for this preset.
+         * 
+         * @return An array of integers representing the pattern sequence
+         */
         public int[] getPattern() {
             return pattern;
         }

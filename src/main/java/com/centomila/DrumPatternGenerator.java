@@ -2,10 +2,16 @@ package com.centomila;
 
 import java.util.Random;
 import com.bitwig.extension.controller.api.Clip;
+import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
 
 public class DrumPatternGenerator {
+    private final BeatBuddyPreferences preferences;
+
+    public DrumPatternGenerator(BeatBuddyPreferences preferences, ControllerHost host) {
+        this.preferences = preferences;
+    }
 
     public static void generatePattern(BeatBuddyExtension extension,
                                        Clip clip,
@@ -119,5 +125,22 @@ public class DrumPatternGenerator {
                 clip.setStep(channel, i, noteDestination, pattern[i], duration);
             }
         }
+    }
+
+    /**
+     * Returns the pattern sequence for a preset with the given name.
+     * 
+     * @param patternName The name of the pattern to find
+     * @return The pattern sequence as an integer array, or null if not found
+     */
+    public int[] getPatternByName(String patternName) {
+        BeatBuddyPreferences.CustomPreset[] presets = preferences.getCustomPresets();
+        for (BeatBuddyPreferences.CustomPreset preset : presets) {
+            if (preset.getName().equals(patternName)) {
+                return preset.getPattern();
+            }
+        }
+        
+        return null;
     }
 }
