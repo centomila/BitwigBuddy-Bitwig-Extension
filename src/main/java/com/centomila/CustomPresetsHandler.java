@@ -51,7 +51,7 @@ public class CustomPresetsHandler {
             return new CustomPreset[0];
         }
 
-        Arrays.sort(files, (f1, f2) -> Utils.naturalCompare(f1.getName(), f2.getName()));
+        // Arrays.sort(files, (f1, f2) -> Utils.naturalCompare(f1.getName(), f2.getName()));
         List<CustomPreset> presetList = new ArrayList<>();
 
         for (File file : files) {

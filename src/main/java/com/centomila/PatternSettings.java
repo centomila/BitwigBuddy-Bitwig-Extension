@@ -187,8 +187,9 @@ public class PatternSettings {
      */
     private String[] getCustomPresetsContentNameStrings() {
         return Arrays.stream(extension.getPreferences().getCustomPresets())
-                .map(CustomPreset::getName)
-                .toArray(String[]::new);
+            .map(CustomPreset::getName)
+            .sorted((a, b) -> Utils.naturalCompare(a, b))
+            .toArray(String[]::new);
     }
 
     private String[] getCustomPresetsContentPatternStrings(String presetName) {
