@@ -5,6 +5,7 @@ import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.DocumentState;
+import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Channel;
 import com.bitwig.extension.controller.api.PlayingNote;
@@ -26,33 +27,40 @@ public class BeatBuddyExtension extends ControllerExtension {
    public Clip arrangerClip;
 
    private DocumentState documentState;
-   public Setting patternTypeSetting;
-   public Setting patternSelectorSetting;
-   // New field for the custom presets dropdown
-   public Setting customPresetSetting;
-   public Setting presetPatternStringSetting;
+   // Pattern settings
+   public Setting patternTypeSetting; // Pattern Type "Preset", "Random", "Custom"
+   public Setting patternSelectorSetting; // List of default patterns
+   public Setting customPresetSetting; // List of custom patterns
+   public Setting presetPatternStringSetting; // Custom pattern string
+   private Setting reversePatternSetting;
+   
+   // Step Size / Note Length settings
    public Setting noteLengthSetting; // How long each note should be
    public Setting stepSizSetting;
-   public Setting stepSizSubdivisionSetting;
-   public Setting noteDestinationSetting;
-   public Setting noteOctaveSetting;
-   public Setting noteChannelSetting;
-   public Setting toggleLauncherArrangerSetting;
+   public Setting stepSizSubdivisionSetting; // Subdivisions Straight | Dotted | Triplet | Quintuplet | Septuplet
+   public Setting learnNoteSetting; // On or Off
    
-
-   private Setting reversePatternSetting;
-
+   
+   public Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
+   public Setting noteOctaveSetting; // Note Octave -2 to 8
+   public Setting noteChannelSetting; // Note Channel 1 to 16
+   private NoteDestinationSettings noteDestSettings; // Class to handle note destination settings
+   
+   
+   // Post actions settings
    private Setting autoResizeLoopLengthSetting;
    private Setting zoomToFitAfterGenerateSetting;
    private Setting postActionsSetting;
-
+   
    private MoveStepsHandler moveStepsHandler;
-   private NoteDestinationSettings noteDestSettings;
-
+   
+   // Spacers
    private Setting spacer1;
    private Setting spacer2;
    private Setting spacer3;
    private Setting spacer4;
+   
+   public Setting toggleLauncherArrangerSetting;
 
    private GlobalPreferences preferences;
 
@@ -340,6 +348,11 @@ public class BeatBuddyExtension extends ControllerExtension {
    }
 
    private void initNoteInput() {
+      // Add a new enumvalue setting called Learn Note. Options are "On" and "Off"
+      final String[] LEARN_NOTE_OPTIONS = new String[] { "On", "Off" };
+      learnNoteSetting = (Setting) documentState.getEnumSetting("Learn Note", "Note Destination", LEARN_NOTE_OPTIONS,
+            "Off");
+
       ControllerHost host = getHost();
       
       // Get cursor channel
@@ -347,7 +360,6 @@ public class BeatBuddyExtension extends ControllerExtension {
       
       // Get playing notes value
       PlayingNoteArrayValue playingNotes = cursorChannel.playingNotes();
-      playingNotes.markInterested();
       
       // Monitor playing notes
       playingNotes.addValueObserver(notes -> {
@@ -355,6 +367,17 @@ public class BeatBuddyExtension extends ControllerExtension {
               String noteName = getNoteNameFromKey(note.pitch());
               PopupUtils.showPopup("Note played: " + noteName + " (velocity: " + Math.round(note.velocity()) + ")");
           }
+      });
+
+      ((EnumValue) learnNoteSetting).addValueObserver(value -> {
+         if (value.equals("On")) {
+            // Start monitoring note input
+            playingNotes.subscribe();
+         }
+         else {
+            // Stop monitoring note input
+            playingNotes.unsubscribe();
+         }
       });
    }
    
