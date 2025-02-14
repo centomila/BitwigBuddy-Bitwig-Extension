@@ -361,23 +361,26 @@ public class BeatBuddyExtension extends ControllerExtension {
       // Get playing notes value
       PlayingNoteArrayValue playingNotes = cursorChannel.playingNotes();
       
-      // Monitor playing notes
+      // Mark interested and add observer during initialization
+      playingNotes.markInterested();
       playingNotes.addValueObserver(notes -> {
-          for (PlayingNote note : notes) {
-              String noteName = getNoteNameFromKey(note.pitch());
-              PopupUtils.showPopup("Note played: " + noteName + " (velocity: " + Math.round(note.velocity()) + ")");
+          // Only show popup if Learn Note is "On"
+          if (((EnumValue)learnNoteSetting).get().equals("On")) {
+              for (PlayingNote note : notes) {
+                  String noteName = getNoteNameFromKey(note.pitch());
+                  PopupUtils.showPopup("Note played: " + noteName + " (velocity: " + Math.round(note.velocity()) + ")");
+              }
           }
       });
 
+      // Handle subscription based on setting value
       ((EnumValue) learnNoteSetting).addValueObserver(value -> {
-         if (value.equals("On")) {
-            // Start monitoring note input
-            playingNotes.subscribe();
-         }
-         else {
-            // Stop monitoring note input
-            playingNotes.unsubscribe();
-         }
+          if (value.equals("On")) {
+              playingNotes.subscribe();
+          }
+          else {
+              playingNotes.unsubscribe();
+          }
       });
    }
    
