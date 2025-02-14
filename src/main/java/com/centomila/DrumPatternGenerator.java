@@ -1,9 +1,13 @@
 package com.centomila;
 
+import java.util.Arrays;
 import java.util.Random;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.SettableEnumValue;
+import com.bitwig.extension.controller.api.StringValue;
+
 import com.bitwig.extension.controller.api.Setting;
 
 public class DrumPatternGenerator {
@@ -16,36 +20,40 @@ public class DrumPatternGenerator {
     /**
      * Generates and applies a drum pattern to the specified clip.
      * 
-     * @param extension The BeatBuddy extension instance
-     * @param clip Target clip for pattern generation
-     * @param noteLengthSetting Note duration setting
-     * @param stepSizSubdivisionSetting Step subdivision setting
-     * @param stepSizSetting Step size setting
-     * @param noteDestSettings Note destination and channel settings
-     * @param patternSelectorSetting Pattern preset selector
-     * @param patternTypeSetting Pattern type (Random/Custom/Predefined)
-     * @param autoReversePatternSetting Pattern reversal setting
-     * @param autoResizeLoopLengthSetting Loop length auto-adjust setting
+     * @param extension                     The BeatBuddy extension instance
+     * @param clip                          Target clip for pattern generation
+     * @param noteLengthSetting             Note duration setting
+     * @param stepSizSubdivisionSetting     Step subdivision setting
+     * @param stepSizSetting                Step size setting
+     * @param noteDestSettings              Note destination and channel settings
+     * @param patternSelectorSetting        Pattern preset selector
+     * @param patternTypeSetting            Pattern type (Random/Custom/Predefined)
+     * @param autoReversePatternSetting     Pattern reversal setting
+     * @param autoResizeLoopLengthSetting   Loop length auto-adjust setting
      * @param zoomToFitAfterGenerateSetting Zoom behavior setting
      * 
-     * Process:
-     * 1. Configures note length and step size
-     * 2. Clears existing pattern
-     * 3. Generates new pattern based on selected type
-     * 4. Applies pattern to clip with optional reversal
-     * 5. Adjusts loop length and zoom if enabled
+     *                                      Process:
+     *                                      1. Configures note length and step size
+     *                                      2. Clears existing pattern
+     *                                      3. Generates new pattern based on
+     *                                      selected type
+     *                                      4. Applies pattern to clip with optional
+     *                                      reversal
+     *                                      5. Adjusts loop length and zoom if
+     *                                      enabled
      */
     public static void generatePattern(BeatBuddyExtension extension,
-                                       Clip clip,
-                                       Setting noteLengthSetting,
-                                       Setting stepSizSubdivisionSetting,
-                                       Setting stepSizSetting,
-                                       NoteDestinationSettings noteDestSettings,
-                                       Setting patternSelectorSetting,
-                                       Setting patternTypeSetting,
-                                       Setting autoReversePatternSetting,
-                                       Setting autoResizeLoopLengthSetting,
-                                       Setting zoomToFitAfterGenerateSetting) {
+            Clip clip,
+            Setting noteLengthSetting,
+            Setting stepSizSubdivisionSetting,
+            Setting stepSizSetting,
+            NoteDestinationSettings noteDestSettings,
+            Setting patternSelectorSetting,
+            Setting patternTypeSetting,
+            Setting presetPatternStringSetting,
+            Setting autoReversePatternSetting,
+            Setting autoResizeLoopLengthSetting,
+            Setting zoomToFitAfterGenerateSetting) {
 
         // Retrieve note length and subdivision settings
         String noteLength = ((EnumValue) noteLengthSetting).get();
@@ -68,12 +76,10 @@ public class DrumPatternGenerator {
         if (patternType.equals("Random")) {
             pattern = new int[16];
             generateRandomPattern(pattern);
-        } else if (patternType.equals("Custom")) {
-            // TODO: Implement custom pattern generation
-            pattern = new int[16];
         } else {
-            String selectedPattern = ((EnumValue) patternSelectorSetting).get();
-            pattern = DefaultPatterns.getPatternByName(selectedPattern);
+            String patternString = ((StringValue) presetPatternStringSetting).get();
+            // convert to an int array
+            pattern = parsePatternString(patternString);
         }
 
         // Optionally reverse the pattern if required
@@ -90,7 +96,7 @@ public class DrumPatternGenerator {
             ClipUtils.setLoopLength(clip, 0.0, beatLength);
         }
 
-        // Cleanup: deselect steps and zoom to fit if enabled in settings   
+        // Cleanup: deselect steps and zoom to fit if enabled in settings
         clip.selectStepContents(channel, noteDestination, false);
         if (((EnumValue) zoomToFitAfterGenerateSetting).get().equals("On")) {
             extension.getApplication().zoomToFit();
@@ -131,17 +137,17 @@ public class DrumPatternGenerator {
      * Applies the provided pattern to the clip.
      * Only non-zero pattern values are used to set steps.
      *
-     * @param clip         the clip on which to apply the pattern.
-     * @param pattern      the pattern array.
-     * @param channel      the channel to use.
+     * @param clip            the clip on which to apply the pattern.
+     * @param pattern         the pattern array.
+     * @param channel         the channel to use.
      * @param noteDestination the destination note value.
-     * @param duration     the duration of each step.
+     * @param duration        the duration of each step.
      */
     private static void applyPatternToClip(Clip clip,
-                                           int[] pattern,
-                                           int channel,
-                                           int noteDestination,
-                                           double duration) {
+            int[] pattern,
+            int channel,
+            int noteDestination,
+            double duration) {
         for (int i = 0; i < pattern.length; i++) {
             if (pattern[i] > 0) {
                 clip.setStep(channel, i, noteDestination, pattern[i], duration);
@@ -162,7 +168,27 @@ public class DrumPatternGenerator {
                 return preset.getPattern();
             }
         }
-        
+
         return null;
+    }
+
+    /**
+     * Parses a pattern string into an integer array.
+     * 
+     * @param patternString the pattern string to parse.
+     * @return the parsed pattern as an integer array.
+     * @throws IllegalArgumentException if the pattern string format is invalid.
+     */
+    private static int[] parsePatternString(String patternString) {
+        try {
+            String normalizedPattern = patternString.replaceAll("[^0-9]", ",");
+            return Arrays.stream(normalizedPattern.split(","))
+                    .filter(s -> !s.isEmpty())
+                    .mapToInt(Integer::parseInt)
+                    .map(value -> Math.min(127, Math.max(0, value)))
+                    .toArray();
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid pattern string format. Expected comma-separated numbers.", e);
+        }
     }
 }

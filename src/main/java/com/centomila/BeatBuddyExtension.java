@@ -122,7 +122,7 @@ public class BeatBuddyExtension extends ControllerExtension {
       Clip clip = getLauncherOrArrangerAsClip();
       DrumPatternGenerator.generatePattern(
             this, clip, noteLengthSetting, stepSizSubdivisionSetting,
-            stepSizSetting, noteDestSettings, patternSelectorSetting, patternTypeSetting,
+            stepSizSetting, noteDestSettings, patternSelectorSetting, patternTypeSetting,presetPatternStringSetting,
             reversePatternSetting, autoResizeLoopLengthSetting, zoomToFitAfterGenerateSetting);
    }
 
