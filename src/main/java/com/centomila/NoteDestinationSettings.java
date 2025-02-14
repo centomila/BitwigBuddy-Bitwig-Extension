@@ -1,14 +1,14 @@
 package com.centomila;
 
+import com.centomila.utils.PopupUtils;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.Setting;
-import com.centomila.utils.PopupUtils;
 import com.bitwig.extension.controller.api.Channel;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.PlayingNote;
 import com.bitwig.extension.controller.api.PlayingNoteArrayValue;
-import com.bitwig.extension.controller.api.ControllerHost;
 
 import java.util.Arrays;
 
@@ -111,7 +111,10 @@ public class NoteDestinationSettings {
          if (((EnumValue) extension.learnNoteSetting).get().equals("On")) {
             for (PlayingNote note : notes) {
                String noteName = getNoteNameFromKey(note.pitch());
-               PopupUtils.showPopup("Note played: " + noteName + " (velocity: " + Math.round(note.velocity()) + ")");
+               // PopupUtils.showPopup("Note played: " + noteName + " (velocity: " + Math.round(note.velocity()) + ")");
+               
+               ((SettableEnumValue) extension.noteDestinationSetting).set(getKeyAndOctaveFromNoteName(noteName)[0]);
+               ((SettableEnumValue) extension.noteOctaveSetting).set(getKeyAndOctaveFromNoteName(noteName)[1]);
             }
          }
       });
@@ -150,26 +153,32 @@ public class NoteDestinationSettings {
       }
 
       public static String[] getKeyAndOctaveFromNoteName(String noteName) {
-      String[] noteNames = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-      // String noteName can be from -C2 TO G8
+      // String noteName can be from C-2 TO G8
 
       // Get note name and octave
-      String note = noteName.substring(0, noteName.length() - 1);
-      int octave = Integer.parseInt(noteName.substring(noteName.length() - 1));
-
-      // Get note index
-      int noteIndex = 0;
-      for (int i = 0; i < noteNames.length; i++) {
-         if (noteNames[i].equals(note)) {
-            noteIndex = i;
-            break;
+      String note;
+      int octave;
+      
+      int octaveStartIndex = -1;
+      // Find where the octave number starts (including possible negative sign)
+      for (int i = 0; i < noteName.length(); i++) {
+         char c = noteName.charAt(i);
+         if (c == '-' || Character.isDigit(c)) {
+         octaveStartIndex = i;
+         break;
          }
       }
+      
+      if (octaveStartIndex != -1) {
+         note = noteName.substring(0, octaveStartIndex);
+         octave = Integer.parseInt(noteName.substring(octaveStartIndex));
+      } else {
+         note = noteName;
+         octave = 0; // Default octave if no number found
+      }
 
-      // Get key
-      int key = (octave + 1) * 12 + noteIndex;
-      PopupUtils.showPopup("Key: " + key + " Octave: " + octave);
-      return new String[] { String.valueOf(key), String.valueOf(octave) };
+      // PopupUtils.showPopup("Note: " + note + " Octave: " + octave);
+      return new String[] { note, String.valueOf(octave) };
 
 
    }

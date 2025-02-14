@@ -5,7 +5,6 @@ import java.util.Random;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
-import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.StringValue;
 
 import com.bitwig.extension.controller.api.Setting;

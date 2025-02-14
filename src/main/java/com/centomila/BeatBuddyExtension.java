@@ -5,11 +5,7 @@ import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.DocumentState;
-import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
-import com.bitwig.extension.controller.api.Channel;
-import com.bitwig.extension.controller.api.PlayingNote;
-import com.bitwig.extension.controller.api.PlayingNoteArrayValue;
 
 import com.centomila.utils.PopupUtils;
 
