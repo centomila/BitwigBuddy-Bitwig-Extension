@@ -50,6 +50,7 @@ public class PatternSettings {
         initPatternTypeSetting(documentState);
         initPatternSelectorSetting(documentState);
         initCustomPresetSetting(documentState);
+        initCustomPresetPatternSetting(documentState);
         initReversePatternSetting(documentState);
         initSpacer(documentState);
     }
@@ -118,11 +119,18 @@ public class PatternSettings {
      */
     private void initCustomPresetSetting(DocumentState documentState) {
         String[] presets = getCustomPresetsContentNameStrings();
-        extension.setCustomPresetSetting((Setting) documentState.getEnumSetting("Custom Presets", "Generate", presets, presets[0]));
+        extension.setCustomPresetSetting(
+                (Setting) documentState.getEnumSetting("Custom Presets", "Generate", presets, presets[0]));
         extension.getCustomPresetSetting().disable(); // Disabled initially until "Custom" is selected.
         ((EnumValue) extension.getCustomPresetSetting()).addValueObserver(newValue -> {
             PopupUtils.showPopup("Custom Preset selected: " + newValue.toString());
         });
+    }
+    
+    private void initCustomPresetPatternSetting(DocumentState documentState) {
+        // String[] presets = getCustomPresetsContentNameStrings();
+        extension.setCustomPresetPatternSetting(
+                (Setting) documentState.getStringSetting("Steps", "Generate", 0, "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"));
     }
 
     /**

@@ -32,6 +32,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting patternSelectorSetting;
    // New field for the custom presets dropdown
    private Setting customPresetSetting;
+   private Setting customPresetPatternSetting;
    private Setting noteLengthSetting; // How long each note should be
    private Setting stepSizSetting;
    private Setting stepSizSubdivisionSetting;
@@ -349,5 +350,13 @@ public class BeatBuddyExtension extends ControllerExtension {
 
    public void setPostActionsSetting(Setting postActionsSetting) {
       this.postActionsSetting = postActionsSetting;
+   }
+
+   public Setting getCustomPresetPatternSetting() {
+      return customPresetPatternSetting;
+   }
+
+   public void setCustomPresetPatternSetting(Setting customPresetPatternSetting) {
+      this.customPresetPatternSetting = customPresetPatternSetting;
    }
 }
