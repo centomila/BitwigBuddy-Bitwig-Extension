@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.bitwig.extension.controller.api.Clip;
-import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.NoteStep;
 import com.bitwig.extension.controller.api.Setting;

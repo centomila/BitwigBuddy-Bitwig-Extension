@@ -1,6 +1,5 @@
 package com.centomila;
 
-import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.centomila.utils.PopupUtils;
@@ -58,7 +57,6 @@ public class NoteDestinationSettings {
     */
    public static void init(BeatBuddyExtension extension) {
       var documentState = extension.getDocumentState();
-      var host = extension.getHost();
 
       // Initialize available options.
       String[] noteDestinationOptions = Utils.NOTE_NAMES;
