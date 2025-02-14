@@ -36,18 +36,18 @@ public class BeatBuddyExtension extends ControllerExtension {
    public Setting stepSizSubdivisionSetting; // Subdivisions Straight | Dotted | Triplet | Quintuplet | Septuplet
    public Setting learnNoteSetting; // On or Off
    
-   
+   // Note Destination settings
    public Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
    public Setting noteOctaveSetting; // Note Octave -2 to 8
    public Setting noteChannelSetting; // Note Channel 1 to 16
    private NoteDestinationSettings noteDestSettings; // Class to handle note destination settings
-   
    
    // Post actions settings
    private Setting autoResizeLoopLengthSetting;
    private Setting zoomToFitAfterGenerateSetting;
    private Setting postActionsSetting;
    
+   // Step movement settings
    private MoveStepsHandler moveStepsHandler;
    
    // Spacers
@@ -88,21 +88,13 @@ public class BeatBuddyExtension extends ControllerExtension {
       moveStepsHandler.init(documentState);
 
       PatternSettings.init(this);
-
       NoteDestinationSettings.init(this);
-
       StepSizeSettings.init(this);
-
       PostActionSettings.init(this);
-
-      // Replace removed method call with external initializer
       ClipUtils.init(this);
 
       // Initialize launcher/arranger toggle
       initToggleLauncherArrangerSetting();
-
-      // Initialize note input.This read the current note played and show a popup with the note name
-      // initNoteInput();
 
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BeatBuddy Initialized");
@@ -156,6 +148,8 @@ public class BeatBuddyExtension extends ControllerExtension {
    public void flush() {
       // Update logic if necessary
    }
+
+   // Getters and Setters
 
    public Application getApplication() {
       return application;
