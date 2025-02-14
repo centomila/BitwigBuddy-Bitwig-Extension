@@ -2,6 +2,8 @@ package com.centomila;
 
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.SettableEnumValue;
+import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.centomila.CustomPresetsHandler.CustomPreset;
@@ -123,7 +125,12 @@ public class PatternSettings {
                 (Setting) documentState.getEnumSetting("Custom Presets", "Generate", presets, presets[0]));
         extension.getCustomPresetSetting().disable(); // Disabled initially until "Custom" is selected.
         ((EnumValue) extension.getCustomPresetSetting()).addValueObserver(newValue -> {
-            PopupUtils.showPopup("Custom Preset selected: " + newValue.toString());
+            
+            String pattern = String.join(",", getCustomPresetsContentPatternStrings(newValue));
+            PopupUtils.showPopup("Custom Preset selected: " + newValue.toString() + " with pattern: " + pattern);
+            // convert pattern to Setting
+            ((SettableStringValue) extension.customPresetPatternSetting).set(pattern);
+            
         });
     }
     
@@ -162,8 +169,14 @@ public class PatternSettings {
      */
     private String[] getCustomPresetsContentNameStrings() {
         return Arrays.stream(extension.getPreferences().getCustomPresets())
-                     .map(CustomPreset::getName)
-                     .toArray(String[]::new);
+                .map(CustomPreset::getName)
+                .toArray(String[]::new);
+    }
+    
+    private String[] getCustomPresetsContentPatternStrings(String presetName) {
+        CustomPresetsHandler handler = new CustomPresetsHandler(extension.getHost(), extension.getPreferences());
+        int[] pattern = handler.getCustomPatternByName(presetName);
+        return Arrays.stream(pattern).mapToObj(String::valueOf).toArray(String[]::new);
     }
 
     /**

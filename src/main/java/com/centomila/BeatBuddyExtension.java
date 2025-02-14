@@ -32,7 +32,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    private Setting patternSelectorSetting;
    // New field for the custom presets dropdown
    private Setting customPresetSetting;
-   private Setting customPresetPatternSetting;
+   public Setting customPresetPatternSetting;
    private Setting noteLengthSetting; // How long each note should be
    private Setting stepSizSetting;
    private Setting stepSizSubdivisionSetting;

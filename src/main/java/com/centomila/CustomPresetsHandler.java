@@ -71,6 +71,28 @@ public class CustomPresetsHandler {
     }
 
     /**
+     * Retrieves the pattern array for a preset with the given name.
+     * 
+     * @param patternName The name of the preset to search for
+     * @return The pattern array if found, null if no preset matches the name
+     */
+    public int[] getCustomPatternByName(String patternName) {
+        if (patternName == null) {
+            return null;
+        }
+
+        CustomPreset[] presets = getCustomPresets();
+        for (CustomPreset preset : presets) {
+            if (patternName.equals(preset.getName())) {
+                return preset.getPattern();
+            }
+        }
+        
+        host.errorln("No preset found with name: " + patternName);
+        return null;
+    }
+
+    /**
      * Reads and parses a single preset file.
      * 
      * @param file The preset file to read
