@@ -156,32 +156,9 @@ public class BeatBuddyExtension extends ControllerExtension {
       return application;
    }
 
-   public void setApplication(Application application) {
-      this.application = application;
-   }
-
-   public Clip getCursorClip() {
-      return cursorClip;
-   }
-
-   public void setCursorClip(Clip cursorClip) {
-      this.cursorClip = cursorClip;
-   }
-
-   public Clip getArrangerClip() {
-      return arrangerClip;
-   }
-
-   public void setArrangerClip(Clip arrangerClip) {
-      this.arrangerClip = arrangerClip;
-   }
 
    public DocumentState getDocumentState() {
       return documentState;
-   }
-
-   public void setDocumentState(DocumentState documentState) {
-      this.documentState = documentState;
    }
 
    public Setting getPatternTypeSetting() {
