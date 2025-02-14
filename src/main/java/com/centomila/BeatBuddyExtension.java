@@ -6,6 +6,9 @@ import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.Setting;
+import com.bitwig.extension.controller.api.Channel;
+import com.bitwig.extension.controller.api.PlayingNote;
+import com.bitwig.extension.controller.api.PlayingNoteArrayValue;
 
 import com.centomila.utils.PopupUtils;
 
@@ -94,9 +97,13 @@ public class BeatBuddyExtension extends ControllerExtension {
       // Initialize launcher/arranger toggle
       initToggleLauncherArrangerSetting();
 
+      // Initialize note input.This read the current note played and show a popup with the note name
+      // initNoteInput();
+
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BeatBuddy Initialized");
 
+      initNoteInput();
    }
 
 
@@ -330,5 +337,31 @@ public class BeatBuddyExtension extends ControllerExtension {
 
    public void setPresetPatternStringSetting(Setting customPresetPatternSetting) {
       this.presetPatternStringSetting = customPresetPatternSetting;
+   }
+
+   private void initNoteInput() {
+      ControllerHost host = getHost();
+      
+      // Get cursor channel
+      Channel cursorChannel = host.createCursorTrack(0, 0);
+      
+      // Get playing notes value
+      PlayingNoteArrayValue playingNotes = cursorChannel.playingNotes();
+      playingNotes.markInterested();
+      
+      // Monitor playing notes
+      playingNotes.addValueObserver(notes -> {
+          for (PlayingNote note : notes) {
+              String noteName = getNoteNameFromKey(note.pitch());
+              PopupUtils.showPopup("Note played: " + noteName + " (velocity: " + Math.round(note.velocity()) + ")");
+          }
+      });
+   }
+   
+   private String getNoteNameFromKey(int key) {
+      String[] noteNames = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+      int octave = (key / 12) - 1;
+      int noteIndex = key % 12;
+      return noteNames[noteIndex] + octave;
    }
 }
