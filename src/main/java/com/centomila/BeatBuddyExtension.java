@@ -18,23 +18,23 @@ import com.centomila.utils.PopupUtils;
  * and various clip manipulation tools.
  */
 public class BeatBuddyExtension extends ControllerExtension {
-   private Application application;
-   private Clip cursorClip;
-   private Clip arrangerClip;
+   public Application application;
+   public Clip cursorClip;
+   public Clip arrangerClip;
 
    private DocumentState documentState;
    public Setting patternTypeSetting;
-   private Setting patternSelectorSetting;
+   public Setting patternSelectorSetting;
    // New field for the custom presets dropdown
-   private Setting customPresetSetting;
-   public Setting customPresetPatternSetting;
-   private Setting noteLengthSetting; // How long each note should be
-   private Setting stepSizSetting;
-   private Setting stepSizSubdivisionSetting;
-   private Setting noteDestinationSetting;
-   private Setting noteOctaveSetting;
-   private Setting noteChannelSetting;
-   private Setting toggleLauncherArrangerSetting;
+   public Setting customPresetSetting;
+   public Setting presetPatternStringSetting;
+   public Setting noteLengthSetting; // How long each note should be
+   public Setting stepSizSetting;
+   public Setting stepSizSubdivisionSetting;
+   public Setting noteDestinationSetting;
+   public Setting noteOctaveSetting;
+   public Setting noteChannelSetting;
+   public Setting toggleLauncherArrangerSetting;
    
 
    private Setting reversePatternSetting;
@@ -324,11 +324,11 @@ public class BeatBuddyExtension extends ControllerExtension {
       this.postActionsSetting = postActionsSetting;
    }
 
-   public Setting getCustomPresetPatternSetting() {
-      return customPresetPatternSetting;
+   public Setting getPresetPatternStringSetting() {
+      return presetPatternStringSetting;
    }
 
-   public void setCustomPresetPatternSetting(Setting customPresetPatternSetting) {
-      this.customPresetPatternSetting = customPresetPatternSetting;
+   public void setPresetPatternStringSetting(Setting customPresetPatternSetting) {
+      this.presetPatternStringSetting = customPresetPatternSetting;
    }
 }

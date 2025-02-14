@@ -9,6 +9,7 @@ import com.centomila.CustomPresetsHandler.CustomPreset;
 import com.centomila.utils.PopupUtils;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * Manages the pattern settings for the BeatBuddy extension including presets,
@@ -57,7 +58,8 @@ public class PatternSettings {
     }
 
     /**
-     * Initializes the generate button setting and binds it to the drum pattern generation.
+     * Initializes the generate button setting and binds it to the drum pattern
+     * generation.
      *
      * @param documentState The current document state.
      */
@@ -67,13 +69,15 @@ public class PatternSettings {
     }
 
     /**
-     * Initializes the pattern type setting and sets up observers to show/hide related settings.
+     * Initializes the pattern type setting and sets up observers to show/hide
+     * related settings.
      *
      * @param documentState The current document state.
      */
     private void initPatternTypeSetting(DocumentState documentState) {
         String[] options = { "Presets", "Random", "Custom" };
-        extension.setPatternTypeSetting((Setting) documentState.getEnumSetting("Pattern Type", "Generate", options, "Presets"));
+        extension.setPatternTypeSetting(
+                (Setting) documentState.getEnumSetting("Pattern Type", "Generate", options, "Presets"));
 
         ((EnumValue) extension.getPatternTypeSetting()).addValueObserver(newValue -> {
             switch (newValue) {
@@ -107,14 +111,20 @@ public class PatternSettings {
                 .toArray(String[]::new);
 
         extension.setPatternSelectorSetting(
-                (Setting) documentState.getEnumSetting("Pattern", "Generate", PATTERN_OPTIONS, "Kick: Four on the Floor"));
+                (Setting) documentState.getEnumSetting("Pattern", "Generate", PATTERN_OPTIONS,
+                        "Kick: Four on the Floor"));
         ((EnumValue) extension.getPatternSelectorSetting()).addValueObserver(newValue -> {
             PopupUtils.showPopup(newValue.toString());
+            String patternByName = Arrays.stream(DefaultPatterns.getPatternByName(newValue.toString()))
+                                       .mapToObj(String::valueOf)
+                                       .collect(Collectors.joining(","));
+            setPatternString(patternByName);
         });
     }
 
     /**
-     * Initializes the custom preset setting and adds an observer for selection events.
+     * Initializes the custom preset setting and adds an observer for selection
+     * events.
      *
      * @param documentState The current document state.
      */
@@ -124,18 +134,27 @@ public class PatternSettings {
                 (Setting) documentState.getEnumSetting("Custom Presets", "Generate", presets, presets[0]));
         extension.getCustomPresetSetting().disable(); // Disabled initially until "Custom" is selected.
         ((EnumValue) extension.getCustomPresetSetting()).addValueObserver(newValue -> {
-            
+
             String pattern = String.join(",", getCustomPresetsContentPatternStrings(newValue));
             PopupUtils.showPopup("Custom Preset selected: " + newValue.toString() + " with pattern: " + pattern);
             // convert pattern to Setting
-            ((SettableStringValue) extension.customPresetPatternSetting).set(pattern);
-            
+            setPatternString(pattern);
+
         });
     }
-    
+
+    private void setPatternString(String patternByName) {
+        String patternType = ((EnumValue) extension.patternTypeSetting).get();
+        if (patternType.equals("Random")) {
+            patternByName = new int[16].toString();
+        } else {
+            ((SettableStringValue) extension.presetPatternStringSetting).set(patternByName);
+        }
+    }
+
     private void initCustomPresetPatternSetting(DocumentState documentState) {
         // String[] presets = getCustomPresetsContentNameStrings();
-        extension.setCustomPresetPatternSetting(
+        extension.setPresetPatternStringSetting(
                 (Setting) documentState.getStringSetting("Steps", "Generate", 0, "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"));
     }
 
@@ -171,7 +190,7 @@ public class PatternSettings {
                 .map(CustomPreset::getName)
                 .toArray(String[]::new);
     }
-    
+
     private String[] getCustomPresetsContentPatternStrings(String presetName) {
         CustomPresetsHandler handler = new CustomPresetsHandler(extension.getHost(), extension.getPreferences());
         int[] pattern = handler.getCustomPatternByName(presetName);
