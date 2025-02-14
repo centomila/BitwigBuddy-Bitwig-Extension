@@ -111,7 +111,6 @@ public class BeatBuddyExtension extends ControllerExtension {
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BeatBuddy Initialized");
 
-      initNoteInput();
    }
 
 
@@ -347,47 +346,5 @@ public class BeatBuddyExtension extends ControllerExtension {
       this.presetPatternStringSetting = customPresetPatternSetting;
    }
 
-   private void initNoteInput() {
-      // Add a new enumvalue setting called Learn Note. Options are "On" and "Off"
-      final String[] LEARN_NOTE_OPTIONS = new String[] { "On", "Off" };
-      learnNoteSetting = (Setting) documentState.getEnumSetting("Learn Note", "Note Destination", LEARN_NOTE_OPTIONS,
-            "Off");
 
-      ControllerHost host = getHost();
-      
-      // Get cursor channel
-      Channel cursorChannel = host.createCursorTrack(0, 0);
-      
-      // Get playing notes value
-      PlayingNoteArrayValue playingNotes = cursorChannel.playingNotes();
-      
-      // Mark interested and add observer during initialization
-      playingNotes.markInterested();
-      playingNotes.addValueObserver(notes -> {
-          // Only show popup if Learn Note is "On"
-          if (((EnumValue)learnNoteSetting).get().equals("On")) {
-              for (PlayingNote note : notes) {
-                  String noteName = getNoteNameFromKey(note.pitch());
-                  PopupUtils.showPopup("Note played: " + noteName + " (velocity: " + Math.round(note.velocity()) + ")");
-              }
-          }
-      });
-
-      // Handle subscription based on setting value
-      ((EnumValue) learnNoteSetting).addValueObserver(value -> {
-          if (value.equals("On")) {
-              playingNotes.subscribe();
-          }
-          else {
-              playingNotes.unsubscribe();
-          }
-      });
-   }
-   
-   private String getNoteNameFromKey(int key) {
-      String[] noteNames = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
-      int octave = (key / 12) - 1;
-      int noteIndex = key % 12;
-      return noteNames[noteIndex] + octave;
-   }
 }

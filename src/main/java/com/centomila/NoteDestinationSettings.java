@@ -3,7 +3,12 @@ package com.centomila;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.centomila.utils.PopupUtils;
+import com.bitwig.extension.controller.api.Channel;
+import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.PlayingNote;
+import com.bitwig.extension.controller.api.PlayingNoteArrayValue;
+import com.bitwig.extension.controller.api.ControllerHost;
 
 import java.util.Arrays;
 
@@ -57,6 +62,7 @@ public class NoteDestinationSettings {
     */
    public static void init(BeatBuddyExtension extension) {
       var documentState = extension.getDocumentState();
+      ControllerHost host = extension.getHost();
 
       // Initialize available options.
       String[] noteDestinationOptions = Utils.NOTE_NAMES;
@@ -67,27 +73,57 @@ public class NoteDestinationSettings {
       // Set up Note Destination setting.
       extension.setNoteDestinationSetting((Setting) documentState.getEnumSetting(
             "Note Destination", "Note Destination",
-            noteDestinationOptions, noteDestinationOptions[0]
-      ));
+            noteDestinationOptions, noteDestinationOptions[0]));
 
       // Set up Note Octave setting.
       extension.setNoteOctaveSetting((Setting) documentState.getEnumSetting(
             "Note Octave", "Note Destination",
-            octaveDestinationOptions, octaveDestinationOptions[3]
-      ));
+            octaveDestinationOptions, octaveDestinationOptions[3]));
 
       // Set up Note Channel setting.
       extension.setNoteChannelSetting((Setting) documentState.getNumberSetting(
             "Note Channel", "Note Destination",
-            1, 16, 1, "Channel MIDI", 1
-      ));
+            1, 16, 1, "Channel MIDI", 1));
 
       // Create and assign NoteDestinationSettings.
-      extension.setNoteDestSettings(new NoteDestinationSettings( 
+      extension.setNoteDestSettings(new NoteDestinationSettings(
             extension.getNoteChannelSetting(),
             noteDestinationOptions[0],
-            3
-      ));
+            3));
+
+      // Add a new enumvalue setting called Learn Note. Options are "On" and "Off"
+      final String[] LEARN_NOTE_OPTIONS = new String[] { "On", "Off" };
+      extension.learnNoteSetting = (Setting) documentState.getEnumSetting("Learn Note", "Note Destination", LEARN_NOTE_OPTIONS,
+            "Off");
+
+      // Playing notes observer
+
+      // Get cursor channel
+      Channel cursorChannel = host.createCursorTrack(0, 0);
+
+      // Get playing notes value
+      PlayingNoteArrayValue playingNotes = cursorChannel.playingNotes();
+
+      // Mark interested and add observer during initialization
+      playingNotes.markInterested();
+      playingNotes.addValueObserver(notes -> {
+         // Only show popup if Learn Note is "On"
+         if (((EnumValue) extension.learnNoteSetting).get().equals("On")) {
+            for (PlayingNote note : notes) {
+               String noteName = getNoteNameFromKey(note.pitch());
+               PopupUtils.showPopup("Note played: " + noteName + " (velocity: " + Math.round(note.velocity()) + ")");
+            }
+         }
+      });
+
+      // Handle subscription based on setting value
+      ((EnumValue) extension.learnNoteSetting).addValueObserver(value -> {
+         if (value.equals("On")) {
+            playingNotes.subscribe();
+         } else {
+            playingNotes.unsubscribe();
+         }
+      });
 
       // Register observer for Note Destination changes.
       ((EnumValue) extension.getNoteDestinationSetting()).addValueObserver(newValue -> {
@@ -101,8 +137,41 @@ public class NoteDestinationSettings {
 
       // Add a spacer setting for layout spacing.
       extension.setSpacer2((Setting) documentState.getStringSetting(
-            "----", "Clip", 0, "---------------------------------------------------"
-      ));
+            "----", "Clip", 0, "---------------------------------------------------"));
       extension.getSpacer2().disable();
+      }
+      
+      public static String getNoteNameFromKey(int key) {
+      String[] noteNames = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+      int octave = (key / 12) - 2;  // Changed from -1 to -2
+      int noteIndex = key % 12;
+      // This can be from -C2 TO G8
+      return noteNames[noteIndex] + octave;
+      }
+
+      public static String[] getKeyAndOctaveFromNoteName(String noteName) {
+      String[] noteNames = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+      // String noteName can be from -C2 TO G8
+
+      // Get note name and octave
+      String note = noteName.substring(0, noteName.length() - 1);
+      int octave = Integer.parseInt(noteName.substring(noteName.length() - 1));
+
+      // Get note index
+      int noteIndex = 0;
+      for (int i = 0; i < noteNames.length; i++) {
+         if (noteNames[i].equals(note)) {
+            noteIndex = i;
+            break;
+         }
+      }
+
+      // Get key
+      int key = (octave + 1) * 12 + noteIndex;
+      PopupUtils.showPopup("Key: " + key + " Octave: " + octave);
+      return new String[] { String.valueOf(key), String.valueOf(octave) };
+
+
    }
 }
+
