@@ -82,6 +82,7 @@ public class PatternSettings {
         String[] options = { "Presets", "Random", "Custom" };
         extension.patternTypeSetting = (Setting) documentState.getEnumSetting("Pattern Type", CATEGORY_GENERATE_PATTERN,
                 options, "Presets");
+        
 
         ((EnumValue) extension.patternTypeSetting).addValueObserver(newValue -> {
             switch (newValue) {

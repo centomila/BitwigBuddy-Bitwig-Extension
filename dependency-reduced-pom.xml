@@ -71,7 +71,38 @@
         <version>3.2.0</version>
         <configuration>
           <failOnError>false</failOnError>
+          <filesets>
+            <fileset>
+              <directory>${bitwig.extension.directory.onedrive.ita}/BeatBuddy</directory>
+              <includes>
+                <include>**/*</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>copy-presets</id>
+            <phase>install</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${bitwig.extension.directory.onedrive.ita}/BeatBuddy</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/main/java/com/centomila/customPresetsTxt</directory>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

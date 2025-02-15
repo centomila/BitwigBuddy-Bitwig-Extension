@@ -1,0 +1,3 @@
+Name: "Sample Custom Preset"
+DefaultNote: "C1"
+Pattern: [100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0]

@@ -21,16 +21,18 @@ public class PostActionSettings {
                 Setting postActionsSetting = (Setting) documentState.getEnumSetting(
                                 "Post Actions",
                                 CATEGORY_POST_ACTIONS,
-                                new String[] { "Show", "Hide" }, "Show");
+                                new String[] { "Show", "Hide" }, "Hide");
 
                 ((EnumValue) postActionsSetting).addValueObserver(newValue -> {
                         if (newValue.equals("Hide")) {
                                 extension.autoResizeLoopLengthSetting.hide();
-                                extension.getZoomToFitAfterGenerateSetting().hide();
+                                extension.zoomToFitAfterGenerateSetting.hide();
+                                extension.duplicateClipSetting.hide();
 
                         } else {
                                 extension.autoResizeLoopLengthSetting.show();
-                                extension.getZoomToFitAfterGenerateSetting().show();
+                                extension.zoomToFitAfterGenerateSetting.show();
+                                extension.duplicateClipSetting.show();
 
                         }
                 });
@@ -45,7 +47,7 @@ public class PostActionSettings {
                 Setting zoomToFitAfterGenerateSetting = (Setting) documentState.getEnumSetting(
                                 "Zoom to fit after generate",
                                 CATEGORY_POST_ACTIONS,
-                                new String[] { "Off", "On" }, "On");
+                                new String[] { "Off", "On" }, "Off");
                 extension.setZoomToFitAfterGenerateSetting(zoomToFitAfterGenerateSetting);
 
                 // extension.openInDetailEditorSetting = (Setting) documentState.getEnumSetting(
@@ -56,7 +58,7 @@ public class PostActionSettings {
                 extension.duplicateClipSetting = (Setting) documentState.getEnumSetting(
                                 "Duplicate Selected Clip",
                                 CATEGORY_POST_ACTIONS,
-                                new String[] { "Off", "On" }, "On");
+                                new String[] { "Off", "On" }, "Off");
                 
         }
 }
