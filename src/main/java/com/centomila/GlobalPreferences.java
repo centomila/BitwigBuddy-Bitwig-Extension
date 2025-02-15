@@ -2,6 +2,8 @@ package com.centomila;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import com.bitwig.extension.controller.api.*;
 import javafx.application.Platform;
@@ -159,15 +161,15 @@ public class GlobalPreferences {
      * Opens the current presets folder in the system's file explorer.
      */
     private void openPresetsFolderInExplorer() {
-        File directory = new File(presetsPath.get());
+        Path directory = Paths.get(presetsPath.get());
         if (!isValidPresetsFolder(directory)) {
-            PopupUtils.showPopup("Presets folder does not exist: " + directory.getAbsolutePath());
+            PopupUtils.showPopup("Presets folder does not exist: " + directory.toAbsolutePath());
             return;
         }
 
         try {
             PlatformCommand cmd = getPlatformCommand();
-            Runtime.getRuntime().exec(new String[]{cmd.fileExplorer, directory.getAbsolutePath()});
+            Runtime.getRuntime().exec(new String[]{cmd.fileExplorer, directory.toAbsolutePath().toString()});
         } catch (IOException e) {
             host.errorln("Failed to open presets folder: " + e.getMessage());
         }
@@ -178,11 +180,11 @@ public class GlobalPreferences {
 
         if (host.platformIsWindows()) {
             // First check OneDrive paths
-            File oneDriveBase = new File(userHome, "OneDrive");
-            if (oneDriveBase.exists()) {
+            Path oneDriveBase = Paths.get(userHome, "OneDrive");
+            if (Files.exists(oneDriveBase)) {
                 for (String docName : DOCUMENTS_LOCALIZED) {
-                    File path = Paths.get(userHome, "OneDrive", docName, "Bitwig Studio", "Extensions", "BeatBuddy").toFile();
-                    if (path.exists()) {
+                    Path path = Paths.get(userHome, "OneDrive", docName, "Bitwig Studio", "Extensions", "BeatBuddy");
+                    if (Files.exists(path)) {
                         return path.toString();
                     }
                 }
@@ -190,8 +192,8 @@ public class GlobalPreferences {
 
             // Then check regular Documents folders
             for (String docName : DOCUMENTS_LOCALIZED) {
-                File path = Paths.get(userHome, docName, "Bitwig Studio", "Extensions", "BeatBuddy").toFile();
-                if (path.exists()) {
+                Path path = Paths.get(userHome, docName, "Bitwig Studio", "Extensions", "BeatBuddy");
+                if (Files.exists(path)) {
                     return path.toString();
                 }
             }
@@ -246,15 +248,15 @@ public class GlobalPreferences {
         }
     }
 
-    private boolean isValidPresetsFolder(File folder) {
-        return folder != null && folder.exists() && folder.isDirectory();
+    private boolean isValidPresetsFolder(Path folder) {
+        return folder != null && Files.exists(folder) && Files.isDirectory(folder);
     }
 
-    private File getValidInitialDirectory() {
+    private Path getValidInitialDirectory() {
         // Try current preset path first
         String currentPathStr = presetsPath.get();
         if (currentPathStr != null) {
-            File currentPath = new File(currentPathStr);
+            Path currentPath = Paths.get(currentPathStr);
             if (isValidPresetsFolder(currentPath)) {
                 return currentPath;
             }
@@ -262,14 +264,14 @@ public class GlobalPreferences {
 
         // Try Bitwig Extensions folder
         String userHome = System.getProperty("user.home");
-        File extensionsFolder = Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions").toFile();
+        Path extensionsFolder = Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions");
         if (isValidPresetsFolder(extensionsFolder)) {
             host.println("Using Bitwig Extensions folder: " + extensionsFolder);
             return extensionsFolder;
         }
 
         // Fallback to user home
-        File homeFolder = new File(userHome);
+        Path homeFolder = Paths.get(userHome);
         host.println("Using home folder: " + homeFolder);
         return homeFolder;
     }
@@ -286,14 +288,17 @@ public class GlobalPreferences {
                 try {
                     DirectoryChooser directoryChooser = new DirectoryChooser();
                     directoryChooser.setTitle("Select BeatBuddy Presets Folder");
-                    File initialDir = getValidInitialDirectory();
+                    Path initialDir = getValidInitialDirectory();
                     if (initialDir != null) {
-                        directoryChooser.setInitialDirectory(initialDir);
+                        directoryChooser.setInitialDirectory(initialDir.toFile()); // DirectoryChooser still needs File
                     }
 
                     Stage stage = new Stage();
                     File selectedDirectory = directoryChooser.showDialog(stage);
-                    chosenFile.set(selectedDirectory);
+                    if (selectedDirectory != null) {
+                        Path selectedPath = selectedDirectory.toPath();
+                        chosenFile.set(selectedDirectory);
+                    }
                 } catch (Exception e) {
                     errorMessage.set(e.getMessage());
                     host.errorln("Error in directory chooser: " + e.getMessage());
@@ -314,11 +319,12 @@ public class GlobalPreferences {
 
             File selectedDirectory = chosenFile.get();
             if (selectedDirectory != null) {
-                if (isValidPresetsFolder(selectedDirectory)) {
-                    setPresetsPath(selectedDirectory.getAbsolutePath());
-                    PopupUtils.showPopup("Presets folder updated to: " + selectedDirectory.getAbsolutePath());
+                Path selectedPath = selectedDirectory.toPath();
+                if (isValidPresetsFolder(selectedPath)) {
+                    setPresetsPath(selectedPath.toAbsolutePath().toString());
+                    PopupUtils.showPopup("Presets folder updated to: " + selectedPath.toAbsolutePath());
                 } else {
-                    PopupUtils.showPopup("Invalid presets folder selected: " + selectedDirectory.getAbsolutePath());
+                    PopupUtils.showPopup("Invalid presets folder selected: " + selectedPath.toAbsolutePath());
                 }
             }
 
@@ -330,7 +336,7 @@ public class GlobalPreferences {
 
     private void resetToDefaultPath() {
         String defaultPath = getDefaultExtensionsPath();
-        File defaultDir = new File(defaultPath);
+        Path defaultDir = Paths.get(defaultPath);
 
         if (isValidPresetsFolder(defaultDir)) {
             setPresetsPath(defaultPath);
