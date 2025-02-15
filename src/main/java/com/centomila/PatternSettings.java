@@ -116,6 +116,9 @@ public class PatternSettings {
                 "Kick: Four on the Floor");
 
         ((EnumValue) extension.patternSelectorSetting).addValueObserver(newValue -> {
+            if (!((EnumValue) extension.patternTypeSetting).get().equals("Presets")) {
+                return;
+            }
             PopupUtils.showPopup(newValue.toString());
             String patternByName = Arrays.stream(DefaultPatterns.getPatternByName(newValue.toString()))
                     .mapToObj(String::valueOf)
@@ -139,6 +142,11 @@ public class PatternSettings {
         extension.customPresetSetting.disable(); // Disabled initially until "Custom" is selected.
 
         ((EnumValue) extension.customPresetSetting).addValueObserver(newValue -> {
+            // if preset type 
+            if (!((EnumValue) extension.patternTypeSetting).get().equals("Custom")) {
+                return;
+            }
+            
             String pattern = String.join(",", getCustomPresetsContentPatternStrings(newValue));
             PopupUtils.showPopup("Custom Preset selected: " + newValue.toString() + " with pattern: " + pattern);
             // convert pattern to Setting

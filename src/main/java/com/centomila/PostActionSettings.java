@@ -5,17 +5,22 @@ import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
 
 public class PostActionSettings {
+        private static String CATEGORY_POST_ACTIONS = "Post Actions";
+
         public static void init(BeatBuddyExtension extension) {
                 DocumentState documentState = extension.getDocumentState();
 
-                // Initialize spacer3 for "Post Actions"
-                Setting spacer3 = (Setting) documentState.getStringSetting("POST ACTIONS----------------------", "Post Actions", 0,
+                // Initialize spacer for "Post Actions"
+                Setting spacerPostActions = (Setting) documentState.getStringSetting(
+                                "POST ACTIONS----------------------",
+                                CATEGORY_POST_ACTIONS, 0,
                                 "---------------------------------------------------");
-                spacer3.disable();
-                
+                spacerPostActions.disable();
 
                 // Setting for toggle hide/show post actions
-                Setting postActionsSetting = (Setting) documentState.getEnumSetting("Post Actions", "Post Actions",
+                Setting postActionsSetting = (Setting) documentState.getEnumSetting(
+                                "Post Actions",
+                                CATEGORY_POST_ACTIONS,
                                 new String[] { "Show", "Hide" }, "Show");
 
                 ((EnumValue) postActionsSetting).addValueObserver(newValue -> {
@@ -31,14 +36,27 @@ public class PostActionSettings {
                 });
 
                 // Initialize auto resize loop length setting
-                Setting autoResizeLoopLengthSetting = (Setting) documentState.getEnumSetting("Auto resize loop length",
-                                "Post Actions",
+                Setting autoResizeLoopLengthSetting = (Setting) documentState.getEnumSetting(
+                                "Auto resize loop length",
+                                CATEGORY_POST_ACTIONS,
                                 new String[] { "Off", "On" }, "On");
                 extension.setAutoResizeLoopLengthSetting(autoResizeLoopLengthSetting);
 
                 Setting zoomToFitAfterGenerateSetting = (Setting) documentState.getEnumSetting(
                                 "Zoom to fit after generate",
-                                "Post Actions", new String[] { "Off", "On" }, "On");
+                                CATEGORY_POST_ACTIONS,
+                                new String[] { "Off", "On" }, "On");
                 extension.setZoomToFitAfterGenerateSetting(zoomToFitAfterGenerateSetting);
+
+                // extension.openInDetailEditorSetting = (Setting) documentState.getEnumSetting(
+                //                 "Open in Detail Editor after Generate",
+                //                 CATEGORY_POST_ACTIONS,
+                //                 new String[] { "Off", "On" }, "On");
+                
+                extension.duplicateClipSetting = (Setting) documentState.getEnumSetting(
+                                "Duplicate Selected Clip",
+                                CATEGORY_POST_ACTIONS,
+                                new String[] { "Off", "On" }, "On");
+                
         }
 }

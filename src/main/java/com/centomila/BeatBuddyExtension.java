@@ -5,6 +5,7 @@ import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.DocumentState;
+import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
 
 import com.centomila.utils.PopupUtils;
@@ -29,28 +30,31 @@ public class BeatBuddyExtension extends ControllerExtension {
    Setting customPresetSetting; // List of custom patterns
    Setting presetPatternStringSetting; // Custom pattern string
    Setting reversePatternSetting;
-   
+
    // Step Size / Note Length settings
    Setting noteLengthSetting; // How long each note should be
    Setting stepSizSetting;
    Setting stepSizSubdivisionSetting; // Subdivisions Straight | Dotted | Triplet | Quintuplet | Septuplet
    Setting learnNoteSetting; // On or Off
-   
+
    // Note Destination settings
-   Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
+   Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#",
+                                   // "B"
    Setting noteOctaveSetting; // Note Octave -2 to 8
    Setting noteChannelSetting; // Note Channel 1 to 16
    NoteDestinationSettings noteDestSettings; // Class to handle note destination settings
-   
+
    // Post actions settings
    Setting autoResizeLoopLengthSetting;
    Setting zoomToFitAfterGenerateSetting;
    Setting postActionsSetting;
+
    Setting duplicateClipSetting;
-   
+   Setting openInDetailEditorSetting;
+
    // Step movement settings
    private MoveStepsHandler moveStepsHandler;
-   
+
    Setting toggleLauncherArrangerSetting;
 
    GlobalPreferences preferences;
@@ -96,7 +100,6 @@ public class BeatBuddyExtension extends ControllerExtension {
 
    }
 
-
    /**
     * Initializes the clip destination toggle.
     * Allows switching between launcher and arranger clip modes,
@@ -108,6 +111,15 @@ public class BeatBuddyExtension extends ControllerExtension {
       toggleLauncherArrangerSetting = (Setting) documentState.getEnumSetting("Destination Launcher/Arranger", "Z",
             TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
             TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
+
+      ((EnumValue) toggleLauncherArrangerSetting).addValueObserver(newValue -> {
+         PopupUtils.showPopup("Destination: " + newValue);
+         if (newValue.equals("Arranger")) {
+            duplicateClipSetting.disable();
+         } else {
+            duplicateClipSetting.enable();
+         }
+      });
    }
 
    /**
@@ -119,7 +131,7 @@ public class BeatBuddyExtension extends ControllerExtension {
       Clip clip = getLauncherOrArrangerAsClip();
       DrumPatternGenerator.generatePattern(
             this, clip, noteLengthSetting, stepSizSubdivisionSetting,
-            stepSizSetting, noteDestSettings, patternSelectorSetting, patternTypeSetting,presetPatternStringSetting,
+            stepSizSetting, noteDestSettings, patternSelectorSetting, patternTypeSetting, presetPatternStringSetting,
             reversePatternSetting, autoResizeLoopLengthSetting, zoomToFitAfterGenerateSetting);
    }
 
@@ -150,63 +162,49 @@ public class BeatBuddyExtension extends ControllerExtension {
       return application;
    }
 
-
    public DocumentState getDocumentState() {
       return documentState;
    }
-
-
 
    public void setPatternSelectorSetting(Setting patternSelectorSetting) {
       this.patternSelectorSetting = patternSelectorSetting;
    }
 
-
    public void setCustomPresetSetting(Setting customPresetSetting) {
       this.customPresetSetting = customPresetSetting;
    }
-
 
    public void setNoteLengthSetting(Setting noteLengthSetting) {
       this.noteLengthSetting = noteLengthSetting;
    }
 
-
-
    public void setStepSizSetting(Setting stepSizSetting) {
       this.stepSizSetting = stepSizSetting;
    }
-
 
    public void setStepSizSubdivisionSetting(Setting stepSizSubdivisionSetting) {
       this.stepSizSubdivisionSetting = stepSizSubdivisionSetting;
    }
 
-
    public void setNoteDestinationSetting(Setting noteDestinationSetting) {
       this.noteDestinationSetting = noteDestinationSetting;
    }
-
 
    public void setNoteOctaveSetting(Setting noteOctaveSetting) {
       this.noteOctaveSetting = noteOctaveSetting;
    }
 
-
    public void setNoteChannelSetting(Setting noteChannelSetting) {
       this.noteChannelSetting = noteChannelSetting;
    }
-
 
    public void setToggleLauncherArrangerSetting(Setting toggleLauncherArrangerSetting) {
       this.toggleLauncherArrangerSetting = toggleLauncherArrangerSetting;
    }
 
-
    public void setAutoResizeLoopLengthSetting(Setting autoResizeLoopLengthSetting) {
       this.autoResizeLoopLengthSetting = autoResizeLoopLengthSetting;
    }
-
 
    public void setReversePatternSetting(Setting reversePatternSetting) {
       this.reversePatternSetting = reversePatternSetting;
@@ -220,13 +218,9 @@ public class BeatBuddyExtension extends ControllerExtension {
       this.moveStepsHandler = moveStepsHandler;
    }
 
-
    public void setNoteDestSettings(NoteDestinationSettings noteDestSettings) {
       this.noteDestSettings = noteDestSettings;
    }
-
-
-
 
    public void setPreferences(GlobalPreferences preferences) {
       this.preferences = preferences;
@@ -238,6 +232,10 @@ public class BeatBuddyExtension extends ControllerExtension {
 
    public void setZoomToFitAfterGenerateSetting(Setting zoomToFitAfterGenerateSetting) {
       this.zoomToFitAfterGenerateSetting = zoomToFitAfterGenerateSetting;
+   }
+
+   public void setDuplicateClipSetting(Setting openInDetailEditorSetting) {
+      this.duplicateClipSetting = openInDetailEditorSetting;
    }
 
    public Setting getPostActionsSetting() {
@@ -255,6 +253,5 @@ public class BeatBuddyExtension extends ControllerExtension {
    public void setPresetPatternStringSetting(Setting customPresetPatternSetting) {
       this.presetPatternStringSetting = customPresetPatternSetting;
    }
-
 
 }
