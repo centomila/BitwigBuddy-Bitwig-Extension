@@ -42,16 +42,15 @@ public class CustomPresetsHandler {
         File presetsDir = new File(preferences.getPresetsPath());
         if (!presetsDir.exists() || !presetsDir.isDirectory()) {
             host.errorln("Presets directory does not exist or is not a directory: " + presetsDir);
-            return new CustomPreset[0];
+            return new CustomPreset[] { createDefaultPreset() };
         }
 
         File[] files = presetsDir.listFiles();
         if (files == null) {
             host.errorln("Failed to list files in presets directory: " + presetsDir);
-            return new CustomPreset[0];
+            return new CustomPreset[] { createDefaultPreset() };
         }
 
-        // Arrays.sort(files, (f1, f2) -> Utils.naturalCompare(f1.getName(), f2.getName()));
         List<CustomPreset> presetList = new ArrayList<>();
 
         for (File file : files) {
@@ -67,7 +66,23 @@ public class CustomPresetsHandler {
             }
         }
 
+        // Return default preset if no valid presets were found
+        if (presetList.isEmpty()) {
+            return new CustomPreset[] { createDefaultPreset() };
+        }
+
         return presetList.toArray(new CustomPreset[0]);
+    }
+
+    private CustomPreset createDefaultPreset() {
+        // Simple default pattern: quarter notes
+        int[] defaultPattern = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        return new CustomPreset(
+            "default.txt",
+            "NO CUSTOM PATTERN",
+            "C1",
+            defaultPattern
+        );
     }
 
     /**
