@@ -20,6 +20,7 @@ public class PatternSettings {
     private final BeatBuddyExtension extension;
     private static String CATEGORY_GENERATE_PATTERN = "Generate Pattern";
     private String lastDefaultPresetUsed = "Kick: Four on the Floor";
+    private String lastCustomPresetUsed = null;
 
     /**
      * Constructs a new instance of PatternSettings.
@@ -90,12 +91,17 @@ public class PatternSettings {
                     showReversePatternSetting();
                     
                     ((SettableEnumValue) extension.patternSelectorSetting).set(lastDefaultPresetUsed);
-                    setPatternString(getPatternByNameForDefaultPresets(lastDefaultPresetUsed));
+                    setPatternString(getDefaultPresetsContentPatternStrings(lastDefaultPresetUsed));
                     break;
                 case "Custom":
                     hidePatternSetting();
                     showCustomPresetSetting();
                     showReversePatternSetting();
+                
+                        if (lastCustomPresetUsed != null) {
+                            ((SettableEnumValue) extension.customPresetSetting).set(lastCustomPresetUsed);
+                        }
+                
                     break;
                 case "Random":
                     hidePatternSetting();
@@ -127,12 +133,12 @@ public class PatternSettings {
             }
             lastDefaultPresetUsed = newValue.toString();
             PopupUtils.showPopup(newValue.toString());
-            String patternByName = getPatternByNameForDefaultPresets(newValue);
+            String patternByName = getDefaultPresetsContentPatternStrings(newValue);
             setPatternString(patternByName);
         });
     }
 
-    private String getPatternByNameForDefaultPresets(String newValue) {
+    private String getDefaultPresetsContentPatternStrings(String newValue) {
         String patternByName = Arrays.stream(DefaultPatterns.getPatternByName(newValue.toString()))
                 .mapToObj(String::valueOf)
                 .collect(Collectors.joining(","));
@@ -158,7 +164,11 @@ public class PatternSettings {
             if (!((EnumValue) extension.patternTypeSetting).get().equals("Custom")) {
                 return;
             }
-            
+            if (newValue != null) {
+                lastCustomPresetUsed = newValue.toString();
+            } else {
+                lastCustomPresetUsed = presets[0];
+            }
             String pattern = String.join(",", getCustomPresetsContentPatternStrings(newValue));
             PopupUtils.showPopup("Custom Preset selected: " + newValue.toString() + " with pattern: " + pattern);
             // convert pattern to Setting
