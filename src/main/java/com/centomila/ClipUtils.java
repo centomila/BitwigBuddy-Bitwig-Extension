@@ -12,7 +12,7 @@ import com.centomila.utils.PopupUtils;
 import com.bitwig.extension.controller.api.DocumentState;
 
 public class ClipUtils {
-
+private static String CATEGORY_OTHER = "Other";
     /**
      * Returns the Clip object for either the Arranger Clip Launcher or the Launcher
      * Clip depending on the value of the "Launcher/Arranger" setting.
@@ -143,13 +143,15 @@ public class ClipUtils {
      */
     public static void init(BeatBuddyExtension extension) {
         DocumentState documentState = extension.getDocumentState();
-        Setting spacer4 = (Setting) documentState.getStringSetting(
-            "----", "Clear Clip", 0, "---------------------------------------------------"
-        );
-        spacer4.disable();
-        extension.setSpacer4(spacer4);
+        Setting spacerOther = ((Setting) documentState.getStringSetting(
+            "OTHER--------------------------------", CATEGORY_OTHER, 0, "---------------------------------------------------"
+        ));
+        spacerOther.disable();
 
-        documentState.getSignalSetting("Clear current clip", "Clear Clip", "Clear current clip")
+        documentState.getSignalSetting("Clear current clip", CATEGORY_OTHER, "Clear current clip")
                 .addSignalObserver(() -> extension.getLauncherOrArrangerAsClip().clearSteps());
+                
+        
+
     }
 }

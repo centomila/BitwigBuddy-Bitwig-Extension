@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
  */
 public class PatternSettings {
     private final BeatBuddyExtension extension;
+    private static String CATEGORY_GENERATE_PATTERN = "Generate Pattern";
 
     /**
      * Constructs a new instance of PatternSettings.
@@ -48,13 +49,13 @@ public class PatternSettings {
      */
     private void initPatternSetting() {
         DocumentState documentState = extension.getDocumentState();
+        initSpacer(documentState);
         initGenerateButton(documentState);
         initPatternTypeSetting(documentState);
         initPatternSelectorSetting(documentState);
         initCustomPresetSetting(documentState);
         initCustomPresetPatternSetting(documentState);
         initReversePatternSetting(documentState);
-        initSpacer(documentState);
     }
 
     /**
@@ -64,7 +65,7 @@ public class PatternSettings {
      * @param documentState The current document state.
      */
     private void initGenerateButton(DocumentState documentState) {
-        Signal generateButton = documentState.getSignalSetting("Generate!", "Generate", "Generate!");
+        Signal generateButton = documentState.getSignalSetting("Generate!", CATEGORY_GENERATE_PATTERN, "Generate!");
         generateButton.addSignalObserver(extension::generateDrumPattern);
     }
 
@@ -76,10 +77,10 @@ public class PatternSettings {
      */
     private void initPatternTypeSetting(DocumentState documentState) {
         String[] options = { "Presets", "Random", "Custom" };
-        extension.setPatternTypeSetting(
-                (Setting) documentState.getEnumSetting("Pattern Type", "Generate", options, "Presets"));
+        extension.patternTypeSetting = (Setting) documentState.getEnumSetting("Pattern Type", CATEGORY_GENERATE_PATTERN,
+                options, "Presets");
 
-        ((EnumValue) extension.getPatternTypeSetting()).addValueObserver(newValue -> {
+        ((EnumValue) extension.patternTypeSetting).addValueObserver(newValue -> {
             switch (newValue) {
                 case "Presets":
                     showPatternSetting();
@@ -110,14 +111,15 @@ public class PatternSettings {
                 .map(pattern -> pattern[0].toString())
                 .toArray(String[]::new);
 
-        extension.setPatternSelectorSetting(
-                (Setting) documentState.getEnumSetting("Pattern", "Generate", PATTERN_OPTIONS,
-                        "Kick: Four on the Floor"));
-        ((EnumValue) extension.getPatternSelectorSetting()).addValueObserver(newValue -> {
+        extension.patternSelectorSetting = (Setting) documentState.getEnumSetting("Pattern", CATEGORY_GENERATE_PATTERN,
+                PATTERN_OPTIONS,
+                "Kick: Four on the Floor");
+
+        ((EnumValue) extension.patternSelectorSetting).addValueObserver(newValue -> {
             PopupUtils.showPopup(newValue.toString());
             String patternByName = Arrays.stream(DefaultPatterns.getPatternByName(newValue.toString()))
-                                       .mapToObj(String::valueOf)
-                                       .collect(Collectors.joining(","));
+                    .mapToObj(String::valueOf)
+                    .collect(Collectors.joining(","));
             setPatternString(patternByName);
         });
     }
@@ -130,16 +132,17 @@ public class PatternSettings {
      */
     private void initCustomPresetSetting(DocumentState documentState) {
         String[] presets = getCustomPresetsContentNameStrings();
-        extension.setCustomPresetSetting(
-                (Setting) documentState.getEnumSetting("Custom Presets", "Generate", presets, presets[0]));
-        extension.getCustomPresetSetting().disable(); // Disabled initially until "Custom" is selected.
-        ((EnumValue) extension.getCustomPresetSetting()).addValueObserver(newValue -> {
+        extension.customPresetSetting = (Setting) documentState.getEnumSetting("Custom Presets",
+                CATEGORY_GENERATE_PATTERN, presets,
+                presets[0]);
 
+        extension.customPresetSetting.disable(); // Disabled initially until "Custom" is selected.
+
+        ((EnumValue) extension.customPresetSetting).addValueObserver(newValue -> {
             String pattern = String.join(",", getCustomPresetsContentPatternStrings(newValue));
             PopupUtils.showPopup("Custom Preset selected: " + newValue.toString() + " with pattern: " + pattern);
             // convert pattern to Setting
             setPatternString(pattern);
-
         });
     }
 
@@ -154,8 +157,9 @@ public class PatternSettings {
 
     private void initCustomPresetPatternSetting(DocumentState documentState) {
         // String[] presets = getCustomPresetsContentNameStrings();
-        extension.setPresetPatternStringSetting(
-                (Setting) documentState.getStringSetting("Steps", "Generate", 0, "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"));
+        extension.presetPatternStringSetting = (Setting) documentState.getStringSetting("Steps",
+                CATEGORY_GENERATE_PATTERN, 0,
+                "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0");
     }
 
     /**
@@ -164,8 +168,9 @@ public class PatternSettings {
      * @param documentState The current document state.
      */
     private void initReversePatternSetting(DocumentState documentState) {
-        extension.setReversePatternSetting((Setting) documentState.getEnumSetting("Reverse Pattern", "Generate",
-                new String[] { "Normal", "Reverse" }, "Normal"));
+        extension.reversePatternSetting = (Setting) documentState.getEnumSetting("Reverse Pattern",
+                CATEGORY_GENERATE_PATTERN,
+                new String[] { "Normal", "Reverse" }, "Normal");
     }
 
     /**
@@ -174,10 +179,10 @@ public class PatternSettings {
      * @param documentState The current document state.
      */
     private void initSpacer(DocumentState documentState) {
-        Setting spacer = (Setting) documentState.getStringSetting("----", "Generate", 0,
+        Setting spacerGenerate = (Setting) documentState.getStringSetting("PATTERN-----------------------------",
+                CATEGORY_GENERATE_PATTERN, 0,
                 "---------------------------------------------------");
-        spacer.disable();
-        extension.setSpacer1(spacer);
+        spacerGenerate.disable();
     }
 
     /**
@@ -186,14 +191,14 @@ public class PatternSettings {
      * @return An array containing the names of the custom presets.
      */
     private String[] getCustomPresetsContentNameStrings() {
-        return Arrays.stream(extension.getPreferences().getCustomPresets())
-            .map(CustomPreset::getName)
-            .sorted((a, b) -> Utils.naturalCompare(a, b))
-            .toArray(String[]::new);
+        return Arrays.stream(extension.preferences.getCustomPresets())
+                .map(CustomPreset::getName)
+                .sorted((a, b) -> Utils.naturalCompare(a, b))
+                .toArray(String[]::new);
     }
 
     private String[] getCustomPresetsContentPatternStrings(String presetName) {
-        CustomPresetsHandler handler = new CustomPresetsHandler(extension.getHost(), extension.getPreferences());
+        CustomPresetsHandler handler = new CustomPresetsHandler(extension.getHost(), extension.preferences);
         int[] pattern = handler.getCustomPatternByName(presetName);
         return Arrays.stream(pattern).mapToObj(String::valueOf).toArray(String[]::new);
     }
@@ -202,47 +207,47 @@ public class PatternSettings {
      * Enables and shows the pattern selector setting.
      */
     private void showPatternSetting() {
-        extension.getPatternSelectorSetting().enable();
-        extension.getPatternSelectorSetting().show();
+        extension.patternSelectorSetting.enable();
+        extension.patternSelectorSetting.show();
     }
 
     /**
      * Disables and hides the pattern selector setting.
      */
     private void hidePatternSetting() {
-        extension.getPatternSelectorSetting().disable();
-        extension.getPatternSelectorSetting().hide();
+        extension.patternSelectorSetting.disable();
+        extension.patternSelectorSetting.hide();
     }
 
     /**
      * Enables and shows the custom preset setting.
      */
     private void showCustomPresetSetting() {
-        extension.getCustomPresetSetting().enable();
-        extension.getCustomPresetSetting().show();
+        extension.customPresetSetting.enable();
+        extension.customPresetSetting.show();
     }
 
     /**
      * Disables and hides the custom preset setting.
      */
     private void hideCustomPresetSetting() {
-        extension.getCustomPresetSetting().disable();
-        extension.getCustomPresetSetting().hide();
+        extension.customPresetSetting.disable();
+        extension.customPresetSetting.hide();
     }
 
     /**
      * Enables and shows the reverse pattern setting.
      */
     private void showReversePatternSetting() {
-        extension.getReversePatternSetting().enable();
-        extension.getReversePatternSetting().show();
+        extension.reversePatternSetting.enable();
+        extension.reversePatternSetting.show();
     }
 
     /**
      * Disables and hides the reverse pattern setting.
      */
     private void hideReversePatternSetting() {
-        extension.getReversePatternSetting().disable();
-        extension.getReversePatternSetting().hide();
+        extension.reversePatternSetting.disable();
+        extension.reversePatternSetting.hide();
     }
 }

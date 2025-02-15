@@ -3,7 +3,6 @@ package com.centomila;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
-import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.centomila.utils.PopupUtils;
 
@@ -47,7 +46,6 @@ public class MoveStepsHandler {
         
         initializeMoveRotateSetting(documentState);
         initializeMoveSignals(documentState);
-        createSpacerSetting(documentState);
     }
 
     private void initializeMoveRotateSetting(DocumentState documentState) {
@@ -75,16 +73,6 @@ public class MoveStepsHandler {
         moveBwd.addSignalObserver(() -> handleStepMovement(-1));
     }
 
-    private void createSpacerSetting(DocumentState documentState) {
-        Setting spacerSetting = (Setting) documentState.getStringSetting(
-            "----", 
-            CATEGORY_MOVE_STEPS, 
-            0,
-            "-".repeat(50)
-        );
-        spacerSetting.disable();
-    }
-
     /**
      * Handles the movement or rotation of steps in the clip.
      * @param stepOffset The number of steps to move (positive for forward, negative for backward)
@@ -103,11 +91,11 @@ public class MoveStepsHandler {
         }
 
         try {
-            int channel = extension.getNoteDestSettings().getCurrentChannelAsInt();
-            int noteDestination = extension.getNoteDestSettings().getCurrentNoteDestinationAsInt();
+            int channel = ((NoteDestinationSettings) extension.noteDestSettings).getCurrentChannelAsInt();
+            int noteDestination = ((NoteDestinationSettings) extension.noteDestSettings).getCurrentNoteDestinationAsInt();
             
-            EnumValue stepSizeSetting = (EnumValue) extension.getStepSizSetting();
-            EnumValue subdivisionSetting = (EnumValue) extension.getStepSizSubdivisionSetting();
+            EnumValue stepSizeSetting = (EnumValue) extension.stepSizSetting;
+            EnumValue subdivisionSetting = (EnumValue) extension.stepSizSubdivisionSetting;
             
             if (stepSizeSetting == null || subdivisionSetting == null) {
                 PopupUtils.showPopup(ERROR_INVALID_SETTINGS);

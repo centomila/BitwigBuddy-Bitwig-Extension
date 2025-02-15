@@ -16,13 +16,13 @@ import java.util.Arrays;
  * Manages the note destination settings including note and octave.
  */
 public class NoteDestinationSettings {
-   
+
    private String currentNoteAsString;
    private int currentOctaveAsInt;
    private final Setting noteChannelSetting;
 
    public NoteDestinationSettings(Setting noteChannelSetting, String initialNote, int initialOctave) {
-      
+
       this.noteChannelSetting = noteChannelSetting;
       this.currentNoteAsString = initialNote;
       this.currentOctaveAsInt = initialOctave;
@@ -64,6 +64,12 @@ public class NoteDestinationSettings {
       var documentState = extension.getDocumentState();
       ControllerHost host = extension.getHost();
 
+      // Add a spacer setting for layout spacing.
+      Setting spacerNoteDestination = (Setting) documentState.getStringSetting("NOTE DESTINATION---------------",
+            "Note Destination", 0,
+            "---------------------------------------------------");
+      spacerNoteDestination.disable();
+
       // Initialize available options.
       String[] noteDestinationOptions = Utils.NOTE_NAMES;
       String[] octaveDestinationOptions = Arrays.stream(Utils.NOTE_OCTAVES)
@@ -87,7 +93,7 @@ public class NoteDestinationSettings {
 
       // Create and assign NoteDestinationSettings.
       extension.setNoteDestSettings(new NoteDestinationSettings(
-            extension.getNoteChannelSetting(),
+            extension.noteChannelSetting,
             noteDestinationOptions[0],
             3));
 
@@ -129,46 +135,43 @@ public class NoteDestinationSettings {
       });
 
       // Register observer for Note Destination changes.
-      ((EnumValue) extension.getNoteDestinationSetting()).addValueObserver(newValue -> {
-         extension.getNoteDestSettings().setCurrentNote(newValue);
+      ((EnumValue) extension.noteDestinationSetting).addValueObserver(newValue -> {
+         ((NoteDestinationSettings) extension.noteDestSettings).setCurrentNote(newValue);
       });
 
       // Register observer for Note Octave changes.
-      ((EnumValue) extension.getNoteOctaveSetting()).addValueObserver(newValue -> {
-         extension.getNoteDestSettings().setCurrentOctave(Integer.parseInt(newValue));
+      ((EnumValue) extension.noteOctaveSetting).addValueObserver(newValue -> {
+         ((NoteDestinationSettings) extension.noteDestSettings).setCurrentOctave(Integer.parseInt(newValue));
       });
 
-      // Add a spacer setting for layout spacing.
-      extension.setSpacer2((Setting) documentState.getStringSetting(
-            "----", "Clip", 0, "---------------------------------------------------"));
-      extension.getSpacer2().disable();
+
       }
-      
-      public static String getNoteNameFromKey(int key) {
+
+   public static String getNoteNameFromKey(int key) {
       String[] noteNames = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-      int octave = (key / 12) - 2;  // Changed from -1 to -2
+      int octave = (key / 12) - 2; // Changed from -1 to -2
       int noteIndex = key % 12;
       // This can be from -C2 TO G8
       return noteNames[noteIndex] + octave;
-      }
+   }
 
-      public static String[] getKeyAndOctaveFromNoteName(String noteName) {
+   public static String[] getKeyAndOctaveFromNoteName(String noteName) {
       // String noteName can be from C-2 TO G8
 
       // Get note name and octave
       String note;
       int octave;
-      
+
       int octaveStartIndex = -1;
       // Find where the octave number starts (including possible negative sign)
       for (int i = 0; i < noteName.length(); i++) {
          char c = noteName.charAt(i);
          if (c == '-' || Character.isDigit(c)) {
-         octaveStartIndex = i;
-         break;
+            octaveStartIndex = i;
+            break;
          }
       }
-      
+
       if (octaveStartIndex != -1) {
          note = noteName.substring(0, octaveStartIndex);
          octave = Integer.parseInt(noteName.substring(octaveStartIndex));
@@ -180,7 +183,5 @@ public class NoteDestinationSettings {
       // PopupUtils.showPopup("Note: " + note + " Octave: " + octave);
       return new String[] { note, String.valueOf(octave) };
 
-
    }
 }
-

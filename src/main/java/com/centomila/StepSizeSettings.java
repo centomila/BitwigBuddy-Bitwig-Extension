@@ -6,11 +6,23 @@ import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
 
 public class StepSizeSettings {
+   private static String CATEGORY_CLIP = "Clip";
+
    public static void init(BeatBuddyExtension extension) {
       DocumentState documentState = extension.getDocumentState();
-      Setting stepSizSetting = (Setting) documentState.getEnumSetting("Step Size", "Clip", Utils.STEPSIZE_OPTIONS, "1/16");
-      Setting stepSizSubdivisionSetting = (Setting) documentState.getEnumSetting("Subdivisions", "Clip", Utils.STEPSIZE_CATEGORY_OPTIONS, "Straight");
-      Setting noteLengthSetting = (Setting) documentState.getEnumSetting("Note Length", "Clip", Utils.STEPSIZE_OPTIONS,
+
+      Setting spacerStepSize = ((Setting) documentState.getStringSetting(
+            "STEP SIZE/NOTE LENGTH---------",
+            CATEGORY_CLIP, 0,
+            "---------------------------------------------------"));
+      spacerStepSize.disable();
+
+      Setting stepSizSetting = (Setting) documentState.getEnumSetting("Step Size",
+            CATEGORY_CLIP, Utils.STEPSIZE_OPTIONS, "1/16");
+      Setting stepSizSubdivisionSetting = (Setting) documentState.getEnumSetting("Subdivisions",
+            CATEGORY_CLIP, Utils.STEPSIZE_CATEGORY_OPTIONS, "Straight");
+      Setting noteLengthSetting = (Setting) documentState.getEnumSetting("Note Length",
+            CATEGORY_CLIP, Utils.STEPSIZE_OPTIONS,
             "1/16");
 
       ((EnumValue) stepSizSetting).addValueObserver(newValue -> {

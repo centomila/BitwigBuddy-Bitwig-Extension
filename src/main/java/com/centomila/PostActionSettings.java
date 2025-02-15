@@ -9,10 +9,10 @@ public class PostActionSettings {
                 DocumentState documentState = extension.getDocumentState();
 
                 // Initialize spacer3 for "Post Actions"
-                Setting spacer3 = (Setting) documentState.getStringSetting("----", "Post Actions", 0,
+                Setting spacer3 = (Setting) documentState.getStringSetting("POST ACTIONS----------------------", "Post Actions", 0,
                                 "---------------------------------------------------");
                 spacer3.disable();
-                extension.setSpacer3(spacer3);
+                
 
                 // Setting for toggle hide/show post actions
                 Setting postActionsSetting = (Setting) documentState.getEnumSetting("Post Actions", "Post Actions",
@@ -20,11 +20,11 @@ public class PostActionSettings {
 
                 ((EnumValue) postActionsSetting).addValueObserver(newValue -> {
                         if (newValue.equals("Hide")) {
-                                extension.getAutoResizeLoopLengthSetting().hide();
+                                extension.autoResizeLoopLengthSetting.hide();
                                 extension.getZoomToFitAfterGenerateSetting().hide();
 
                         } else {
-                                extension.getAutoResizeLoopLengthSetting().show();
+                                extension.autoResizeLoopLengthSetting.show();
                                 extension.getZoomToFitAfterGenerateSetting().show();
 
                         }

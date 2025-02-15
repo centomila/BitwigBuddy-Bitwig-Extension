@@ -18,47 +18,42 @@ import com.centomila.utils.PopupUtils;
  * and various clip manipulation tools.
  */
 public class BeatBuddyExtension extends ControllerExtension {
-   public Application application;
-   public Clip cursorClip;
-   public Clip arrangerClip;
+   Application application;
+   Clip cursorClip;
+   Clip arrangerClip;
 
-   private DocumentState documentState;
+   DocumentState documentState;
    // Pattern settings
-   public Setting patternTypeSetting; // Pattern Type "Preset", "Random", "Custom"
-   public Setting patternSelectorSetting; // List of default patterns
-   public Setting customPresetSetting; // List of custom patterns
-   public Setting presetPatternStringSetting; // Custom pattern string
-   private Setting reversePatternSetting;
+   Setting patternTypeSetting; // Pattern Type "Preset", "Random", "Custom"
+   Setting patternSelectorSetting; // List of default patterns
+   Setting customPresetSetting; // List of custom patterns
+   Setting presetPatternStringSetting; // Custom pattern string
+   Setting reversePatternSetting;
    
    // Step Size / Note Length settings
-   public Setting noteLengthSetting; // How long each note should be
-   public Setting stepSizSetting;
-   public Setting stepSizSubdivisionSetting; // Subdivisions Straight | Dotted | Triplet | Quintuplet | Septuplet
-   public Setting learnNoteSetting; // On or Off
+   Setting noteLengthSetting; // How long each note should be
+   Setting stepSizSetting;
+   Setting stepSizSubdivisionSetting; // Subdivisions Straight | Dotted | Triplet | Quintuplet | Septuplet
+   Setting learnNoteSetting; // On or Off
    
    // Note Destination settings
-   public Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
-   public Setting noteOctaveSetting; // Note Octave -2 to 8
-   public Setting noteChannelSetting; // Note Channel 1 to 16
-   private NoteDestinationSettings noteDestSettings; // Class to handle note destination settings
+   Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
+   Setting noteOctaveSetting; // Note Octave -2 to 8
+   Setting noteChannelSetting; // Note Channel 1 to 16
+   NoteDestinationSettings noteDestSettings; // Class to handle note destination settings
    
    // Post actions settings
-   private Setting autoResizeLoopLengthSetting;
-   private Setting zoomToFitAfterGenerateSetting;
-   private Setting postActionsSetting;
+   Setting autoResizeLoopLengthSetting;
+   Setting zoomToFitAfterGenerateSetting;
+   Setting postActionsSetting;
+   Setting duplicateClipSetting;
    
    // Step movement settings
    private MoveStepsHandler moveStepsHandler;
    
-   // Spacers
-   private Setting spacer1;
-   private Setting spacer2;
-   private Setting spacer3;
-   private Setting spacer4;
-   
-   public Setting toggleLauncherArrangerSetting;
+   Setting toggleLauncherArrangerSetting;
 
-   private GlobalPreferences preferences;
+   GlobalPreferences preferences;
 
    protected BeatBuddyExtension(final BeatBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
@@ -160,97 +155,58 @@ public class BeatBuddyExtension extends ControllerExtension {
       return documentState;
    }
 
-   public Setting getPatternTypeSetting() {
-      return patternTypeSetting;
-   }
 
-   public void setPatternTypeSetting(Setting patternTypeSetting) {
-      this.patternTypeSetting = patternTypeSetting;
-   }
-
-   public Setting getPatternSelectorSetting() {
-      return patternSelectorSetting;
-   }
 
    public void setPatternSelectorSetting(Setting patternSelectorSetting) {
       this.patternSelectorSetting = patternSelectorSetting;
    }
 
-   public Setting getCustomPresetSetting() {
-      return customPresetSetting;
-   }
 
    public void setCustomPresetSetting(Setting customPresetSetting) {
       this.customPresetSetting = customPresetSetting;
    }
 
-   public Setting getNoteLengthSetting() {
-      return noteLengthSetting;
-   }
 
    public void setNoteLengthSetting(Setting noteLengthSetting) {
       this.noteLengthSetting = noteLengthSetting;
    }
 
-   public Setting getStepSizSetting() {
-      return stepSizSetting;
-   }
+
 
    public void setStepSizSetting(Setting stepSizSetting) {
       this.stepSizSetting = stepSizSetting;
    }
 
-   public Setting getStepSizSubdivisionSetting() {
-      return stepSizSubdivisionSetting;
-   }
 
    public void setStepSizSubdivisionSetting(Setting stepSizSubdivisionSetting) {
       this.stepSizSubdivisionSetting = stepSizSubdivisionSetting;
    }
 
-   public Setting getNoteDestinationSetting() {
-      return noteDestinationSetting;
-   }
 
    public void setNoteDestinationSetting(Setting noteDestinationSetting) {
       this.noteDestinationSetting = noteDestinationSetting;
    }
 
-   public Setting getNoteOctaveSetting() {
-      return noteOctaveSetting;
-   }
 
    public void setNoteOctaveSetting(Setting noteOctaveSetting) {
       this.noteOctaveSetting = noteOctaveSetting;
    }
 
-   public Setting getNoteChannelSetting() {
-      return noteChannelSetting;
-   }
 
    public void setNoteChannelSetting(Setting noteChannelSetting) {
       this.noteChannelSetting = noteChannelSetting;
    }
 
-   public Setting getToggleLauncherArrangerSetting() {
-      return toggleLauncherArrangerSetting;
-   }
 
    public void setToggleLauncherArrangerSetting(Setting toggleLauncherArrangerSetting) {
       this.toggleLauncherArrangerSetting = toggleLauncherArrangerSetting;
    }
 
-   public Setting getAutoResizeLoopLengthSetting() {
-      return autoResizeLoopLengthSetting;
-   }
 
    public void setAutoResizeLoopLengthSetting(Setting autoResizeLoopLengthSetting) {
       this.autoResizeLoopLengthSetting = autoResizeLoopLengthSetting;
    }
 
-   public Setting getReversePatternSetting() {
-      return reversePatternSetting;
-   }
 
    public void setReversePatternSetting(Setting reversePatternSetting) {
       this.reversePatternSetting = reversePatternSetting;
@@ -264,49 +220,13 @@ public class BeatBuddyExtension extends ControllerExtension {
       this.moveStepsHandler = moveStepsHandler;
    }
 
-   public NoteDestinationSettings getNoteDestSettings() {
-      return noteDestSettings;
-   }
 
    public void setNoteDestSettings(NoteDestinationSettings noteDestSettings) {
       this.noteDestSettings = noteDestSettings;
    }
 
-   public Setting getSpacer1() {
-      return spacer1;
-   }
 
-   public void setSpacer1(Setting spacer1) {
-      this.spacer1 = spacer1;
-   }
 
-   public Setting getSpacer2() {
-      return spacer2;
-   }
-
-   public void setSpacer2(Setting spacer2) {
-      this.spacer2 = spacer2;
-   }
-
-   public Setting getSpacer3() {
-      return spacer3;
-   }
-
-   public void setSpacer3(Setting spacer3) {
-      this.spacer3 = spacer3;
-   }
-
-   public Setting getSpacer4() {
-      return spacer4;
-   }
-
-   public void setSpacer4(Setting spacer4) {
-      this.spacer4 = spacer4;
-   }
-
-   public GlobalPreferences getPreferences() {
-      return preferences;
-   }
 
    public void setPreferences(GlobalPreferences preferences) {
       this.preferences = preferences;
