@@ -196,7 +196,7 @@ public interface DefaultPatterns {
          * @return the drum pattern as an array of integers
          * @throws IllegalArgumentException if no pattern is found with the specified name
          */
-        static int[] getPatternByName(String name) {
+        public static int[] getPatternByName(String name) {
                 for (Object[] pattern : patterns) {
                         if (pattern[0].equals(name)) {
                                 // pattern[1] is our int[] data

@@ -2,6 +2,7 @@ package com.centomila;
 
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class PatternSettings {
     private final BeatBuddyExtension extension;
     private static String CATEGORY_GENERATE_PATTERN = "Generate Pattern";
+    private String lastDefaultPresetUsed = "Kick: Four on the Floor";
 
     /**
      * Constructs a new instance of PatternSettings.
@@ -86,6 +88,9 @@ public class PatternSettings {
                     showPatternSetting();
                     hideCustomPresetSetting();
                     showReversePatternSetting();
+                    
+                    ((SettableEnumValue) extension.patternSelectorSetting).set(lastDefaultPresetUsed);
+                    setPatternString(getPatternByNameForDefaultPresets(lastDefaultPresetUsed));
                     break;
                 case "Custom":
                     hidePatternSetting();
@@ -114,17 +119,24 @@ public class PatternSettings {
         extension.patternSelectorSetting = (Setting) documentState.getEnumSetting("Pattern", CATEGORY_GENERATE_PATTERN,
                 PATTERN_OPTIONS,
                 "Kick: Four on the Floor");
+                
 
         ((EnumValue) extension.patternSelectorSetting).addValueObserver(newValue -> {
             if (!((EnumValue) extension.patternTypeSetting).get().equals("Presets")) {
                 return;
             }
+            lastDefaultPresetUsed = newValue.toString();
             PopupUtils.showPopup(newValue.toString());
-            String patternByName = Arrays.stream(DefaultPatterns.getPatternByName(newValue.toString()))
-                    .mapToObj(String::valueOf)
-                    .collect(Collectors.joining(","));
+            String patternByName = getPatternByNameForDefaultPresets(newValue);
             setPatternString(patternByName);
         });
+    }
+
+    private String getPatternByNameForDefaultPresets(String newValue) {
+        String patternByName = Arrays.stream(DefaultPatterns.getPatternByName(newValue.toString()))
+                .mapToObj(String::valueOf)
+                .collect(Collectors.joining(","));
+        return patternByName;
     }
 
     /**
