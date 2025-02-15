@@ -1,6 +1,6 @@
 [View Changelog](CHANGELOG)
 
-# BeatBuddy - Bitwig Studio Extension for Generating Drum Patterns (v0.7.5)
+# BeatBuddy - Bitwig Studio Extension for Generating Drum Patterns (v0.8.0)
 
 ![Screenshot v0.7.6](image.png)
 
@@ -105,5 +105,4 @@ BeatBuddy is a Bitwig extension for creating and manipulating single lane MIDI p
 - [ ] Setting for random patterns  
 - [ ] Option to remove excess notes if the user generates a pattern longer than the clip  
 - [ ] MOAAAR PATTERNS!
-- [ ] Support for custom patterns via TXT files  
 - [ ] A decent README!

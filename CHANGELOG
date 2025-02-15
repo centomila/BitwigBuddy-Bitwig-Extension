@@ -1,5 +1,48 @@
 # 📋 Changelog:
 
+**0.8.0**  
+This is the biggest update so far! 🎉  
+Please give me feedback on the new features and let me know if you find any bugs. The custom patterns feature is still a little buggy, so please be careful when using it.  
+
+- [X] Added a Pattern Type Selector with:  
+  - [X] Preset Patterns (Default)  
+  - [X] Random Patterns (Previously available through the Preset list)  
+  - [X] Custom Patterns  
+- [X] Added a new feature to use custom patterns in txt format! 📄
+  - Preference panel  
+    - Path of the custom pattern files (default is Documents/Bitwig Studio/Extensions/BeatBuddy)  
+    - Button to open the custom patterns folder  
+    - Button to browse for a custom patterns folder  
+    - Button to reset the custom patterns folder to the default path  
+  - Check in the BeatBuddy folder for the file `SampleCustomPreset.txt` to see an example of how to create custom patterns  
+    - The file is a simple text file with the following structure:  
+      ```
+      Name: "Sample Custom Preset"
+      DefaultNote: "C1"
+      Pattern: [100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0]
+      ```
+    - DefaultNote is not yet implemented, but it will be used in the future to set the default note destination for the custom pattern  
+- [X] Now the content of the selected pattern is displayed in the UI  
+  - The user can edit the pattern directly in the UI (not ideal for long patterns)  
+  - Up to 128 steps  
+  - 0 means no note, 127 means the maximum velocity  
+  - Steps can be separated by any character (comma, space, etc.)  
+- [X] Learn Note button to automatically set the note destination based on the last pressed note 🎹  
+  - When enabled, the user can click on any note in the piano roll or press a key on the MIDI keyboard to set the note destination  
+  - The track needs to be selected  
+  - It is not necessary for the track to be armed if you click on the piano roll with the Piano Roll’s *Audition Notes* option enabled  
+  - This is a big improvement for the workflow and is very fun when used in combination with the Random Patterns feature. 🥳  
+- [X] POST Actions 🏁  
+  - [X] Show/Hide Post Actions options 👁️  
+  - [X] Added an On/Off option to automatically Zoom To Fit the clip after the pattern is generated 🔍  
+  - [X] Added an On/Off option to automatically duplicate the clip after the pattern is generated (Clip Launcher only) 2️⃣  
+    - Super fun for creating variations of the pattern!  
+- [X] Added a Support Section in Preferences  
+  - [X] Added a button to open the [GitHub Repository](https://github.com/centomila/BeatBuddy-Bitwig-Extension-MIDI-Drum-Generator) 🧑‍💻  
+  - [X] Added a button to open my [Patreon Page](https://www.patreon.com/centomila) 🙏  
+  - [X] Added a button to open [My Website](https://centomila.com) 🪞  
+
+
 **0.7.6**
 - [X] Code refactoring and split in multiple files. No changes to the bwextension.
 
