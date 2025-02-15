@@ -50,14 +50,13 @@ public class GlobalPreferences {
     private final Preferences preferences;
     private final SettableStringValue presetsPath;
     private final Signal openPresetsFolder;
-    private final Signal openPatreon;
-    private final Signal openGitHub;    // Add this
-    private final Signal openCentomila; // Add this
     private final Signal browseFolderButton;
     private final Signal resetToDefaultButton;
     private final ControllerHost host;
     private boolean jfxInitialized = false;
     private final CustomPresetsHandler presetsHandler;
+    @SuppressWarnings({"unused"})
+    private final Signal openPatreon, openGitHub, openCentomila;
 
     /**
      * Initializes the global preferences with the specified controller host.
