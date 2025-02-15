@@ -6,7 +6,7 @@
 	<artifactId>beatbuddy</artifactId>
 	<packaging>jar</packaging>
 	<name>BeatBuddy</name>
-	<version>0.7.8</version>
+	<version>0.8.0</version>
 	
 	<repositories>
        <repository>
@@ -154,6 +154,28 @@
                                 </resource>
                             </resources>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/distribution.xml</descriptor>
+                    </descriptors>
+                    <finalName>BeatBuddy-${project.version}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>create-distribution</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
