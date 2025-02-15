@@ -5,12 +5,14 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import com.bitwig.extension.controller.api.*;
+import com.bitwig.extension.controller.api.ControllerHost;
+import com.bitwig.extension.controller.api.Preferences;
+import com.bitwig.extension.controller.api.SettableStringValue;
+import com.bitwig.extension.controller.api.Signal;
+
 import javafx.application.Platform;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
 import com.centomila.utils.PopupUtils;
 
 /**
@@ -238,12 +240,16 @@ public class GlobalPreferences {
         if (!jfxInitialized) {
             try {
                 Platform.startup(() -> {
-                    // Initialize JavaFX
+                    host.println("JavaFX initialized successfully");
+                    jfxInitialized = true;
                 });
-                jfxInitialized = true;
             } catch (IllegalStateException e) {
                 // JavaFX already initialized
+                host.println("JavaFX was already initialized");
                 jfxInitialized = true;
+            } catch (Exception e) {
+                host.errorln("Failed to initialize JavaFX: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -277,59 +283,47 @@ public class GlobalPreferences {
     }
 
     private void browseForPresetsFolder() {
-        CountDownLatch latch = new CountDownLatch(1);
-        AtomicReference<File> chosenFile = new AtomicReference<>();
-        AtomicReference<String> errorMessage = new AtomicReference<>();
-
         try {
+            // Ensure JavaFX is initialized
             initializeJavaFX();
-
+            
             Platform.runLater(() -> {
                 try {
-                    DirectoryChooser directoryChooser = new DirectoryChooser();
-                    directoryChooser.setTitle("Select BeatBuddy Presets Folder");
+                    DirectoryChooser chooser = new DirectoryChooser();
+                    chooser.setTitle("Select BeatBuddy Presets Folder");
+                    
+                    // Set initial directory
                     Path initialDir = getValidInitialDirectory();
                     if (initialDir != null) {
-                        directoryChooser.setInitialDirectory(initialDir.toFile()); // DirectoryChooser still needs File
+                        File dir = initialDir.toFile();
+                        if (dir.exists() && dir.isDirectory()) {
+                            chooser.setInitialDirectory(dir);
+                        }
                     }
 
                     Stage stage = new Stage();
-                    File selectedDirectory = directoryChooser.showDialog(stage);
+                    File selectedDirectory = chooser.showDialog(stage);
+                    
                     if (selectedDirectory != null) {
                         Path selectedPath = selectedDirectory.toPath();
-                        chosenFile.set(selectedDirectory);
+                        if (isValidPresetsFolder(selectedPath)) {
+                            setPresetsPath(selectedPath.toAbsolutePath().toString());
+                            PopupUtils.showPopup("Presets folder updated to: " + selectedPath);
+                        } else {
+                            PopupUtils.showPopup("Invalid presets folder selected: " + selectedPath);
+                        }
                     }
+                    
+                    stage.close();
                 } catch (Exception e) {
-                    errorMessage.set(e.getMessage());
-                    host.errorln("Error in directory chooser: " + e.getMessage());
-                } finally {
-                    latch.countDown(); // Ensure latch is always counted down
+                    host.errorln("Directory chooser error: " + e.getMessage());
+                    e.printStackTrace();
+                    PopupUtils.showPopup("Failed to open folder browser");
                 }
             });
-
-            // Wait with timeout
-            if (!latch.await(DIALOG_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
-                throw new TimeoutException("Folder selection dialog timed out");
-            }
-
-            // Check if there was an error
-            if (errorMessage.get() != null) {
-                throw new Exception("Directory chooser error: " + errorMessage.get());
-            }
-
-            File selectedDirectory = chosenFile.get();
-            if (selectedDirectory != null) {
-                Path selectedPath = selectedDirectory.toPath();
-                if (isValidPresetsFolder(selectedPath)) {
-                    setPresetsPath(selectedPath.toAbsolutePath().toString());
-                    PopupUtils.showPopup("Presets folder updated to: " + selectedPath.toAbsolutePath());
-                } else {
-                    PopupUtils.showPopup("Invalid presets folder selected: " + selectedPath.toAbsolutePath());
-                }
-            }
-
         } catch (Exception e) {
             host.errorln("Failed to open folder browser: " + e.getMessage());
+            e.printStackTrace();
             PopupUtils.showPopup("Failed to open folder browser");
         }
     }
