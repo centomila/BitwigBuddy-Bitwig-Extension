@@ -18,8 +18,10 @@ import com.centomila.utils.PopupUtils;
 public class GlobalPreferences {
     private static final String PRESETS_SETTING_CATEGORY = "Preset Path";
     private static final String SUPPORT_CATEGORY = "Support";
-    private static final int MAX_PATH_LENGTH = 100;
+    private static final int MAX_PATH_LENGTH = 10000;
     private static final String PATREON_URL = "https://www.patreon.com/Centomila";
+    private static final String GITHUB_URL = "https://github.com/centomila/BeatBuddy-Bitwig-Extension-MIDI-Drum-Generator";
+    private static final String CENTOMILA_URL = "https://centomila.com";
     private static final long DIALOG_TIMEOUT_SECONDS = 10;
     private static final String[] DOCUMENTS_LOCALIZED = {
         "Documents", "Documenti", "Documentos", "Dokumente",
@@ -49,6 +51,8 @@ public class GlobalPreferences {
     private final SettableStringValue presetsPath;
     private final Signal openPresetsFolder;
     private final Signal openPatreon;
+    private final Signal openGitHub;    // Add this
+    private final Signal openCentomila; // Add this
     private final Signal browseFolderButton;
     private final Signal resetToDefaultButton;
     private final ControllerHost host;
@@ -77,6 +81,8 @@ public class GlobalPreferences {
         this.browseFolderButton = initializeBrowseFolderSignal();
         this.resetToDefaultButton = initializeResetDefaultSignal();
         this.openPatreon = initializePatreonSignal();
+        this.openGitHub = initializeGitHubSignal();     // Add this
+        this.openCentomila = initializeCentomilaSignal(); // Add this
         
         this.presetsHandler = new CustomPresetsHandler(host, this);
     }
@@ -118,6 +124,26 @@ public class GlobalPreferences {
             "Go to Patreon.com/Centomila"
         );
         signal.addSignalObserver(this::openPatreonPage);
+        return signal;
+    }
+
+    private Signal initializeGitHubSignal() {
+        Signal signal = preferences.getSignalSetting(
+            "Visit BeatBuddy on GitHub",
+            SUPPORT_CATEGORY,
+            "Go to GitHub Repository"
+        );
+        signal.addSignalObserver(this::openGitHubPage);
+        return signal;
+    }
+
+    private Signal initializeCentomilaSignal() {
+        Signal signal = preferences.getSignalSetting(
+            "Visit Centomila Website",
+            SUPPORT_CATEGORY,
+            "Go to Centomila.com"
+        );
+        signal.addSignalObserver(this::openCentomilaPage);
         return signal;
     }
 
@@ -181,18 +207,30 @@ public class GlobalPreferences {
     /**
      * Opens the Patreon page in the default system browser.
      */
-    private void openPatreonPage() {
+    private void openWebUrl(String url, String pageName) {
         try {
             PlatformCommand cmd = getPlatformCommand();
             String[] command = cmd.browserParam1.isEmpty() 
-                ? new String[]{cmd.browserCommand, PATREON_URL}
-                : new String[]{cmd.browserCommand, cmd.browserParam1, cmd.browserParam2, PATREON_URL};
+                ? new String[]{cmd.browserCommand, url}
+                : new String[]{cmd.browserCommand, cmd.browserParam1, cmd.browserParam2, url};
             
             Runtime.getRuntime().exec(command);
         } catch (IOException e) {
-            host.errorln("Failed to open Patreon page: " + e.getMessage());
-            PopupUtils.showPopup("Please visit " + PATREON_URL + " in your web browser.");
+            host.errorln("Failed to open " + pageName + " page: " + e.getMessage());
+            PopupUtils.showPopup("Please visit " + url + " in your web browser.");
         }
+    }
+
+    private void openPatreonPage() {
+        openWebUrl(PATREON_URL, "Patreon");
+    }
+
+    private void openGitHubPage() {
+        openWebUrl(GITHUB_URL, "GitHub");
+    }
+
+    private void openCentomilaPage() {
+        openWebUrl(CENTOMILA_URL, "Centomila");
     }
 
     private void initializeJavaFX() {
@@ -327,9 +365,6 @@ public class GlobalPreferences {
         return openPresetsFolder;
     }
 
-    public Signal getOpenPatreon() {
-        return openPatreon;
-    }
 
     public Signal getBrowseFolderButton() {
         return browseFolderButton;
