@@ -22,6 +22,7 @@ public class PatternSettings {
     private static String CATEGORY_GENERATE_PATTERN = "Generate Pattern";
     private String lastDefaultPresetUsed = "Kick: Four on the Floor";
     private String lastCustomPresetUsed = null;
+    private String lastStringPatternUsed = "100,0,0,0,100,0,0,0,100,0,0,0,100,0,0,0";
 
     /**
      * Constructs a new instance of PatternSettings.
@@ -125,12 +126,12 @@ public class PatternSettings {
      * @param documentState The current document state.
      */
     private void initPatternSelectorSetting(DocumentState documentState) {
-        final String[] PATTERN_OPTIONS = Arrays.stream(DefaultPatterns.patterns)
+        final String[] LIST_OF_DEFAULT_PATTERNS = Arrays.stream(DefaultPatterns.patterns)
                 .map(pattern -> pattern[0].toString())
                 .toArray(String[]::new);
 
         extension.patternSelectorSetting = (Setting) documentState.getEnumSetting("Pattern", CATEGORY_GENERATE_PATTERN,
-                PATTERN_OPTIONS,
+                LIST_OF_DEFAULT_PATTERNS,
                 "Kick: Four on the Floor");
                 
 
@@ -164,7 +165,7 @@ public class PatternSettings {
                 CATEGORY_GENERATE_PATTERN, presets,
                 presets[0]);
 
-        hideAndDisalbeSetting(null, extension.customPresetSetting);
+        hideAndDisalbeSetting( extension.customPresetSetting);
 
         ((EnumValue) extension.customPresetSetting).addValueObserver(newValue -> {
             // if preset type 
@@ -193,10 +194,9 @@ public class PatternSettings {
     }
 
     private void initCustomPresetPatternSetting(DocumentState documentState) {
-        // String[] presets = getCustomPresetsContentNameStrings();
         extension.presetPatternStringSetting = (Setting) documentState.getStringSetting("Steps",
                 CATEGORY_GENERATE_PATTERN, 0,
-                "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0");
+                lastStringPatternUsed);
     }
 
     /**
