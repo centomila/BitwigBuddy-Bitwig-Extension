@@ -8,6 +8,7 @@ import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.centomila.CustomPresetsHandler.CustomPreset;
 import com.centomila.utils.PopupUtils;
+import static com.centomila.utils.SettingsHelper.*;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -87,17 +88,20 @@ public class PatternSettings {
         ((EnumValue) extension.patternTypeSetting).addValueObserver(newValue -> {
             switch (newValue) {
                 case "Presets":
-                    showPatternSetting();
-                    hideCustomPresetSetting();
-                    showReversePatternSetting();
+                    Setting[] settingsToShow = { extension.patternSelectorSetting, extension.reversePatternSetting };
+                    Setting[] settingsToHide = { extension.customPresetSetting };                
+                    showAndEnableSetting(settingsToShow);
+                    hideAndDisalbeSetting(settingsToHide);
+
                     
                     ((SettableEnumValue) extension.patternSelectorSetting).set(lastDefaultPresetUsed);
                     setPatternString(getDefaultPresetsContentPatternStrings(lastDefaultPresetUsed));
                     break;
                 case "Custom":
-                    hidePatternSetting();
-                    showCustomPresetSetting();
-                    showReversePatternSetting();
+                    Setting[] settingsToShowCustom = { extension.customPresetSetting, extension.reversePatternSetting };
+                    Setting[] settingsToHideCustom = { extension.patternSelectorSetting };
+                    showAndEnableSetting(settingsToShowCustom);
+                    hideAndDisalbeSetting(settingsToHideCustom);
                 
                         if (lastCustomPresetUsed != null) {
                             ((SettableEnumValue) extension.customPresetSetting).set(lastCustomPresetUsed);
@@ -105,9 +109,11 @@ public class PatternSettings {
                 
                     break;
                 case "Random":
-                    hidePatternSetting();
-                    hideCustomPresetSetting();
-                    hideReversePatternSetting();
+                    // Setting[] settingsToShowRandom = {  }; TODO: ADD RANDOM SETTINGS
+                    Setting[] settingsToHideRandom = { extension.patternSelectorSetting, extension.customPresetSetting, 
+                            extension.reversePatternSetting };
+                    // showAndEnableSetting(settingsToShowRandom);
+                    hideAndDisalbeSetting(settingsToHideRandom);
                     break;
             }
         });
@@ -234,51 +240,4 @@ public class PatternSettings {
         return Arrays.stream(pattern).mapToObj(String::valueOf).toArray(String[]::new);
     }
 
-    /**
-     * Enables and shows the pattern selector setting.
-     */
-    private void showPatternSetting() {
-        extension.patternSelectorSetting.enable();
-        extension.patternSelectorSetting.show();
-    }
-
-    /**
-     * Disables and hides the pattern selector setting.
-     */
-    private void hidePatternSetting() {
-        extension.patternSelectorSetting.disable();
-        extension.patternSelectorSetting.hide();
-    }
-
-    /**
-     * Enables and shows the custom preset setting.
-     */
-    private void showCustomPresetSetting() {
-        extension.customPresetSetting.enable();
-        extension.customPresetSetting.show();
-    }
-
-    /**
-     * Disables and hides the custom preset setting.
-     */
-    private void hideCustomPresetSetting() {
-        extension.customPresetSetting.disable();
-        extension.customPresetSetting.hide();
-    }
-
-    /**
-     * Enables and shows the reverse pattern setting.
-     */
-    private void showReversePatternSetting() {
-        extension.reversePatternSetting.enable();
-        extension.reversePatternSetting.show();
-    }
-
-    /**
-     * Disables and hides the reverse pattern setting.
-     */
-    private void hideReversePatternSetting() {
-        extension.reversePatternSetting.disable();
-        extension.reversePatternSetting.hide();
-    }
 }
