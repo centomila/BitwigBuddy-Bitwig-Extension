@@ -32,7 +32,7 @@ public class NoteDestinationSettings {
       return Utils.getMIDINoteNumberFromStringAndOctave(currentNoteAsString, currentOctaveAsInt);
    }
 
-   public void notifyNoteDestination() {
+   public void popupNoteDestination() {
       showPopup("Note Destination: " + currentNoteAsString + currentOctaveAsInt);
    }
 
@@ -45,14 +45,14 @@ public class NoteDestinationSettings {
       this.currentNoteAsString = note;
       // Refresh note destination and notify
       getCurrentNoteDestinationAsInt();
-      notifyNoteDestination();
+      popupNoteDestination();
    }
 
    public void setCurrentOctave(int octave) {
       this.currentOctaveAsInt = octave;
       // Refresh note destination and notify
       getCurrentNoteDestinationAsInt();
-      notifyNoteDestination();
+      popupNoteDestination();
    }
 
    /**
