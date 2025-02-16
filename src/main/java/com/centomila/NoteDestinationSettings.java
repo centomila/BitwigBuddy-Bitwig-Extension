@@ -1,6 +1,7 @@
 package com.centomila;
 
 import static com.centomila.utils.PopupUtils.*;
+import static com.centomila.utils.SettingsHelper.*;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Channel;
@@ -68,7 +69,8 @@ public class NoteDestinationSettings {
       Setting spacerNoteDestination = (Setting) documentState.getStringSetting("NOTE DESTINATION---------------",
             "Note Destination", 0,
             "---------------------------------------------------");
-      spacerNoteDestination.disable();
+      
+      disableSetting(spacerNoteDestination); // Spacers are always disabled
 
       // Initialize available options.
       String[] noteDestinationOptions = Utils.NOTE_NAMES;

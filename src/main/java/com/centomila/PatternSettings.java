@@ -164,7 +164,7 @@ public class PatternSettings {
                 CATEGORY_GENERATE_PATTERN, presets,
                 presets[0]);
 
-        extension.customPresetSetting.disable(); // Disabled initially until "Custom" is selected.
+        hideAndDisalbeSetting(null, extension.customPresetSetting);
 
         ((EnumValue) extension.customPresetSetting).addValueObserver(newValue -> {
             // if preset type 
@@ -219,7 +219,7 @@ public class PatternSettings {
         Setting spacerGenerate = (Setting) documentState.getStringSetting("PATTERN-----------------------------",
                 CATEGORY_GENERATE_PATTERN, 0,
                 "---------------------------------------------------");
-        spacerGenerate.disable();
+        disableSetting(spacerGenerate); // Spacers are always disabled
     }
 
     /**

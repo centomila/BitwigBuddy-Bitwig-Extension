@@ -1,6 +1,10 @@
 package com.centomila;
 
 import com.bitwig.extension.controller.api.ControllerHost;
+
+import static com.centomila.utils.SettingsHelper.disableSetting;
+import static com.centomila.utils.SettingsHelper.enableSetting;
+
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Clip;
@@ -115,9 +119,9 @@ public class BeatBuddyExtension extends ControllerExtension {
       ((EnumValue) toggleLauncherArrangerSetting).addValueObserver(newValue -> {
          PopupUtils.showPopup("Destination: " + newValue);
          if (newValue.equals("Arranger")) {
-            duplicateClipSetting.disable();
+            disableSetting(duplicateClipSetting);
          } else {
-            duplicateClipSetting.enable();
+            enableSetting(duplicateClipSetting);
          }
       });
    }

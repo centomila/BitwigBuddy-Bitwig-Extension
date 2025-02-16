@@ -1,6 +1,9 @@
 package com.centomila;
 
 import com.bitwig.extension.controller.api.Setting;
+
+import static com.centomila.utils.SettingsHelper.disableSetting;
+
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
 
@@ -15,7 +18,8 @@ public class PostActionSettings {
                                 "POST ACTIONS----------------------",
                                 CATEGORY_POST_ACTIONS, 0,
                                 "---------------------------------------------------");
-                spacerPostActions.disable();
+                
+                disableSetting( spacerPostActions ); // Spacers are always disabled
 
                 // Setting for toggle hide/show post actions
                 Setting postActionsSetting = (Setting) documentState.getEnumSetting(

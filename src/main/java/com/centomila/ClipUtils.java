@@ -9,6 +9,8 @@ import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.NoteStep;
 import com.bitwig.extension.controller.api.Setting;
 import static com.centomila.utils.PopupUtils.*;
+import static com.centomila.utils.SettingsHelper.disableSetting;
+
 import com.bitwig.extension.controller.api.DocumentState;
 
 public class ClipUtils {
@@ -146,7 +148,8 @@ private static String CATEGORY_OTHER = "Other";
         Setting spacerOther = ((Setting) documentState.getStringSetting(
             "OTHER--------------------------------", CATEGORY_OTHER, 0, "---------------------------------------------------"
         ));
-        spacerOther.disable();
+        
+        disableSetting(spacerOther); // Spacers are always disabled
 
         documentState.getSignalSetting("Clear current clip", CATEGORY_OTHER, "Clear current clip")
                 .addSignalObserver(() -> extension.getLauncherOrArrangerAsClip().clearSteps());
