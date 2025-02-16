@@ -7,7 +7,7 @@ import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.centomila.CustomPresetsHandler.CustomPreset;
-import com.centomila.utils.PopupUtils;
+import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.utils.SettingsHelper.*;
 
 import java.util.Arrays;
@@ -139,7 +139,7 @@ public class PatternSettings {
                 return;
             }
             lastDefaultPresetUsed = newValue.toString();
-            PopupUtils.showPopup(newValue.toString());
+            showPopup(newValue.toString());
             String patternByName = getDefaultPresetsContentPatternStrings(newValue);
             setPatternString(patternByName);
         });
@@ -177,7 +177,7 @@ public class PatternSettings {
                 lastCustomPresetUsed = presets[0];
             }
             String pattern = String.join(",", getCustomPresetsContentPatternStrings(newValue));
-            PopupUtils.showPopup("Custom Preset selected: " + newValue.toString() + " with pattern: " + pattern);
+            showPopup("Custom Preset selected: " + newValue.toString() + " with pattern: " + pattern);
             // convert pattern to Setting
             setPatternString(pattern);
         });

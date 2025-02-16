@@ -13,7 +13,7 @@ import com.bitwig.extension.controller.api.Signal;
 import javafx.application.Platform;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import com.centomila.utils.PopupUtils;
+import static com.centomila.utils.PopupUtils.*;
 
 /**
  * Handles global preferences and settings for the BeatBuddy extension.
@@ -165,7 +165,7 @@ public class GlobalPreferences {
     private void openPresetsFolderInExplorer() {
         Path directory = Paths.get(presetsPath.get());
         if (!isValidPresetsFolder(directory)) {
-            PopupUtils.showPopup("Presets folder does not exist: " + directory.toAbsolutePath());
+            showPopup("Presets folder does not exist: " + directory.toAbsolutePath());
             return;
         }
 
@@ -220,7 +220,7 @@ public class GlobalPreferences {
             Runtime.getRuntime().exec(command);
         } catch (IOException e) {
             host.errorln("Failed to open " + pageName + " page: " + e.getMessage());
-            PopupUtils.showPopup("Please visit " + url + " in your web browser.");
+            showPopup("Please visit " + url + " in your web browser.");
         }
     }
 
@@ -308,9 +308,9 @@ public class GlobalPreferences {
                         Path selectedPath = selectedDirectory.toPath();
                         if (isValidPresetsFolder(selectedPath)) {
                             setPresetsPath(selectedPath.toAbsolutePath().toString());
-                            PopupUtils.showPopup("Presets folder updated to: " + selectedPath);
+                            showPopup("Presets folder updated to: " + selectedPath);
                         } else {
-                            PopupUtils.showPopup("Invalid presets folder selected: " + selectedPath);
+                            showPopup("Invalid presets folder selected: " + selectedPath);
                         }
                     }
                     
@@ -318,13 +318,13 @@ public class GlobalPreferences {
                 } catch (Exception e) {
                     host.errorln("Directory chooser error: " + e.getMessage());
                     e.printStackTrace();
-                    PopupUtils.showPopup("Failed to open folder browser");
+                    showPopup("Failed to open folder browser");
                 }
             });
         } catch (Exception e) {
             host.errorln("Failed to open folder browser: " + e.getMessage());
             e.printStackTrace();
-            PopupUtils.showPopup("Failed to open folder browser");
+            showPopup("Failed to open folder browser");
         }
     }
 
@@ -334,9 +334,9 @@ public class GlobalPreferences {
 
         if (isValidPresetsFolder(defaultDir)) {
             setPresetsPath(defaultPath);
-            PopupUtils.showPopup("Presets folder reset to default: " + defaultPath);
+            showPopup("Presets folder reset to default: " + defaultPath);
         } else {
-            PopupUtils.showPopup("Default presets folder not found: " + defaultPath);
+            showPopup("Default presets folder not found: " + defaultPath);
         }
     }
 

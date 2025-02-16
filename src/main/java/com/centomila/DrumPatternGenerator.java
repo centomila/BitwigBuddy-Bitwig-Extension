@@ -7,7 +7,7 @@ import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.StringValue;
-import com.centomila.utils.PopupUtils;
+import static com.centomila.utils.PopupUtils.*;
 import com.bitwig.extension.controller.api.ClipLauncherSlot;
 import com.bitwig.extension.controller.api.Arranger;
 

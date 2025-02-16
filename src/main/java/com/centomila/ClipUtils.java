@@ -8,7 +8,7 @@ import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.NoteStep;
 import com.bitwig.extension.controller.api.Setting;
-import com.centomila.utils.PopupUtils;
+import static com.centomila.utils.PopupUtils.*;
 import com.bitwig.extension.controller.api.DocumentState;
 
 public class ClipUtils {
@@ -62,7 +62,7 @@ private static String CATEGORY_OTHER = "Other";
             if (step.x() == 0 && stepOffset < 0) {
                 // Prevent moving steps before the start of the clip
                 stepOffset = 0;
-                PopupUtils.showPopup("Cannot move steps before the start of the clip");
+                showPopup("Cannot move steps before the start of the clip");
             } else {
                 clip.moveStep(channel, step.x(), step.y(), stepOffset, 0);
             }
