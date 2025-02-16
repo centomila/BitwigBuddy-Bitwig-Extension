@@ -26,10 +26,9 @@ public class GlobalPreferences {
     private static final String PATREON_URL = "https://www.patreon.com/Centomila";
     private static final String GITHUB_URL = "https://github.com/centomila/BeatBuddy-Bitwig-Extension-MIDI-Drum-Generator";
     private static final String CENTOMILA_URL = "https://centomila.com";
-    private static final long DIALOG_TIMEOUT_SECONDS = 10;
     private static final String[] DOCUMENTS_LOCALIZED = {
-        "Documents", "Documenti", "Documentos", "Dokumente",
-        "文档", "文書", "문서", "Документы"
+            "Documents", "Documenti", "Documentos", "Dokumente",
+            "文档", "文書", "문서", "Документы"
     };
 
     private enum PlatformCommand {
@@ -59,93 +58,87 @@ public class GlobalPreferences {
     private final ControllerHost host;
     private boolean jfxInitialized = false;
     private final CustomPresetsHandler presetsHandler;
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings({ "unused" })
     private final Signal openPatreon, openGitHub, openCentomila;
 
     /**
      * Initializes the global preferences with the specified controller host.
+     * 
      * @param host The Bitwig controller host
      */
     public GlobalPreferences(ControllerHost host) {
         this.host = host;
         this.defaultPresetsPath = getDefaultExtensionsPath();
         this.preferences = host.getPreferences();
-        
+
         // Initialize preference settings
         this.presetsPath = preferences.getStringSetting(
-            "Presets Path",
-            PRESETS_SETTING_CATEGORY,
-            MAX_PATH_LENGTH,
-            defaultPresetsPath
-        );
+                "Presets Path",
+                PRESETS_SETTING_CATEGORY,
+                MAX_PATH_LENGTH,
+                defaultPresetsPath);
 
         // Initialize signals
         this.openPresetsFolder = initializeOpenPresetsFolderSignal();
         this.browseFolderButton = initializeBrowseFolderSignal();
         this.resetToDefaultButton = initializeResetDefaultSignal();
         this.openPatreon = initializePatreonSignal();
-        this.openGitHub = initializeGitHubSignal();     // Add this
+        this.openGitHub = initializeGitHubSignal(); // Add this
         this.openCentomila = initializeCentomilaSignal(); // Add this
-        
+
         this.presetsHandler = new CustomPresetsHandler(host, this);
     }
 
     private Signal initializeOpenPresetsFolderSignal() {
         Signal signal = preferences.getSignalSetting(
-            "Opens the presets folder in system file explorer",
-            PRESETS_SETTING_CATEGORY,
-            "Explore Preset Folder"
-        );
+                "Opens the presets folder in system file explorer",
+                PRESETS_SETTING_CATEGORY,
+                "Explore Preset Folder");
         signal.addSignalObserver(this::openPresetsFolderInExplorer);
         return signal;
     }
 
     private Signal initializeBrowseFolderSignal() {
         Signal signal = preferences.getSignalSetting(
-            "Select presets folder location",
-            PRESETS_SETTING_CATEGORY,
-            "Browse"
-        );
+                "Select presets folder location",
+                PRESETS_SETTING_CATEGORY,
+                "Browse");
         signal.addSignalObserver(this::browseForPresetsFolder);
         return signal;
     }
 
     private Signal initializeResetDefaultSignal() {
         Signal signal = preferences.getSignalSetting(
-            "Reset to Default Extensions/BeatBuddy",
-            PRESETS_SETTING_CATEGORY,
-            "Reset to default location"
-        );
+                "Reset to Default Extensions/BeatBuddy",
+                PRESETS_SETTING_CATEGORY,
+                "Reset to default location");
         signal.addSignalObserver(this::resetToDefaultPath);
         return signal;
     }
 
     private Signal initializePatreonSignal() {
         Signal signal = preferences.getSignalSetting(
-            "Support BeatBuddy on Patreon!",
-            SUPPORT_CATEGORY,
-            "Go to Patreon.com/Centomila"
-        );
+                "Support BeatBuddy on Patreon!",
+                SUPPORT_CATEGORY,
+                "Go to Patreon.com/Centomila");
         signal.addSignalObserver(this::openPatreonPage);
         return signal;
     }
 
     private Signal initializeGitHubSignal() {
         Signal signal = preferences.getSignalSetting(
-            "Visit BeatBuddy on GitHub",
-            SUPPORT_CATEGORY,
-            "Go to GitHub Repository"
-        );
+                "Visit BeatBuddy on GitHub",
+                SUPPORT_CATEGORY,
+                "Go to GitHub Repository");
         signal.addSignalObserver(this::openGitHubPage);
         return signal;
     }
 
     private Signal initializeCentomilaSignal() {
         Signal signal = preferences.getSignalSetting(
-            "Visit Centomila Website",
-            SUPPORT_CATEGORY,
-            "Go to Centomila.com"
-        );
+                "Visit Centomila Website",
+                SUPPORT_CATEGORY,
+                "Go to Centomila.com");
         signal.addSignalObserver(this::openCentomilaPage);
         return signal;
     }
@@ -154,8 +147,10 @@ public class GlobalPreferences {
      * Gets the current platform-specific command configuration.
      */
     private PlatformCommand getPlatformCommand() {
-        if (host.platformIsWindows()) return PlatformCommand.WINDOWS;
-        if (host.platformIsMac()) return PlatformCommand.MAC;
+        if (host.platformIsWindows())
+            return PlatformCommand.WINDOWS;
+        if (host.platformIsMac())
+            return PlatformCommand.MAC;
         return PlatformCommand.LINUX;
     }
 
@@ -171,7 +166,7 @@ public class GlobalPreferences {
 
         try {
             PlatformCommand cmd = getPlatformCommand();
-            Runtime.getRuntime().exec(new String[]{cmd.fileExplorer, directory.toAbsolutePath().toString()});
+            Runtime.getRuntime().exec(new String[] { cmd.fileExplorer, directory.toAbsolutePath().toString() });
         } catch (IOException e) {
             host.errorln("Failed to open presets folder: " + e.getMessage());
         }
@@ -213,10 +208,10 @@ public class GlobalPreferences {
     private void openWebUrl(String url, String pageName) {
         try {
             PlatformCommand cmd = getPlatformCommand();
-            String[] command = cmd.browserParam1.isEmpty() 
-                ? new String[]{cmd.browserCommand, url}
-                : new String[]{cmd.browserCommand, cmd.browserParam1, cmd.browserParam2, url};
-            
+            String[] command = cmd.browserParam1.isEmpty()
+                    ? new String[] { cmd.browserCommand, url }
+                    : new String[] { cmd.browserCommand, cmd.browserParam1, cmd.browserParam2, url };
+
             Runtime.getRuntime().exec(command);
         } catch (IOException e) {
             host.errorln("Failed to open " + pageName + " page: " + e.getMessage());
@@ -286,12 +281,12 @@ public class GlobalPreferences {
         try {
             // Ensure JavaFX is initialized
             initializeJavaFX();
-            
+
             Platform.runLater(() -> {
                 try {
                     DirectoryChooser chooser = new DirectoryChooser();
                     chooser.setTitle("Select BeatBuddy Presets Folder");
-                    
+
                     // Set initial directory
                     Path initialDir = getValidInitialDirectory();
                     if (initialDir != null) {
@@ -303,7 +298,7 @@ public class GlobalPreferences {
 
                     Stage stage = new Stage();
                     File selectedDirectory = chooser.showDialog(stage);
-                    
+
                     if (selectedDirectory != null) {
                         Path selectedPath = selectedDirectory.toPath();
                         if (isValidPresetsFolder(selectedPath)) {
@@ -313,7 +308,7 @@ public class GlobalPreferences {
                             showPopup("Invalid presets folder selected: " + selectedPath);
                         }
                     }
-                    
+
                     stage.close();
                 } catch (Exception e) {
                     host.errorln("Directory chooser error: " + e.getMessage());
@@ -364,7 +359,6 @@ public class GlobalPreferences {
         return openPresetsFolder;
     }
 
-
     public Signal getBrowseFolderButton() {
         return browseFolderButton;
     }
@@ -384,7 +378,7 @@ public class GlobalPreferences {
     public void setJfxInitialized(boolean jfxInitialized) {
         this.jfxInitialized = jfxInitialized;
     }
-    
+
     public CustomPresetsHandler.CustomPreset[] getCustomPresets() {
         return presetsHandler.getCustomPresets();
     }

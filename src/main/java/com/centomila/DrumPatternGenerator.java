@@ -1,15 +1,12 @@
 package com.centomila;
 
-
 import java.util.Arrays;
 import java.util.Random;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.StringValue;
-import static com.centomila.utils.PopupUtils.*;
 import com.bitwig.extension.controller.api.ClipLauncherSlot;
-import com.bitwig.extension.controller.api.Arranger;
 
 import com.bitwig.extension.controller.api.Setting;
 
@@ -106,9 +103,10 @@ public class DrumPatternGenerator {
         }
 
         if (((EnumValue) extension.duplicateClipSetting).get().equals("On")) {
-            ClipLauncherSlot clipLauncherSlot = clip.clipLauncherSlot();;
+            ClipLauncherSlot clipLauncherSlot = clip.clipLauncherSlot();
+            ;
             if (((EnumValue) extension.toggleLauncherArrangerSetting).get().equals("Launcher")) {
-                
+
                 if (clipLauncherSlot != null) {
                     clipLauncherSlot.duplicateClip();
                 }
