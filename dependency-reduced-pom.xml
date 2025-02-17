@@ -4,7 +4,7 @@
   <groupId>com.centomila</groupId>
   <artifactId>beatbuddy</artifactId>
   <name>BeatBuddy</name>
-  <version>0.8.0</version>
+  <version>0.8.1</version>
   <build>
     <plugins>
       <plugin>
@@ -17,7 +17,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.6.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -44,6 +44,12 @@
                   </excludes>
                 </filter>
               </filters>
+              <artifactSet>
+                <includes>
+                  <include>org.openjfx:*</include>
+                </includes>
+              </artifactSet>
+              <minimizeJar>false</minimizeJar>
             </configuration>
           </execution>
         </executions>
@@ -133,10 +139,18 @@
       <url>https://maven.bitwig.com</url>
     </repository>
   </repositories>
+  <dependencies>
+    <dependency>
+      <groupId>com.bitwig</groupId>
+      <artifactId>extension-api</artifactId>
+      <version>19</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
   <properties>
     <bitwig.extension.directory.onedrive.ita>${env.USERPROFILE}/OneDrive/Documenti/Bitwig Studio/Extensions</bitwig.extension.directory.onedrive.ita>
-    <maven.compiler.target>21</maven.compiler.target>
     <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javafx.version>23.0.2</javafx.version>
     <bitwig.extension.directory>${env.USERPROFILE}/Documents/Bitwig Studio/Extensions</bitwig.extension.directory>
