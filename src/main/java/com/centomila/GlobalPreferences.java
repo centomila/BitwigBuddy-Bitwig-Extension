@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.Preferences;
 import com.bitwig.extension.controller.api.SettableStringValue;
@@ -60,6 +63,7 @@ public class GlobalPreferences {
     private final CustomPresetsHandler presetsHandler;
     @SuppressWarnings({ "unused" })
     private final Signal openPatreon, openGitHub, openCentomila;
+    private static final Object jfxInitLock = new Object();
 
     /**
      * Initializes the global preferences with the specified controller host.
@@ -232,19 +236,51 @@ public class GlobalPreferences {
     }
 
     private void initializeJavaFX() {
-        if (!jfxInitialized) {
-            try {
-                Platform.startup(() -> {
-                    host.println("JavaFX initialized successfully");
+        if (jfxInitialized) {
+            return;
+        }
+
+        synchronized (jfxInitLock) {
+            if (!jfxInitialized) {
+                try {
+                    if (host.platformIsMac()) {
+                        System.setProperty("javafx.toolkit", "com.sun.javafx.tk.quantum.QuantumToolkit");
+                        System.setProperty("glass.platform", "mac");
+                    }
+
+                    if (!Platform.isFxApplicationThread()) {
+                        // Create a completion latch
+                        final CountDownLatch initLatch = new CountDownLatch(1);
+                        
+                        Platform.startup(() -> {
+                            try {
+                                // Test if we can create a Stage
+                                new Stage();
+                                host.println("JavaFX initialized successfully");
+                                jfxInitialized = true;
+                            } catch (Exception e) {
+                                host.errorln("JavaFX init failed: " + e.getMessage());
+                            } finally {
+                                initLatch.countDown();
+                            }
+                        });
+                        
+                        // Wait for initialization to complete (max 5 seconds)
+                        if (!initLatch.await(5, TimeUnit.SECONDS)) {
+                            host.errorln("JavaFX initialization timed out");
+                            return;
+                        }
+                    } else {
+                        host.println("JavaFX already running on FX thread");
+                        jfxInitialized = true;
+                    }
+                } catch (IllegalStateException e) {
+                    host.println("JavaFX toolkit already initialized (this is OK)");
                     jfxInitialized = true;
-                });
-            } catch (IllegalStateException e) {
-                // JavaFX already initialized
-                host.println("JavaFX was already initialized");
-                jfxInitialized = true;
-            } catch (Exception e) {
-                host.errorln("Failed to initialize JavaFX: " + e.getMessage());
-                e.printStackTrace();
+                } catch (Exception e) {
+                    host.errorln("JavaFX initialization error: " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -279,47 +315,57 @@ public class GlobalPreferences {
 
     private void browseForPresetsFolder() {
         try {
-            // Ensure JavaFX is initialized
+            // Initialize JavaFX first
             initializeJavaFX();
 
-            Platform.runLater(() -> {
-                try {
-                    DirectoryChooser chooser = new DirectoryChooser();
-                    chooser.setTitle("Select BeatBuddy Presets Folder");
+            if (!jfxInitialized) {
+                showPopup("Failed to initialize JavaFX. Please try again or use manual path input.");
+                return;
+            }
 
-                    // Set initial directory
-                    Path initialDir = getValidInitialDirectory();
-                    if (initialDir != null) {
-                        File dir = initialDir.toFile();
-                        if (dir.exists() && dir.isDirectory()) {
-                            chooser.setInitialDirectory(dir);
-                        }
-                    }
-
-                    Stage stage = new Stage();
-                    File selectedDirectory = chooser.showDialog(stage);
-
-                    if (selectedDirectory != null) {
-                        Path selectedPath = selectedDirectory.toPath();
-                        if (isValidPresetsFolder(selectedPath)) {
-                            setPresetsPath(selectedPath.toAbsolutePath().toString());
-                            showPopup("Presets folder updated to: " + selectedPath);
-                        } else {
-                            showPopup("Invalid presets folder selected: " + selectedPath);
-                        }
-                    }
-
-                    stage.close();
-                } catch (Exception e) {
-                    host.errorln("Directory chooser error: " + e.getMessage());
-                    e.printStackTrace();
-                    showPopup("Failed to open folder browser");
-                }
-            });
+            // Ensure we're on the FX thread before proceeding
+            if (!Platform.isFxApplicationThread()) {
+                Platform.runLater(this::showDirectoryChooser);
+            } else {
+                showDirectoryChooser();
+            }
         } catch (Exception e) {
-            host.errorln("Failed to open folder browser: " + e.getMessage());
-            e.printStackTrace();
-            showPopup("Failed to open folder browser");
+            host.errorln("Browse folder operation failed: " + e.getMessage());
+            showPopup("Failed to open folder browser. Please try again.");
+        }
+    }
+
+    private void showDirectoryChooser() {
+        try {
+            host.println("Creating directory chooser...");
+            DirectoryChooser chooser = new DirectoryChooser();
+            chooser.setTitle("Select BeatBuddy Presets Folder");
+
+            Path initialDir = getValidInitialDirectory();
+            if (initialDir != null) {
+                File dir = initialDir.toFile();
+                if (dir.exists() && dir.isDirectory()) {
+                    chooser.setInitialDirectory(dir);
+                }
+            }
+
+            Stage stage = new Stage();
+            File selectedDirectory = chooser.showDialog(stage);
+
+            if (selectedDirectory != null) {
+                Path selectedPath = selectedDirectory.toPath();
+                if (isValidPresetsFolder(selectedPath)) {
+                    setPresetsPath(selectedPath.toAbsolutePath().toString());
+                    showPopup("Presets folder updated to: " + selectedPath);
+                } else {
+                    showPopup("Invalid presets folder selected: " + selectedPath);
+                }
+            }
+
+            stage.close();
+        } catch (Exception e) {
+            host.errorln("Directory chooser error: " + e.getMessage());
+            showPopup("Failed to open folder browser: " + e.getMessage());
         }
     }
 

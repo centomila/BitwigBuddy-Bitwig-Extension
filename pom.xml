@@ -33,6 +33,7 @@
 		</dependency>
 		
 		<!-- JavaFX Dependencies -->
+        <!-- Base package -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
@@ -57,6 +58,7 @@
             <classifier>mac</classifier>
         </dependency>
         
+        <!-- Controls package (includes DirectoryChooser and Stage) -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
