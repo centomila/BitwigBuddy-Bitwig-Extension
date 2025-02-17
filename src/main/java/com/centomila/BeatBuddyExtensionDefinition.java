@@ -24,12 +24,12 @@ public class BeatBuddyExtensionDefinition extends ControllerExtensionDefinition
    public String getAuthor()
    {
       return "centomila";
-   }
+   }t
 
    @Override
    public String getVersion()
    {
-      return "0.8.0";
+      return "0.8.1";
    }
 
    @Override
