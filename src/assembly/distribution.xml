@@ -11,7 +11,7 @@
         <file>
             <source>${project.build.directory}/${project.build.finalName}.jar</source>
             <outputDirectory>/</outputDirectory>
-            <destName>BeatBuddy.bwextension</destName>
+            <destName>BeatBuddy-${platform.classifier}.bwextension</destName>
         </file>
     </files>
     

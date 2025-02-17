@@ -46,7 +46,9 @@
               </filters>
               <artifactSet>
                 <includes>
-                  <include>org.openjfx:*</include>
+                  <include>org.openjfx:javafx-base:jar:${platform.classifier}</include>
+                  <include>org.openjfx:javafx-controls:jar:${platform.classifier}</include>
+                  <include>org.openjfx:javafx-graphics:jar:${platform.classifier}</include>
                 </includes>
               </artifactSet>
               <minimizeJar>false</minimizeJar>
@@ -126,12 +128,92 @@
           <descriptors>
             <descriptor>src/assembly/distribution.xml</descriptor>
           </descriptors>
-          <finalName>BeatBuddy-${project.version}</finalName>
+          <finalName>BeatBuddy-${project.version}-${platform.classifier}</finalName>
           <appendAssemblyId>false</appendAssemblyId>
         </configuration>
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>windows</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-base</artifactId>
+          <version>${javafx.version}</version>
+          <classifier>win</classifier>
+        </dependency>
+        <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-graphics</artifactId>
+          <version>${javafx.version}</version>
+          <classifier>win</classifier>
+        </dependency>
+        <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-controls</artifactId>
+          <version>${javafx.version}</version>
+          <classifier>win</classifier>
+        </dependency>
+      </dependencies>
+      <properties>
+        <platform.classifier>win</platform.classifier>
+      </properties>
+    </profile>
+    <profile>
+      <id>macos</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-base</artifactId>
+          <version>${javafx.version}</version>
+          <classifier>mac</classifier>
+        </dependency>
+        <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-controls</artifactId>
+          <version>${javafx.version}</version>
+          <classifier>mac</classifier>
+        </dependency>
+        <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-graphics</artifactId>
+          <version>${javafx.version}</version>
+          <classifier>mac</classifier>
+        </dependency>
+      </dependencies>
+      <properties>
+        <platform.classifier>mac</platform.classifier>
+      </properties>
+    </profile>
+    <profile>
+      <id>linux</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-base</artifactId>
+          <version>${javafx.version}</version>
+          <classifier>linux</classifier>
+        </dependency>
+        <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-controls</artifactId>
+          <version>${javafx.version}</version>
+          <classifier>linux</classifier>
+        </dependency>
+        <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-graphics</artifactId>
+          <version>${javafx.version}</version>
+          <classifier>linux</classifier>
+        </dependency>
+      </dependencies>
+      <properties>
+        <platform.classifier>linux</platform.classifier>
+      </properties>
+    </profile>
+  </profiles>
   <repositories>
     <repository>
       <id>bitwig</id>
@@ -144,6 +226,24 @@
       <groupId>com.bitwig</groupId>
       <artifactId>extension-api</artifactId>
       <version>19</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-base</artifactId>
+      <version>23.0.2</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-graphics</artifactId>
+      <version>23.0.2</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>23.0.2</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
