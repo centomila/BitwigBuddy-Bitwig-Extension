@@ -2,7 +2,7 @@ package com.centomila;
 
 import com.bitwig.extension.controller.api.Setting;
 
-import static com.centomila.utils.SettingsHelper.disableSetting;
+import static com.centomila.utils.SettingsHelper.*;
 
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
@@ -18,16 +18,38 @@ public class PostActionSettings {
                                 "POST ACTIONS----------------------",
                                 CATEGORY_POST_ACTIONS, 0,
                                 "---------------------------------------------------");
-                
-                disableSetting( spacerPostActions ); // Spacers are always disabled
+
+                disableSetting(spacerPostActions); // Spacers are always disabled
 
                 // Setting for toggle hide/show post actions
-                Setting postActionsSetting = (Setting) documentState.getEnumSetting(
+                extension.postActionsSetting = (Setting) createEnumSetting(
                                 "Post Actions",
                                 CATEGORY_POST_ACTIONS,
-                                new String[] { "Show", "Hide" }, "Hide");
+                                new String[] { "Show", "Hide" },
+                                "Hide");
 
-                ((EnumValue) postActionsSetting).addValueObserver(newValue -> {
+                // Initialize auto resize loop length setting
+                extension.autoResizeLoopLengthSetting = (Setting) createEnumSetting(
+                                "Auto resize loop length",
+                                CATEGORY_POST_ACTIONS,
+                                new String[] { "Off", "On" },
+                                "On");
+
+                extension.zoomToFitAfterGenerateSetting = (Setting) createEnumSetting(
+                                "Zoom to fit after generate",
+                                CATEGORY_POST_ACTIONS,
+                                new String[] { "Off", "On" },
+                                "Off");
+
+                extension.duplicateClipSetting = (Setting) createEnumSetting(
+                                "Duplicate Selected Clip",
+                                CATEGORY_POST_ACTIONS,
+                                new String[] { "Off", "On" },
+                                "Off");
+
+
+
+                ((EnumValue) extension.postActionsSetting).addValueObserver(newValue -> {
                         if (newValue.equals("Hide")) {
                                 extension.autoResizeLoopLengthSetting.hide();
                                 extension.zoomToFitAfterGenerateSetting.hide();
@@ -41,28 +63,5 @@ public class PostActionSettings {
                         }
                 });
 
-                // Initialize auto resize loop length setting
-                Setting autoResizeLoopLengthSetting = (Setting) documentState.getEnumSetting(
-                                "Auto resize loop length",
-                                CATEGORY_POST_ACTIONS,
-                                new String[] { "Off", "On" }, "On");
-                extension.setAutoResizeLoopLengthSetting(autoResizeLoopLengthSetting);
-
-                Setting zoomToFitAfterGenerateSetting = (Setting) documentState.getEnumSetting(
-                                "Zoom to fit after generate",
-                                CATEGORY_POST_ACTIONS,
-                                new String[] { "Off", "On" }, "Off");
-                extension.setZoomToFitAfterGenerateSetting(zoomToFitAfterGenerateSetting);
-
-                // extension.openInDetailEditorSetting = (Setting) documentState.getEnumSetting(
-                //                 "Open in Detail Editor after Generate",
-                //                 CATEGORY_POST_ACTIONS,
-                //                 new String[] { "Off", "On" }, "On");
-                
-                extension.duplicateClipSetting = (Setting) documentState.getEnumSetting(
-                                "Duplicate Selected Clip",
-                                CATEGORY_POST_ACTIONS,
-                                new String[] { "Off", "On" }, "Off");
-                
         }
 }
