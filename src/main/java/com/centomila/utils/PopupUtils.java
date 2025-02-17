@@ -5,7 +5,7 @@ import com.bitwig.extension.controller.api.ControllerHost;
 public class PopupUtils {
     private static ControllerHost host;
 
-    public static void initialize(ControllerHost controllerHost) {
+    public static void init(ControllerHost controllerHost) {
         host = controllerHost;
     }
 

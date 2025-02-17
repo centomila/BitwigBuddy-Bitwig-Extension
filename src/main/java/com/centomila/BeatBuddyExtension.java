@@ -2,8 +2,7 @@ package com.centomila;
 
 import com.bitwig.extension.controller.api.ControllerHost;
 
-import static com.centomila.utils.SettingsHelper.disableSetting;
-import static com.centomila.utils.SettingsHelper.enableSetting;
+import static com.centomila.utils.SettingsHelper.*;
 
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
@@ -13,6 +12,7 @@ import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
 
 import com.centomila.utils.PopupUtils;
+import com.centomila.utils.SettingsHelper;
 
 /**
  * BeatBuddy Extension for Bitwig Studio.
@@ -34,6 +34,10 @@ public class BeatBuddyExtension extends ControllerExtension {
    Setting customPresetSetting; // List of custom patterns
    Setting presetPatternStringSetting; // Custom pattern string
    Setting reversePatternSetting;
+
+   // Random Settings
+   Setting randomVelocityVariationSetting;
+   Setting randomDensitySetting;
 
    // Step Size / Note Length settings
    Setting noteLengthSetting; // How long each note should be
@@ -71,7 +75,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    public void init() {
       final ControllerHost host = getHost();
       preferences = new GlobalPreferences(host);
-      PopupUtils.initialize(host);
+
       // Initialize API objects
       application = host.createApplication();
       cursorClip = host.createLauncherCursorClip((16 * 8), 128);
@@ -89,8 +93,12 @@ public class BeatBuddyExtension extends ControllerExtension {
 
       moveStepsHandler = new MoveStepsHandler(this);
       moveStepsHandler.init(documentState);
+      
+      SettingsHelper.init(this);
+      PopupUtils.init(host);
 
       PatternSettings.init(this);
+      RandomPattern.init(this);
       NoteDestinationSettings.init(this);
       StepSizeSettings.init(this);
       PostActionSettings.init(this);

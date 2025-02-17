@@ -1,11 +1,25 @@
 package com.centomila.utils;
 
+import com.centomila.BeatBuddyExtension;
+import com.bitwig.extension.controller.api.ControllerHost;
+import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.Setting;
+import com.bitwig.extension.controller.api.SettableRangedValue;
 
 /**
  * Utility class to manage settings visibility and enabled state.
  */
 public class SettingsHelper {
+    private static BeatBuddyExtension extension;
+
+    /**
+     * Initializes the settings helper.
+     *
+     * @param extension the extension
+     */
+    public static void init(BeatBuddyExtension extension) {
+        SettingsHelper.extension = extension;
+    }
 
     /**
      * Hides the specified settings.
@@ -76,5 +90,32 @@ public class SettingsHelper {
             s.show();
             s.enable();
         }
+    }
+
+    /**
+     * Creates a number setting.
+     *
+     * @param label the setting id
+     * @param category the setting name
+     * @param defaultValue the default value
+     * @param minValue the minimum value
+     * @param maxValue the maximum value
+     * @param stepResolution the step resolution
+     * @param unit the unit
+     * @param initialValue the initial value
+     * @return the created number setting
+     */
+    public static SettableRangedValue createNumberSetting(String label, String category, double defaultValue,
+            double minValue, double maxValue) {
+        DocumentState documentState = extension.getDocumentState();
+        return documentState.getNumberSetting(
+            label,
+            category,
+            minValue,
+            maxValue,
+            1.0,
+            "",
+            defaultValue
+        );
     }
 }
