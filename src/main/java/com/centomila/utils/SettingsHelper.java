@@ -93,21 +93,24 @@ public class SettingsHelper {
         }
     }
 
-    
     /**
-     * Creates a numeric setting that can be displayed as a number field in Bitwig Studio.
+     * Creates a numeric setting that can be displayed as a number field in Bitwig
+     * Studio.
      * 
-     * @param label The name of the setting, must not be null
-     * @param category The name of the category, must not be null
-     * @param defaultValue The initial numeric value of the setting
-     * @param minValue The minimum value that the user is allowed to enter
-     * @param maxValue The maximum value that the user is allowed to enter
+     * @param label          The name of the setting, must not be null
+     * @param category       The name of the category, must not be null
+     * @param defaultValue   The initial numeric value of the setting
+     * @param minValue       The minimum value that the user is allowed to enter
+     * @param maxValue       The maximum value that the user is allowed to enter
      * @param stepResolution The step resolution used for the number field
-     * @param unit The string that should be used to display the unit of the number
-     * @return A SettableRangedValue object that encapsulates the requested numeric setting
+     * @param unit           The string that should be used to display the unit of
+     *                       the number
+     * @return A SettableRangedValue object that encapsulates the requested numeric
+     *         setting
      * @since API version 1
      */
-    public static SettableRangedValue createNumberSetting(String label, String category, double defaultValue, double minValue, double maxValue, double stepResolution, String unit) {
+    public static SettableRangedValue createNumberSetting(String label, String category, double defaultValue,
+            double minValue, double maxValue, double stepResolution, String unit) {
         DocumentState documentState = extension.getDocumentState();
         return documentState.getNumberSetting(
                 label,
@@ -122,14 +125,19 @@ public class SettingsHelper {
     /**
      * Creates an enum setting.
      *
-     * @param label the setting id
-     * @param category the setting name
-     * @param options  the options as an array of strings
+     * @param label        the setting id
+     * @param category     the setting name
+     * @param options      the options as an array of strings
      * @param initialValue the initial value
      * @return the created enum setting
      */
-    public static SettableEnumValue createEnumSetting(String label, String category, String[] options, String initialValue) {
+    public static SettableEnumValue createEnumSetting(String label, String category, String[] options,
+            String initialValue) {
         DocumentState documentState = extension.getDocumentState();
-        return documentState.getEnumSetting(label, category, options, initialValue);
+        return documentState.getEnumSetting(
+                label,
+                category,
+                options,
+                initialValue);
     }
 }
