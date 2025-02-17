@@ -1,10 +1,11 @@
 package com.centomila.utils;
 
 import com.centomila.BeatBuddyExtension;
-import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.SettableRangedValue;
+import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.SettableEnumValue;
 
 /**
  * Utility class to manage settings visibility and enabled state.
@@ -109,13 +110,27 @@ public class SettingsHelper {
             double minValue, double maxValue) {
         DocumentState documentState = extension.getDocumentState();
         return documentState.getNumberSetting(
-            label,
-            category,
-            minValue,
-            maxValue,
-            1.0,
-            "",
-            defaultValue
-        );
+                label,
+                category,
+                minValue,
+                maxValue,
+                1.0,
+                "",
+                defaultValue);
+    }
+    
+
+    /**
+     * Creates an enum setting.
+     *
+     * @param label the setting id
+     * @param category the setting name
+     * @param options  the options as an array of strings
+     * @param initialValue the initial value
+     * @return the created enum setting
+     */
+    public static SettableEnumValue createEnumSetting(String label, String category, String[] options, String initialValue) {
+        DocumentState documentState = extension.getDocumentState();
+        return documentState.getEnumSetting(label, category, options, initialValue);
     }
 }
