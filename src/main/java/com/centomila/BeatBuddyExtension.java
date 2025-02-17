@@ -36,7 +36,8 @@ public class BeatBuddyExtension extends ControllerExtension {
    Setting reversePatternSetting;
 
    // Random Settings
-   Setting randomVelocityVariationSetting;
+   Setting randomMinVelocityVariationSetting;
+   Setting randomMaxVelocityVariationSetting;
    Setting randomDensitySetting;
 
    // Step Size / Note Length settings

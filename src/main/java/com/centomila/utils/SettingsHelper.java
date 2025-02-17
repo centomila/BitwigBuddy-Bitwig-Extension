@@ -93,32 +93,31 @@ public class SettingsHelper {
         }
     }
 
+    
     /**
-     * Creates a number setting.
-     *
-     * @param label the setting id
-     * @param category the setting name
-     * @param defaultValue the default value
-     * @param minValue the minimum value
-     * @param maxValue the maximum value
-     * @param stepResolution the step resolution
-     * @param unit the unit
-     * @param initialValue the initial value
-     * @return the created number setting
+     * Creates a numeric setting that can be displayed as a number field in Bitwig Studio.
+     * 
+     * @param label The name of the setting, must not be null
+     * @param category The name of the category, must not be null
+     * @param defaultValue The initial numeric value of the setting
+     * @param minValue The minimum value that the user is allowed to enter
+     * @param maxValue The maximum value that the user is allowed to enter
+     * @param stepResolution The step resolution used for the number field
+     * @param unit The string that should be used to display the unit of the number
+     * @return A SettableRangedValue object that encapsulates the requested numeric setting
+     * @since API version 1
      */
-    public static SettableRangedValue createNumberSetting(String label, String category, double defaultValue,
-            double minValue, double maxValue) {
+    public static SettableRangedValue createNumberSetting(String label, String category, double defaultValue, double minValue, double maxValue, double stepResolution, String unit) {
         DocumentState documentState = extension.getDocumentState();
         return documentState.getNumberSetting(
                 label,
                 category,
                 minValue,
                 maxValue,
-                1.0,
-                "",
+                stepResolution,
+                unit,
                 defaultValue);
     }
-    
 
     /**
      * Creates an enum setting.

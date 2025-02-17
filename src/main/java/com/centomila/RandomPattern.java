@@ -6,22 +6,32 @@ import com.bitwig.extension.controller.api.Setting;
 
 public class RandomPattern {
     public static void init(BeatBuddyExtension extension) {
-        
+
         // Initialize Random Pattern Settings
-        extension.randomVelocityVariationSetting = (Setting)createNumberSetting(
-            "randomVelocityVariation",
-            "Velocity Variation",
-            0,
-            0,
-            127
-        );
-        
-        extension.randomDensitySetting = (Setting)createNumberSetting(
-            "randomDensity",
-            "Density",
-            0,
-            0,
-            127
-        );
+        extension.randomMinVelocityVariationSetting = (Setting) createNumberSetting(
+                "Min Velocity",
+                "Generate Pattern",
+                1,
+                1,
+                127,
+                1,
+                "/127 Velocity");
+        extension.randomMaxVelocityVariationSetting = (Setting) createNumberSetting(
+                "Max Velocity",
+                "Generate Pattern",
+                127,
+                1,
+                127,
+                1,
+                "/127 Velocity");
+
+        extension.randomDensitySetting = (Setting) createNumberSetting(
+                "Density",
+                "Generate Pattern",
+                50,
+                0.1,
+                127,
+                0.1,
+                "%");
     }
 }
