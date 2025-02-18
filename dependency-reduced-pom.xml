@@ -13,6 +13,9 @@
         <configuration>
           <source>21</source>
           <target>21</target>
+          <compilerArgs>
+            <arg>${javafx.mac.options}</arg>
+          </compilerArgs>
         </configuration>
       </plugin>
       <plugin>
@@ -76,7 +79,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.4.0</version>
         <configuration>
           <failOnError>false</failOnError>
           <filesets>
@@ -114,7 +117,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.6.0</version>
+        <version>3.7.1</version>
         <executions>
           <execution>
             <id>create-distribution</id>
@@ -163,6 +166,30 @@
     </profile>
     <profile>
       <id>macos</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.13.0</version>
+            <configuration>
+              <source>${maven.compiler.source}</source>
+              <target>${maven.compiler.target}</target>
+              <compilerArgs>
+                <arg>--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED</arg>
+                <arg>--add-exports=javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED</arg>
+              </compilerArgs>
+            </configuration>
+          </plugin>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.5.2</version>
+            <configuration>
+              <argLine>--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
+                            --add-exports=javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
       <dependencies>
         <dependency>
           <groupId>org.openjfx</groupId>
@@ -249,6 +276,7 @@
   </dependencies>
   <properties>
     <bitwig.extension.directory.onedrive.ita>${env.USERPROFILE}/OneDrive/Documenti/Bitwig Studio/Extensions</bitwig.extension.directory.onedrive.ita>
+    <javafx.mac.options>--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED --add-exports=javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED</javafx.mac.options>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
