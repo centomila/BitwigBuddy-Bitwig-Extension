@@ -11,34 +11,44 @@ public class StepSizeSettings {
       private static String CATEGORY_CLIP = "Clip";
 
       public static void init(BeatBuddyExtension extension) {
-            DocumentState documentState = extension.getDocumentState();
-
-            Setting spacerStepSize = ((Setting) documentState.getStringSetting(
+            Setting spacerStepSize = (Setting) createStringSetting(
                         "STEP SIZE/NOTE LENGTH---------",
                         CATEGORY_CLIP, 0,
-                        "---------------------------------------------------"));
+                        "---------------------------------------------------");
 
             disableSetting(spacerStepSize); // Spacers are always disabled
 
-            Setting stepSizSetting = (Setting) documentState.getEnumSetting("Step Size",
-                        CATEGORY_CLIP, Utils.STEPSIZE_OPTIONS, "1/16");
-            Setting stepSizSubdivisionSetting = (Setting) documentState.getEnumSetting("Subdivisions",
-                        CATEGORY_CLIP, Utils.STEPSIZE_CATEGORY_OPTIONS, "Straight");
-            Setting noteLengthSetting = (Setting) documentState.getEnumSetting("Note Length",
-                        CATEGORY_CLIP, Utils.STEPSIZE_OPTIONS,
+            extension.stepSizSetting = (Setting) createEnumSetting(
+                        "Step Size",
+                        CATEGORY_CLIP,
+                        Utils.STEPSIZE_OPTIONS,
+                        "1/16");
+            extension.stepSizSubdivisionSetting = (Setting) createEnumSetting(
+                        "Subdivisions",
+                        CATEGORY_CLIP,
+                        Utils.STEPSIZE_CATEGORY_OPTIONS,
+                        "Straight");
+            extension.noteLengthSetting = (Setting) createEnumSetting(
+                        "Note Length",
+                        CATEGORY_CLIP,
+                        Utils.STEPSIZE_OPTIONS,
                         "1/16");
 
-            ((EnumValue) stepSizSetting).addValueObserver(newValue -> {
-                  ((SettableEnumValue) stepSizSetting).set(newValue);
-                  ((SettableEnumValue) noteLengthSetting).set(newValue);
+            setupStepSizeObservers(extension);
+
+            // extension.setStepSizSetting(stepSizSetting);
+            // extension.setStepSizSubdivisionSetting(stepSizSubdivisionSetting);
+            // extension.setNoteLengthSetting(noteLengthSetting);
+      }
+
+      private static void setupStepSizeObservers(BeatBuddyExtension extension) {
+            ((EnumValue) extension.stepSizSetting).addValueObserver(newValue -> {
+                  ((SettableEnumValue) extension.stepSizSetting).set(newValue);
+                  ((SettableEnumValue) extension.noteLengthSetting).set(newValue);
             });
 
-            ((EnumValue) noteLengthSetting).addValueObserver(newValue -> {
-                  ((SettableEnumValue) noteLengthSetting).set(newValue);
+            ((EnumValue) extension.noteLengthSetting).addValueObserver(newValue -> {
+                  ((SettableEnumValue) extension.noteLengthSetting).set(newValue);
             });
-
-            extension.setStepSizSetting(stepSizSetting);
-            extension.setStepSizSubdivisionSetting(stepSizSubdivisionSetting);
-            extension.setNoteLengthSetting(noteLengthSetting);
       }
 }
