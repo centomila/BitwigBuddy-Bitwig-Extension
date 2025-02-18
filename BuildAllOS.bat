@@ -1,0 +1,13 @@
+@echo off
+echo 🪟  Building Windows version...
+call mvn clean package -P windows
+copy target\*.zip .
+echo 🍎  Building macOS version...
+call mvn clean package -P macos
+copy target\*.zip .
+echo 🐧  Building Linux version...
+call mvn clean package -P linux
+copy target\*.zip .
+echo 🧹  Clean target folder...
+call mvn clean
+echo 🏁  All builds completed!
