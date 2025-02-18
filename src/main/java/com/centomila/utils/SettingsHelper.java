@@ -6,6 +6,7 @@ import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
+import com.bitwig.extension.controller.api.SettableStringValue;
 
 /**
  * Utility class to manage settings visibility and enabled state.
@@ -139,5 +140,24 @@ public class SettingsHelper {
                 category,
                 options,
                 initialValue);
+    }
+
+    /**
+     * Creates a string setting.
+     *
+     * @param label       the setting id
+     * @param category    the setting name
+     * @param numChars    the number of characters
+     * @param initialText the initial text
+     * @return the created string setting
+     */
+    public static SettableStringValue createStringSetting(String label, String category, int numChars,
+            String initialText) {
+        DocumentState documentState = extension.getDocumentState();
+        return documentState.getStringSetting(
+                label,
+                category,
+                numChars,
+                initialText);
     }
 }

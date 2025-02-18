@@ -1,22 +1,19 @@
 package com.centomila;
 
-import com.bitwig.extension.controller.api.Setting;
-
 import static com.centomila.utils.SettingsHelper.*;
 
-import com.bitwig.extension.controller.api.DocumentState;
+import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.EnumValue;
 
 public class PostActionSettings {
         private static String CATEGORY_POST_ACTIONS = "Post Actions";
 
         public static void init(BeatBuddyExtension extension) {
-                DocumentState documentState = extension.getDocumentState();
-
                 // Initialize spacer for "Post Actions"
-                Setting spacerPostActions = (Setting) documentState.getStringSetting(
+                Setting spacerPostActions = (Setting) createStringSetting(
                                 "POST ACTIONS----------------------",
-                                CATEGORY_POST_ACTIONS, 0,
+                                CATEGORY_POST_ACTIONS,
+                                9999,
                                 "---------------------------------------------------");
 
                 disableSetting(spacerPostActions); // Spacers are always disabled
@@ -47,21 +44,25 @@ public class PostActionSettings {
                                 new String[] { "Off", "On" },
                                 "Off");
 
+                setupPostActionsObserver(extension);
+        }
 
-
+        // Observer for post actions setting
+        private static void setupPostActionsObserver(BeatBuddyExtension extension) {
+                
                 ((EnumValue) extension.postActionsSetting).addValueObserver(newValue -> {
+                        // Array with all settings to be hidden
+                        Setting[] settingsToHideAndShow = {
+                                        extension.autoResizeLoopLengthSetting,
+                                        extension.zoomToFitAfterGenerateSetting,
+                                        extension.duplicateClipSetting };
+                                        
                         if (newValue.equals("Hide")) {
-                                extension.autoResizeLoopLengthSetting.hide();
-                                extension.zoomToFitAfterGenerateSetting.hide();
-                                extension.duplicateClipSetting.hide();
+                                hideSetting(settingsToHideAndShow);
 
                         } else {
-                                extension.autoResizeLoopLengthSetting.show();
-                                extension.zoomToFitAfterGenerateSetting.show();
-                                extension.duplicateClipSetting.show();
-
+                                showSetting(settingsToHideAndShow);
                         }
                 });
-
         }
 }
