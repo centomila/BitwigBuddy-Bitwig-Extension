@@ -103,18 +103,24 @@ public class SettingsHelper {
      * 
      * @param label          The name of the setting, must not be null
      * @param category       The name of the category, must not be null
-     * @param defaultValue   The initial numeric value of the setting
      * @param minValue       The minimum value that the user is allowed to enter
      * @param maxValue       The maximum value that the user is allowed to enter
      * @param stepResolution The step resolution used for the number field
      * @param unit           The string that should be used to display the unit of
+     * @param defaultValue   The initial numeric value of the setting
      *                       the number
      * @return A SettableRangedValue object that encapsulates the requested numeric
      *         setting
      * @since API version 1
      */
-    public static SettableRangedValue createNumberSetting(String label, String category, double defaultValue,
-            double minValue, double maxValue, double stepResolution, String unit) {
+    public static SettableRangedValue createNumberSetting(
+            String label,
+            String category,
+            double minValue,
+            double maxValue,
+            double stepResolution,
+            String unit,
+            double defaultValue) {
 
         return documentState.getNumberSetting(
                 label,
