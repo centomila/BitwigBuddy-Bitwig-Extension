@@ -1,6 +1,9 @@
 package com.centomila.utils;
 
 import com.centomila.BeatBuddyExtension;
+
+import javax.swing.text.Document;
+
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.SettableRangedValue;
@@ -12,7 +15,7 @@ import com.bitwig.extension.controller.api.SettableStringValue;
  * Utility class to manage settings visibility and enabled state.
  */
 public class SettingsHelper {
-    private static BeatBuddyExtension extension;
+    private static DocumentState documentState;
 
     /**
      * Initializes the settings helper.
@@ -20,7 +23,7 @@ public class SettingsHelper {
      * @param extension the extension
      */
     public static void init(BeatBuddyExtension extension) {
-        SettingsHelper.extension = extension;
+        documentState = extension.getDocumentState();
     }
 
     /**
@@ -112,7 +115,7 @@ public class SettingsHelper {
      */
     public static SettableRangedValue createNumberSetting(String label, String category, double defaultValue,
             double minValue, double maxValue, double stepResolution, String unit) {
-        DocumentState documentState = extension.getDocumentState();
+
         return documentState.getNumberSetting(
                 label,
                 category,
@@ -134,7 +137,7 @@ public class SettingsHelper {
      */
     public static SettableEnumValue createEnumSetting(String label, String category, String[] options,
             String initialValue) {
-        DocumentState documentState = extension.getDocumentState();
+
         return documentState.getEnumSetting(
                 label,
                 category,
@@ -153,7 +156,7 @@ public class SettingsHelper {
      */
     public static SettableStringValue createStringSetting(String label, String category, int numChars,
             String initialText) {
-        DocumentState documentState = extension.getDocumentState();
+
         return documentState.getStringSetting(
                 label,
                 category,
