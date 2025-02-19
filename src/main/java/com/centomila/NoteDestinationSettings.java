@@ -10,7 +10,6 @@ import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.PlayingNote;
 import com.bitwig.extension.controller.api.PlayingNoteArrayValue;
-import com.bitwig.extension.controller.api.DocumentState;
 
 import java.util.Arrays;
 

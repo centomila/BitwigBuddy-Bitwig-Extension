@@ -1,8 +1,6 @@
 package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
-
-import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
