@@ -32,9 +32,9 @@ public class RandomPattern {
                 extension.randomDensitySetting = (Setting) createNumberSetting(
                                 "Density",
                                 "Generate Pattern",
-                                0.1,
+                                1,
                                 100,
-                                0.1,
+                                1,
                                 "%",
                                 50);
 

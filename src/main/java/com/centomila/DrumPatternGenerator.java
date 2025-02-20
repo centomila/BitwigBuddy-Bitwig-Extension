@@ -1,5 +1,7 @@
 package com.centomila;
 
+import static com.centomila.utils.PopupUtils.*;
+
 import java.util.Arrays;
 import java.util.Random;
 import com.bitwig.extension.controller.api.Clip;
@@ -143,13 +145,42 @@ public class DrumPatternGenerator {
                 .round(((SettableRangedValue) extension.randomMinVelocityVariationSetting).getRaw());
         int maxVelocity = (int) Math
                 .round(((SettableRangedValue) extension.randomMaxVelocityVariationSetting).getRaw());
-        int density = (int) Math.round(((SettableRangedValue) extension.randomDensitySetting).getRaw());
-
-
+        double density = (double) (((SettableRangedValue) extension.randomDensitySetting).getRaw());
+        showPopup("Min Velocity: " + minVelocity + " Max Velocity: " + maxVelocity + " Density: " + density);
 
         for (int i = 0; i < pattern.length; i++) {
-            pattern[i] = minVelocity + random.nextInt(maxVelocity - minVelocity + 1);
+        pattern[i] = minVelocity + random.nextInt(maxVelocity - minVelocity + 1);
         }
+
+        // Calculate how many steps should be active based on density
+        int activeSteps = (int) Math.round((density / 100.0) * pattern.length);
+        
+        // Create a boolean array to track which positions will be active
+        boolean[] activePositions = new boolean[pattern.length];
+        for (int i = 0; i < activeSteps; i++) {
+            int pos;
+            do {
+            pos = random.nextInt(pattern.length);
+            } while (activePositions[pos]);
+            activePositions[pos] = true;
+        }
+        
+        // Zero out inactive positions
+        for (int i = 0; i < pattern.length; i++) {
+            if (!activePositions[i]) {
+            pattern[i] = 0;
+            }
+        }
+
+
+        // Count how many steps are > 0 and show a popup
+        int count = 0;
+        for (int i = 0; i < pattern.length; i++) {
+            if (pattern[i] > 0) {
+                count++;
+            }
+        }
+        showPopup("Pattern has " + count + " steps." + " Density: " + density);
     }
 
     /**
