@@ -9,6 +9,7 @@ import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.IntegerValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
+import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Value;
 import com.bitwig.extension.controller.api.StringValue;
 import com.bitwig.extension.controller.api.ClipLauncherSlot;
@@ -81,6 +82,7 @@ public class DrumPatternGenerator {
         if (patternType.equals("Random")) {
             pattern = new int[16];
             generateRandomPattern(extension, pattern);
+
         } else {
             String patternString = ((StringValue) presetPatternStringSetting).get();
             // convert to an int array
@@ -181,6 +183,10 @@ public class DrumPatternGenerator {
             }
         }
         showPopup("Pattern has " + count + " steps." + " Density: " + density);
+
+               
+        String patternString = Arrays.toString(pattern).replaceAll("[\\[\\]]", "");
+        ((SettableStringValue) extension.presetPatternStringSetting).set(patternString);
     }
 
     /**
