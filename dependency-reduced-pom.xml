@@ -13,9 +13,7 @@
         <configuration>
           <source>21</source>
           <target>21</target>
-          <compilerArgs>
-            <arg>${javafx.mac.options}</arg>
-          </compilerArgs>
+          <compilerArgs />
         </configuration>
       </plugin>
       <plugin>
@@ -195,23 +193,23 @@
           <groupId>org.openjfx</groupId>
           <artifactId>javafx-base</artifactId>
           <version>${javafx.version}</version>
-          <classifier>mac</classifier>
+          <classifier>mac-aarch64</classifier>
         </dependency>
         <dependency>
           <groupId>org.openjfx</groupId>
           <artifactId>javafx-controls</artifactId>
           <version>${javafx.version}</version>
-          <classifier>mac</classifier>
+          <classifier>mac-aarch64</classifier>
         </dependency>
         <dependency>
           <groupId>org.openjfx</groupId>
           <artifactId>javafx-graphics</artifactId>
           <version>${javafx.version}</version>
-          <classifier>mac</classifier>
+          <classifier>mac-aarch64</classifier>
         </dependency>
       </dependencies>
       <properties>
-        <platform.classifier>mac</platform.classifier>
+        <platform.classifier>mac-aarch64</platform.classifier>
       </properties>
     </profile>
     <profile>

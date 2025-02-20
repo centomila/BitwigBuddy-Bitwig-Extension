@@ -5,6 +5,9 @@ import java.util.Random;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.IntegerValue;
+import com.bitwig.extension.controller.api.SettableRangedValue;
+import com.bitwig.extension.controller.api.Value;
 import com.bitwig.extension.controller.api.StringValue;
 import com.bitwig.extension.controller.api.ClipLauncherSlot;
 
@@ -75,7 +78,7 @@ public class DrumPatternGenerator {
         String patternType = ((EnumValue) patternTypeSetting).get();
         if (patternType.equals("Random")) {
             pattern = new int[16];
-            generateRandomPattern(pattern);
+            generateRandomPattern(extension, pattern);
         } else {
             String patternString = ((StringValue) presetPatternStringSetting).get();
             // convert to an int array
@@ -134,13 +137,18 @@ public class DrumPatternGenerator {
      *
      * @param pattern the pattern array to populate.
      */
-    private static void generateRandomPattern(int[] pattern) {
+    private static void generateRandomPattern(BeatBuddyExtension extension, int[] pattern) {
         Random random = new Random();
+        int minVelocity = (int) Math
+                .round(((SettableRangedValue) extension.randomMinVelocityVariationSetting).getRaw());
+        int maxVelocity = (int) Math
+                .round(((SettableRangedValue) extension.randomMaxVelocityVariationSetting).getRaw());
+        int density = (int) Math.round(((SettableRangedValue) extension.randomDensitySetting).getRaw());
+
+
+
         for (int i = 0; i < pattern.length; i++) {
-            pattern[i] = random.nextInt(128);
-            if (random.nextInt(4) == 0) {
-                pattern[i] = 0;
-            }
+            pattern[i] = minVelocity + random.nextInt(maxVelocity - minVelocity + 1);
         }
     }
 

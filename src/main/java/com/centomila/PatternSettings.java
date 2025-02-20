@@ -84,36 +84,40 @@ public class PatternSettings {
         String[] options = { "Presets", "Random", "Custom" };
         extension.patternTypeSetting = (Setting) documentState.getEnumSetting("Pattern Type", CATEGORY_GENERATE_PATTERN,
                 options, "Presets");
-        
 
         ((EnumValue) extension.patternTypeSetting).addValueObserver(newValue -> {
             switch (newValue) {
                 case "Presets":
                     Setting[] settingsToShow = { extension.patternSelectorSetting, extension.reversePatternSetting };
-                    Setting[] settingsToHide = { extension.customPresetSetting };                
+                    Setting[] settingsToHide = { extension.customPresetSetting, extension.randomDensitySetting,
+                            extension.randomMinVelocityVariationSetting,
+                            extension.randomMaxVelocityVariationSetting };
                     showAndEnableSetting(settingsToShow);
                     hideAndDisalbeSetting(settingsToHide);
 
-                    
                     ((SettableEnumValue) extension.patternSelectorSetting).set(lastDefaultPresetUsed);
                     setPatternString(getDefaultPresetsContentPatternStrings(lastDefaultPresetUsed));
                     break;
                 case "Custom":
                     Setting[] settingsToShowCustom = { extension.customPresetSetting, extension.reversePatternSetting };
-                    Setting[] settingsToHideCustom = { extension.patternSelectorSetting };
+                    Setting[] settingsToHideCustom = { extension.patternSelectorSetting, extension.randomDensitySetting,
+                            extension.randomMinVelocityVariationSetting,
+                            extension.randomMaxVelocityVariationSetting };
                     showAndEnableSetting(settingsToShowCustom);
                     hideAndDisalbeSetting(settingsToHideCustom);
-                
-                        if (lastCustomPresetUsed != null) {
-                            ((SettableEnumValue) extension.customPresetSetting).set(lastCustomPresetUsed);
-                        }
-                
+
+                    if (lastCustomPresetUsed != null) {
+                        ((SettableEnumValue) extension.customPresetSetting).set(lastCustomPresetUsed);
+                    }
+
                     break;
                 case "Random":
-                    // Setting[] settingsToShowRandom = {  }; TODO: ADD RANDOM SETTINGS
-                    Setting[] settingsToHideRandom = { extension.patternSelectorSetting, extension.customPresetSetting, 
+                    Setting[] settingsToShowRandom = { extension.randomDensitySetting,
+                            extension.randomMinVelocityVariationSetting,
+                            extension.randomMaxVelocityVariationSetting };
+                    Setting[] settingsToHideRandom = { extension.patternSelectorSetting, extension.customPresetSetting,
                             extension.reversePatternSetting };
-                    // showAndEnableSetting(settingsToShowRandom);
+                    showAndEnableSetting(settingsToShowRandom);
                     hideAndDisalbeSetting(settingsToHideRandom);
                     break;
             }
@@ -133,7 +137,6 @@ public class PatternSettings {
         extension.patternSelectorSetting = (Setting) documentState.getEnumSetting("Pattern", CATEGORY_GENERATE_PATTERN,
                 LIST_OF_DEFAULT_PATTERNS,
                 "Kick: Four on the Floor");
-                
 
         ((EnumValue) extension.patternSelectorSetting).addValueObserver(newValue -> {
             if (!((EnumValue) extension.patternTypeSetting).get().equals("Presets")) {
@@ -165,10 +168,10 @@ public class PatternSettings {
                 CATEGORY_GENERATE_PATTERN, presets,
                 presets[0]);
 
-        hideAndDisalbeSetting( extension.customPresetSetting);
+        hideAndDisalbeSetting(extension.customPresetSetting);
 
         ((EnumValue) extension.customPresetSetting).addValueObserver(newValue -> {
-            // if preset type 
+            // if preset type
             if (!((EnumValue) extension.patternTypeSetting).get().equals("Custom")) {
                 return;
             }
