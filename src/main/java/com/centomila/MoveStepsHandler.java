@@ -18,12 +18,13 @@ public class MoveStepsHandler {
     private static final String ERROR_INVALID_STEP = "Invalid step offset";
     private static final String ERROR_INVALID_SETTINGS = "Invalid step size or subdivision settings";
     private static final int MAX_STEP_OFFSET = 128;
-    
+
     private final BeatBuddyExtension extension;
     private EnumValue moveRotateStepsSetting;
 
     /**
      * Creates a new MoveStepsHandler instance.
+     * 
      * @param extension The parent BeatBuddy extension
      * @throws IllegalArgumentException if extension is null
      */
@@ -36,6 +37,7 @@ public class MoveStepsHandler {
 
     /**
      * Initializes the handler with document state settings and signals.
+     * 
      * @param documentState The document state to initialize with
      * @throws IllegalArgumentException if documentState is null
      */
@@ -43,31 +45,28 @@ public class MoveStepsHandler {
         if (documentState == null) {
             throw new IllegalArgumentException("DocumentState cannot be null");
         }
-        
+
         initializeMoveRotateSetting(documentState);
         initializeMoveSignals(documentState);
     }
 
     private void initializeMoveRotateSetting(DocumentState documentState) {
         moveRotateStepsSetting = documentState.getEnumSetting(
-            "Move/Rotate", 
-            CATEGORY_MOVE_STEPS,
-            MOVE_MODES, 
-            DEFAULT_MOVE_MODE
-        );
+                "Move/Rotate",
+                CATEGORY_MOVE_STEPS,
+                MOVE_MODES,
+                DEFAULT_MOVE_MODE);
     }
 
     private void initializeMoveSignals(DocumentState documentState) {
         Signal moveFwd = documentState.getSignalSetting(
-            "Move Steps Forward", 
-            CATEGORY_MOVE_STEPS, 
-            ">>>"
-        );
+                "Move Steps Forward",
+                CATEGORY_MOVE_STEPS,
+                ">>>");
         Signal moveBwd = documentState.getSignalSetting(
-            "Move Steps Backward", 
-            CATEGORY_MOVE_STEPS, 
-            "<<<"
-        );
+                "Move Steps Backward",
+                CATEGORY_MOVE_STEPS,
+                "<<<");
 
         moveFwd.addSignalObserver(() -> handleStepMovement(1));
         moveBwd.addSignalObserver(() -> handleStepMovement(-1));
@@ -75,7 +74,9 @@ public class MoveStepsHandler {
 
     /**
      * Handles the movement or rotation of steps in the clip.
-     * @param stepOffset The number of steps to move (positive for forward, negative for backward)
+     * 
+     * @param stepOffset The number of steps to move (positive for forward, negative
+     *                   for backward)
      * @throws IllegalArgumentException if stepOffset is invalid
      */
     private void handleStepMovement(int stepOffset) {
@@ -92,11 +93,12 @@ public class MoveStepsHandler {
 
         try {
             int channel = ((NoteDestinationSettings) extension.noteDestSettings).getCurrentChannelAsInt();
-            int noteDestination = ((NoteDestinationSettings) extension.noteDestSettings).getCurrentNoteDestinationAsInt();
-            
+            int noteDestination = ((NoteDestinationSettings) extension.noteDestSettings)
+                    .getCurrentNoteDestinationAsInt();
+
             EnumValue stepSizeSetting = (EnumValue) extension.stepSizSetting;
             EnumValue subdivisionSetting = (EnumValue) extension.stepSizSubdivisionSetting;
-            
+
             if (stepSizeSetting == null || subdivisionSetting == null) {
                 showPopup(ERROR_INVALID_SETTINGS);
                 return;
@@ -107,14 +109,13 @@ public class MoveStepsHandler {
             boolean isRotate = moveRotateStepsSetting.get().equals(MOVE_MODES[1]);
 
             ClipUtils.handleStepMovement(
-                clip, 
-                channel, 
-                noteDestination, 
-                stepSize, 
-                subdivision, 
-                stepOffset, 
-                isRotate
-            );
+                    clip,
+                    channel,
+                    noteDestination,
+                    stepSize,
+                    subdivision,
+                    stepOffset,
+                    isRotate);
         } catch (ClassCastException e) {
             extension.getHost().errorln("Settings type error: " + e.getMessage());
             showPopup(ERROR_INVALID_SETTINGS);

@@ -22,6 +22,7 @@ import java.util.Arrays;
 public class NoteDestinationSettings {
    private static String CATEGORY_NOTE_DESTINATION = "Note Destination";
 
+   public int currentNoteAsInt;
    private String currentNoteAsString;
    private int currentOctaveAsInt;
    private final Setting noteChannelSetting;
@@ -46,7 +47,8 @@ public class NoteDestinationSettings {
     * @return The MIDI note number (0-127)
     */
    public int getCurrentNoteDestinationAsInt() {
-      return Utils.getMIDINoteNumberFromStringAndOctave(currentNoteAsString, currentOctaveAsInt);
+      currentNoteAsInt = Utils.getMIDINoteNumberFromStringAndOctave(currentNoteAsString, currentOctaveAsInt);
+      return currentNoteAsInt;
    }
 
    /**
