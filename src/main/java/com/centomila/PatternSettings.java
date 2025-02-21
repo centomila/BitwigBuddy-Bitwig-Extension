@@ -91,7 +91,7 @@ public class PatternSettings {
                     Setting[] settingsToShow = { extension.patternSelectorSetting, extension.reversePatternSetting };
                     Setting[] settingsToHide = { extension.customPresetSetting, extension.randomDensitySetting,
                             extension.randomMinVelocityVariationSetting,
-                            extension.randomMaxVelocityVariationSetting };
+                            extension.randomMaxVelocityVariationSetting, extension.randomStepQtySetting };
                     showAndEnableSetting(settingsToShow);
                     hideAndDisalbeSetting(settingsToHide);
 
@@ -102,7 +102,7 @@ public class PatternSettings {
                     Setting[] settingsToShowCustom = { extension.customPresetSetting, extension.reversePatternSetting };
                     Setting[] settingsToHideCustom = { extension.patternSelectorSetting, extension.randomDensitySetting,
                             extension.randomMinVelocityVariationSetting,
-                            extension.randomMaxVelocityVariationSetting };
+                            extension.randomMaxVelocityVariationSetting, extension.randomStepQtySetting };
                     showAndEnableSetting(settingsToShowCustom);
                     hideAndDisalbeSetting(settingsToHideCustom);
 
@@ -114,7 +114,7 @@ public class PatternSettings {
                 case "Random":
                     Setting[] settingsToShowRandom = { extension.randomDensitySetting,
                             extension.randomMinVelocityVariationSetting,
-                            extension.randomMaxVelocityVariationSetting };
+                            extension.randomMaxVelocityVariationSetting, extension.randomStepQtySetting };
                     Setting[] settingsToHideRandom = { extension.patternSelectorSetting, extension.customPresetSetting,
                             extension.reversePatternSetting };
                     showAndEnableSetting(settingsToShowRandom);

@@ -1,11 +1,16 @@
 package com.centomila;
 
-// import static com.centomila.utils.PopupUtils.*;
+
 import static com.centomila.utils.SettingsHelper.*;
 import static com.centomila.utils.PopupUtils.*;
 
+import java.util.Arrays;
+import java.util.Random;
+
+
 import com.bitwig.extension.controller.api.SettableIntegerValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
+import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Setting;
 
 public class RandomPattern {
@@ -38,6 +43,15 @@ public class RandomPattern {
                                 "%",
                                 50);
 
+                extension.randomStepQtySetting = (Setting) createNumberSetting(
+                                "Step Quantity",
+                                "Generate Pattern",
+                                1,
+                                128,
+                                1,
+                                "Steps",
+                                16);
+
                 // init observers
                 initiObserver(extension);
         }
@@ -45,12 +59,10 @@ public class RandomPattern {
         // Observers
         public static void initiObserver(BeatBuddyExtension extension) {
                 ((SettableRangedValue) extension.randomMinVelocityVariationSetting).addValueObserver(newValue -> {
-                        // convert from double with range 0.0-1.0 to int in the range 1-127
-                        // int intValue = (int) Math.round(newValue * 126) + 1;
-                        // showPopup("Min Velocity: " + intValue);
-                        // if newValue is > maxVelocity, set maxVelocity to newValue
+                        // Force max velocity to be greater than min velocity
                         double scaledNewValue = newValue * 126 + 1;
-                        double maxValue = ((SettableRangedValue) extension.randomMaxVelocityVariationSetting).get() * 126 + 1;
+                        double maxValue = ((SettableRangedValue) extension.randomMaxVelocityVariationSetting).get()
+                                        * 126 + 1;
                         if (scaledNewValue > maxValue) {
                                 ((SettableRangedValue) extension.randomMaxVelocityVariationSetting).set(newValue);
                         }
@@ -58,12 +70,10 @@ public class RandomPattern {
                 });
 
                 ((SettableRangedValue) extension.randomMaxVelocityVariationSetting).addValueObserver(newValue -> {
-                        // convert from double with range 0.0-1.0 to int in the range 1-127
-                        // int intValue = (int) Math.round(newValue * 126) + 1;
-                        // showPopup("Max Velocity: " + intValue);
-                        // if newValue is < minVelocity, set minVelocity to newValue
+                        // Force max velocity to be greater than min velocity
                         double scaledNewValue = newValue * 126 + 1;
-                        double minValue = ((SettableRangedValue) extension.randomMinVelocityVariationSetting).get() * 126 + 1;
+                        double minValue = ((SettableRangedValue) extension.randomMinVelocityVariationSetting).get()
+                                        * 126 + 1;
                         if (scaledNewValue < minValue) {
                                 ((SettableRangedValue) extension.randomMinVelocityVariationSetting).set(newValue);
                         }
@@ -73,5 +83,57 @@ public class RandomPattern {
 
                 });
 
+        }
+
+        public static int[] generateRandomPattern(BeatBuddyExtension extension) {
+                Random random = new Random();
+                int minVelocity = (int) Math
+                                .round(((SettableRangedValue) extension.randomMinVelocityVariationSetting).getRaw());
+                int maxVelocity = (int) Math
+                                .round(((SettableRangedValue) extension.randomMaxVelocityVariationSetting).getRaw());
+                double density = (double) (((SettableRangedValue) extension.randomDensitySetting).getRaw());
+                showPopup("Min Velocity: " + minVelocity + " Max Velocity: " + maxVelocity + " Density: " + density);
+
+                int stepsQty = (int) Math.round(((SettableRangedValue) extension.randomStepQtySetting).getRaw());
+                showPopup("Steps: " + stepsQty);
+                int[] pattern = new int[stepsQty];
+
+                for (int i = 0; i < pattern.length; i++) {
+                        pattern[i] = minVelocity + random.nextInt(maxVelocity - minVelocity + 1);
+                }
+
+                // Calculate how many steps should be active based on density
+                int activeSteps = (int) Math.round((density / 100.0) * pattern.length);
+
+                // Create a boolean array to track which positions will be active
+                boolean[] activePositions = new boolean[pattern.length];
+                for (int i = 0; i < activeSteps; i++) {
+                        int pos;
+                        do {
+                                pos = random.nextInt(pattern.length);
+                        } while (activePositions[pos]);
+                        activePositions[pos] = true;
+                }
+
+                // Zero out inactive positions
+                for (int i = 0; i < pattern.length; i++) {
+                        if (!activePositions[i]) {
+                                pattern[i] = 0;
+                        }
+                }
+
+                // Count how many steps are > 0 and show a popup
+                int count = 0;
+                for (int i = 0; i < pattern.length; i++) {
+                        if (pattern[i] > 0) {
+                                count++;
+                        }
+                }
+                // showPopup("Pattern has " + count + " steps." + " Density: " + density);
+
+                String patternString = Arrays.toString(pattern).replaceAll("[\\[\\]]", "");
+                ((SettableStringValue) extension.presetPatternStringSetting).set(patternString);
+
+                return pattern;
         }
 }

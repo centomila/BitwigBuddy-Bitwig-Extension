@@ -1,6 +1,7 @@
 package com.centomila;
 
 import static com.centomila.utils.PopupUtils.*;
+import static com.centomila.RandomPattern.*;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -77,11 +78,10 @@ public class DrumPatternGenerator {
         clip.clearStepsAtY(channel, noteDestination);
 
         // Determine the type of pattern to generate
-        int[] pattern;
+        int[] pattern = new int[16];
         String patternType = ((EnumValue) patternTypeSetting).get();
         if (patternType.equals("Random")) {
-            pattern = new int[16];
-            generateRandomPattern(extension, pattern);
+            pattern = generateRandomPattern(extension);
 
         } else {
             String patternString = ((StringValue) presetPatternStringSetting).get();
@@ -134,60 +134,7 @@ public class DrumPatternGenerator {
         }
     }
 
-    /**
-     * Generates a randomized pattern with 16 steps.
-     * Each step is assigned a random value between 0 and 127.
-     * Occasionally, a step is set to 0.
-     *
-     * @param pattern the pattern array to populate.
-     */
-    private static void generateRandomPattern(BeatBuddyExtension extension, int[] pattern) {
-        Random random = new Random();
-        int minVelocity = (int) Math
-                .round(((SettableRangedValue) extension.randomMinVelocityVariationSetting).getRaw());
-        int maxVelocity = (int) Math
-                .round(((SettableRangedValue) extension.randomMaxVelocityVariationSetting).getRaw());
-        double density = (double) (((SettableRangedValue) extension.randomDensitySetting).getRaw());
-        showPopup("Min Velocity: " + minVelocity + " Max Velocity: " + maxVelocity + " Density: " + density);
 
-        for (int i = 0; i < pattern.length; i++) {
-        pattern[i] = minVelocity + random.nextInt(maxVelocity - minVelocity + 1);
-        }
-
-        // Calculate how many steps should be active based on density
-        int activeSteps = (int) Math.round((density / 100.0) * pattern.length);
-        
-        // Create a boolean array to track which positions will be active
-        boolean[] activePositions = new boolean[pattern.length];
-        for (int i = 0; i < activeSteps; i++) {
-            int pos;
-            do {
-            pos = random.nextInt(pattern.length);
-            } while (activePositions[pos]);
-            activePositions[pos] = true;
-        }
-        
-        // Zero out inactive positions
-        for (int i = 0; i < pattern.length; i++) {
-            if (!activePositions[i]) {
-            pattern[i] = 0;
-            }
-        }
-
-
-        // Count how many steps are > 0 and show a popup
-        int count = 0;
-        for (int i = 0; i < pattern.length; i++) {
-            if (pattern[i] > 0) {
-                count++;
-            }
-        }
-        showPopup("Pattern has " + count + " steps." + " Density: " + density);
-
-               
-        String patternString = Arrays.toString(pattern).replaceAll("[\\[\\]]", "");
-        ((SettableStringValue) extension.presetPatternStringSetting).set(patternString);
-    }
 
     /**
      * Applies the provided pattern to the clip.
