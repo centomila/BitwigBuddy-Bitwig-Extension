@@ -78,7 +78,7 @@ public class SettingsHelper {
      *
      * @param settings one or more settings to be hidden and disabled
      */
-    public static void hideAndDisalbeSetting(Setting... settings) {
+    public static void hideAndDisableSetting(Setting... settings) {
         for (Setting setting : settings) {
             setting.hide();
             setting.disable();

@@ -93,7 +93,7 @@ public class PatternSettings {
                             extension.randomMinVelocityVariationSetting,
                             extension.randomMaxVelocityVariationSetting, extension.randomStepQtySetting };
                     showAndEnableSetting(settingsToShow);
-                    hideAndDisalbeSetting(settingsToHide);
+                    hideAndDisableSetting(settingsToHide);
 
                     ((SettableEnumValue) extension.patternSelectorSetting).set(lastDefaultPresetUsed);
                     setPatternString(getDefaultPresetsContentPatternStrings(lastDefaultPresetUsed));
@@ -104,7 +104,7 @@ public class PatternSettings {
                             extension.randomMinVelocityVariationSetting,
                             extension.randomMaxVelocityVariationSetting, extension.randomStepQtySetting };
                     showAndEnableSetting(settingsToShowCustom);
-                    hideAndDisalbeSetting(settingsToHideCustom);
+                    hideAndDisableSetting(settingsToHideCustom);
 
                     if (lastCustomPresetUsed != null) {
                         ((SettableEnumValue) extension.customPresetSetting).set(lastCustomPresetUsed);
@@ -118,7 +118,7 @@ public class PatternSettings {
                     Setting[] settingsToHideRandom = { extension.patternSelectorSetting, extension.customPresetSetting,
                             extension.reversePatternSetting };
                     showAndEnableSetting(settingsToShowRandom);
-                    hideAndDisalbeSetting(settingsToHideRandom);
+                    hideAndDisableSetting(settingsToHideRandom);
                     break;
             }
         });
@@ -168,7 +168,7 @@ public class PatternSettings {
                 CATEGORY_GENERATE_PATTERN, presets,
                 presets[0]);
 
-        hideAndDisalbeSetting(extension.customPresetSetting);
+        hideAndDisableSetting(extension.customPresetSetting);
 
         ((EnumValue) extension.customPresetSetting).addValueObserver(newValue -> {
             // if preset type
