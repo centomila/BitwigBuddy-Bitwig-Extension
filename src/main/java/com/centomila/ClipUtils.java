@@ -1,5 +1,8 @@
 package com.centomila;
 
+import static com.centomila.utils.PopupUtils.*;
+import static com.centomila.utils.SettingsHelper.*;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -8,18 +11,44 @@ import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.NoteStep;
 import com.bitwig.extension.controller.api.Setting;
-import static com.centomila.utils.PopupUtils.*;
-import static com.centomila.utils.SettingsHelper.disableSetting;
+import com.bitwig.extension.controller.api.Signal;
 
-import com.bitwig.extension.controller.api.DocumentState;
-
+/**
+ * Utility class providing methods for manipulating clips in Bitwig Studio.
+ * This class contains various static methods for handling clip operations such as
+ * loop length modification, step movement, and rotation.
+ * 
+ * <p>The class primarily works with Bitwig's Clip API and provides functionality for:
+ * <ul>
+ *   <li>Switching between launcher and arranger clips</li>
+ *   <li>Modifying clip loop lengths and playback points</li>
+ *   <li>Moving and rotating steps within clips</li>
+ *   <li>Initializing clip-related settings and controls</li>
+ * </ul>
+ * 
+ * <p>The class uses a concept of "steps" which represent individual note events
+ * within a clip, and provides methods to manipulate these steps either by moving
+ * them linearly or rotating them within the clip boundaries.
+ * 
+ * <p>Note: This class is designed to work with the Bitwig Studio API and requires
+ * appropriate initialization of the Bitwig extension system.
+ * 
+ * @see com.bitwig.extension.controller.api.Clip
+ * @see com.bitwig.extension.controller.api.NoteStep
+ * @see com.centomila.BeatBuddyExtension
+ * 
+ * @author centomila
+ * @version 1.0
+ */
 public class ClipUtils {
-private static String CATEGORY_OTHER = "Other";
+    private static String CATEGORY_OTHER = "Other";
+
     /**
      * Returns the Clip object for either the Arranger Clip Launcher or the Launcher
      * Clip depending on the value of the "Launcher/Arranger" setting.
      *
-     * @param toggleSetting The setting used to toggle between launcher and arranger.
+     * @param toggleSetting The setting used to toggle between launcher and
+     *                      arranger.
      * @param arrangerClip  The Arranger Clip.
      * @param cursorClip    The Launcher (cursor) Clip.
      * @return The selected Clip object.
@@ -30,7 +59,8 @@ private static String CATEGORY_OTHER = "Other";
     }
 
     /**
-     * Sets the loop length of the given clip to a given start and end time in beats.
+     * Sets the loop length of the given clip to a given start and end time in
+     * beats.
      * Additionally, sets the playback start and end times to the same values.
      *
      * @param clip      The clip to modify.
@@ -45,7 +75,8 @@ private static String CATEGORY_OTHER = "Other";
     }
 
     /**
-     * Moves steps in a clip by a given offset. The sort order is determined by the offset
+     * Moves steps in a clip by a given offset. The sort order is determined by the
+     * offset
      * direction to prevent overlapping.
      *
      * @param clip        The clip containing note steps.
@@ -72,7 +103,8 @@ private static String CATEGORY_OTHER = "Other";
     }
 
     /**
-     * Rotates steps in a clip by the given offset with wrapping around at clip boundaries.
+     * Rotates steps in a clip by the given offset with wrapping around at clip
+     * boundaries.
      *
      * @param clip          The clip containing note steps.
      * @param stepsToRotate The list of steps to rotate.
@@ -80,7 +112,8 @@ private static String CATEGORY_OTHER = "Other";
      * @param loopLengthInt The loop length in integer steps.
      * @param channel       The channel of the steps.
      */
-    public static void rotateSteps(Clip clip, List<NoteStep> stepsToRotate, int stepOffset, int loopLengthInt, int channel) {
+    public static void rotateSteps(Clip clip, List<NoteStep> stepsToRotate, int stepOffset, int loopLengthInt,
+            int channel) {
         // Sort steps in descending order by x coordinate.
         stepsToRotate.sort(Comparator.comparingInt(NoteStep::x).reversed());
 
@@ -117,8 +150,8 @@ private static String CATEGORY_OTHER = "Other";
      * @param stepOffset      The offset to apply.
      * @param isRotate        If true, rotate steps; otherwise, move steps.
      */
-    public static void handleStepMovement(Clip clip, int channel, int noteDestination, 
-                                          String stepSize, String subdivision, int stepOffset, boolean isRotate) {
+    public static void handleStepMovement(Clip clip, int channel, int noteDestination,
+            String stepSize, String subdivision, int stepOffset, boolean isRotate) {
         double loopLength = clip.getLoopLength().get();
         double stepsPerBeat = 1.0 / Utils.getNoteLengthAsDouble(stepSize, subdivision);
         int loopLengthInt = (int) Math.round(loopLength * stepsPerBeat);
@@ -139,22 +172,38 @@ private static String CATEGORY_OTHER = "Other";
     }
 
     /**
-     * Initializes the "Clear Clip" setting.
-     *
-     * @param extension The BeatBuddyExtension instance.
+     * Initializes the ClipUtils class by creating and configuring settings for
+     * clip operations.
+     * This method should be called during the extension initialization process.
+     *  
+     * @param extension The BeatBuddyExtension object to which the settings will be added.
      */
     public static void init(BeatBuddyExtension extension) {
-        DocumentState documentState = extension.getDocumentState();
-        Setting spacerOther = ((Setting) documentState.getStringSetting(
-            "OTHER--------------------------------", CATEGORY_OTHER, 0, "---------------------------------------------------"
-        ));
-        
+        Setting spacerOther = (Setting) createStringSetting(
+                "OTHER--------------------------------",
+                CATEGORY_OTHER,
+                0,
+                "---------------------------------------------------");
+
         disableSetting(spacerOther); // Spacers are always disabled
 
-        documentState.getSignalSetting("Clear current clip", CATEGORY_OTHER, "Clear current clip")
-                .addSignalObserver(() -> extension.getLauncherOrArrangerAsClip().clearSteps());
-                
-        
+        Setting clearClipSetting = (Setting) createSignalSetting(
+                "Clear current clip",
+                CATEGORY_OTHER,
+                "Clear current clip");
 
+        Setting clearCurrentNoteDestination = (Setting) createSignalSetting(
+                "Clear current note destination",
+                CATEGORY_OTHER,
+                "Clear current note destination");
+
+        ((Signal) clearClipSetting).addSignalObserver(() -> extension.getLauncherOrArrangerAsClip().clearSteps());
+        ((Signal) clearCurrentNoteDestination)
+                .addSignalObserver(() -> {
+                    int noteDestination = extension.noteDestSettings.getCurrentNoteDestinationAsInt();
+                    int noteChannel = extension.noteDestSettings.getCurrentChannelAsInt();
+                    extension.getLauncherOrArrangerAsClip().clearStepsAtY(noteChannel, noteDestination);
+                });
     }
+    
 }
