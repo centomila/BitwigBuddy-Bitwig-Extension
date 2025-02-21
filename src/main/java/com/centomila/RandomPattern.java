@@ -6,6 +6,7 @@ import static com.centomila.utils.PopupUtils.*;
 import java.util.Arrays;
 import java.util.Random;
 
+import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Setting;
@@ -30,6 +31,14 @@ public class RandomPattern {
                                 1,
                                 "/127 Velocity",
                                 127);
+
+                extension.randomVelocitySettingType = (Setting) createEnumSetting(
+                                "Velocity Shape",
+                                "Generate Pattern",
+                                new String[] { "Random", "Linear Inc", "Linear Dec", "Arc", "Sine", "Cosine",
+                                                "Double Cosine" },
+
+                                "Random");
 
                 extension.randomDensitySetting = (Setting) createNumberSetting(
                                 "Density",
@@ -117,6 +126,90 @@ public class RandomPattern {
                         if (!activePositions[i]) {
                                 pattern[i] = 0;
                         }
+                }
+
+                // Apply velocity type
+                String velocityType = ((SettableEnumValue) extension.randomVelocitySettingType).get();
+
+                // Count non-zero steps first
+                int activeStepsCount = 0;
+                for (int i = 0; i < pattern.length; i++) {
+                        if (pattern[i] > 0)
+                                activeStepsCount++;
+                }
+
+                switch (velocityType) {
+                        case "Linear Inc":
+                                int stepCount = 0;
+                                for (int i = 0; i < pattern.length; i++) {
+                                        if (pattern[i] > 0) {
+                                                pattern[i] = minVelocity + (int) Math
+                                                                .round((maxVelocity - minVelocity) * stepCount
+                                                                                / (double) (activeStepsCount - 1));
+                                                stepCount++;
+                                        }
+                                }
+                                break;
+                        case "Linear Dec":
+                                stepCount = 0;
+                                for (int i = 0; i < pattern.length; i++) {
+                                        if (pattern[i] > 0) {
+                                                pattern[i] = maxVelocity - (int) Math
+                                                                .round((maxVelocity - minVelocity) * stepCount
+                                                                                / (double) (activeStepsCount - 1));
+                                                stepCount++;
+                                        }
+                                }
+                                break;
+                        case "Arc":
+                                stepCount = 0;
+                                for (int i = 0; i < pattern.length; i++) {
+                                        if (pattern[i] > 0) {
+                                                pattern[i] = minVelocity + (int) Math.round((maxVelocity - minVelocity)
+                                                                * Math.sin(Math.PI * stepCount
+                                                                                / (activeStepsCount - 1)));
+                                                stepCount++;
+                                        }
+                                }
+                                break;
+                        case "Sine":
+                                stepCount = 0;
+                                for (int i = 0; i < pattern.length; i++) {
+                                        if (pattern[i] > 0) {
+                                                double normalizedValue = (Math.sin(2 * Math.PI * stepCount
+                                                                / (activeStepsCount - 1)) + 1) * 0.5;
+                                                pattern[i] = minVelocity + (int) Math.round((maxVelocity - minVelocity)
+                                                                * normalizedValue);
+                                                stepCount++;
+                                        }
+                                }
+                                break;
+                        case "Cosine":
+                                stepCount = 0;
+                                for (int i = 0; i < pattern.length; i++) {
+                                        if (pattern[i] > 0) {
+                                                double normalizedValue = (Math.cos(2 * Math.PI * stepCount
+                                                                / (activeStepsCount - 1))) * 0.5 + 0.5;
+                                                pattern[i] = Math.max(1, minVelocity + (int) Math.round((maxVelocity
+                                                                - minVelocity) * normalizedValue));
+                                                stepCount++;
+                                        }
+                                }
+                                break;
+                        case "Double Cosine":
+                                stepCount = 0;
+                                for (int i = 0; i < pattern.length; i++) {
+                                        if (pattern[i] > 0) {
+                                                double normalizedValue = (Math.cos(4 * Math.PI * stepCount
+                                                                / (activeStepsCount - 1))) * 0.5 + 0.5;
+                                                pattern[i] = Math.max(1, minVelocity + (int) Math.round((maxVelocity
+                                                                - minVelocity) * normalizedValue));
+                                                stepCount++;
+                                        }
+                                }
+                                break;
+                        default:
+                                break;
                 }
 
                 // Count how many steps are > 0 and show a popup

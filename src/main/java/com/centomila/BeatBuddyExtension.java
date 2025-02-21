@@ -39,6 +39,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    Setting randomMinVelocityVariationSetting;
    Setting randomMaxVelocityVariationSetting;
    Setting randomDensitySetting;
+   Setting randomVelocitySettingType;
    Setting randomStepQtySetting;
 
    // Step Size / Note Length settings
