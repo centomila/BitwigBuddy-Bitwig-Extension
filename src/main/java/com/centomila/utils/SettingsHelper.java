@@ -2,12 +2,10 @@ package com.centomila.utils;
 
 import com.centomila.BeatBuddyExtension;
 
-import javax.swing.text.Document;
-
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.Setting;
+import com.bitwig.extension.controller.api.Signal;
 import com.bitwig.extension.controller.api.SettableRangedValue;
-import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
 
@@ -168,5 +166,17 @@ public class SettingsHelper {
                 category,
                 numChars,
                 initialText);
+    }
+
+    /**
+     * Creates a signal setting (A button that sends a signal when pressed).
+     *
+     * @param label  the setting id
+     * @param category the setting name
+     * @param action the action string as displayed on the related Bitwig Studio button
+     * @return the created signal setting
+     */
+    public static Signal createSignalSetting(String label, String category, String action) {
+        return documentState.getSignalSetting(label, category, action);
     }
 }
