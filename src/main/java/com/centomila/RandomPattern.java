@@ -35,7 +35,7 @@ public class RandomPattern {
                 extension.randomVelocitySettingType = (Setting) createEnumSetting(
                                 "Velocity Shape",
                                 "Generate Pattern",
-                                new String[] { "Random", "Linear Inc", "Linear Dec", "Arc", "Sine", "Cosine",
+                                new String[] { "Random", "Flat (Value by Min Velocity)", "Linear Inc", "Linear Dec", "Arc", "Sine", "Cosine",
                                                 "Double Cosine" },
 
                                 "Random");
@@ -139,6 +139,13 @@ public class RandomPattern {
                 }
 
                 switch (velocityType) {
+                        case "Flat (Value by Min Velocity)":
+                                for (int i = 0; i < pattern.length; i++) {
+                                        if (pattern[i] > 0) {
+                                                pattern[i] = minVelocity;
+                                        }
+                                }
+                                break;
                         case "Linear Inc":
                                 int stepCount = 0;
                                 for (int i = 0; i < pattern.length; i++) {
