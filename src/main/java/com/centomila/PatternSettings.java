@@ -1,5 +1,13 @@
 package com.centomila;
 
+import static com.centomila.utils.PopupUtils.showPopup;
+import static com.centomila.utils.SettingsHelper.disableSetting;
+import static com.centomila.utils.SettingsHelper.hideAndDisableSetting;
+import static com.centomila.utils.SettingsHelper.showAndEnableSetting;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
@@ -7,11 +15,6 @@ import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.centomila.CustomPresetsHandler.CustomPreset;
-import static com.centomila.utils.PopupUtils.*;
-import static com.centomila.utils.SettingsHelper.*;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * Manages the pattern settings for the BeatBuddy extension including presets,
@@ -88,10 +91,15 @@ public class PatternSettings {
         ((EnumValue) extension.patternTypeSetting).addValueObserver(newValue -> {
             switch (newValue) {
                 case "Presets":
-                    Setting[] settingsToShow = { extension.patternSelectorSetting, extension.reversePatternSetting };
-                    Setting[] settingsToHide = { extension.customPresetSetting, extension.randomDensitySetting,
+                    Setting[] settingsToShow = {
+                            extension.patternSelectorSetting,
+                            extension.reversePatternSetting };
+                    Setting[] settingsToHide = {
+                            extension.customPresetSetting,
+                            extension.randomDensitySetting,
                             extension.randomMinVelocityVariationSetting,
-                            extension.randomMaxVelocityVariationSetting, extension.randomStepQtySetting };
+                            extension.randomMaxVelocityVariationSetting,
+                            extension.randomStepQtySetting };
                     showAndEnableSetting(settingsToShow);
                     hideAndDisableSetting(settingsToHide);
 
@@ -99,10 +107,15 @@ public class PatternSettings {
                     setPatternString(getDefaultPresetsContentPatternStrings(lastDefaultPresetUsed));
                     break;
                 case "Custom":
-                    Setting[] settingsToShowCustom = { extension.customPresetSetting, extension.reversePatternSetting };
-                    Setting[] settingsToHideCustom = { extension.patternSelectorSetting, extension.randomDensitySetting,
+                    Setting[] settingsToShowCustom = {
+                            extension.customPresetSetting,
+                            extension.reversePatternSetting };
+                    Setting[] settingsToHideCustom = {
+                            extension.patternSelectorSetting,
+                            extension.randomDensitySetting,
                             extension.randomMinVelocityVariationSetting,
-                            extension.randomMaxVelocityVariationSetting, extension.randomStepQtySetting };
+                            extension.randomMaxVelocityVariationSetting,
+                            extension.randomStepQtySetting };
                     showAndEnableSetting(settingsToShowCustom);
                     hideAndDisableSetting(settingsToHideCustom);
 
