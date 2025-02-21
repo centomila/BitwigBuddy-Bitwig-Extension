@@ -1,14 +1,11 @@
 package com.centomila;
 
-
 import static com.centomila.utils.SettingsHelper.*;
 import static com.centomila.utils.PopupUtils.*;
 
 import java.util.Arrays;
 import java.util.Random;
 
-
-import com.bitwig.extension.controller.api.SettableIntegerValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Setting;
@@ -129,7 +126,7 @@ public class RandomPattern {
                                 count++;
                         }
                 }
-                // showPopup("Pattern has " + count + " steps." + " Density: " + density);
+                showPopup("Random Pattern has filled " + count + " steps out of " + stepsQty + " Density: " + density);
 
                 String patternString = Arrays.toString(pattern).replaceAll("[\\[\\]]", "");
                 ((SettableStringValue) extension.presetPatternStringSetting).set(patternString);

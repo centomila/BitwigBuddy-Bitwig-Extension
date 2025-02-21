@@ -1,17 +1,12 @@
 package com.centomila;
 
-import static com.centomila.utils.PopupUtils.*;
+// import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.RandomPattern.*;
 
 import java.util.Arrays;
-import java.util.Random;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
-import com.bitwig.extension.controller.api.IntegerValue;
-import com.bitwig.extension.controller.api.SettableRangedValue;
-import com.bitwig.extension.controller.api.SettableStringValue;
-import com.bitwig.extension.controller.api.Value;
 import com.bitwig.extension.controller.api.StringValue;
 import com.bitwig.extension.controller.api.ClipLauncherSlot;
 
