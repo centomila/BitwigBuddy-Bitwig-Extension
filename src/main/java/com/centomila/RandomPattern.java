@@ -2,6 +2,7 @@ package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
 import static com.centomila.utils.PopupUtils.*;
+import static com.centomila.VelocityShape.*;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -21,7 +22,7 @@ public class RandomPattern {
                                 1,
                                 127,
                                 1,
-                                "/127 Velocity",
+                                "",
                                 1);
                 extension.randomMaxVelocityVariationSetting = (Setting) createNumberSetting(
                                 "Max Velocity",
@@ -29,15 +30,13 @@ public class RandomPattern {
                                 1,
                                 127,
                                 1,
-                                "/127 Velocity",
+                                "",
                                 127);
 
-                extension.randomVelocitySettingType = (Setting) createEnumSetting(
+                extension.randomVelocitySettingShape = (Setting) createEnumSetting(
                                 "Velocity Shape",
                                 "Generate Pattern",
-                                new String[] { "Random", "Flat (Value by Min Velocity)", "Linear Inc", "Linear Dec", "Arc", "Sine", "Cosine",
-                                                "Double Cosine" },
-
+                                VelocityShape.velocityShapes,
                                 "Random");
 
                 extension.randomDensitySetting = (Setting) createNumberSetting(
@@ -101,11 +100,11 @@ public class RandomPattern {
                 showPopup("Min Velocity: " + minVelocity + " Max Velocity: " + maxVelocity + " Density: " + density);
 
                 int stepsQty = (int) Math.round(((SettableRangedValue) extension.randomStepQtySetting).getRaw());
-                showPopup("Steps: " + stepsQty);
+
                 int[] pattern = new int[stepsQty];
 
                 for (int i = 0; i < pattern.length; i++) {
-                        pattern[i] = minVelocity + random.nextInt(maxVelocity - minVelocity + 1);
+                        pattern[i] = 127;
                 }
 
                 // Calculate how many steps should be active based on density
@@ -129,95 +128,9 @@ public class RandomPattern {
                 }
 
                 // Apply velocity type
-                String velocityType = ((SettableEnumValue) extension.randomVelocitySettingType).get();
+                String velocityType = ((SettableEnumValue) extension.randomVelocitySettingShape).get();
 
-                // Count non-zero steps first
-                int activeStepsCount = 0;
-                for (int i = 0; i < pattern.length; i++) {
-                        if (pattern[i] > 0)
-                                activeStepsCount++;
-                }
-
-                switch (velocityType) {
-                        case "Flat (Value by Min Velocity)":
-                                for (int i = 0; i < pattern.length; i++) {
-                                        if (pattern[i] > 0) {
-                                                pattern[i] = minVelocity;
-                                        }
-                                }
-                                break;
-                        case "Linear Inc":
-                                int stepCount = 0;
-                                for (int i = 0; i < pattern.length; i++) {
-                                        if (pattern[i] > 0) {
-                                                pattern[i] = minVelocity + (int) Math
-                                                                .round((maxVelocity - minVelocity) * stepCount
-                                                                                / (double) (activeStepsCount - 1));
-                                                stepCount++;
-                                        }
-                                }
-                                break;
-                        case "Linear Dec":
-                                stepCount = 0;
-                                for (int i = 0; i < pattern.length; i++) {
-                                        if (pattern[i] > 0) {
-                                                pattern[i] = maxVelocity - (int) Math
-                                                                .round((maxVelocity - minVelocity) * stepCount
-                                                                                / (double) (activeStepsCount - 1));
-                                                stepCount++;
-                                        }
-                                }
-                                break;
-                        case "Arc":
-                                stepCount = 0;
-                                for (int i = 0; i < pattern.length; i++) {
-                                        if (pattern[i] > 0) {
-                                                pattern[i] = minVelocity + (int) Math.round((maxVelocity - minVelocity)
-                                                                * Math.sin(Math.PI * stepCount
-                                                                                / (activeStepsCount - 1)));
-                                                stepCount++;
-                                        }
-                                }
-                                break;
-                        case "Sine":
-                                stepCount = 0;
-                                for (int i = 0; i < pattern.length; i++) {
-                                        if (pattern[i] > 0) {
-                                                double normalizedValue = (Math.sin(2 * Math.PI * stepCount
-                                                                / (activeStepsCount - 1)) + 1) * 0.5;
-                                                pattern[i] = minVelocity + (int) Math.round((maxVelocity - minVelocity)
-                                                                * normalizedValue);
-                                                stepCount++;
-                                        }
-                                }
-                                break;
-                        case "Cosine":
-                                stepCount = 0;
-                                for (int i = 0; i < pattern.length; i++) {
-                                        if (pattern[i] > 0) {
-                                                double normalizedValue = (Math.cos(2 * Math.PI * stepCount
-                                                                / (activeStepsCount - 1))) * 0.5 + 0.5;
-                                                pattern[i] = Math.max(1, minVelocity + (int) Math.round((maxVelocity
-                                                                - minVelocity) * normalizedValue));
-                                                stepCount++;
-                                        }
-                                }
-                                break;
-                        case "Double Cosine":
-                                stepCount = 0;
-                                for (int i = 0; i < pattern.length; i++) {
-                                        if (pattern[i] > 0) {
-                                                double normalizedValue = (Math.cos(4 * Math.PI * stepCount
-                                                                / (activeStepsCount - 1))) * 0.5 + 0.5;
-                                                pattern[i] = Math.max(1, minVelocity + (int) Math.round((maxVelocity
-                                                                - minVelocity) * normalizedValue));
-                                                stepCount++;
-                                        }
-                                }
-                                break;
-                        default:
-                                break;
-                }
+                applyVelocityShape(pattern, velocityType, minVelocity, maxVelocity);
 
                 // Count how many steps are > 0 and show a popup
                 int count = 0;
@@ -233,4 +146,5 @@ public class RandomPattern {
 
                 return pattern;
         }
+
 }
