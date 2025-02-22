@@ -47,6 +47,66 @@
 			<artifactId>javafx-controls</artifactId>
 			<version>${javafx.version}</version>
 		</dependency>
+		
+		<!-- Windows JavaFX -->
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-base</artifactId>
+			<version>${javafx.version}</version>
+			<classifier>win</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics</artifactId>
+			<version>${javafx.version}</version>
+			<classifier>win</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>${javafx.version}</version>
+			<classifier>win</classifier>
+		</dependency>
+		
+		<!-- macOS JavaFX -->
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-base</artifactId>
+			<version>${javafx.version}</version>
+			<classifier>mac-aarch64</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics</artifactId>
+			<version>${javafx.version}</version>
+			<classifier>mac-aarch64</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>${javafx.version}</version>
+			<classifier>mac-aarch64</classifier>
+		</dependency>
+		
+		<!-- Linux JavaFX -->
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-base</artifactId>
+			<version>${javafx.version}</version>
+			<classifier>linux</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics</artifactId>
+			<version>${javafx.version}</version>
+			<classifier>linux</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>${javafx.version}</version>
+			<classifier>linux</classifier>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -97,9 +157,9 @@
                             </filters>
 							<artifactSet>
                                 <includes>
-                                    <include>org.openjfx:javafx-base:jar:${platform.classifier}</include>
-                                    <include>org.openjfx:javafx-controls:jar:${platform.classifier}</include>
-                                    <include>org.openjfx:javafx-graphics:jar:${platform.classifier}</include>
+                                    <include>org.openjfx:javafx-base:jar:*</include>
+                                    <include>org.openjfx:javafx-controls:jar:*</include>
+                                    <include>org.openjfx:javafx-graphics:jar:*</include>
                                 </includes>
                             </artifactSet>
                             <minimizeJar>false</minimizeJar>
@@ -177,7 +237,7 @@
                     <descriptors>
                         <descriptor>src/assembly/distribution.xml</descriptor>
                     </descriptors>
-                    <finalName>BeatBuddy-${project.version}-${platform.classifier}</finalName>
+                    <finalName>BeatBuddy-${project.version}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
