@@ -8,14 +8,15 @@ import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import javafx.application.Platform;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
+
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.Preferences;
 import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Signal;
 
-import javafx.application.Platform;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 import static com.centomila.utils.PopupUtils.*;
 
 /**
