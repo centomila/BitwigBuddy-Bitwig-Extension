@@ -13,7 +13,7 @@ import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Setting;
 
 public class RandomPattern {
-        public static void init(BeatBuddyExtension extension) {
+        public static void init(BitwigBuddyExtension extension) {
 
                 // Initialize Random Pattern Settings
                 extension.randomMinVelocityVariationSetting = (Setting) createNumberSetting(
@@ -62,7 +62,7 @@ public class RandomPattern {
         }
 
         // Observers
-        public static void initiObserver(BeatBuddyExtension extension) {
+        public static void initiObserver(BitwigBuddyExtension extension) {
                 ((SettableRangedValue) extension.randomMinVelocityVariationSetting).addValueObserver(newValue -> {
                         // Force max velocity to be greater than min velocity
                         double scaledNewValue = newValue * 126 + 1;
@@ -90,7 +90,7 @@ public class RandomPattern {
 
         }
 
-        public static int[] generateRandomPattern(BeatBuddyExtension extension) {
+        public static int[] generateRandomPattern(BitwigBuddyExtension extension) {
                 Random random = new Random();
                 int minVelocity = (int) Math
                                 .round(((SettableRangedValue) extension.randomMinVelocityVariationSetting).getRaw());

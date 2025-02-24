@@ -1,6 +1,6 @@
 package com.centomila.utils;
 
-import com.centomila.BeatBuddyExtension;
+import com.centomila.BitwigBuddyExtension;
 
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.Setting;
@@ -20,7 +20,7 @@ public class SettingsHelper {
      *
      * @param extension the extension
      */
-    public static void init(BeatBuddyExtension extension) {
+    public static void init(BitwigBuddyExtension extension) {
         documentState = extension.getDocumentState();
     }
 

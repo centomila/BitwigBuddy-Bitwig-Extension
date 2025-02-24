@@ -15,14 +15,14 @@ import com.centomila.utils.PopupUtils;
 import com.centomila.utils.SettingsHelper;
 
 /**
- * BeatBuddy Extension for Bitwig Studio.
+ * BitwigBuddy Extension for Bitwig Studio.
  * This extension provides functionality for generating and manipulating drum
  * patterns
  * in both launcher and arranger clips. It features pattern generation, step
  * movement,
  * and various clip manipulation tools.
  */
-public class BeatBuddyExtension extends ControllerExtension {
+public class BitwigBuddyExtension extends ControllerExtension {
    Application application;
    Clip cursorClip;
    Clip arrangerClip;
@@ -70,7 +70,7 @@ public class BeatBuddyExtension extends ControllerExtension {
 
    GlobalPreferences preferences;
 
-   protected BeatBuddyExtension(final BeatBuddyExtensionDefinition definition, final ControllerHost host) {
+   protected BitwigBuddyExtension(final BitwigBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
    }
 
@@ -111,7 +111,7 @@ public class BeatBuddyExtension extends ControllerExtension {
       initToggleLauncherArrangerSetting();
 
       // Show a notification to confirm initialization
-      PopupUtils.showPopup("BeatBuddy Initialized");
+      PopupUtils.showPopup("BitwigBuddy Initialized");
 
    }
 
@@ -163,7 +163,7 @@ public class BeatBuddyExtension extends ControllerExtension {
    @Override
    public void exit() {
       // Cleanup on exit
-      PopupUtils.showPopup("BeatBuddy Exited");
+      PopupUtils.showPopup("BitwigBuddy Exited");
    }
 
    @Override

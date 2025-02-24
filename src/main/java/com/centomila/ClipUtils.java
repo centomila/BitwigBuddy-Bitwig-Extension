@@ -35,7 +35,7 @@ import com.bitwig.extension.controller.api.Signal;
  * 
  * @see com.bitwig.extension.controller.api.Clip
  * @see com.bitwig.extension.controller.api.NoteStep
- * @see com.centomila.BeatBuddyExtension
+ * @see com.centomila.BitwigBuddyExtension
  * 
  * @author centomila
  * @version 1.0
@@ -176,9 +176,9 @@ public class ClipUtils {
      * clip operations.
      * This method should be called during the extension initialization process.
      *  
-     * @param extension The BeatBuddyExtension object to which the settings will be added.
+     * @param extension The BitwigBuddyExtension object to which the settings will be added.
      */
-    public static void init(BeatBuddyExtension extension) {
+    public static void init(BitwigBuddyExtension extension) {
         Setting spacerOther = (Setting) createStringSetting(
                 "OTHER--------------------------------",
                 CATEGORY_OTHER,

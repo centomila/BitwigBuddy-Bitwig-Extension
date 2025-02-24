@@ -17,11 +17,11 @@ import com.bitwig.extension.controller.api.Signal;
 import com.centomila.CustomPresetsHandler.CustomPreset;
 
 /**
- * Manages the pattern settings for the BeatBuddy extension including presets,
+ * Manages the pattern settings for the BitwigBuddy extension including presets,
  * random, and custom patterns.
  */
 public class PatternSettings {
-    private final BeatBuddyExtension extension;
+    private final BitwigBuddyExtension extension;
     private static String CATEGORY_GENERATE_PATTERN = "Generate Pattern";
     private String lastDefaultPresetUsed = "Kick: Four on the Floor";
     private String lastCustomPresetUsed = null;
@@ -30,9 +30,9 @@ public class PatternSettings {
     /**
      * Constructs a new instance of PatternSettings.
      *
-     * @param extension The BeatBuddyExtension instance.
+     * @param extension The BitwigBuddyExtension instance.
      */
-    public PatternSettings(BeatBuddyExtension extension) {
+    public PatternSettings(BitwigBuddyExtension extension) {
         this.extension = extension;
     }
 
@@ -45,9 +45,9 @@ public class PatternSettings {
      * - Custom preset selector
      * - Pattern reversal option
      * 
-     * @param extension The BeatBuddyExtension instance to configure settings for
+     * @param extension The BitwigBuddyExtension instance to configure settings for
      */
-    public static void init(BeatBuddyExtension extension) {
+    public static void init(BitwigBuddyExtension extension) {
         PatternSettings settings = new PatternSettings(extension);
         settings.initPatternSetting();
     }

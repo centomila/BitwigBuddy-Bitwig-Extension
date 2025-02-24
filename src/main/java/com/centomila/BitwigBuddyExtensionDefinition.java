@@ -6,18 +6,18 @@ import com.bitwig.extension.controller.AutoDetectionMidiPortNamesList;
 import com.bitwig.extension.controller.ControllerExtensionDefinition;
 import com.bitwig.extension.controller.api.ControllerHost;
 
-public class BeatBuddyExtensionDefinition extends ControllerExtensionDefinition
+public class BitwigBuddyExtensionDefinition extends ControllerExtensionDefinition
 {
    private static final UUID DRIVER_ID = UUID.fromString("8afdc6aa-bfe9-41f2-a689-8738031806ee");
    
-   public BeatBuddyExtensionDefinition()
+   public BitwigBuddyExtensionDefinition()
    {
    }
 
    @Override
    public String getName()
    {
-      return "BeatBuddy";
+      return "BitwigBuddy";
    }
    
    @Override
@@ -47,13 +47,13 @@ public class BeatBuddyExtensionDefinition extends ControllerExtensionDefinition
    @Override
    public String getHardwareModel()
    {
-      return "BeatBuddy";
+      return "BitwigBuddy";
    }
 
    /** {@inheritDoc} */
    @Override
    public String getHelpFilePath() {
-      return "https://github.com/centomila/BeatBuddy-Bitwig-Extension-MIDI-Drum-Generator";
+      return "https://github.com/centomila/BitwigBuddy-Bitwig-Extension-MIDI-Drum-Generator";
    }
 
    @Override
@@ -80,8 +80,8 @@ public class BeatBuddyExtensionDefinition extends ControllerExtensionDefinition
    }
 
    @Override
-   public BeatBuddyExtension createInstance(final ControllerHost host)
+   public BitwigBuddyExtension createInstance(final ControllerHost host)
    {
-      return new BeatBuddyExtension(this, host);
+      return new BitwigBuddyExtension(this, host);
    }
 }
