@@ -19,21 +19,20 @@ import com.bitwig.extension.controller.api.Signal;
 
 import static com.centomila.utils.PopupUtils.*;
 
+import com.centomila.utils.ExtensionPath;
+
 /**
  * Handles global preferences and settings for the BitwigBuddy extension.
  * Manages preset paths, UI interactions, and platform-specific operations.
  */
 public class GlobalPreferences {
+
     private static final String PRESETS_SETTING_CATEGORY = "Preset Path";
     private static final String SUPPORT_CATEGORY = "Support";
     private static final int MAX_PATH_LENGTH = 10000;
     private static final String PATREON_URL = "https://www.patreon.com/Centomila";
     private static final String GITHUB_URL = "https://github.com/centomila/BitwigBuddy-Bitwig-Extension";
     private static final String CENTOMILA_URL = "https://centomila.com";
-    private static final String[] DOCUMENTS_LOCALIZED = {
-            "Documents", "Documenti", "Documentos", "Dokumente",
-            "文档", "文書", "문서", "Документы"
-    };
 
     private enum PlatformCommand {
         WINDOWS("explorer.exe", "cmd", "/c", "start"),
@@ -73,7 +72,7 @@ public class GlobalPreferences {
      */
     public GlobalPreferences(ControllerHost host) {
         this.host = host;
-        this.defaultPresetsPath = getDefaultExtensionsPath();
+        this.defaultPresetsPath = ExtensionPath.getExstensionsSubfolderPath("BitwigBuddy");
         this.preferences = host.getPreferences();
 
         // Initialize preference settings
@@ -175,38 +174,6 @@ public class GlobalPreferences {
         } catch (IOException e) {
             host.errorln("Failed to open presets folder: " + e.getMessage());
         }
-    }
-
-    private String getDefaultExtensionsPath() {
-        String userHome = System.getProperty("user.home");
-
-        if (host.platformIsWindows()) {
-            // First check OneDrive paths
-            Path oneDriveBase = Paths.get(userHome, "OneDrive");
-            if (Files.exists(oneDriveBase)) {
-                for (String docName : DOCUMENTS_LOCALIZED) {
-                    Path path = Paths.get(userHome, "OneDrive", docName, "Bitwig Studio", "Extensions", "BitwigBuddy");
-                    if (Files.exists(path)) {
-                        return path.toString();
-                    }
-                }
-            }
-
-            // Then check regular Documents folders
-            for (String docName : DOCUMENTS_LOCALIZED) {
-                Path path = Paths.get(userHome, docName, "Bitwig Studio", "Extensions", "BitwigBuddy");
-                if (Files.exists(path)) {
-                    return path.toString();
-                }
-            }
-        } else if (host.platformIsMac()) {
-            return Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions", "BitwigBuddy").toString();
-        } else if (host.platformIsLinux()) {
-            return Paths.get(userHome, "Bitwig Studio", "Extensions", "BitwigBuddy").toString();
-        }
-
-        // Linux or general fallback
-        return Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions", "BitwigBuddy").toString();
     }
 
     /**
@@ -382,7 +349,7 @@ public class GlobalPreferences {
     }
 
     private void resetToDefaultPath() {
-        String defaultPath = getDefaultExtensionsPath();
+        String defaultPath = ExtensionPath.getExstensionsSubfolderPath("BitwigBuddy");
         Path defaultDir = Paths.get(defaultPath);
 
         if (isValidPresetsFolder(defaultDir)) {

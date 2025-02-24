@@ -13,6 +13,7 @@ import com.bitwig.extension.controller.api.Setting;
 
 import com.centomila.utils.PopupUtils;
 import com.centomila.utils.SettingsHelper;
+import com.centomila.utils.ExtensionPath;
 
 /**
  * BitwigBuddy Extension for Bitwig Studio.
@@ -73,10 +74,13 @@ public class BitwigBuddyExtension extends ControllerExtension {
    protected BitwigBuddyExtension(final BitwigBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
    }
-
+   
    @Override
    public void init() {
       final ControllerHost host = getHost();
+      ExtensionPath.init(host);
+      PopupUtils.init(host);
+
       preferences = new GlobalPreferences(host);
 
       // Initialize API objects
@@ -96,9 +100,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
       moveStepsHandler = new MoveStepsHandler(this);
       moveStepsHandler.init(documentState);
-      
+
       SettingsHelper.init(this);
-      PopupUtils.init(host);
 
       PatternSettings.init(this);
       RandomPattern.init(this);
@@ -111,8 +114,13 @@ public class BitwigBuddyExtension extends ControllerExtension {
       initToggleLauncherArrangerSetting();
 
       // Show a notification to confirm initialization
-      PopupUtils.showPopup("BitwigBuddy Initialized");
+      PopupUtils.showPopup("BitwigBuddy Initialized! Have fun!");
+      host.println("BitwigBuddy Initialized! Have fun!");
 
+   }
+   
+   public void testConsole() {
+      getHost().println("Test console message");
    }
 
    /**
