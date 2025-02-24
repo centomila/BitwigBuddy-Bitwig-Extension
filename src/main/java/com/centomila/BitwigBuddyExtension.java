@@ -74,7 +74,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
    protected BitwigBuddyExtension(final BitwigBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
    }
-
+   
    @Override
    public void init() {
       final ControllerHost host = getHost();
