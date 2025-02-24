@@ -20,6 +20,7 @@ import com.bitwig.extension.controller.api.Signal;
 import static com.centomila.utils.PopupUtils.*;
 
 import com.centomila.utils.ExtensionPath;
+import com.centomila.utils.OpenWebUrl;
 
 /**
  * Handles global preferences and settings for the BitwigBuddy extension.
@@ -176,33 +177,16 @@ public class GlobalPreferences {
         }
     }
 
-    /**
-     * Opens the Patreon page in the default system browser.
-     */
-    private void openWebUrl(String url, String pageName) {
-        try {
-            PlatformCommand cmd = getPlatformCommand();
-            String[] command = cmd.browserParam1.isEmpty()
-                    ? new String[] { cmd.browserCommand, url }
-                    : new String[] { cmd.browserCommand, cmd.browserParam1, cmd.browserParam2, url };
-
-            Runtime.getRuntime().exec(command);
-        } catch (IOException e) {
-            host.errorln("Failed to open " + pageName + " page: " + e.getMessage());
-            showPopup("Please visit " + url + " in your web browser.");
-        }
-    }
-
     private void openPatreonPage() {
-        openWebUrl(PATREON_URL, "Patreon");
+        OpenWebUrl.openUrl(host, PATREON_URL, "Patreon");
     }
 
     private void openGitHubPage() {
-        openWebUrl(GITHUB_URL, "GitHub");
+        OpenWebUrl.openUrl(host, GITHUB_URL, "GitHub");
     }
 
     private void openCentomilaPage() {
-        openWebUrl(CENTOMILA_URL, "Centomila");
+        OpenWebUrl.openUrl(host, CENTOMILA_URL, "Centomila");
     }
 
     private void initializeJavaFX() {

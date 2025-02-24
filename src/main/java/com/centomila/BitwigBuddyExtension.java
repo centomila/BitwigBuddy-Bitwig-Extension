@@ -117,6 +117,11 @@ public class BitwigBuddyExtension extends ControllerExtension {
       PopupUtils.showPopup("BitwigBuddy Initialized! Have fun!");
       host.println("BitwigBuddy Initialized! Have fun!");
 
+      // print with bitwig log
+      getHost().println("BitwigBuddy Initialized");
+      // print with system out
+      System.out.println("BitwigBuddy Initialized");
+
    }
    
    public void testConsole() {
