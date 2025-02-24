@@ -1,13 +1,70 @@
 # 📋 Changelog:
 
-**0.8.0**  
+## 0.9.0
+
+Another big update! 🎉
+
+New features and improvements:
+- [X] Clear Current Note Destination
+  - Button to clear the current note destination. This is useful if you want to empty the note lane without generating a new pattern.
+- [X] Now the Random pattern are customizable.
+  - A text field where all the generated steps are displayed as a string of numbers separated by commas.
+  - Min Velocity: The minimum velocity for the the generated steps (1-127)
+    - Default is 1
+  - Max Velocity: The maximum velocity for the the generated steps (1-127)
+    - Default is 127
+  - Density: How many steps will be generated in the pattern (1-100%)
+    - Default is 50%
+    - 50% means 8 steps in a 16 steps pattern
+    - 100% means 16 steps in a 16 steps pattern.
+    - To mimic the previous behavior, set the density to 75% and the steps quantity to 16 (12 steps will be generated).
+  - Steps Quantity: The minimum number of steps in the pattern (1-128)
+    - Default is 16
+  - Velocity Shape
+    - ---DISABLED---
+      - All steps will have 127 velocity
+    - Random
+      - Each step will have a random velocity between Min and Max
+    - "Flat (Value by Min Velocity)"
+      - All steps will have the Min Velocity
+    - Linear Inc
+      - The velocity will increase linearly from Min to Max
+    - Linear Dec
+      - The velocity will decrease linearly from Max to Min
+    - Arc
+      - The velocity will increase from Min to Max and then decrease from Max to Min
+    - Sine
+      - The velocity will follow a sine wave shape based on the Min and Max values
+    - Cosine
+      - The velocity will follow a cosine wave shape. Will start from the Max value, go to the Min value and then back to the Max value.
+    - Double Cosine
+      - The velocity will follow a double cosine wave shape. Will start from the Min value, go to the Max value, then to the Min value and finally back to the Max value.
+    - Alternate Min Vel and High Vel
+      - The velocity will alternate between the Min and Max values
+    - "Alternate High and Min Vel
+      - "The velocity will alternate between the Max and Min values
+  - Workflow Idea: Generated patterns are immediately saved in the *Steps* text field after generation. If you want to generate the same pattern again or customize single steps, go to the *Custom Pattern Type*
+    - Don't change the *Custom Preset* otherwise the *Steps* field will be overwritten with the Pattern from the Custom Preset.
+
+**Fixes:**
+- [x] Fixed a bug that caused a crash if the user tried to generate a pattern outside the possible note range in the Octave 8
+- [X] Fixed default Extensions folder for Linux.
+
+**Important NOTE:**
+From version 1.0 BeatBuddy will change name.
+See this issue for more information:
+https://github.com/centomila/BeatBuddy-Bitwig-Extension-MIDI-Drum-Generator/issues/11
+
+
+## 0.8.0
+
 This is the biggest update so far! 🎉  
 Please give me feedback on the new features and let me know if you find any bugs. The custom patterns feature is still a little buggy, so please be careful when using it.  
 
 - [X] Added a Pattern Type Selector with:  
-  - [X] Preset Patterns (Default)  
-  - [X] Random Patterns (Previously available through the Preset list)  
-  - [X] Custom Patterns  
+  - Preset Patterns (Default)  
+  - Random Patterns (Previously available through the Preset list)  
+  - Custom Patterns  
 - [X] Added a new feature to use custom patterns in txt format! 📄
   - Preference panel  
     - Path of the custom pattern files (default is Documents/Bitwig Studio/Extensions/BeatBuddy)  
@@ -33,20 +90,20 @@ Please give me feedback on the new features and let me know if you find any bugs
   - It is not necessary for the track to be armed if you click on the piano roll with the Piano Roll’s *Audition Notes* option enabled  
   - This is a big improvement for the workflow and is very fun when used in combination with the Random Patterns feature. 🥳  
 - [X] POST Actions 🏁  
-  - [X] Show/Hide Post Actions options 👁️  
-  - [X] Added an On/Off option to automatically Zoom To Fit the clip after the pattern is generated 🔍  
+  - Show/Hide Post Actions options 👁️  
+  - Added an On/Off option to automatically Zoom To Fit the clip after the pattern is generated 🔍  
   - [X] Added an On/Off option to automatically duplicate the clip after the pattern is generated (Clip Launcher only) 2️⃣  
     - Super fun for creating variations of the pattern!  
 - [X] Added a Support Section in Preferences  
-  - [X] Added a button to open the [GitHub Repository](https://github.com/centomila/BeatBuddy-Bitwig-Extension-MIDI-Drum-Generator) 🧑‍💻  
-  - [X] Added a button to open my [Patreon Page](https://www.patreon.com/centomila) 🙏  
-  - [X] Added a button to open [My Website](https://centomila.com) 🪞  
+  - Added a button to open the [GitHub Repository](https://github.com/centomila/BeatBuddy-Bitwig-Extension-MIDI-Drum-Generator) 🧑‍💻  
+  - Added a button to open my [Patreon Page](https://www.patreon.com/centomila) 🙏  
+  - Added a button to open [My Website](https://centomila.com) 🪞  
 
 
-**0.7.6**
+## 0.7.6
 - [X] Code refactoring and split in multiple files. No changes to the bwextension.
 
-**0.7.5**
+## 0.7.5
 - [X] Added rotate patterns
   - New buttons to rotate notes left or right
   - Unlike move steps, rotating wraps the notes around (the leftmost note moves to the rightmost position or vice versa)
@@ -54,13 +111,13 @@ Please give me feedback on the new features and let me know if you find any bugs
 - ⚠️ Note: Move and Rotate operations currently only work with notes on MIDI channel 1. This might be related to a bug in the Bitwig Controller API - investigation is ongoing.
 
 
-**0.7.1**  
+## 0.7.1
 - [X] The single line buttons for moving the pattern by one step were causing problems. Now, there are two separate buttons: <<< and >>>.  
   - This fixes the problem of the broken undo action.
 - [X] Fixed a bug that caused unpredictable step movement if the length of the individual steps was different.  
 
 
-0.7.0
+## 0.7.0
 - [X] Fixed Quintuplets (5t) and Septuplets (7t).
 - [X] Added 1/1 step size/note length.
 - [X] Added a "Move Steps" button to shift the pattern by one step in the x-direction.
@@ -69,11 +126,11 @@ Please give me feedback on the new features and let me know if you find any bugs
   - This is not the _Reverse_ or _Reverse Pattern_ action in Bitwig Studio. It simply flips the order of the pattern selected by the user.
 
 
-0.6.2
+## 0.6.2
 - [X] Link to github project in the extension panel
 - [X] Support for Quintuplets (5t) and Septuplets (7t)
 
-0.6.0
+## 0.6.0
 - [X] Added more patterns  
 - [X] Support for dotted notes in note length and step size  
 - [X] Note length now automatically follows the step size  
@@ -82,13 +139,13 @@ Please give me feedback on the new features and let me know if you find any bugs
 - [X] Button to manually clear the clip completely  
 - [X] Extracted some generic methods in Utils class
 
-0.5.3
+## 0.5.3
 - [X] Added more patterns
 
-0.5.2
+## 0.5.2
 - [X] Replaced the old method to select note destination with a new method to select note destination based on Note Name+Octave
 
-0.5.0
+## 0.5.0
 - [X] Support for multiple step sizes and note lengths in the pattern!
   - 1/2  |  1/4  |  1/8  |  1/8  |  1/16  |  1/32  |  1/32  |  1/64  |  1/128
   - 1/2 - 3t  |  1/4 - 3t  | 1/8 - 3t  |  1/16 - 3t  |  1/32 - 3t  |  1/32 - 3t  |  1/64 - 3t  |  1/128 - 3t
@@ -96,10 +153,10 @@ Please give me feedback on the new features and let me know if you find any bugs
 - [X] Renamed some fields for clarity
 - [X] Tooltip notification with the current note name when the user change the note destination or a MIDI Note number.
 
-0.4.5
+## 0.4.5
 - [X] Support for clip in the arranger with the _Launcher/Arranger_ option
 
-0.4
+## 0.4
 - [X] Separated fields for changing the note destination  
 - [X] Added a Show/Hide button for note destination fields  
 - [X] Removed GMDrums as the default note destination selector  
