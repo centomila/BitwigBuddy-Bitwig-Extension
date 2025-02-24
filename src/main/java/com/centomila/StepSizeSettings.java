@@ -8,7 +8,7 @@ import com.bitwig.extension.controller.api.SettableEnumValue;
 public class StepSizeSettings {
       private static String CATEGORY_CLIP = "Clip";
 
-      public static void init(BeatBuddyExtension extension) {
+      public static void init(BitwigBuddyExtension extension) {
             Setting spacerStepSize = (Setting) createStringSetting(
                         "STEP SIZE/NOTE LENGTH---------",
                         CATEGORY_CLIP, 0,
@@ -39,7 +39,7 @@ public class StepSizeSettings {
             // extension.setNoteLengthSetting(noteLengthSetting);
       }
 
-      private static void setupStepSizeObservers(BeatBuddyExtension extension) {
+      private static void setupStepSizeObservers(BitwigBuddyExtension extension) {
             ((EnumValue) extension.stepSizSetting).addValueObserver(newValue -> {
                   ((SettableEnumValue) extension.stepSizSetting).set(newValue);
                   ((SettableEnumValue) extension.noteLengthSetting).set(newValue);

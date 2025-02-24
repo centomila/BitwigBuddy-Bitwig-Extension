@@ -14,7 +14,7 @@ import com.bitwig.extension.controller.api.PlayingNoteArrayValue;
 import java.util.Arrays;
 
 /**
- * Manages MIDI note destination settings for the BeatBuddy extension.
+ * Manages MIDI note destination settings for the BitwigBuddy extension.
  * This class handles the configuration and updates of note values, octaves,
  * and MIDI channel settings, providing functionality for note learning and
  * value constraints.
@@ -95,9 +95,9 @@ public class NoteDestinationSettings {
     * Initializes all note destination settings and observers.
     * Sets up note selection, octave selection, MIDI channel, and note learning functionality.
     * 
-    * @param extension The BeatBuddy extension instance containing the settings
+    * @param extension The BitwigBuddy extension instance containing the settings
     */
-   public static void init(BeatBuddyExtension extension) {
+   public static void init(BitwigBuddyExtension extension) {
       ControllerHost host = extension.getHost();
 
       // Setup spacer
@@ -158,9 +158,9 @@ public class NoteDestinationSettings {
     * Configures value observers for note and octave destination changes.
     * Updates the current note/octave values and enforces the G8 maximum note constraint.
     * 
-    * @param extension The BeatBuddy extension instance
+    * @param extension The BitwigBuddy extension instance
     */
-   private static void setupNoteDestinationObservers(BeatBuddyExtension extension) {
+   private static void setupNoteDestinationObservers(BitwigBuddyExtension extension) {
       // Register observer for note changes
       ((EnumValue) extension.noteDestinationSetting).addValueObserver(newValue -> {
          ((NoteDestinationSettings) extension.noteDestSettings).setCurrentNote(newValue);
@@ -179,10 +179,10 @@ public class NoteDestinationSettings {
     * Sets up note learning functionality by observing played notes.
     * When enabled, automatically updates note destination settings based on played notes.
     * 
-    * @param extension The BeatBuddy extension instance
+    * @param extension The BitwigBuddy extension instance
     * @param host The Bitwig Studio controller host
     */
-   private static void setupPlayingNotesObserver(BeatBuddyExtension extension, ControllerHost host) {
+   private static void setupPlayingNotesObserver(BitwigBuddyExtension extension, ControllerHost host) {
       Channel cursorChannel = host.createCursorTrack(0, 0);
       PlayingNoteArrayValue playingNotes = cursorChannel.playingNotes();
       playingNotes.markInterested();
@@ -251,9 +251,9 @@ public class NoteDestinationSettings {
     * Enforces the maximum playable note constraint of G8.
     * If the current note is above G8, forces the note value back to G.
     * 
-    * @param extension The BeatBuddy extension instance
+    * @param extension The BitwigBuddy extension instance
     */
-   private static void forceNoteRangeMaxToG8(BeatBuddyExtension extension) {
+   private static void forceNoteRangeMaxToG8(BitwigBuddyExtension extension) {
       String currentNote = ((EnumValue) extension.noteDestinationSetting).get();
       int currentOctave = Integer.parseInt(((EnumValue) extension.noteOctaveSetting).get());
       if (currentOctave == 8 &&

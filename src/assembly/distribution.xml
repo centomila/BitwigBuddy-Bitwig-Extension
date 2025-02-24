@@ -11,14 +11,14 @@
         <file>
             <source>${project.build.directory}/${project.build.finalName}.jar</source>
             <outputDirectory>/</outputDirectory>
-            <destName>BeatBuddy.bwextension</destName>
+            <destName>BitwigBuddy.bwextension</destName>
         </file>
     </files>
     
     <fileSets>
         <fileSet>
             <directory>src/main/java/com/centomila/customPresetsTxt</directory>
-            <outputDirectory>BeatBuddy</outputDirectory>
+            <outputDirectory>BitwigBuddy</outputDirectory>
             <includes>
                 <include>**/*.txt</include>
             </includes>

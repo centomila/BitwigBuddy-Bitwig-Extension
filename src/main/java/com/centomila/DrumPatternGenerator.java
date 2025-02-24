@@ -22,7 +22,7 @@ public class DrumPatternGenerator {
     /**
      * Generates and applies a drum pattern to the specified clip.
      * 
-     * @param extension                     The BeatBuddy extension instance
+     * @param extension                     The BitwigBuddy extension instance
      * @param clip                          Target clip for pattern generation
      * @param noteLengthSetting             Note duration setting
      * @param stepSizSubdivisionSetting     Step subdivision setting
@@ -44,7 +44,7 @@ public class DrumPatternGenerator {
      *                                      5. Adjusts loop length and zoom if
      *                                      enabled
      */
-    public static void generatePattern(BeatBuddyExtension extension,
+    public static void generatePattern(BitwigBuddyExtension extension,
             Clip clip,
             Setting noteLengthSetting,
             Setting stepSizSubdivisionSetting,

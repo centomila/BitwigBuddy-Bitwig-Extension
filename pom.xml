@@ -3,9 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.centomila</groupId>
-	<artifactId>beatbuddy</artifactId>
+	<artifactId>bitwigbuddy</artifactId>
 	<packaging>jar</packaging>
-	<name>BeatBuddy</name>
+	<name>BitwigBuddy</name>
 	<version>0.9.0</version>
 	
 	<repositories>
@@ -136,7 +136,7 @@
 						<configuration>
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.centomila.BeatBuddyExtension</mainClass>
+									<mainClass>com.centomila.BitwigBuddyExtension</mainClass>
 								</transformer>
 							 </transformers>
 							 <filters>
@@ -179,7 +179,7 @@
 						</goals>
 						<configuration>
 							<sourceFile>${project.build.directory}/${project.build.finalName}.jar</sourceFile>
-							<destinationFile>${bitwig.extension.directory.onedrive.ita}/BeatBuddy.bwextension</destinationFile>
+							<destinationFile>${bitwig.extension.directory.onedrive.ita}/BitwigBuddy.bwextension</destinationFile>
 						</configuration>
 					</execution>
 				</executions>
@@ -193,7 +193,7 @@
                     <failOnError>false</failOnError>
                     <filesets>
                         <fileset>
-                            <directory>${bitwig.extension.directory.onedrive.ita}/BeatBuddy</directory>
+                            <directory>${bitwig.extension.directory.onedrive.ita}/BitwigBuddy</directory>
                             <includes>
                                 <include>**/*</include>
                             </includes>
@@ -215,7 +215,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${bitwig.extension.directory.onedrive.ita}/BeatBuddy</outputDirectory>
+                            <outputDirectory>${bitwig.extension.directory.onedrive.ita}/BitwigBuddy</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/java/com/centomila/customPresetsTxt</directory>
@@ -235,7 +235,7 @@
                     <descriptors>
                         <descriptor>src/assembly/distribution.xml</descriptor>
                     </descriptors>
-                    <finalName>BeatBuddy-${project.version}</finalName>
+                    <finalName>BitwigBuddy-${project.version}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>

@@ -19,16 +19,16 @@ public class MoveStepsHandler {
     private static final String ERROR_INVALID_SETTINGS = "Invalid step size or subdivision settings";
     private static final int MAX_STEP_OFFSET = 128;
 
-    private final BeatBuddyExtension extension;
+    private final BitwigBuddyExtension extension;
     private EnumValue moveRotateStepsSetting;
 
     /**
      * Creates a new MoveStepsHandler instance.
      * 
-     * @param extension The parent BeatBuddy extension
+     * @param extension The parent BitwigBuddy extension
      * @throws IllegalArgumentException if extension is null
      */
-    public MoveStepsHandler(BeatBuddyExtension extension) {
+    public MoveStepsHandler(BitwigBuddyExtension extension) {
         if (extension == null) {
             throw new IllegalArgumentException("Extension cannot be null");
         }

@@ -20,7 +20,7 @@ import com.bitwig.extension.controller.api.Signal;
 import static com.centomila.utils.PopupUtils.*;
 
 /**
- * Handles global preferences and settings for the BeatBuddy extension.
+ * Handles global preferences and settings for the BitwigBuddy extension.
  * Manages preset paths, UI interactions, and platform-specific operations.
  */
 public class GlobalPreferences {
@@ -28,7 +28,7 @@ public class GlobalPreferences {
     private static final String SUPPORT_CATEGORY = "Support";
     private static final int MAX_PATH_LENGTH = 10000;
     private static final String PATREON_URL = "https://www.patreon.com/Centomila";
-    private static final String GITHUB_URL = "https://github.com/centomila/BeatBuddy-Bitwig-Extension-MIDI-Drum-Generator";
+    private static final String GITHUB_URL = "https://github.com/centomila/BitwigBuddy-Bitwig-Extension";
     private static final String CENTOMILA_URL = "https://centomila.com";
     private static final String[] DOCUMENTS_LOCALIZED = {
             "Documents", "Documenti", "Documentos", "Dokumente",
@@ -114,7 +114,7 @@ public class GlobalPreferences {
 
     private Signal initializeResetDefaultSignal() {
         Signal signal = preferences.getSignalSetting(
-                "Reset to Default Extensions/BeatBuddy",
+                "Reset to Default Extensions/BitwigBuddy",
                 PRESETS_SETTING_CATEGORY,
                 "Reset to default location");
         signal.addSignalObserver(this::resetToDefaultPath);
@@ -123,7 +123,7 @@ public class GlobalPreferences {
 
     private Signal initializePatreonSignal() {
         Signal signal = preferences.getSignalSetting(
-                "Support BeatBuddy on Patreon!",
+                "Support BitwigBuddy on Patreon!",
                 SUPPORT_CATEGORY,
                 "Go to Patreon.com/Centomila");
         signal.addSignalObserver(this::openPatreonPage);
@@ -132,7 +132,7 @@ public class GlobalPreferences {
 
     private Signal initializeGitHubSignal() {
         Signal signal = preferences.getSignalSetting(
-                "Visit BeatBuddy on GitHub",
+                "Visit BitwigBuddy on GitHub",
                 SUPPORT_CATEGORY,
                 "Go to GitHub Repository");
         signal.addSignalObserver(this::openGitHubPage);
@@ -185,7 +185,7 @@ public class GlobalPreferences {
             Path oneDriveBase = Paths.get(userHome, "OneDrive");
             if (Files.exists(oneDriveBase)) {
                 for (String docName : DOCUMENTS_LOCALIZED) {
-                    Path path = Paths.get(userHome, "OneDrive", docName, "Bitwig Studio", "Extensions", "BeatBuddy");
+                    Path path = Paths.get(userHome, "OneDrive", docName, "Bitwig Studio", "Extensions", "BitwigBuddy");
                     if (Files.exists(path)) {
                         return path.toString();
                     }
@@ -194,19 +194,19 @@ public class GlobalPreferences {
 
             // Then check regular Documents folders
             for (String docName : DOCUMENTS_LOCALIZED) {
-                Path path = Paths.get(userHome, docName, "Bitwig Studio", "Extensions", "BeatBuddy");
+                Path path = Paths.get(userHome, docName, "Bitwig Studio", "Extensions", "BitwigBuddy");
                 if (Files.exists(path)) {
                     return path.toString();
                 }
             }
         } else if (host.platformIsMac()) {
-            return Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions", "BeatBuddy").toString();
+            return Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions", "BitwigBuddy").toString();
         } else if (host.platformIsLinux()) {
-            return Paths.get(userHome, "Bitwig Studio", "Extensions", "BeatBuddy").toString();
+            return Paths.get(userHome, "Bitwig Studio", "Extensions", "BitwigBuddy").toString();
         }
 
         // Linux or general fallback
-        return Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions", "BeatBuddy").toString();
+        return Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions", "BitwigBuddy").toString();
     }
 
     /**
@@ -351,7 +351,7 @@ public class GlobalPreferences {
         try {
             host.println("Creating directory chooser...");
             DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setTitle("Select BeatBuddy Presets Folder");
+            chooser.setTitle("Select BitwigBuddy Presets Folder");
 
             Path initialDir = getValidInitialDirectory();
             if (initialDir != null) {

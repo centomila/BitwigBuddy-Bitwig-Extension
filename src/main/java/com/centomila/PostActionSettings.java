@@ -8,7 +8,7 @@ import com.bitwig.extension.controller.api.EnumValue;
 public class PostActionSettings {
         private static String CATEGORY_POST_ACTIONS = "Post Actions";
 
-        public static void init(BeatBuddyExtension extension) {
+        public static void init(BitwigBuddyExtension extension) {
                 // Initialize spacer for "Post Actions"
                 Setting spacerPostActions = (Setting) createStringSetting(
                                 "POST ACTIONS----------------------",
@@ -48,7 +48,7 @@ public class PostActionSettings {
         }
 
         // Observer for post actions setting
-        private static void setupPostActionsObserver(BeatBuddyExtension extension) {
+        private static void setupPostActionsObserver(BitwigBuddyExtension extension) {
                 
                 ((EnumValue) extension.postActionsSetting).addValueObserver(newValue -> {
                         // Array with all settings to be hidden

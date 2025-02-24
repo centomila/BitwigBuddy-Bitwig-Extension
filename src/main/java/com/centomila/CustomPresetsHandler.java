@@ -9,7 +9,7 @@ import java.util.Objects;
 import com.bitwig.extension.controller.api.ControllerHost;
 
 /**
- * Handles the loading and parsing of custom presets for the BeatBuddy extension.
+ * Handles the loading and parsing of custom presets for the BitwigBuddy extension.
  * Each preset is stored in a text file with a specific format containing name, default MIDI note,
  * and pattern information.
  */
@@ -185,7 +185,7 @@ public class CustomPresetsHandler {
     }
 
     /**
-     * Immutable class representing a custom preset for the BeatBuddy extension.
+     * Immutable class representing a custom preset for the BitwigBuddy extension.
      */
     public static final class CustomPreset {
         private final String fileName;
