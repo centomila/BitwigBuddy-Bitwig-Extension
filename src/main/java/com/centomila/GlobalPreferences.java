@@ -5,21 +5,24 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import javafx.application.Platform;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
-import com.bitwig.extension.controller.api.ControllerHost;
-import com.bitwig.extension.controller.api.Preferences;
-import com.bitwig.extension.controller.api.SettableStringValue;
-import com.bitwig.extension.controller.api.Signal;
-
 import static com.centomila.utils.PopupUtils.*;
+import static com.centomila.utils.SettingsHelper.*;
 
 import com.centomila.utils.ExtensionPath;
+import com.centomila.utils.OpenWebUrl;
+import com.centomila.utils.JavaFXInitializer;
+
+import com.bitwig.extension.controller.api.ControllerHost;
+import com.bitwig.extension.controller.api.Preferences;
+import com.bitwig.extension.controller.api.SettableRangedValue;
+import com.bitwig.extension.controller.api.SettableStringValue;
+import com.bitwig.extension.controller.api.Signal;
+import com.bitwig.extension.controller.api.BooleanValue;
 
 /**
  * Handles global preferences and settings for the BitwigBuddy extension.
@@ -40,111 +43,117 @@ public class GlobalPreferences {
         LINUX("xdg-open", "xdg-open", "", "");
 
         final String fileExplorer;
-        final String browserCommand;
-        final String browserParam1;
-        final String browserParam2;
 
         PlatformCommand(String fileExplorer, String browserCommand, String browserParam1, String browserParam2) {
             this.fileExplorer = fileExplorer;
-            this.browserCommand = browserCommand;
-            this.browserParam1 = browserParam1;
-            this.browserParam2 = browserParam2;
         }
     }
 
     private String defaultPresetsPath;
-    private final Preferences preferences;
-    private final SettableStringValue presetsPath;
-    private final Signal openPresetsFolder;
-    private final Signal browseFolderButton;
-    private final Signal resetToDefaultButton;
-    private final ControllerHost host;
-    private boolean jfxInitialized = false;
-    private final CustomPresetsHandler presetsHandler;
-    @SuppressWarnings({ "unused" })
-    private final Signal openPatreon, openGitHub, openCentomila;
-    private static final Object jfxInitLock = new Object();
+    private Preferences preferences;
+    private SettableStringValue presetsPath;
+    private Signal openPresetsFolder;
+    private Signal browseFolderButton;
+    private Signal resetToDefaultButton;
+    private BooleanValue showChannelDestination;
+    private ControllerHost host;
+    private BitwigBuddyExtension extension;
+    
+    private CustomPresetsHandler presetsHandler;
+
+    private Signal openPatreon, openGitHub, openCentomila;
+    
 
     /**
      * Initializes the global preferences with the specified controller host.
      * 
      * @param host The Bitwig controller host
      */
-    public GlobalPreferences(ControllerHost host) {
+    public GlobalPreferences(ControllerHost host, BitwigBuddyExtension extension) {
         this.host = host;
+        this.extension = extension;
         this.defaultPresetsPath = ExtensionPath.getExstensionsSubfolderPath("BitwigBuddy");
         this.preferences = host.getPreferences();
 
-        // Initialize preference settings
+        // Initialize all settings first
+        initPreferencesSettings();
+
+        // Add observers after all settings are initialized
+        initPreferencesObservers();
+
+        this.presetsHandler = new CustomPresetsHandler(host, this);
+    }
+
+    private void initPreferencesSettings() {
+        // Presets path settings
         this.presetsPath = preferences.getStringSetting(
                 "Presets Path",
                 PRESETS_SETTING_CATEGORY,
                 MAX_PATH_LENGTH,
                 defaultPresetsPath);
 
-        // Initialize signals
-        this.openPresetsFolder = initializeOpenPresetsFolderSignal();
-        this.browseFolderButton = initializeBrowseFolderSignal();
-        this.resetToDefaultButton = initializeResetDefaultSignal();
-        this.openPatreon = initializePatreonSignal();
-        this.openGitHub = initializeGitHubSignal();
-        this.openCentomila = initializeCentomilaSignal();
-
-        this.presetsHandler = new CustomPresetsHandler(host, this);
-    }
-
-    private Signal initializeOpenPresetsFolderSignal() {
-        Signal signal = preferences.getSignalSetting(
+        // Signal settings
+        this.openPresetsFolder = preferences.getSignalSetting(
                 "Opens the presets folder in system file explorer",
                 PRESETS_SETTING_CATEGORY,
                 "Explore Preset Folder");
-        signal.addSignalObserver(this::openPresetsFolderInExplorer);
-        return signal;
-    }
 
-    private Signal initializeBrowseFolderSignal() {
-        Signal signal = preferences.getSignalSetting(
+        this.browseFolderButton = preferences.getSignalSetting(
                 "Select presets folder location",
                 PRESETS_SETTING_CATEGORY,
                 "Browse");
-        signal.addSignalObserver(this::browseForPresetsFolder);
-        return signal;
-    }
 
-    private Signal initializeResetDefaultSignal() {
-        Signal signal = preferences.getSignalSetting(
+        this.resetToDefaultButton = preferences.getSignalSetting(
                 "Reset to Default Extensions/BitwigBuddy",
                 PRESETS_SETTING_CATEGORY,
                 "Reset to default location");
-        signal.addSignalObserver(this::resetToDefaultPath);
-        return signal;
-    }
 
-    private Signal initializePatreonSignal() {
-        Signal signal = preferences.getSignalSetting(
+        // Channel destination setting
+        this.showChannelDestination = preferences.getBooleanSetting(
+                "Show Channel Destination Selector",
+                "Note Destination Settings",
+                true);
+
+        // Support settings
+        this.openPatreon = preferences.getSignalSetting(
                 "Support BitwigBuddy on Patreon!",
                 SUPPORT_CATEGORY,
                 "Go to Patreon.com/Centomila");
-        signal.addSignalObserver(this::openPatreonPage);
-        return signal;
-    }
 
-    private Signal initializeGitHubSignal() {
-        Signal signal = preferences.getSignalSetting(
+        this.openGitHub = preferences.getSignalSetting(
                 "Visit BitwigBuddy on GitHub",
                 SUPPORT_CATEGORY,
                 "Go to GitHub Repository");
-        signal.addSignalObserver(this::openGitHubPage);
-        return signal;
-    }
 
-    private Signal initializeCentomilaSignal() {
-        Signal signal = preferences.getSignalSetting(
+        this.openCentomila = preferences.getSignalSetting(
                 "Visit Centomila Website",
                 SUPPORT_CATEGORY,
                 "Go to Centomila.com");
-        signal.addSignalObserver(this::openCentomilaPage);
-        return signal;
+    }
+
+    private void initPreferencesObservers() {
+        // Add observers for signals
+        this.openPresetsFolder.addSignalObserver(this::openPresetsFolderInExplorer);
+        this.browseFolderButton.addSignalObserver(this::browseForPresetsFolder);
+        this.resetToDefaultButton.addSignalObserver(this::resetToDefaultPath);
+
+        // Add observer for channel destination
+        this.showChannelDestination.addValueObserver(value -> {
+            host.println("Show Channel Destination: " + value);
+            if (value) {
+                showSetting(extension.noteChannelSetting);
+                showPopup("Channel Destination enabled");
+            } else {
+                ((SettableRangedValue) extension.noteChannelSetting).set(0); // Set to Channel 1
+                hideSetting(extension.noteChannelSetting);
+                showPopup("Channel Destination disabled. All notes will be sent to Channel 1.");
+            }
+        });
+
+        // Add observers for support buttons
+        this.openPatreon.addSignalObserver(this::openPatreonPage);
+        this.openGitHub.addSignalObserver(this::openGitHubPage);
+        this.openCentomila.addSignalObserver(this::openCentomilaPage);
     }
 
     /**
@@ -176,93 +185,18 @@ public class GlobalPreferences {
         }
     }
 
-    /**
-     * Opens the Patreon page in the default system browser.
-     */
-    private void openWebUrl(String url, String pageName) {
-        try {
-            PlatformCommand cmd = getPlatformCommand();
-            String[] command = cmd.browserParam1.isEmpty()
-                    ? new String[] { cmd.browserCommand, url }
-                    : new String[] { cmd.browserCommand, cmd.browserParam1, cmd.browserParam2, url };
-
-            Runtime.getRuntime().exec(command);
-        } catch (IOException e) {
-            host.errorln("Failed to open " + pageName + " page: " + e.getMessage());
-            showPopup("Please visit " + url + " in your web browser.");
-        }
-    }
-
     private void openPatreonPage() {
-        openWebUrl(PATREON_URL, "Patreon");
+        OpenWebUrl.openUrl(host, PATREON_URL, "Patreon");
     }
 
     private void openGitHubPage() {
-        openWebUrl(GITHUB_URL, "GitHub");
+        OpenWebUrl.openUrl(host, GITHUB_URL, "GitHub");
     }
 
     private void openCentomilaPage() {
-        openWebUrl(CENTOMILA_URL, "Centomila");
+        OpenWebUrl.openUrl(host, CENTOMILA_URL, "Centomila");
     }
 
-    private void initializeJavaFX() {
-        if (jfxInitialized) {
-            host.println("JavaFX already initialized, skipping initialization");
-            return;
-        }
-
-        synchronized (jfxInitLock) {
-            if (!jfxInitialized) {
-                host.println("Starting JavaFX initialization...");
-                try {
-                    if (host.platformIsMac()) {
-                        host.println("Setting Mac-specific JavaFX properties");
-                        System.setProperty("javafx.toolkit", "com.sun.javafx.tk.quantum.QuantumToolkit");
-                        System.setProperty("glass.platform", "mac");
-                    }
-
-                    if (!Platform.isFxApplicationThread()) {
-                        host.println("Not on FX thread, starting platform...");
-                        final CountDownLatch initLatch = new CountDownLatch(1);
-
-                        Platform.startup(() -> {
-                            host.println("In Platform.startup callback");
-                            try {
-                                host.println("Attempting to create test Stage");
-                                new Stage();
-                                host.println("JavaFX initialized successfully");
-                                jfxInitialized = true;
-                            } catch (Exception e) {
-                                host.errorln("JavaFX Stage creation failed: " + e.getMessage());
-                                e.printStackTrace();
-                            } finally {
-                                host.println("Countdown latch released");
-                                initLatch.countDown();
-                            }
-                        });
-
-                        host.println("Waiting for initialization completion...");
-                        if (!initLatch.await(5, TimeUnit.SECONDS)) {
-                            host.errorln("JavaFX initialization timed out after 5 seconds");
-                            return;
-                        }
-                        host.println("Initialization wait completed");
-
-                    } else {
-                        host.println("Already on FX thread, marking as initialized");
-                        jfxInitialized = true;
-                    }
-                } catch (IllegalStateException e) {
-                    host.println("JavaFX toolkit already running: " + e.getMessage());
-                    jfxInitialized = true;
-                } catch (Exception e) {
-                    host.errorln("JavaFX initialization failed with: " + e.getMessage());
-                    e.printStackTrace();
-                }
-                host.println("JavaFX initialization process complete. Success: " + jfxInitialized);
-            }
-        }
-    }
 
     private boolean isValidPresetsFolder(Path folder) {
         return folder != null && Files.exists(folder) && Files.isDirectory(folder);
@@ -294,10 +228,8 @@ public class GlobalPreferences {
 
     private void browseForPresetsFolder() {
         try {
-            // Initialize JavaFX first
-            initializeJavaFX();
-
-            if (!jfxInitialized) {
+            // Initialize JavaFX first using the utility class
+            if (!JavaFXInitializer.initialize(host)) {
                 showPopup("Failed to initialize JavaFX. Please try again or use manual path input.");
                 return;
             }
@@ -397,11 +329,7 @@ public class GlobalPreferences {
     }
 
     public boolean isJfxInitialized() {
-        return jfxInitialized;
-    }
-
-    public void setJfxInitialized(boolean jfxInitialized) {
-        this.jfxInitialized = jfxInitialized;
+        return JavaFXInitializer.isInitialized();
     }
 
     public CustomPresetsHandler.CustomPreset[] getCustomPresets() {

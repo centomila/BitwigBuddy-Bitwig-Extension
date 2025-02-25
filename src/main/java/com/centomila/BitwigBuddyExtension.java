@@ -74,14 +74,14 @@ public class BitwigBuddyExtension extends ControllerExtension {
    protected BitwigBuddyExtension(final BitwigBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
    }
-   
+
    @Override
    public void init() {
       final ControllerHost host = getHost();
       ExtensionPath.init(host);
       PopupUtils.init(host);
 
-      preferences = new GlobalPreferences(host);
+      preferences = new GlobalPreferences(host, this);
 
       // Initialize API objects
       application = host.createApplication();
@@ -115,10 +115,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BitwigBuddy Initialized! Have fun!");
-      host.println("BitwigBuddy Initialized! Have fun!");
-
    }
-   
+
    public void testConsole() {
       getHost().println("Test console message");
    }
@@ -215,6 +213,10 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
    public void setNoteOctaveSetting(Setting noteOctaveSetting) {
       this.noteOctaveSetting = noteOctaveSetting;
+   }
+
+   public void getNoteChannelSetting(Setting noteChannelSetting) {
+      this.noteChannelSetting = noteChannelSetting;
    }
 
    public void setNoteChannelSetting(Setting noteChannelSetting) {
