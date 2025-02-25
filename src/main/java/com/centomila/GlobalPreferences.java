@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import javafx.application.Platform;
 import javafx.stage.DirectoryChooser;
@@ -17,6 +15,7 @@ import static com.centomila.utils.SettingsHelper.*;
 
 import com.centomila.utils.ExtensionPath;
 import com.centomila.utils.OpenWebUrl;
+import com.centomila.utils.JavaFXInitializer;
 
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.Preferences;
@@ -59,11 +58,11 @@ public class GlobalPreferences {
     private BooleanValue showChannelDestination;
     private ControllerHost host;
     private BitwigBuddyExtension extension;
-    private boolean jfxInitialized = false;
+    
     private CustomPresetsHandler presetsHandler;
 
     private Signal openPatreon, openGitHub, openCentomila;
-    private static Object jfxInitLock = new Object();
+    
 
     /**
      * Initializes the global preferences with the specified controller host.
@@ -198,64 +197,6 @@ public class GlobalPreferences {
         OpenWebUrl.openUrl(host, CENTOMILA_URL, "Centomila");
     }
 
-    private void initializeJavaFX() {
-        if (jfxInitialized) {
-            host.println("JavaFX already initialized, skipping initialization");
-            return;
-        }
-
-        synchronized (jfxInitLock) {
-            if (!jfxInitialized) {
-                host.println("Starting JavaFX initialization...");
-                try {
-                    if (host.platformIsMac()) {
-                        host.println("Setting Mac-specific JavaFX properties");
-                        System.setProperty("javafx.toolkit", "com.sun.javafx.tk.quantum.QuantumToolkit");
-                        System.setProperty("glass.platform", "mac");
-                    }
-
-                    if (!Platform.isFxApplicationThread()) {
-                        host.println("Not on FX thread, starting platform...");
-                        final CountDownLatch initLatch = new CountDownLatch(1);
-
-                        Platform.startup(() -> {
-                            host.println("In Platform.startup callback");
-                            try {
-                                host.println("Attempting to create test Stage");
-                                new Stage();
-                                host.println("JavaFX initialized successfully");
-                                jfxInitialized = true;
-                            } catch (Exception e) {
-                                host.errorln("JavaFX Stage creation failed: " + e.getMessage());
-                                e.printStackTrace();
-                            } finally {
-                                host.println("Countdown latch released");
-                                initLatch.countDown();
-                            }
-                        });
-
-                        host.println("Waiting for initialization completion...");
-                        if (!initLatch.await(5, TimeUnit.SECONDS)) {
-                            host.errorln("JavaFX initialization timed out after 5 seconds");
-                            return;
-                        }
-                        host.println("Initialization wait completed");
-
-                    } else {
-                        host.println("Already on FX thread, marking as initialized");
-                        jfxInitialized = true;
-                    }
-                } catch (IllegalStateException e) {
-                    host.println("JavaFX toolkit already running: " + e.getMessage());
-                    jfxInitialized = true;
-                } catch (Exception e) {
-                    host.errorln("JavaFX initialization failed with: " + e.getMessage());
-                    e.printStackTrace();
-                }
-                host.println("JavaFX initialization process complete. Success: " + jfxInitialized);
-            }
-        }
-    }
 
     private boolean isValidPresetsFolder(Path folder) {
         return folder != null && Files.exists(folder) && Files.isDirectory(folder);
@@ -287,10 +228,8 @@ public class GlobalPreferences {
 
     private void browseForPresetsFolder() {
         try {
-            // Initialize JavaFX first
-            initializeJavaFX();
-
-            if (!jfxInitialized) {
+            // Initialize JavaFX first using the utility class
+            if (!JavaFXInitializer.initialize(host)) {
                 showPopup("Failed to initialize JavaFX. Please try again or use manual path input.");
                 return;
             }
@@ -390,11 +329,7 @@ public class GlobalPreferences {
     }
 
     public boolean isJfxInitialized() {
-        return jfxInitialized;
-    }
-
-    public void setJfxInitialized(boolean jfxInitialized) {
-        this.jfxInitialized = jfxInitialized;
+        return JavaFXInitializer.isInitialized();
     }
 
     public CustomPresetsHandler.CustomPreset[] getCustomPresets() {
