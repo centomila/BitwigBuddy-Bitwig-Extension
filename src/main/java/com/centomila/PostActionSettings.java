@@ -8,11 +8,13 @@ import com.bitwig.extension.controller.api.EnumValue;
 public class PostActionSettings {
         // Post actions settings
         static Setting postActionsToggleCategorySetting;
+        
         static Setting autoResizeLoopLengthSetting;
         static Setting zoomToFitAfterGenerateSetting;
-
+        static Setting switchToEditLayoutSetting;
         static Setting duplicateClipSetting;
-        static Setting openInDetailEditorSetting;
+        static Setting launchClipSetting;
+        
         private static String CATEGORY_POST_ACTIONS = "Post Actions";
 
         public static void init(BitwigBuddyExtension extension) {
@@ -44,9 +46,20 @@ public class PostActionSettings {
                                 CATEGORY_POST_ACTIONS,
                                 new String[] { "Off", "On" },
                                 "Off");
+                switchToEditLayoutSetting = (Setting) createEnumSetting(
+                                "Switch to Edit View Layout",
+                                CATEGORY_POST_ACTIONS,
+                                new String[] { "Off", "On" },
+                                "Off");
 
                 duplicateClipSetting = (Setting) createEnumSetting(
                                 "Duplicate Selected Clip",
+                                CATEGORY_POST_ACTIONS,
+                                new String[] { "Off", "On" },
+                                "Off");
+                
+                launchClipSetting = (Setting) createEnumSetting(
+                                "Launch Clip",
                                 CATEGORY_POST_ACTIONS,
                                 new String[] { "Off", "On" },
                                 "Off");
@@ -62,7 +75,10 @@ public class PostActionSettings {
                         Setting[] settingsToHideAndShow = {
                                         autoResizeLoopLengthSetting,
                                         zoomToFitAfterGenerateSetting,
-                                        duplicateClipSetting };
+                                        switchToEditLayoutSetting,
+                                        duplicateClipSetting,
+                                        launchClipSetting
+                        };
 
                         if (newValue.equals("Hide")) {
                                 hideSetting(settingsToHideAndShow);

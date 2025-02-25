@@ -81,14 +81,18 @@ public class BitwigBuddyExtension extends ControllerExtension {
       arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
       documentState = host.getDocumentState();
 
+      this.application.panelLayout().markInterested();
+
       cursorClip.getLoopLength().markInterested();
       cursorClip.getLoopStart().markInterested();
       cursorClip.getPlayStart().markInterested();
       cursorClip.getPlayStop().markInterested();
+      cursorClip.clipLauncherSlot().isPlaying().markInterested();
       arrangerClip.getLoopLength().markInterested();
       arrangerClip.getLoopStart().markInterested();
       arrangerClip.getPlayStart().markInterested();
       arrangerClip.getPlayStop().markInterested();
+      arrangerClip.clipLauncherSlot().isPlaying().markInterested();
 
       moveStepsHandler = new MoveStepsHandler(this);
       moveStepsHandler.init(documentState);
