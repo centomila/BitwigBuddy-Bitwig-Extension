@@ -6,6 +6,15 @@ import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.EnumValue;
 
 public class PostActionSettings {
+        // Post actions settings
+        static Setting postActionsToggleCategorySetting;
+        
+        static Setting autoResizeLoopLengthSetting;
+        static Setting zoomToFitAfterGenerateSetting;
+        static Setting switchToEditLayoutSetting;
+        static Setting duplicateClipSetting;
+        static Setting launchClipSetting;
+        
         private static String CATEGORY_POST_ACTIONS = "Post Actions";
 
         public static void init(BitwigBuddyExtension extension) {
@@ -19,27 +28,38 @@ public class PostActionSettings {
                 disableSetting(spacerPostActions); // Spacers are always disabled
 
                 // Setting for toggle hide/show post actions
-                extension.postActionsSetting = (Setting) createEnumSetting(
+                postActionsToggleCategorySetting = (Setting) createEnumSetting(
                                 "Post Actions",
                                 CATEGORY_POST_ACTIONS,
                                 new String[] { "Show", "Hide" },
                                 "Hide");
 
                 // Initialize auto resize loop length setting
-                extension.autoResizeLoopLengthSetting = (Setting) createEnumSetting(
+                autoResizeLoopLengthSetting = (Setting) createEnumSetting(
                                 "Auto resize loop length",
                                 CATEGORY_POST_ACTIONS,
                                 new String[] { "Off", "On" },
                                 "On");
 
-                extension.zoomToFitAfterGenerateSetting = (Setting) createEnumSetting(
+                zoomToFitAfterGenerateSetting = (Setting) createEnumSetting(
                                 "Zoom to fit after generate",
                                 CATEGORY_POST_ACTIONS,
                                 new String[] { "Off", "On" },
                                 "Off");
+                switchToEditLayoutSetting = (Setting) createEnumSetting(
+                                "Switch to Edit View Layout",
+                                CATEGORY_POST_ACTIONS,
+                                new String[] { "Off", "On" },
+                                "Off");
 
-                extension.duplicateClipSetting = (Setting) createEnumSetting(
+                duplicateClipSetting = (Setting) createEnumSetting(
                                 "Duplicate Selected Clip",
+                                CATEGORY_POST_ACTIONS,
+                                new String[] { "Off", "On" },
+                                "Off");
+                
+                launchClipSetting = (Setting) createEnumSetting(
+                                "Launch Clip",
                                 CATEGORY_POST_ACTIONS,
                                 new String[] { "Off", "On" },
                                 "Off");
@@ -49,14 +69,17 @@ public class PostActionSettings {
 
         // Observer for post actions setting
         private static void setupPostActionsObserver(BitwigBuddyExtension extension) {
-                
-                ((EnumValue) extension.postActionsSetting).addValueObserver(newValue -> {
+
+                ((EnumValue) postActionsToggleCategorySetting).addValueObserver(newValue -> {
                         // Array with all settings to be hidden
                         Setting[] settingsToHideAndShow = {
-                                        extension.autoResizeLoopLengthSetting,
-                                        extension.zoomToFitAfterGenerateSetting,
-                                        extension.duplicateClipSetting };
-                                        
+                                        autoResizeLoopLengthSetting,
+                                        zoomToFitAfterGenerateSetting,
+                                        switchToEditLayoutSetting,
+                                        duplicateClipSetting,
+                                        launchClipSetting
+                        };
+
                         if (newValue.equals("Hide")) {
                                 hideSetting(settingsToHideAndShow);
 

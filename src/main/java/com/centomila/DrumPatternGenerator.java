@@ -2,6 +2,8 @@ package com.centomila;
 
 // import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.RandomPattern.*;
+import static com.centomila.utils.PopupUtils.showPopup;
+import static com.centomila.PostActionSettings.*;
 
 import java.util.Arrays;
 import com.bitwig.extension.controller.api.Clip;
@@ -9,6 +11,9 @@ import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.StringValue;
 import com.bitwig.extension.controller.api.ClipLauncherSlot;
+import com.bitwig.extension.controller.api.TimelineEditor;
+import com.bitwig.extension.controller.api.DetailEditor;
+import com.bitwig.extension.controller.api.Settings;
 
 import com.bitwig.extension.controller.api.Setting;
 
@@ -22,27 +27,25 @@ public class DrumPatternGenerator {
     /**
      * Generates and applies a drum pattern to the specified clip.
      * 
-     * @param extension                     The BitwigBuddy extension instance
-     * @param clip                          Target clip for pattern generation
-     * @param noteLengthSetting             Note duration setting
-     * @param stepSizSubdivisionSetting     Step subdivision setting
-     * @param stepSizSetting                Step size setting
-     * @param noteDestSettings              Note destination and channel settings
-     * @param patternSelectorSetting        Pattern preset selector
-     * @param patternTypeSetting            Pattern type (Random/Custom/Predefined)
-     * @param autoReversePatternSetting     Pattern reversal setting
-     * @param autoResizeLoopLengthSetting   Loop length auto-adjust setting
-     * @param zoomToFitAfterGenerateSetting Zoom behavior setting
+     * @param extension                 The BitwigBuddy extension instance
+     * @param clip                      Target clip for pattern generation
+     * @param noteLengthSetting         Note duration setting
+     * @param stepSizSubdivisionSetting Step subdivision setting
+     * @param stepSizSetting            Step size setting
+     * @param noteDestSettings          Note destination and channel settings
+     * @param patternSelectorSetting    Pattern preset selector
+     * @param patternTypeSetting        Pattern type (Random/Custom/Predefined)
+     * @param autoReversePatternSetting Pattern reversal setting
      * 
-     *                                      Process:
-     *                                      1. Configures note length and step size
-     *                                      2. Clears existing pattern
-     *                                      3. Generates new pattern based on
-     *                                      selected type
-     *                                      4. Applies pattern to clip with optional
-     *                                      reversal
-     *                                      5. Adjusts loop length and zoom if
-     *                                      enabled
+     *                                  Process:
+     *                                  1. Configures note length and step size
+     *                                  2. Clears existing pattern
+     *                                  3. Generates new pattern based on
+     *                                  selected type
+     *                                  4. Applies pattern to clip with optional
+     *                                  reversal
+     *                                  5. Adjusts loop length and zoom if
+     *                                  enabled
      */
     public static void generatePattern(BitwigBuddyExtension extension,
             Clip clip,
@@ -53,9 +56,14 @@ public class DrumPatternGenerator {
             Setting patternSelectorSetting,
             Setting patternTypeSetting,
             Setting presetPatternStringSetting,
-            Setting autoReversePatternSetting,
-            Setting autoResizeLoopLengthSetting,
-            Setting zoomToFitAfterGenerateSetting) {
+            Setting autoReversePatternSetting) {
+
+        // Make visible if is out of view
+        if (((EnumValue) extension.toggleLauncherArrangerSetting).get().equals("Launcher")) {
+            clip.getTrack().makeVisibleInMixer();
+        } else {
+            clip.getTrack().makeVisibleInArranger();
+        }
 
         // Retrieve note length and subdivision settings
         String noteLength = ((EnumValue) noteLengthSetting).get();
@@ -92,6 +100,19 @@ public class DrumPatternGenerator {
         // Apply pattern to the clip
         applyPatternToClip(clip, pattern, channel, noteDestination, duration);
 
+        // Post actions
+
+        if (((EnumValue) duplicateClipSetting).get().equals("On")) {
+            ClipLauncherSlot clipLauncherSlot = clip.clipLauncherSlot();
+
+            if (((EnumValue) extension.toggleLauncherArrangerSetting).get().equals("Launcher")) {
+
+                if (clipLauncherSlot != null) {
+                    clipLauncherSlot.duplicateClip();
+                }
+            }
+        }
+
         // Resize clip loop length if the option is enabled
         if (((EnumValue) autoResizeLoopLengthSetting).get().equals("On")) {
             double beatLength = patternStepSize * pattern.length;
@@ -103,17 +124,20 @@ public class DrumPatternGenerator {
         if (((EnumValue) zoomToFitAfterGenerateSetting).get().equals("On")) {
             extension.getApplication().zoomToFit();
         }
-
-        if (((EnumValue) extension.duplicateClipSetting).get().equals("On")) {
-            ClipLauncherSlot clipLauncherSlot = clip.clipLauncherSlot();
-            ;
-            if (((EnumValue) extension.toggleLauncherArrangerSetting).get().equals("Launcher")) {
-
-                if (clipLauncherSlot != null) {
-                    clipLauncherSlot.duplicateClip();
-                }
+        // Launch Clip
+        if (((EnumValue) launchClipSetting).get().equals("On")) {
+            
+            if (!clip.clipLauncherSlot().isPlaying().get()) {
+                clip.clipLauncherSlot().launch();
             }
+         
         }
+
+        // Switch to edit view layout if enabled
+        if (((EnumValue) switchToEditLayoutSetting).get().equals("On")) {
+            extension.application.setPanelLayout("EDIT");
+        }
+
     }
 
     /**
@@ -128,8 +152,6 @@ public class DrumPatternGenerator {
             pattern[pattern.length - 1 - i] = temp;
         }
     }
-
-
 
     /**
      * Applies the provided pattern to the clip.
