@@ -56,13 +56,13 @@ public class BitwigBuddyExtension extends ControllerExtension {
    Setting noteChannelSetting; // Note Channel 1 to 16
    NoteDestinationSettings noteDestSettings; // Class to handle note destination settings
 
-   // Post actions settings
-   Setting autoResizeLoopLengthSetting;
-   Setting zoomToFitAfterGenerateSetting;
-   Setting postActionsSetting;
+   // // Post actions settings
+   // Setting autoResizeLoopLengthSetting;
+   // Setting zoomToFitAfterGenerateSetting;
+   // Setting postActionsSetting;
 
-   Setting duplicateClipSetting;
-   Setting openInDetailEditorSetting;
+   // Setting duplicateClipSetting;
+   // Setting openInDetailEditorSetting;
 
    // Step movement settings
    private MoveStepsHandler moveStepsHandler;
@@ -136,9 +136,9 @@ public class BitwigBuddyExtension extends ControllerExtension {
       ((EnumValue) toggleLauncherArrangerSetting).addValueObserver(newValue -> {
          PopupUtils.showPopup("Destination: " + newValue);
          if (newValue.equals("Arranger")) {
-            disableSetting(duplicateClipSetting);
+            disableSetting(PostActionSettings.duplicateClipSetting);
          } else {
-            enableSetting(duplicateClipSetting);
+            enableSetting(PostActionSettings.duplicateClipSetting);
          }
       });
    }
@@ -153,7 +153,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       DrumPatternGenerator.generatePattern(
             this, clip, noteLengthSetting, stepSizSubdivisionSetting,
             stepSizSetting, noteDestSettings, patternSelectorSetting, patternTypeSetting, presetPatternStringSetting,
-            reversePatternSetting, autoResizeLoopLengthSetting, zoomToFitAfterGenerateSetting);
+            reversePatternSetting);
    }
 
    /**
@@ -227,9 +227,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.toggleLauncherArrangerSetting = toggleLauncherArrangerSetting;
    }
 
-   public void setAutoResizeLoopLengthSetting(Setting autoResizeLoopLengthSetting) {
-      this.autoResizeLoopLengthSetting = autoResizeLoopLengthSetting;
-   }
 
    public void setReversePatternSetting(Setting reversePatternSetting) {
       this.reversePatternSetting = reversePatternSetting;
@@ -249,26 +246,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
    public void setPreferences(GlobalPreferences preferences) {
       this.preferences = preferences;
-   }
-
-   public Setting getZoomToFitAfterGenerateSetting() {
-      return zoomToFitAfterGenerateSetting;
-   }
-
-   public void setZoomToFitAfterGenerateSetting(Setting zoomToFitAfterGenerateSetting) {
-      this.zoomToFitAfterGenerateSetting = zoomToFitAfterGenerateSetting;
-   }
-
-   public void setDuplicateClipSetting(Setting openInDetailEditorSetting) {
-      this.duplicateClipSetting = openInDetailEditorSetting;
-   }
-
-   public Setting getPostActionsSetting() {
-      return postActionsSetting;
-   }
-
-   public void setPostActionsSetting(Setting postActionsSetting) {
-      this.postActionsSetting = postActionsSetting;
    }
 
    public Setting getPresetPatternStringSetting() {

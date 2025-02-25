@@ -2,6 +2,7 @@ package com.centomila;
 
 // import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.RandomPattern.*;
+import static com.centomila.PostActionSettings.*;
 
 import java.util.Arrays;
 import com.bitwig.extension.controller.api.Clip;
@@ -31,8 +32,6 @@ public class DrumPatternGenerator {
      * @param patternSelectorSetting        Pattern preset selector
      * @param patternTypeSetting            Pattern type (Random/Custom/Predefined)
      * @param autoReversePatternSetting     Pattern reversal setting
-     * @param autoResizeLoopLengthSetting   Loop length auto-adjust setting
-     * @param zoomToFitAfterGenerateSetting Zoom behavior setting
      * 
      *                                      Process:
      *                                      1. Configures note length and step size
@@ -53,9 +52,7 @@ public class DrumPatternGenerator {
             Setting patternSelectorSetting,
             Setting patternTypeSetting,
             Setting presetPatternStringSetting,
-            Setting autoReversePatternSetting,
-            Setting autoResizeLoopLengthSetting,
-            Setting zoomToFitAfterGenerateSetting) {
+            Setting autoReversePatternSetting) {
 
         // Retrieve note length and subdivision settings
         String noteLength = ((EnumValue) noteLengthSetting).get();
@@ -104,7 +101,7 @@ public class DrumPatternGenerator {
             extension.getApplication().zoomToFit();
         }
 
-        if (((EnumValue) extension.duplicateClipSetting).get().equals("On")) {
+        if (((EnumValue) PostActionSettings.duplicateClipSetting).get().equals("On")) {
             ClipLauncherSlot clipLauncherSlot = clip.clipLauncherSlot();
             ;
             if (((EnumValue) extension.toggleLauncherArrangerSetting).get().equals("Launcher")) {
