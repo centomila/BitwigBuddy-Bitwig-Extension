@@ -19,13 +19,9 @@ import com.centomila.utils.ExtensionPath;
 import com.centomila.utils.OpenWebUrl;
 
 import com.bitwig.extension.controller.api.ControllerHost;
-import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Preferences;
-import com.bitwig.extension.controller.api.RangedValue;
-import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
-import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.bitwig.extension.controller.api.BooleanValue;
 
@@ -55,20 +51,19 @@ public class GlobalPreferences {
     }
 
     private String defaultPresetsPath;
-    private final Preferences preferences;
-    private final SettableStringValue presetsPath;
-    private final Signal openPresetsFolder;
-    private final Signal browseFolderButton;
-    private final Signal resetToDefaultButton;
-    private final BooleanValue showChannelDestination;
-    private final ControllerHost host;
-    private final BitwigBuddyExtension extension;
+    private Preferences preferences;
+    private SettableStringValue presetsPath;
+    private Signal openPresetsFolder;
+    private Signal browseFolderButton;
+    private Signal resetToDefaultButton;
+    private BooleanValue showChannelDestination;
+    private ControllerHost host;
+    private BitwigBuddyExtension extension;
     private boolean jfxInitialized = false;
-    private final CustomPresetsHandler presetsHandler;
-    @SuppressWarnings({ "unused" })
-    private final Signal openPatreon, openGitHub, openCentomila;
-    private static final Object jfxInitLock = new Object();
+    private CustomPresetsHandler presetsHandler;
 
+    private Signal openPatreon, openGitHub, openCentomila;
+    private static Object jfxInitLock = new Object();
 
     /**
      * Initializes the global preferences with the specified controller host.
@@ -80,66 +75,71 @@ public class GlobalPreferences {
         this.extension = extension;
         this.defaultPresetsPath = ExtensionPath.getExstensionsSubfolderPath("BitwigBuddy");
         this.preferences = host.getPreferences();
-        
 
-        // Initialize preference settings
+        // Initialize all settings first
+        initPreferencesSettings();
+
+        // Add observers after all settings are initialized
+        initPreferencesObservers();
+
+        this.presetsHandler = new CustomPresetsHandler(host, this);
+    }
+
+    private void initPreferencesSettings() {
+        // Presets path settings
         this.presetsPath = preferences.getStringSetting(
                 "Presets Path",
                 PRESETS_SETTING_CATEGORY,
                 MAX_PATH_LENGTH,
                 defaultPresetsPath);
 
-        // Initialize signals
-        this.openPresetsFolder = initializeOpenPresetsFolderSignal();
-        this.browseFolderButton = initializeBrowseFolderSignal();
-        this.resetToDefaultButton = initializeResetDefaultSignal();
-
-        this.showChannelDestination = initializeShowChannelDestination();
-
-        this.openPatreon = initializePatreonSignal();
-        this.openGitHub = initializeGitHubSignal();
-        this.openCentomila = initializeCentomilaSignal();
-
-        this.presetsHandler = new CustomPresetsHandler(host, this);
-    }
-
-    // Custom Presets folder settings
-
-    private Signal initializeOpenPresetsFolderSignal() {
-        Signal signal = preferences.getSignalSetting(
+        // Signal settings
+        this.openPresetsFolder = preferences.getSignalSetting(
                 "Opens the presets folder in system file explorer",
                 PRESETS_SETTING_CATEGORY,
                 "Explore Preset Folder");
-        signal.addSignalObserver(this::openPresetsFolderInExplorer);
-        return signal;
-    }
 
-    private Signal initializeBrowseFolderSignal() {
-        Signal signal = preferences.getSignalSetting(
+        this.browseFolderButton = preferences.getSignalSetting(
                 "Select presets folder location",
                 PRESETS_SETTING_CATEGORY,
                 "Browse");
-        signal.addSignalObserver(this::browseForPresetsFolder);
-        return signal;
-    }
 
-    private Signal initializeResetDefaultSignal() {
-        Signal signal = preferences.getSignalSetting(
+        this.resetToDefaultButton = preferences.getSignalSetting(
                 "Reset to Default Extensions/BitwigBuddy",
                 PRESETS_SETTING_CATEGORY,
                 "Reset to default location");
-        signal.addSignalObserver(this::resetToDefaultPath);
-        return signal;
-    }
 
-    // BitwigBuddy extension settings
-
-    private BooleanValue initializeShowChannelDestination() {
-        BooleanValue preference = preferences.getBooleanSetting(
+        // Channel destination setting
+        this.showChannelDestination = preferences.getBooleanSetting(
                 "Show Channel Destination Selector",
                 "Note Destination Settings",
                 true);
-        preference.addValueObserver((value) -> {
+
+        // Support settings
+        this.openPatreon = preferences.getSignalSetting(
+                "Support BitwigBuddy on Patreon!",
+                SUPPORT_CATEGORY,
+                "Go to Patreon.com/Centomila");
+
+        this.openGitHub = preferences.getSignalSetting(
+                "Visit BitwigBuddy on GitHub",
+                SUPPORT_CATEGORY,
+                "Go to GitHub Repository");
+
+        this.openCentomila = preferences.getSignalSetting(
+                "Visit Centomila Website",
+                SUPPORT_CATEGORY,
+                "Go to Centomila.com");
+    }
+
+    private void initPreferencesObservers() {
+        // Add observers for signals
+        this.openPresetsFolder.addSignalObserver(this::openPresetsFolderInExplorer);
+        this.browseFolderButton.addSignalObserver(this::browseForPresetsFolder);
+        this.resetToDefaultButton.addSignalObserver(this::resetToDefaultPath);
+
+        // Add observer for channel destination
+        this.showChannelDestination.addValueObserver(value -> {
             host.println("Show Channel Destination: " + value);
             if (value) {
                 showSetting(extension.noteChannelSetting);
@@ -150,36 +150,11 @@ public class GlobalPreferences {
                 showPopup("Channel Destination disabled. All notes will be sent to Channel 1.");
             }
         });
-        return preference;
-    }
 
-    // Support-About BitwigBuddy signals
-
-    private Signal initializePatreonSignal() {
-        Signal signal = preferences.getSignalSetting(
-                "Support BitwigBuddy on Patreon!",
-                SUPPORT_CATEGORY,
-                "Go to Patreon.com/Centomila");
-        signal.addSignalObserver(this::openPatreonPage);
-        return signal;
-    }
-
-    private Signal initializeGitHubSignal() {
-        Signal signal = preferences.getSignalSetting(
-                "Visit BitwigBuddy on GitHub",
-                SUPPORT_CATEGORY,
-                "Go to GitHub Repository");
-        signal.addSignalObserver(this::openGitHubPage);
-        return signal;
-    }
-
-    private Signal initializeCentomilaSignal() {
-        Signal signal = preferences.getSignalSetting(
-                "Visit Centomila Website",
-                SUPPORT_CATEGORY,
-                "Go to Centomila.com");
-        signal.addSignalObserver(this::openCentomilaPage);
-        return signal;
+        // Add observers for support buttons
+        this.openPatreon.addSignalObserver(this::openPatreonPage);
+        this.openGitHub.addSignalObserver(this::openGitHubPage);
+        this.openCentomila.addSignalObserver(this::openCentomilaPage);
     }
 
     /**

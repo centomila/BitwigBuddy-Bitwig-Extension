@@ -74,7 +74,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
    protected BitwigBuddyExtension(final BitwigBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
    }
-   
+
    @Override
    public void init() {
       final ControllerHost host = getHost();
@@ -115,15 +115,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BitwigBuddy Initialized! Have fun!");
-      host.println("BitwigBuddy Initialized! Have fun!");
-
-      // print with bitwig log
-      getHost().println("BitwigBuddy Initialized");
-      // print with system out
-      System.out.println("BitwigBuddy Initialized");
-
    }
-   
+
    public void testConsole() {
       getHost().println("Test console message");
    }
@@ -225,6 +218,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public void getNoteChannelSetting(Setting noteChannelSetting) {
       this.noteChannelSetting = noteChannelSetting;
    }
+
    public void setNoteChannelSetting(Setting noteChannelSetting) {
       this.noteChannelSetting = noteChannelSetting;
    }
