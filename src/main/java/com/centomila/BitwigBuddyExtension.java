@@ -56,14 +56,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
    Setting noteChannelSetting; // Note Channel 1 to 16
    NoteDestinationSettings noteDestSettings; // Class to handle note destination settings
 
-   // // Post actions settings
-   // Setting autoResizeLoopLengthSetting;
-   // Setting zoomToFitAfterGenerateSetting;
-   // Setting postActionsSetting;
-
-   // Setting duplicateClipSetting;
-   // Setting openInDetailEditorSetting;
-
    // Step movement settings
    private MoveStepsHandler moveStepsHandler;
 

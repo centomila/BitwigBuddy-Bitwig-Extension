@@ -7,9 +7,9 @@ import com.bitwig.extension.controller.api.EnumValue;
 
 public class PostActionSettings {
         // Post actions settings
+        static Setting postActionsToggleCategorySetting;
         static Setting autoResizeLoopLengthSetting;
         static Setting zoomToFitAfterGenerateSetting;
-        static Setting postActionsSetting;
 
         static Setting duplicateClipSetting;
         static Setting openInDetailEditorSetting;
@@ -26,7 +26,7 @@ public class PostActionSettings {
                 disableSetting(spacerPostActions); // Spacers are always disabled
 
                 // Setting for toggle hide/show post actions
-                postActionsSetting = (Setting) createEnumSetting(
+                postActionsToggleCategorySetting = (Setting) createEnumSetting(
                                 "Post Actions",
                                 CATEGORY_POST_ACTIONS,
                                 new String[] { "Show", "Hide" },
@@ -57,7 +57,7 @@ public class PostActionSettings {
         // Observer for post actions setting
         private static void setupPostActionsObserver(BitwigBuddyExtension extension) {
 
-                ((EnumValue) postActionsSetting).addValueObserver(newValue -> {
+                ((EnumValue) postActionsToggleCategorySetting).addValueObserver(newValue -> {
                         // Array with all settings to be hidden
                         Setting[] settingsToHideAndShow = {
                                         autoResizeLoopLengthSetting,
