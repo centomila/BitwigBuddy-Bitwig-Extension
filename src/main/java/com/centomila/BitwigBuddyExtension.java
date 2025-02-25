@@ -81,7 +81,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       ExtensionPath.init(host);
       PopupUtils.init(host);
 
-      preferences = new GlobalPreferences(host);
+      preferences = new GlobalPreferences(host, this);
 
       // Initialize API objects
       application = host.createApplication();
@@ -222,6 +222,9 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.noteOctaveSetting = noteOctaveSetting;
    }
 
+   public void getNoteChannelSetting(Setting noteChannelSetting) {
+      this.noteChannelSetting = noteChannelSetting;
+   }
    public void setNoteChannelSetting(Setting noteChannelSetting) {
       this.noteChannelSetting = noteChannelSetting;
    }

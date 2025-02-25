@@ -12,16 +12,22 @@ import javafx.application.Platform;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
-import com.bitwig.extension.controller.api.ControllerHost;
-import com.bitwig.extension.controller.api.Preferences;
-import com.bitwig.extension.controller.api.SettableStringValue;
-import com.bitwig.extension.controller.api.Signal;
-import com.bitwig.extension.controller.api.BooleanValue;
-
 import static com.centomila.utils.PopupUtils.*;
+import static com.centomila.utils.SettingsHelper.*;
 
 import com.centomila.utils.ExtensionPath;
 import com.centomila.utils.OpenWebUrl;
+
+import com.bitwig.extension.controller.api.ControllerHost;
+import com.bitwig.extension.controller.ControllerExtension;
+import com.bitwig.extension.controller.api.Preferences;
+import com.bitwig.extension.controller.api.RangedValue;
+import com.bitwig.extension.controller.api.SettableEnumValue;
+import com.bitwig.extension.controller.api.SettableRangedValue;
+import com.bitwig.extension.controller.api.SettableStringValue;
+import com.bitwig.extension.controller.api.Setting;
+import com.bitwig.extension.controller.api.Signal;
+import com.bitwig.extension.controller.api.BooleanValue;
 
 /**
  * Handles global preferences and settings for the BitwigBuddy extension.
@@ -56,21 +62,25 @@ public class GlobalPreferences {
     private final Signal resetToDefaultButton;
     private final BooleanValue showChannelDestination;
     private final ControllerHost host;
+    private final BitwigBuddyExtension extension;
     private boolean jfxInitialized = false;
     private final CustomPresetsHandler presetsHandler;
     @SuppressWarnings({ "unused" })
     private final Signal openPatreon, openGitHub, openCentomila;
     private static final Object jfxInitLock = new Object();
 
+
     /**
      * Initializes the global preferences with the specified controller host.
      * 
      * @param host The Bitwig controller host
      */
-    public GlobalPreferences(ControllerHost host) {
+    public GlobalPreferences(ControllerHost host, BitwigBuddyExtension extension) {
         this.host = host;
+        this.extension = extension;
         this.defaultPresetsPath = ExtensionPath.getExstensionsSubfolderPath("BitwigBuddy");
         this.preferences = host.getPreferences();
+        
 
         // Initialize preference settings
         this.presetsPath = preferences.getStringSetting(
@@ -92,7 +102,6 @@ public class GlobalPreferences {
 
         this.presetsHandler = new CustomPresetsHandler(host, this);
     }
-
 
     // Custom Presets folder settings
 
@@ -127,11 +136,19 @@ public class GlobalPreferences {
 
     private BooleanValue initializeShowChannelDestination() {
         BooleanValue preference = preferences.getBooleanSetting(
-                "Show Channel Destination",
+                "Show Channel Destination Selector",
                 "Note Destination Settings",
                 true);
         preference.addValueObserver((value) -> {
             host.println("Show Channel Destination: " + value);
+            if (value) {
+                showSetting(extension.noteChannelSetting);
+                showPopup("Channel Destination enabled");
+            } else {
+                ((SettableRangedValue) extension.noteChannelSetting).set(0); // Set to Channel 1
+                hideSetting(extension.noteChannelSetting);
+                showPopup("Channel Destination disabled. All notes will be sent to Channel 1.");
+            }
         });
         return preference;
     }
