@@ -37,11 +37,11 @@ public class BitwigBuddyExtension extends ControllerExtension {
    Setting reversePatternSetting;
 
    // Random Settings
-   Setting randomMinVelocityVariationSetting;
-   Setting randomMaxVelocityVariationSetting;
-   Setting randomDensitySetting;
-   Setting randomVelocitySettingShape;
-   Setting randomStepQtySetting;
+   // Setting randomMinVelocityVariationSetting;
+   // Setting randomMaxVelocityVariationSetting;
+   // Setting randomDensitySetting;
+   // Setting randomVelocitySettingShape;
+   // Setting randomStepQtySetting;
 
    // Step Size / Note Length settings
    Setting noteLengthSetting; // How long each note should be
