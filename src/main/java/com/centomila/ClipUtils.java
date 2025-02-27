@@ -13,9 +13,45 @@ import com.bitwig.extension.controller.api.NoteStep;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 
-
 public class ClipUtils {
     private static String CATEGORY_OTHER = "Other";
+
+    /**
+     * Initializes the ClipUtils class by creating and configuring settings for
+     * clip operations.
+     * This method should be called during the extension initialization process.
+     * 
+     * @param extension The BitwigBuddyExtension object to which the settings will
+     *                  be added.
+     */
+    public static void init(BitwigBuddyExtension extension) {
+        Setting spacerOther = (Setting) createStringSetting(
+                "OTHER--------------------------------",
+                CATEGORY_OTHER,
+                0,
+                "---------------------------------------------------");
+
+        disableSetting(spacerOther); // Spacers are always disabled
+
+        Setting clearClipSetting = (Setting) createSignalSetting(
+                "Clear current clip",
+                CATEGORY_OTHER,
+                "Clear current clip");
+
+        Setting clearCurrentNoteDestination = (Setting) createSignalSetting(
+                "Clear current note destination",
+                CATEGORY_OTHER,
+                "Clear current note destination");
+
+        ((Signal) clearClipSetting).addSignalObserver(() -> extension.getLauncherOrArrangerAsClip().clearSteps());
+        
+        ((Signal) clearCurrentNoteDestination)
+                .addSignalObserver(() -> {
+                    int noteDestination = NoteDestinationSettings.getCurrentNoteDestinationAsInt();
+                    int noteChannel = NoteDestinationSettings.getCurrentChannelAsInt();
+                    extension.getLauncherOrArrangerAsClip().clearStepsAtY(noteChannel, noteDestination);
+                });
+    }
 
     /**
      * Returns the Clip object for either the Arranger Clip Launcher or the Launcher
@@ -145,39 +181,4 @@ public class ClipUtils {
         }
     }
 
-    /**
-     * Initializes the ClipUtils class by creating and configuring settings for
-     * clip operations.
-     * This method should be called during the extension initialization process.
-     *  
-     * @param extension The BitwigBuddyExtension object to which the settings will be added.
-     */
-    public static void init(BitwigBuddyExtension extension) {
-        Setting spacerOther = (Setting) createStringSetting(
-                "OTHER--------------------------------",
-                CATEGORY_OTHER,
-                0,
-                "---------------------------------------------------");
-
-        disableSetting(spacerOther); // Spacers are always disabled
-
-        Setting clearClipSetting = (Setting) createSignalSetting(
-                "Clear current clip",
-                CATEGORY_OTHER,
-                "Clear current clip");
-
-        Setting clearCurrentNoteDestination = (Setting) createSignalSetting(
-                "Clear current note destination",
-                CATEGORY_OTHER,
-                "Clear current note destination");
-
-        ((Signal) clearClipSetting).addSignalObserver(() -> extension.getLauncherOrArrangerAsClip().clearSteps());
-        ((Signal) clearCurrentNoteDestination)
-                .addSignalObserver(() -> {
-                    int noteDestination = NoteDestinationSettings.getCurrentNoteDestinationAsInt();
-                    int noteChannel = NoteDestinationSettings.getCurrentChannelAsInt();
-                    extension.getLauncherOrArrangerAsClip().clearStepsAtY(noteChannel, noteDestination);
-                });
-    }
-    
 }

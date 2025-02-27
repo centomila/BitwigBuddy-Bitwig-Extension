@@ -30,7 +30,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
    DocumentState documentState;
 
-
    // Step movement settings
    private MoveStepsHandler moveStepsHandler;
 
@@ -156,12 +155,9 @@ public class BitwigBuddyExtension extends ControllerExtension {
       return documentState;
    }
 
-
-
    public void setToggleLauncherArrangerSetting(Setting toggleLauncherArrangerSetting) {
       this.toggleLauncherArrangerSetting = toggleLauncherArrangerSetting;
    }
-
 
    public MoveStepsHandler getMoveStepsHandler() {
       return moveStepsHandler;
@@ -170,12 +166,5 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public void setMoveStepsHandler(MoveStepsHandler moveStepsHandler) {
       this.moveStepsHandler = moveStepsHandler;
    }
-
-
-   public void setPreferences(GlobalPreferences preferences) {
-      this.preferences = preferences;
-   }
-
-
 
 }
