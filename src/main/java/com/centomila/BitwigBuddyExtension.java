@@ -36,20 +36,14 @@ public class BitwigBuddyExtension extends ControllerExtension {
    Setting presetPatternStringSetting; // Custom pattern string
    Setting reversePatternSetting;
 
-   // Random Settings
-   // Setting randomMinVelocityVariationSetting;
-   // Setting randomMaxVelocityVariationSetting;
-   // Setting randomDensitySetting;
-   // Setting randomVelocitySettingShape;
-   // Setting randomStepQtySetting;
 
    // Step Size / Note Length settings
    Setting noteLengthSetting; // How long each note should be
    Setting stepSizSetting;
    Setting stepSizSubdivisionSetting; // Subdivisions Straight | Dotted | Triplet | Quintuplet | Septuplet
-   Setting learnNoteSetting; // On or Off
-
+   
    // Note Destination settings
+   Setting learnNoteSetting; // On or Off
    Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#",
                                    // "B"
    Setting noteOctaveSetting; // Note Octave -2 to 8
