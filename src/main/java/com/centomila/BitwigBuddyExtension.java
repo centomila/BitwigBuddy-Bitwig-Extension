@@ -37,10 +37,10 @@ public class BitwigBuddyExtension extends ControllerExtension {
    Setting reversePatternSetting;
 
 
-   // Step Size / Note Length settings
-   Setting noteLengthSetting; // How long each note should be
-   Setting stepSizSetting;
-   Setting stepSizSubdivisionSetting; // Subdivisions Straight | Dotted | Triplet | Quintuplet | Septuplet
+   // // Step Size / Note Length settings
+   // Setting noteLengthSetting; // How long each note should be
+   // Setting stepSizSetting;
+   // Setting stepSizSubdivisionSetting; // Subdivisions Straight | Dotted | Triplet | Quintuplet | Septuplet
    
    // Note Destination settings
    Setting learnNoteSetting; // On or Off
@@ -141,8 +141,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public void generateDrumPattern() {
       Clip clip = getLauncherOrArrangerAsClip();
       DrumPatternGenerator.generatePattern(
-            this, clip, noteLengthSetting, stepSizSubdivisionSetting,
-            stepSizSetting, noteDestSettings, patternSelectorSetting, patternTypeSetting, presetPatternStringSetting,
+            this, clip, noteDestSettings, patternSelectorSetting, patternTypeSetting, presetPatternStringSetting,
             reversePatternSetting);
    }
 
@@ -185,17 +184,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.customPresetSetting = customPresetSetting;
    }
 
-   public void setNoteLengthSetting(Setting noteLengthSetting) {
-      this.noteLengthSetting = noteLengthSetting;
-   }
 
-   public void setStepSizSetting(Setting stepSizSetting) {
-      this.stepSizSetting = stepSizSetting;
-   }
-
-   public void setStepSizSubdivisionSetting(Setting stepSizSubdivisionSetting) {
-      this.stepSizSubdivisionSetting = stepSizSubdivisionSetting;
-   }
 
    public void setNoteDestinationSetting(Setting noteDestinationSetting) {
       this.noteDestinationSetting = noteDestinationSetting;

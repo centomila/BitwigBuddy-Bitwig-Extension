@@ -4,6 +4,7 @@ package com.centomila;
 import static com.centomila.RandomPattern.*;
 import static com.centomila.utils.PopupUtils.showPopup;
 import static com.centomila.PostActionSettings.*;
+import com.centomila.StepSizeSettings;
 
 import java.util.Arrays;
 import com.bitwig.extension.controller.api.Clip;
@@ -29,9 +30,6 @@ public class DrumPatternGenerator {
      * 
      * @param extension                 The BitwigBuddy extension instance
      * @param clip                      Target clip for pattern generation
-     * @param noteLengthSetting         Note duration setting
-     * @param stepSizSubdivisionSetting Step subdivision setting
-     * @param stepSizSetting            Step size setting
      * @param noteDestSettings          Note destination and channel settings
      * @param patternSelectorSetting    Pattern preset selector
      * @param patternTypeSetting        Pattern type (Random/Custom/Predefined)
@@ -49,9 +47,6 @@ public class DrumPatternGenerator {
      */
     public static void generatePattern(BitwigBuddyExtension extension,
             Clip clip,
-            Setting noteLengthSetting,
-            Setting stepSizSubdivisionSetting,
-            Setting stepSizSetting,
             NoteDestinationSettings noteDestSettings,
             Setting patternSelectorSetting,
             Setting patternTypeSetting,
@@ -66,12 +61,12 @@ public class DrumPatternGenerator {
         }
 
         // Retrieve note length and subdivision settings
-        String noteLength = ((EnumValue) noteLengthSetting).get();
-        String subdivision = ((EnumValue) stepSizSubdivisionSetting).get();
+        String noteLength = ((EnumValue) StepSizeSettings.noteLengthSetting).get();
+        String subdivision = ((EnumValue) StepSizeSettings.stepSizSubdivisionSetting).get();
         double duration = Utils.getNoteLengthAsDouble(noteLength, subdivision);
 
         // Retrieve and set step size based on note settings
-        String stepSize = ((EnumValue) stepSizSetting).get();
+        String stepSize = ((EnumValue) StepSizeSettings.stepSizSetting).get();
         double patternStepSize = Utils.getNoteLengthAsDouble(stepSize, subdivision);
         clip.setStepSize(patternStepSize);
 

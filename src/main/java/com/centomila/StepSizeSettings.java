@@ -6,6 +6,10 @@ import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
 
 public class StepSizeSettings {
+      // Step Size / Note Length settings
+      public static Setting noteLengthSetting; // How long each note should be
+      public static Setting stepSizSetting;
+      public static Setting stepSizSubdivisionSetting;
       private static String CATEGORY_CLIP = "Clip";
 
       public static void init(BitwigBuddyExtension extension) {
@@ -16,17 +20,17 @@ public class StepSizeSettings {
 
             disableSetting(spacerStepSize); // Spacers are always disabled
 
-            extension.stepSizSetting = (Setting) createEnumSetting(
+            stepSizSetting = (Setting) createEnumSetting(
                         "Step Size",
                         CATEGORY_CLIP,
                         Utils.STEPSIZE_OPTIONS,
                         "1/16");
-            extension.stepSizSubdivisionSetting = (Setting) createEnumSetting(
+            stepSizSubdivisionSetting = (Setting) createEnumSetting(
                         "Subdivisions",
                         CATEGORY_CLIP,
                         Utils.STEPSIZE_CATEGORY_OPTIONS,
                         "Straight");
-            extension.noteLengthSetting = (Setting) createEnumSetting(
+            noteLengthSetting = (Setting) createEnumSetting(
                         "Note Length",
                         CATEGORY_CLIP,
                         Utils.STEPSIZE_OPTIONS,
@@ -34,19 +38,18 @@ public class StepSizeSettings {
 
             setupStepSizeObservers(extension);
 
-            // extension.setStepSizSetting(stepSizSetting);
-            // extension.setStepSizSubdivisionSetting(stepSizSubdivisionSetting);
-            // extension.setNoteLengthSetting(noteLengthSetting);
       }
 
       private static void setupStepSizeObservers(BitwigBuddyExtension extension) {
-            ((EnumValue) extension.stepSizSetting).addValueObserver(newValue -> {
-                  ((SettableEnumValue) extension.stepSizSetting).set(newValue);
-                  ((SettableEnumValue) extension.noteLengthSetting).set(newValue);
+            ((EnumValue) stepSizSetting).addValueObserver(newValue -> {
+                  ((SettableEnumValue) stepSizSetting).set(newValue);
+                  ((SettableEnumValue) noteLengthSetting).set(newValue);
             });
 
-            ((EnumValue) extension.noteLengthSetting).addValueObserver(newValue -> {
-                  ((SettableEnumValue) extension.noteLengthSetting).set(newValue);
+            ((EnumValue) noteLengthSetting).addValueObserver(newValue -> {
+                  ((SettableEnumValue) noteLengthSetting).set(newValue);
             });
       }
+
+
 }

@@ -1,10 +1,12 @@
 package com.centomila;
+import static com.centomila.utils.PopupUtils.*;
+
+import com.centomila.StepSizeSettings;
 
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Signal;
-import static com.centomila.utils.PopupUtils.*;
 
 /**
  * Handles the movement and rotation of steps in a Bitwig clip.
@@ -96,8 +98,8 @@ public class MoveStepsHandler {
             int noteDestination = ((NoteDestinationSettings) extension.noteDestSettings)
                     .getCurrentNoteDestinationAsInt();
 
-            EnumValue stepSizeSetting = (EnumValue) extension.stepSizSetting;
-            EnumValue subdivisionSetting = (EnumValue) extension.stepSizSubdivisionSetting;
+            EnumValue stepSizeSetting = (EnumValue) StepSizeSettings.stepSizSetting;
+            EnumValue subdivisionSetting = (EnumValue) StepSizeSettings.stepSizSubdivisionSetting;
 
             if (stepSizeSetting == null || subdivisionSetting == null) {
                 showPopup(ERROR_INVALID_SETTINGS);
