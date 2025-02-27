@@ -20,6 +20,22 @@ import java.util.Arrays;
  * value constraints.
  */
 public class NoteDestinationSettings {
+   public static Setting learnNoteSetting; // On or Off
+   public static Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
+   public static Setting noteOctaveSetting; // Note Octave -2 to 8
+   public static Setting noteChannelSetting; // Note Channel 1 to 16
+
+   public static int currentNoteAsInt;
+
+   public static String currentNoteAsString;
+   public static int currentOctaveAsInt;
+
+   private static NoteDestinationSettings noteDestSettings;
+
+   private static void setNoteDestSettings(NoteDestinationSettings settings) {
+      noteDestSettings = settings;
+   }
+
    private static String CATEGORY_NOTE_DESTINATION = "Note Destination";
 
    /**
@@ -46,19 +62,19 @@ public class NoteDestinationSettings {
             .mapToObj(i -> String.valueOf(i))
             .toArray(String[]::new);
 
-      extension.noteDestinationSetting = (Setting) createEnumSetting(
+      noteDestinationSetting = (Setting) createEnumSetting(
             "Note Destination",
             "Note Destination",
             noteDestinationOptions,
             noteDestinationOptions[0]);
-      extension.noteOctaveSetting = (Setting) createEnumSetting(
+      noteOctaveSetting = (Setting) createEnumSetting(
             "Note Octave",
             "Note Destination",
             octaveDestinationOptions,
             octaveDestinationOptions[3]);
 
       // Setup note channel setting
-      extension.noteChannelSetting = (Setting) createNumberSetting(
+      noteChannelSetting = (Setting) createNumberSetting(
             "Note Channel",
             "Note Destination",
             1,
@@ -67,16 +83,16 @@ public class NoteDestinationSettings {
             "MIDI Channel",
             1);
 
-      String initialNote = ((EnumValue) extension.noteDestinationSetting).get();
-      int initialOctave = Integer.parseInt(((EnumValue) extension.noteOctaveSetting).get());
+      String initialNote = ((EnumValue) noteDestinationSetting).get();
+      int initialOctave = Integer.parseInt(((EnumValue) noteOctaveSetting).get());
 
-      extension.setNoteDestSettings(new NoteDestinationSettings(
-            extension.noteChannelSetting, initialNote, initialOctave));
+      setNoteDestSettings(new NoteDestinationSettings(
+            noteChannelSetting, initialNote, initialOctave));
 
       // Setup learn note setting
       final String[] LEARN_NOTE_OPTIONS = new String[] { "On", "Off" };
 
-      extension.learnNoteSetting = (Setting) createEnumSetting(
+      learnNoteSetting = (Setting) createEnumSetting(
             "Learn Note", "Note Destination", LEARN_NOTE_OPTIONS, "Off");
 
       // Setup note destination observers
@@ -130,14 +146,14 @@ public class NoteDestinationSettings {
     */
    private static void setupNoteDestinationObservers(BitwigBuddyExtension extension) {
       // Register observer for note changes
-      ((EnumValue) extension.noteDestinationSetting).addValueObserver(newValue -> {
-         ((NoteDestinationSettings) extension.noteDestSettings).setCurrentNote(newValue);
+      ((EnumValue) noteDestinationSetting).addValueObserver(newValue -> {
+         ((NoteDestinationSettings) noteDestSettings).setCurrentNote(newValue);
          forceNoteRangeMaxToG8(extension);
       });
 
       // Register observer for octave changes
-      ((EnumValue) extension.noteOctaveSetting).addValueObserver(newValue -> {
-         ((NoteDestinationSettings) extension.noteDestSettings)
+      ((EnumValue) noteOctaveSetting).addValueObserver(newValue -> {
+         ((NoteDestinationSettings) noteDestSettings)
                .setCurrentOctave(Integer.parseInt(newValue));
          forceNoteRangeMaxToG8(extension);
       });
@@ -156,17 +172,17 @@ public class NoteDestinationSettings {
       playingNotes.markInterested();
 
       playingNotes.addValueObserver(notes -> {
-         if (((EnumValue) extension.learnNoteSetting).get().equals("On")) {
+         if (((EnumValue) learnNoteSetting).get().equals("On")) {
             for (PlayingNote note : notes) {
                String noteName = getNoteNameFromKey(note.pitch());
                String[] keyAndOctave = getKeyAndOctaveFromNoteName(noteName);
-               ((SettableEnumValue) extension.noteDestinationSetting).set(keyAndOctave[0]);
-               ((SettableEnumValue) extension.noteOctaveSetting).set(keyAndOctave[1]);
+               ((SettableEnumValue) noteDestinationSetting).set(keyAndOctave[0]);
+               ((SettableEnumValue) noteOctaveSetting).set(keyAndOctave[1]);
             }
          }
       });
 
-      ((EnumValue) extension.learnNoteSetting).addValueObserver(value -> {
+      ((EnumValue) learnNoteSetting).addValueObserver(value -> {
          if (value.equals("On")) {
             playingNotes.subscribe();
          } else {
@@ -182,35 +198,17 @@ public class NoteDestinationSettings {
     * @param extension The BitwigBuddy extension instance
     */
    private static void forceNoteRangeMaxToG8(BitwigBuddyExtension extension) {
-      String currentNote = ((EnumValue) extension.noteDestinationSetting).get();
-      int currentOctave = Integer.parseInt(((EnumValue) extension.noteOctaveSetting).get());
+      String currentNote = ((EnumValue) noteDestinationSetting).get();
+      int currentOctave = Integer.parseInt(((EnumValue) noteOctaveSetting).get());
       if (currentOctave == 8 &&
             (currentNote.equals("G#") || currentNote.equals("A") ||
                   currentNote.equals("A#") || currentNote.equals("B"))) {
-         ((SettableEnumValue) extension.noteDestinationSetting).set("G");
+         ((SettableEnumValue) noteDestinationSetting).set("G");
       }
    }
 
-   public int currentNoteAsInt;
 
-   private String currentNoteAsString;
 
-   private int currentOctaveAsInt;
-
-   private final Setting noteChannelSetting;
-
-   /**
-    * Constructs a new NoteDestinationSettings instance with initial values.
-    * 
-    * @param noteChannelSetting The Setting object controlling the MIDI channel
-    * @param initialNote The initial note value (e.g., "C", "F#")
-    * @param initialOctave The initial octave value (-2 to 8)
-    */
-   public NoteDestinationSettings(Setting noteChannelSetting, String initialNote, int initialOctave) {
-      this.noteChannelSetting = noteChannelSetting;
-      this.currentNoteAsString = initialNote;
-      this.currentOctaveAsInt = initialOctave;
-   }
 
    /**
     * Calculates and returns the current MIDI note number.
@@ -218,7 +216,7 @@ public class NoteDestinationSettings {
     * 
     * @return The MIDI note number (0-127)
     */
-   public int getCurrentNoteDestinationAsInt() {
+   public static int getCurrentNoteDestinationAsInt() {
       currentNoteAsInt = Utils.getMIDINoteNumberFromStringAndOctave(currentNoteAsString, currentOctaveAsInt);
       return currentNoteAsInt;
    }
@@ -236,7 +234,7 @@ public class NoteDestinationSettings {
     * 
     * @return The MIDI channel number (0-15, zero-indexed)
     */
-   public int getCurrentChannelAsInt() {
+   public static int getCurrentChannelAsInt() {
       int channel = (int) Math.round(((SettableRangedValue) noteChannelSetting).getRaw());
       return channel - 1;
    }
@@ -247,7 +245,7 @@ public class NoteDestinationSettings {
     * @param note The new note value (e.g., "C", "F#")
     */
    public void setCurrentNote(String note) {
-      this.currentNoteAsString = note;
+      currentNoteAsString = note;
       getCurrentNoteDestinationAsInt();
       popupNoteDestination();
    }
@@ -258,8 +256,14 @@ public class NoteDestinationSettings {
     * @param octave The new octave value (-2 to 8)
     */
    public void setCurrentOctave(int octave) {
-      this.currentOctaveAsInt = octave;
+      currentOctaveAsInt = octave;
       getCurrentNoteDestinationAsInt();
       popupNoteDestination();
+   }
+
+   public NoteDestinationSettings(Setting channelSetting, String note, int octave) {
+      currentNoteAsString = note;
+      currentOctaveAsInt = octave;
+      noteChannelSetting = channelSetting;
    }
 }

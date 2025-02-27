@@ -29,26 +29,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
    Clip arrangerClip;
 
    DocumentState documentState;
-   // // Pattern settings
-   // Setting patternTypeSetting; // Pattern Type "Preset", "Random", "Custom"
-   // Setting patternSelectorSetting; // List of default patterns
-   // Setting customPresetSetting; // List of custom patterns
-   // Setting presetPatternStringSetting; // Custom pattern string
-   // Setting reversePatternSetting;
 
-
-   // // Step Size / Note Length settings
-   // Setting noteLengthSetting; // How long each note should be
-   // Setting stepSizSetting;
-   // Setting stepSizSubdivisionSetting; // Subdivisions Straight | Dotted | Triplet | Quintuplet | Septuplet
-   
-   // Note Destination settings
-   Setting learnNoteSetting; // On or Off
-   Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#",
-                                   // "B"
-   Setting noteOctaveSetting; // Note Octave -2 to 8
-   Setting noteChannelSetting; // Note Channel 1 to 16
-   NoteDestinationSettings noteDestSettings; // Class to handle note destination settings
 
    // Step movement settings
    private MoveStepsHandler moveStepsHandler;
@@ -141,7 +122,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public void generateDrumPattern() {
       Clip clip = getLauncherOrArrangerAsClip();
       DrumPatternGenerator.generatePattern(
-            this, clip, noteDestSettings);
+            this, clip);
    }
 
    /**
@@ -177,22 +158,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
 
 
-   public void setNoteDestinationSetting(Setting noteDestinationSetting) {
-      this.noteDestinationSetting = noteDestinationSetting;
-   }
-
-   public void setNoteOctaveSetting(Setting noteOctaveSetting) {
-      this.noteOctaveSetting = noteOctaveSetting;
-   }
-
-   public void getNoteChannelSetting(Setting noteChannelSetting) {
-      this.noteChannelSetting = noteChannelSetting;
-   }
-
-   public void setNoteChannelSetting(Setting noteChannelSetting) {
-      this.noteChannelSetting = noteChannelSetting;
-   }
-
    public void setToggleLauncherArrangerSetting(Setting toggleLauncherArrangerSetting) {
       this.toggleLauncherArrangerSetting = toggleLauncherArrangerSetting;
    }
@@ -206,9 +171,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.moveStepsHandler = moveStepsHandler;
    }
 
-   public void setNoteDestSettings(NoteDestinationSettings noteDestSettings) {
-      this.noteDestSettings = noteDestSettings;
-   }
 
    public void setPreferences(GlobalPreferences preferences) {
       this.preferences = preferences;

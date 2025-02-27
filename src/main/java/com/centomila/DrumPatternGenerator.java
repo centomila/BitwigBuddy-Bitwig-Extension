@@ -2,6 +2,7 @@ package com.centomila;
 
 // import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.PostActionSettings.*;
+import com.centomila.NoteDestinationSettings.*;
 
 import java.util.Arrays;
 import com.bitwig.extension.controller.api.Clip;
@@ -34,8 +35,7 @@ public class DrumPatternGenerator {
      *                                  enabled
      */
     public static void generatePattern(BitwigBuddyExtension extension,
-            Clip clip,
-            NoteDestinationSettings noteDestSettings) {
+            Clip clip) {
 
         // Make visible if is out of view
         if (((EnumValue) extension.toggleLauncherArrangerSetting).get().equals("Launcher")) {
@@ -55,8 +55,8 @@ public class DrumPatternGenerator {
         clip.setStepSize(patternStepSize);
 
         // Get channel and note destination values
-        int channel = noteDestSettings.getCurrentChannelAsInt();
-        int noteDestination = noteDestSettings.getCurrentNoteDestinationAsInt();
+        int channel = NoteDestinationSettings.getCurrentChannelAsInt();
+        int noteDestination = NoteDestinationSettings.getCurrentNoteDestinationAsInt();
         clip.clearStepsAtY(channel, noteDestination);
 
         // Determine the type of pattern to generate
@@ -100,6 +100,7 @@ public class DrumPatternGenerator {
 
         // Zoom to fit if enabled in settings
         clip.selectStepContents(channel, noteDestination, false);
+
         if (((EnumValue) zoomToFitAfterGenerateSetting).get().equals("On")) {
             extension.getApplication().zoomToFit();
         }

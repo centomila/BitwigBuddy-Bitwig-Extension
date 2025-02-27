@@ -174,8 +174,8 @@ public class ClipUtils {
         ((Signal) clearClipSetting).addSignalObserver(() -> extension.getLauncherOrArrangerAsClip().clearSteps());
         ((Signal) clearCurrentNoteDestination)
                 .addSignalObserver(() -> {
-                    int noteDestination = extension.noteDestSettings.getCurrentNoteDestinationAsInt();
-                    int noteChannel = extension.noteDestSettings.getCurrentChannelAsInt();
+                    int noteDestination = NoteDestinationSettings.getCurrentNoteDestinationAsInt();
+                    int noteChannel = NoteDestinationSettings.getCurrentChannelAsInt();
                     extension.getLauncherOrArrangerAsClip().clearStepsAtY(noteChannel, noteDestination);
                 });
     }

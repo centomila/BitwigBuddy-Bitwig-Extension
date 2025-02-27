@@ -141,11 +141,11 @@ public class GlobalPreferences {
         this.showChannelDestination.addValueObserver(value -> {
             host.println("Show Channel Destination: " + value);
             if (value) {
-                showSetting(extension.noteChannelSetting);
+                showSetting(NoteDestinationSettings.noteChannelSetting);
                 showPopup("Channel Destination enabled");
             } else {
-                ((SettableRangedValue) extension.noteChannelSetting).set(0); // Set to Channel 1
-                hideSetting(extension.noteChannelSetting);
+                ((SettableRangedValue) NoteDestinationSettings.noteChannelSetting).set(0); // Set to Channel 1
+                hideSetting(NoteDestinationSettings.noteChannelSetting);
                 showPopup("Channel Destination disabled. All notes will be sent to Channel 1.");
             }
         });

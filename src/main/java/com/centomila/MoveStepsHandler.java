@@ -92,9 +92,8 @@ public class MoveStepsHandler {
         }
 
         try {
-            int channel = ((NoteDestinationSettings) extension.noteDestSettings).getCurrentChannelAsInt();
-            int noteDestination = ((NoteDestinationSettings) extension.noteDestSettings)
-                    .getCurrentNoteDestinationAsInt();
+            int channel =  NoteDestinationSettings.getCurrentChannelAsInt();
+            int noteDestination = NoteDestinationSettings.getCurrentNoteDestinationAsInt();
 
             EnumValue stepSizeSetting = (EnumValue) StepSizeSettings.stepSizSetting;
             EnumValue subdivisionSetting = (EnumValue) StepSizeSettings.stepSizSubdivisionSetting;
