@@ -33,7 +33,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
    // Step movement settings
    private MoveStepsHandler moveStepsHandler;
 
-   Setting toggleLauncherArrangerSetting;
+   
 
    GlobalPreferences preferences;
 
@@ -68,10 +68,14 @@ public class BitwigBuddyExtension extends ControllerExtension {
       arrangerClip.getPlayStop().markInterested();
       arrangerClip.clipLauncherSlot().isPlaying().markInterested();
 
+      SettingsHelper.init(this);
+      
+      // Initialize launcher/arranger toggle
+      ModeSelectSettings.init(this);
+      
       moveStepsHandler = new MoveStepsHandler(this);
       moveStepsHandler.init(documentState);
 
-      SettingsHelper.init(this);
 
       PatternSettings.init(this);
       RandomPattern.init(this);
@@ -79,39 +83,15 @@ public class BitwigBuddyExtension extends ControllerExtension {
       StepSizeSettings.init(this);
       PostActionSettings.init(this);
       ClipUtils.init(this);
+      
 
-      // Initialize launcher/arranger toggle
-      initToggleLauncherArrangerSetting();
 
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BitwigBuddy Initialized! Have fun!");
    }
 
-   public void testConsole() {
-      getHost().println("Test console message");
-   }
 
-   /**
-    * Initializes the clip destination toggle.
-    * Allows switching between launcher and arranger clip modes,
-    * determining where patterns will be generated.
-    */
-   private void initToggleLauncherArrangerSetting() {
-      // Launcher/Arranger toggle
-      final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] { "Launcher", "Arranger", };
-      toggleLauncherArrangerSetting = (Setting) documentState.getEnumSetting("Destination Launcher/Arranger", "Z",
-            TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
-            TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
 
-      ((EnumValue) toggleLauncherArrangerSetting).addValueObserver(newValue -> {
-         PopupUtils.showPopup("Destination: " + newValue);
-         if (newValue.equals("Arranger")) {
-            disableSetting(PostActionSettings.duplicateClipSetting);
-         } else {
-            enableSetting(PostActionSettings.duplicateClipSetting);
-         }
-      });
-   }
 
    /**
     * Generates a drum pattern based on current settings.
@@ -131,7 +111,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
     * @return The active Clip object (either launcher or arranger clip)
     */
    public Clip getLauncherOrArrangerAsClip() {
-      return ClipUtils.getLauncherOrArrangerAsClip(toggleLauncherArrangerSetting, arrangerClip, cursorClip);
+      return ClipUtils.getLauncherOrArrangerAsClip(ModeSelectSettings.toggleLauncherArrangerSetting, arrangerClip, cursorClip);
    }
 
    @Override
@@ -153,10 +133,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
    public DocumentState getDocumentState() {
       return documentState;
-   }
-
-   public void setToggleLauncherArrangerSetting(Setting toggleLauncherArrangerSetting) {
-      this.toggleLauncherArrangerSetting = toggleLauncherArrangerSetting;
    }
 
    public MoveStepsHandler getMoveStepsHandler() {

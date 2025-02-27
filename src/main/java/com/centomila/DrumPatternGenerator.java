@@ -38,7 +38,7 @@ public class DrumPatternGenerator {
             Clip clip) {
 
         // Make visible if is out of view
-        if (((EnumValue) extension.toggleLauncherArrangerSetting).get().equals("Launcher")) {
+        if (((EnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).get().equals("Launcher")) {
             clip.getTrack().makeVisibleInMixer();
         } else {
             clip.getTrack().makeVisibleInArranger();
@@ -84,7 +84,7 @@ public class DrumPatternGenerator {
         if (((EnumValue) duplicateClipSetting).get().equals("On")) {
             ClipLauncherSlot clipLauncherSlot = clip.clipLauncherSlot();
 
-            if (((EnumValue) extension.toggleLauncherArrangerSetting).get().equals("Launcher")) {
+            if (((EnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).get().equals("Launcher")) {
 
                 if (clipLauncherSlot != null) {
                     clipLauncherSlot.duplicateClip();
