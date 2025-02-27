@@ -1,10 +1,7 @@
 package com.centomila;
 
 // import static com.centomila.utils.PopupUtils.*;
-import static com.centomila.RandomPattern.*;
-import static com.centomila.utils.PopupUtils.showPopup;
 import static com.centomila.PostActionSettings.*;
-import com.centomila.StepSizeSettings;
 
 import java.util.Arrays;
 import com.bitwig.extension.controller.api.Clip;
@@ -12,11 +9,6 @@ import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.StringValue;
 import com.bitwig.extension.controller.api.ClipLauncherSlot;
-import com.bitwig.extension.controller.api.TimelineEditor;
-import com.bitwig.extension.controller.api.DetailEditor;
-import com.bitwig.extension.controller.api.Settings;
-
-import com.bitwig.extension.controller.api.Setting;
 
 public class DrumPatternGenerator {
     private final GlobalPreferences preferences;
@@ -30,10 +22,6 @@ public class DrumPatternGenerator {
      * 
      * @param extension                 The BitwigBuddy extension instance
      * @param clip                      Target clip for pattern generation
-     * @param noteDestSettings          Note destination and channel settings
-     * @param patternSelectorSetting    Pattern preset selector
-     * @param patternTypeSetting        Pattern type (Random/Custom/Predefined)
-     * @param autoReversePatternSetting Pattern reversal setting
      * 
      *                                  Process:
      *                                  1. Configures note length and step size
@@ -47,11 +35,7 @@ public class DrumPatternGenerator {
      */
     public static void generatePattern(BitwigBuddyExtension extension,
             Clip clip,
-            NoteDestinationSettings noteDestSettings,
-            Setting patternSelectorSetting,
-            Setting patternTypeSetting,
-            Setting presetPatternStringSetting,
-            Setting autoReversePatternSetting) {
+            NoteDestinationSettings noteDestSettings) {
 
         // Make visible if is out of view
         if (((EnumValue) extension.toggleLauncherArrangerSetting).get().equals("Launcher")) {
@@ -77,18 +61,18 @@ public class DrumPatternGenerator {
 
         // Determine the type of pattern to generate
         int[] pattern = new int[16];
-        String patternType = ((EnumValue) patternTypeSetting).get();
+        String patternType = ((EnumValue) PatternSettings.patternTypeSetting).get();
         if (patternType.equals("Random")) {
-            pattern = generateRandomPattern(extension);
+            pattern = RandomPattern.generateRandomPattern(extension);
 
         } else {
-            String patternString = ((StringValue) presetPatternStringSetting).get();
+            String patternString = ((StringValue) PatternSettings.presetPatternStringSetting).get();
             // convert to an int array
             pattern = parsePatternString(patternString);
         }
 
         // Optionally reverse the pattern if required
-        if (((EnumValue) autoReversePatternSetting).get().equals("Reverse")) {
+        if (((EnumValue) PatternSettings.reversePatternSetting).get().equals("Reverse")) {
             reversePattern(pattern);
         }
 

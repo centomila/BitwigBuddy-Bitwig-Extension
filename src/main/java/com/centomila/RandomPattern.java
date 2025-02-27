@@ -148,7 +148,7 @@ public class RandomPattern {
                 showPopup("Random Pattern has filled " + count + " steps out of " + stepsQty + " Density: " + density);
 
                 String patternString = Arrays.toString(pattern).replaceAll("[\\[\\]]", "");
-                ((SettableStringValue) extension.presetPatternStringSetting).set(patternString);
+                ((SettableStringValue) PatternSettings.presetPatternStringSetting).set(patternString);
 
                 return pattern;
         }

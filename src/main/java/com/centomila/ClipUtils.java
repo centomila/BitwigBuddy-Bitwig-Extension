@@ -13,33 +13,7 @@ import com.bitwig.extension.controller.api.NoteStep;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 
-/**
- * Utility class providing methods for manipulating clips in Bitwig Studio.
- * This class contains various static methods for handling clip operations such as
- * loop length modification, step movement, and rotation.
- * 
- * <p>The class primarily works with Bitwig's Clip API and provides functionality for:
- * <ul>
- *   <li>Switching between launcher and arranger clips</li>
- *   <li>Modifying clip loop lengths and playback points</li>
- *   <li>Moving and rotating steps within clips</li>
- *   <li>Initializing clip-related settings and controls</li>
- * </ul>
- * 
- * <p>The class uses a concept of "steps" which represent individual note events
- * within a clip, and provides methods to manipulate these steps either by moving
- * them linearly or rotating them within the clip boundaries.
- * 
- * <p>Note: This class is designed to work with the Bitwig Studio API and requires
- * appropriate initialization of the Bitwig extension system.
- * 
- * @see com.bitwig.extension.controller.api.Clip
- * @see com.bitwig.extension.controller.api.NoteStep
- * @see com.centomila.BitwigBuddyExtension
- * 
- * @author centomila
- * @version 1.0
- */
+
 public class ClipUtils {
     private static String CATEGORY_OTHER = "Other";
 

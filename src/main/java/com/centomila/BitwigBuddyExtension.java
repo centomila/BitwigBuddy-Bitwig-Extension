@@ -29,12 +29,12 @@ public class BitwigBuddyExtension extends ControllerExtension {
    Clip arrangerClip;
 
    DocumentState documentState;
-   // Pattern settings
-   Setting patternTypeSetting; // Pattern Type "Preset", "Random", "Custom"
-   Setting patternSelectorSetting; // List of default patterns
-   Setting customPresetSetting; // List of custom patterns
-   Setting presetPatternStringSetting; // Custom pattern string
-   Setting reversePatternSetting;
+   // // Pattern settings
+   // Setting patternTypeSetting; // Pattern Type "Preset", "Random", "Custom"
+   // Setting patternSelectorSetting; // List of default patterns
+   // Setting customPresetSetting; // List of custom patterns
+   // Setting presetPatternStringSetting; // Custom pattern string
+   // Setting reversePatternSetting;
 
 
    // // Step Size / Note Length settings
@@ -141,8 +141,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public void generateDrumPattern() {
       Clip clip = getLauncherOrArrangerAsClip();
       DrumPatternGenerator.generatePattern(
-            this, clip, noteDestSettings, patternSelectorSetting, patternTypeSetting, presetPatternStringSetting,
-            reversePatternSetting);
+            this, clip, noteDestSettings);
    }
 
    /**
@@ -176,14 +175,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
       return documentState;
    }
 
-   public void setPatternSelectorSetting(Setting patternSelectorSetting) {
-      this.patternSelectorSetting = patternSelectorSetting;
-   }
-
-   public void setCustomPresetSetting(Setting customPresetSetting) {
-      this.customPresetSetting = customPresetSetting;
-   }
-
 
 
    public void setNoteDestinationSetting(Setting noteDestinationSetting) {
@@ -207,10 +198,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
    }
 
 
-   public void setReversePatternSetting(Setting reversePatternSetting) {
-      this.reversePatternSetting = reversePatternSetting;
-   }
-
    public MoveStepsHandler getMoveStepsHandler() {
       return moveStepsHandler;
    }
@@ -227,12 +214,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.preferences = preferences;
    }
 
-   public Setting getPresetPatternStringSetting() {
-      return presetPatternStringSetting;
-   }
 
-   public void setPresetPatternStringSetting(Setting customPresetPatternSetting) {
-      this.presetPatternStringSetting = customPresetPatternSetting;
-   }
 
 }

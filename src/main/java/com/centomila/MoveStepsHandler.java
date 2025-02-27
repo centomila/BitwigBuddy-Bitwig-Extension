@@ -1,8 +1,6 @@
 package com.centomila;
 import static com.centomila.utils.PopupUtils.*;
 
-import com.centomila.StepSizeSettings;
-
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
