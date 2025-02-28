@@ -51,12 +51,12 @@ public class ModeSelectSettings {
 
     private static void initiObservers() {
         ((EnumValue) modeSelectSetting).addValueObserver(newValue -> {
-            PopupUtils.showPopup("Mode: " + newValue);
+            // PopupUtils.showPopup("Mode: " + newValue);
             toggleMode(newValue);
         });
 
         ((EnumValue) toggleLauncherArrangerSetting).addValueObserver(newValue -> {
-            PopupUtils.showPopup("Destination: " + newValue);
+            // PopupUtils.showPopup("Destination: " + newValue);
             if (newValue.equals("Arranger")) {
                 disableSetting(PostActionSettings.duplicateClipSetting);
             } else {
