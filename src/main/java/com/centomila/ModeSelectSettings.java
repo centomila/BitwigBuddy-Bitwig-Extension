@@ -2,6 +2,7 @@ package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.disableSetting;
 import static com.centomila.utils.SettingsHelper.enableSetting;
+import static com.centomila.utils.SettingsHelper.showSetting;
 
 import java.util.Random;
 
@@ -19,11 +20,9 @@ public class ModeSelectSettings {
 
     static Setting modeSelectSetting;
     static Setting toggleLauncherArrangerSetting;
-    
-        
 
     public static void init(BitwigBuddyExtension extension) {
-        
+
         initToggleModesSettings();
         initiObservers();
     }
@@ -95,23 +94,22 @@ public class ModeSelectSettings {
             setting.hide();
         }
 
+        for (Setting setting : PostActionSettings.allSettings) {
+            setting.hide();
+        }
+
         // StepSizeSettings.hideSettings();
         // NoteDestinationSettings.hideSettings();
         // VelocityShapeSettings.hideSettings();
         // PostActionSettings.hideSettings();
     }
 
+    // GENERATE MODE
     private static void gotoGenerateMode() {
         // Show generate settings
         // RandomPattern.showSettings();
         // for each Setting in RandomPattern.allSettings, showSetting(setting);
         // if presetPatternType is random
-
-        if (((EnumValue)PatternSettings.patternTypeSetting).get().equals("Random")) {
-            for (Setting setting : RandomPattern.allSettings) {
-                setting.show();
-            }
-        }
 
         // for each Setting in MoveStepsHandler.allSettings, showSetting(setting);
         for (Setting setting : MoveStepsHandler.allSettings) {
@@ -123,12 +121,14 @@ public class ModeSelectSettings {
             setting.show();
         }
 
-
+        PatternSettings.generatorTypeSelector(((EnumValue) PatternSettings.patternTypeSetting).get());
 
         // StepSizeSettings.showSettings();
         // NoteDestinationSettings.showSettings();
         // VelocityShapeSettings.showSettings();
-        // PostActionSettings.showSettings();
+
+        showSetting(PostActionSettings.allSettings);
+       PostActionSettings.showPostActionsSettings();
     }
 
 }

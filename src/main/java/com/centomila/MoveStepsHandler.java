@@ -1,4 +1,5 @@
 package com.centomila;
+
 import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.utils.SettingsHelper.*;
 
@@ -23,9 +24,10 @@ public class MoveStepsHandler {
     private static final int MAX_STEP_OFFSET = 128;
 
     private final BitwigBuddyExtension extension;
-    private EnumValue moveRotateStepsSetting;
-    private Signal moveFwd;
-    private Signal moveBwd;
+    private Setting moveRotateStepsSetting;
+    private Setting moveFwd;
+    private Setting moveBwd;
+    private Setting spacerMoveSteps;
     public static Setting[] allSettings;
 
     /**
@@ -52,14 +54,21 @@ public class MoveStepsHandler {
             throw new IllegalArgumentException("DocumentState cannot be null");
         }
         // Initialize SettingsHelper with the extension
-        
+
         initializeMoveRotateSetting(documentState);
         initializeMoveSignals(documentState);
     }
 
     private void initializeMoveRotateSetting(DocumentState documentState) {
+        // Spacer
+        spacerMoveSteps = (Setting) SettingsHelper.createStringSetting(
+                "MOVE/ROTATE STEPS-------------",
+                CATEGORY_MOVE_STEPS,
+                0,
+                "---------------------------------------------------");
+        SettingsHelper.disableSetting(spacerMoveSteps);
         // Replace direct call with SettingsHelper
-        moveRotateStepsSetting = SettingsHelper.createEnumSetting(
+        moveRotateStepsSetting = (Setting) SettingsHelper.createEnumSetting(
                 "Move/Rotate",
                 CATEGORY_MOVE_STEPS,
                 MOVE_MODES,
@@ -67,22 +76,22 @@ public class MoveStepsHandler {
     }
 
     private void initializeMoveSignals(DocumentState documentState) {
+
         // Use SettingsHelper to create signal settings
-        moveFwd = SettingsHelper.createSignalSetting(
+        moveFwd = (Setting) SettingsHelper.createSignalSetting(
                 "Move Steps Forward",
                 CATEGORY_MOVE_STEPS,
                 ">>>");
-        moveBwd = SettingsHelper.createSignalSetting(
+        moveBwd = (Setting) SettingsHelper.createSignalSetting(
                 "Move Steps Backward",
                 CATEGORY_MOVE_STEPS,
                 "<<<");
 
-        allSettings = new Setting[] { (Setting) moveRotateStepsSetting, (Setting) moveFwd, (Setting) moveBwd };
-            
-        
+        allSettings = new Setting[] { (Setting) spacerMoveSteps, (Setting) moveRotateStepsSetting, (Setting) moveFwd,
+                (Setting) moveBwd };
 
-        moveFwd.addSignalObserver(() -> handleStepMovement(1));
-        moveBwd.addSignalObserver(() -> handleStepMovement(-1));
+        ((Signal) moveFwd).addSignalObserver(() -> handleStepMovement(1));
+        ((Signal) moveBwd).addSignalObserver(() -> handleStepMovement(-1));
     }
 
     /**
@@ -105,7 +114,7 @@ public class MoveStepsHandler {
         }
 
         try {
-            int channel =  NoteDestinationSettings.getCurrentChannelAsInt();
+            int channel = NoteDestinationSettings.getCurrentChannelAsInt();
             int noteDestination = NoteDestinationSettings.getCurrentNoteDestinationAsInt();
 
             EnumValue stepSizeSetting = (EnumValue) StepSizeSettings.stepSizSetting;
@@ -118,7 +127,7 @@ public class MoveStepsHandler {
 
             String stepSize = stepSizeSetting.get();
             String subdivision = subdivisionSetting.get();
-            boolean isRotate = moveRotateStepsSetting.get().equals(MOVE_MODES[1]);
+            boolean isRotate = ((EnumValue) moveRotateStepsSetting).get().equals(MOVE_MODES[1]);
 
             ClipUtils.handleStepMovement(
                     clip,
