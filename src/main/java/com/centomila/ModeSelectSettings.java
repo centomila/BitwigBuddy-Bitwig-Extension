@@ -2,6 +2,9 @@ package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.disableSetting;
 import static com.centomila.utils.SettingsHelper.enableSetting;
+
+import java.util.Random;
+
 import static com.centomila.utils.SettingsHelper.createEnumSetting;
 
 import com.bitwig.extension.controller.api.DocumentState;
@@ -50,6 +53,7 @@ public class ModeSelectSettings {
     private static void initiObservers() {
         ((EnumValue) modeSelectSetting).addValueObserver(newValue -> {
             PopupUtils.showPopup("Mode: " + newValue);
+            toggleMode(newValue);
         });
 
         ((EnumValue) toggleLauncherArrangerSetting).addValueObserver(newValue -> {
@@ -61,6 +65,51 @@ public class ModeSelectSettings {
             }
         });
 
+    }
+
+    private static void toggleMode(String newValue) {
+        String currentMode = newValue;
+        if (currentMode.equals("Generate")) {
+            // ((SettableEnumValue) modeSelectSetting).set("Edit");
+            showGenerateSettings();
+        } else {
+            // ((SettableEnumValue) modeSelectSetting).set("Generate");
+            hideGenerateSettings();
+        }
+    }
+
+    private static void hideGenerateSettings() {
+        // Hide generate settings
+        // RandomPattern.hideSettings();
+        // for each Setting in RandomPattern.allSettings, hideSetting(setting);
+
+        for (Setting setting : RandomPattern.allSettings) {
+            setting.hide();
+        }
+
+        // StepSizeSettings.hideSettings();
+        // NoteDestinationSettings.hideSettings();
+        // VelocityShapeSettings.hideSettings();
+        // PostActionSettings.hideSettings();
+    }
+
+    private static void showGenerateSettings() {
+        // Show generate settings
+        // RandomPattern.showSettings();
+        // for each Setting in RandomPattern.allSettings, showSetting(setting);
+        // if presetPatternType is random
+
+        if (((EnumValue)PatternSettings.patternTypeSetting).get().equals("Random")) {
+            for (Setting setting : RandomPattern.allSettings) {
+                setting.show();
+            }
+        }
+
+
+        // StepSizeSettings.showSettings();
+        // NoteDestinationSettings.showSettings();
+        // VelocityShapeSettings.showSettings();
+        // PostActionSettings.showSettings();
     }
 
 }

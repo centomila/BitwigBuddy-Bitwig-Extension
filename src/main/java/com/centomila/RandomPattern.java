@@ -18,6 +18,7 @@ public class RandomPattern {
         public static Setting randomDensitySetting;
         public static Setting randomVelocitySettingShape;
         public static Setting randomStepQtySetting;
+        public static Setting[] allSettings;
 
         public static void init(BitwigBuddyExtension extension) {
 
@@ -65,6 +66,8 @@ public class RandomPattern {
 
                 // init observers
                 initiObserver(extension);
+                allSettings = new Setting[] { randomMinVelocityVariationSetting, randomMaxVelocityVariationSetting,
+                                randomDensitySetting, randomVelocitySettingShape, randomStepQtySetting };
         }
 
         // Observers
