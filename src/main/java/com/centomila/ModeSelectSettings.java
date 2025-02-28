@@ -98,6 +98,8 @@ public class ModeSelectSettings {
             setting.hide();
         }
 
+        EditClipSettings.showEditClipSettings();
+
         // StepSizeSettings.hideSettings();
         // NoteDestinationSettings.hideSettings();
         // VelocityShapeSettings.hideSettings();
@@ -105,7 +107,7 @@ public class ModeSelectSettings {
     }
 
     // GENERATE MODE
-    private static void gotoGenerateMode() {
+    public static void gotoGenerateMode() {
         // Show generate settings
         // RandomPattern.showSettings();
         // for each Setting in RandomPattern.allSettings, showSetting(setting);
@@ -129,6 +131,8 @@ public class ModeSelectSettings {
 
         showSetting(PostActionSettings.allSettings);
        PostActionSettings.showPostActionsSettings();
+
+       EditClipSettings.hideEditClipSettings();
     }
 
 }
