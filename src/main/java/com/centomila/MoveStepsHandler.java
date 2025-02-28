@@ -1,10 +1,13 @@
 package com.centomila;
 import static com.centomila.utils.PopupUtils.*;
+import static com.centomila.utils.SettingsHelper.*;
 
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
+import com.centomila.utils.SettingsHelper;
 
 /**
  * Handles the movement and rotation of steps in a Bitwig clip.
@@ -21,6 +24,9 @@ public class MoveStepsHandler {
 
     private final BitwigBuddyExtension extension;
     private EnumValue moveRotateStepsSetting;
+    private Signal moveFwd;
+    private Signal moveBwd;
+    public static Setting[] allSettings;
 
     /**
      * Creates a new MoveStepsHandler instance.
@@ -45,13 +51,15 @@ public class MoveStepsHandler {
         if (documentState == null) {
             throw new IllegalArgumentException("DocumentState cannot be null");
         }
-
+        // Initialize SettingsHelper with the extension
+        
         initializeMoveRotateSetting(documentState);
         initializeMoveSignals(documentState);
     }
 
     private void initializeMoveRotateSetting(DocumentState documentState) {
-        moveRotateStepsSetting = documentState.getEnumSetting(
+        // Replace direct call with SettingsHelper
+        moveRotateStepsSetting = SettingsHelper.createEnumSetting(
                 "Move/Rotate",
                 CATEGORY_MOVE_STEPS,
                 MOVE_MODES,
@@ -59,14 +67,19 @@ public class MoveStepsHandler {
     }
 
     private void initializeMoveSignals(DocumentState documentState) {
-        Signal moveFwd = documentState.getSignalSetting(
+        // Use SettingsHelper to create signal settings
+        moveFwd = SettingsHelper.createSignalSetting(
                 "Move Steps Forward",
                 CATEGORY_MOVE_STEPS,
                 ">>>");
-        Signal moveBwd = documentState.getSignalSetting(
+        moveBwd = SettingsHelper.createSignalSetting(
                 "Move Steps Backward",
                 CATEGORY_MOVE_STEPS,
                 "<<<");
+
+        allSettings = new Setting[] { (Setting) moveRotateStepsSetting, (Setting) moveFwd, (Setting) moveBwd };
+            
+        
 
         moveFwd.addSignalObserver(() -> handleStepMovement(1));
         moveBwd.addSignalObserver(() -> handleStepMovement(-1));

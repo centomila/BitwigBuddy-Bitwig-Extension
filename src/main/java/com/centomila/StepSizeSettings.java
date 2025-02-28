@@ -10,6 +10,7 @@ public class StepSizeSettings {
       public static Setting noteLengthSetting; // How long each note should be
       public static Setting stepSizSetting;
       public static Setting stepSizSubdivisionSetting;
+      public static Setting[] allSettings;
       private static String CATEGORY_CLIP = "Clip";
 
       public static void init(BitwigBuddyExtension extension) {
@@ -37,6 +38,7 @@ public class StepSizeSettings {
                         "1/16");
 
             setupStepSizeObservers(extension);
+            allSettings = new Setting[] { spacerStepSize, stepSizSetting, stepSizSubdivisionSetting, noteLengthSetting };
 
       }
 

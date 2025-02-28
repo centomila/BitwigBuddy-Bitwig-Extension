@@ -71,14 +71,14 @@ public class ModeSelectSettings {
         String currentMode = newValue;
         if (currentMode.equals("Generate")) {
             // ((SettableEnumValue) modeSelectSetting).set("Edit");
-            showGenerateSettings();
+            gotoGenerateMode();
         } else {
             // ((SettableEnumValue) modeSelectSetting).set("Generate");
-            hideGenerateSettings();
+            gotoEditMode();
         }
     }
 
-    private static void hideGenerateSettings() {
+    private static void gotoEditMode() {
         // Hide generate settings
         // RandomPattern.hideSettings();
         // for each Setting in RandomPattern.allSettings, hideSetting(setting);
@@ -87,13 +87,17 @@ public class ModeSelectSettings {
             setting.hide();
         }
 
+        for (Setting setting : MoveStepsHandler.allSettings) {
+            setting.show();
+        }
+
         // StepSizeSettings.hideSettings();
         // NoteDestinationSettings.hideSettings();
         // VelocityShapeSettings.hideSettings();
         // PostActionSettings.hideSettings();
     }
 
-    private static void showGenerateSettings() {
+    private static void gotoGenerateMode() {
         // Show generate settings
         // RandomPattern.showSettings();
         // for each Setting in RandomPattern.allSettings, showSetting(setting);
@@ -104,6 +108,12 @@ public class ModeSelectSettings {
                 setting.show();
             }
         }
+
+        // for each Setting in MoveStepsHandler.allSettings, showSetting(setting);
+        for (Setting setting : MoveStepsHandler.allSettings) {
+            setting.hide();
+        }
+
 
 
         // StepSizeSettings.showSettings();
