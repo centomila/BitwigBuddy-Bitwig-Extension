@@ -91,6 +91,10 @@ public class ModeSelectSettings {
             setting.show();
         }
 
+        for (Setting setting : PatternSettings.allSettings) {
+            setting.hide();
+        }
+
         // StepSizeSettings.hideSettings();
         // NoteDestinationSettings.hideSettings();
         // VelocityShapeSettings.hideSettings();
@@ -112,6 +116,11 @@ public class ModeSelectSettings {
         // for each Setting in MoveStepsHandler.allSettings, showSetting(setting);
         for (Setting setting : MoveStepsHandler.allSettings) {
             setting.hide();
+        }
+
+        // hide PatternSettings
+        for (Setting setting : PatternSettings.allSettings) {
+            setting.show();
         }
 
 

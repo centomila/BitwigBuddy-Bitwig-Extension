@@ -27,6 +27,8 @@ public class PatternSettings {
     public static Setting customPresetSetting; // List of custom patterns
     public static Setting presetPatternStringSetting; // Custom pattern string
     public static Setting reversePatternSetting;
+    public static Setting spacerGenerate;
+    public static Setting[] allSettings;
     private final BitwigBuddyExtension extension;
     private static String CATEGORY_GENERATE_PATTERN = "Generate Pattern";
     private String lastDefaultPresetUsed = "Kick: Four on the Floor";
@@ -70,6 +72,8 @@ public class PatternSettings {
         initCustomPresetSetting(documentState);
         initCustomPresetPatternSetting(documentState);
         initReversePatternSetting(documentState);
+        allSettings = new Setting[] { spacerGenerate, patternTypeSetting, patternSelectorSetting, customPresetSetting,
+                presetPatternStringSetting, reversePatternSetting };
     }
 
     /**
@@ -241,7 +245,7 @@ public class PatternSettings {
      * @param documentState The current document state.
      */
     private void initSpacer(DocumentState documentState) {
-        Setting spacerGenerate = (Setting) documentState.getStringSetting("PATTERN-----------------------------",
+        spacerGenerate = (Setting) documentState.getStringSetting("PATTERN-----------------------------",
                 CATEGORY_GENERATE_PATTERN, 0,
                 "---------------------------------------------------");
         disableSetting(spacerGenerate); // Spacers are always disabled
