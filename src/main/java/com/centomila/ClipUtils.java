@@ -225,7 +225,7 @@ public class ClipUtils {
 
         int[] velocityShapesInt = VelocityShape.applyVelocityShape(selectedStepsAsInt,
                 (((EnumValue) ProgramPattern.programVelocitySettingShape).get()),
-                1, 127);
+                ProgramPattern.getMinVelocityAsInt(),ProgramPattern.getMaxVelocityAsInt());
 
         // apply velocity to selected steps mapping the velocity shapes
         for (int i = 0; i < selectedSteps.size(); i++) {

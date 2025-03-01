@@ -166,4 +166,12 @@ public class ProgramPattern {
                 hideAndDisableSetting(allSettings);
         }
 
+        public static int getMinVelocityAsInt() {
+                return (int) Math.round(((SettableRangedValue) programMinVelocityVariationSetting).getRaw());
+        }
+
+        public static int getMaxVelocityAsInt() {
+                return (int) Math.round(((SettableRangedValue) programMaxVelocityVariationSetting).getRaw());
+        }
+
 }
