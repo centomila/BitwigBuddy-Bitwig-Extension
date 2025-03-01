@@ -198,10 +198,14 @@ public class ClipUtils {
         // Calculate clip length
         double clipLength = clipStop.get() - clipStart.get();
         extension.getHost().println("Clip length: " + clipLength);
+
+        // Count the number of possible steps in the clip
+        int numSteps = (int) Math.round(clipLength * 1.0 / Utils.getNoteLengthAsDouble("1/16", "1"));
+        extension.getHost().println("Number of steps: " + numSteps);
         
 
         List<NoteStep> selectedSteps = new ArrayList<>();
-        for (int i = 0; i < 128; i++) {
+        for (int i = 0; i < numSteps; i++) {
             NoteStep step = clip.getStep(channel, i, noteDestination);
             if (step != null && step.isIsSelected()) {
                 selectedSteps.add(step);
