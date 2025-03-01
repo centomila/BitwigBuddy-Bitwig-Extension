@@ -15,7 +15,7 @@ import com.centomila.utils.SettingsHelper;
  * This class manages settings and signals for step manipulation operations.
  */
 public class MoveStepsHandler {
-    private static final String CATEGORY_MOVE_STEPS = "Move Steps";
+    private static final String CATEGORY_MOVE_STEPS = "2 Move Steps";
     private static final String[] MOVE_MODES = { "Move", "Rotate" };
     private static final String DEFAULT_MOVE_MODE = MOVE_MODES[0];
     private static final String ERROR_NO_CLIP = "No clip selected";

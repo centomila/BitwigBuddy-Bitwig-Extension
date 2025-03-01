@@ -31,7 +31,7 @@ public class PatternSettings {
     public static Setting spacerGenerate;
     public static Setting[] allSettings;
     private final BitwigBuddyExtension extension;
-    private static String CATEGORY_GENERATE_PATTERN = "Generate Pattern";
+    private static String CATEGORY_GENERATE_PATTERN = "3 Generate Pattern";
     private static String lastDefaultPresetUsed = "Kick: Four on the Floor";
     private static String lastCustomPresetUsed = null;
     private String lastStringPatternUsed = "100,0,0,0,100,0,0,0,100,0,0,0,100,0,0,0";

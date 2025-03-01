@@ -14,7 +14,7 @@ import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 
 public class ClipUtils {
-    private static String CATEGORY_OTHER = "Other";
+    private static String CATEGORY_OTHER = "99 Other";
 
     /**
      * Initializes the ClipUtils class by creating and configuring settings for

@@ -11,7 +11,7 @@ public class StepSizeSettings {
       public static Setting stepSizSetting;
       public static Setting stepSizSubdivisionSetting;
       public static Setting[] allSettings;
-      private static String CATEGORY_CLIP = "Clip";
+      private static String CATEGORY_CLIP = "5 Clip";
 
       public static void init(BitwigBuddyExtension extension) {
             Setting spacerStepSize = (Setting) createStringSetting(

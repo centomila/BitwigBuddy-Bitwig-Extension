@@ -1,12 +1,9 @@
 package com.centomila;
 
-import static com.centomila.utils.SettingsHelper.disableSetting;
-import static com.centomila.utils.SettingsHelper.enableSetting;
-import static com.centomila.utils.SettingsHelper.showSetting;
+import static com.centomila.utils.SettingsHelper.*;
 
 import java.util.Random;
 
-import static com.centomila.utils.SettingsHelper.createEnumSetting;
 
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
@@ -17,8 +14,9 @@ import com.bitwig.extension.controller.api.Signal;
 import com.centomila.utils.PopupUtils;
 
 public class ModeSelectSettings {
-    private static final String CATEGORY_OTHER = "Mode Select";
+    private static final String CATEGORY_MODE_SELECT = "1 Mode Select";
 
+    private static Setting spacerSelectModSetting;
     public static Setting modeGenerateEditToggleSetting;
     public static Setting toggleLauncherArrangerSetting;
 
@@ -27,14 +25,18 @@ public class ModeSelectSettings {
         // Mode select setting
         final String[] MODE_SELECT_OPTIONS = new String[] { "Generate", "Edit" };
 
-        modeGenerateEditToggleSetting = (Setting) createEnumSetting("Generate/Edit Mode", "A",
+        spacerSelectModSetting = (Setting) createStringSetting("MODE SELECT------------------------", CATEGORY_MODE_SELECT, 0,
+                "---------------------------------------------------");
+        disableSetting(spacerSelectModSetting);
+
+        modeGenerateEditToggleSetting = (Setting) createEnumSetting("Generate/Edit Mode", CATEGORY_MODE_SELECT,
                 MODE_SELECT_OPTIONS,
                 MODE_SELECT_OPTIONS[0]);
 
         // Launcher/Arranger toggle
         final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] { "Launcher", "Arranger", };
 
-        toggleLauncherArrangerSetting = (Setting) createEnumSetting("Destination Launcher/Arranger", CATEGORY_OTHER,
+        toggleLauncherArrangerSetting = (Setting) createEnumSetting("Destination Launcher/Arranger", CATEGORY_MODE_SELECT,
                 TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
                 TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
 

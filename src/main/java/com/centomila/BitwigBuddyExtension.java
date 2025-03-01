@@ -72,9 +72,11 @@ public class BitwigBuddyExtension extends ControllerExtension {
       
       // Initialize launcher/arranger toggle
       
-
-      
       ModeSelectSettings.init(this);
+
+      moveStepsHandler = new MoveStepsHandler(this);
+      moveStepsHandler.init(documentState);
+      
       EditClipSettings.init(this);
       
       PatternSettings.init(this);
@@ -84,8 +86,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       PostActionSettings.init(this);
       ClipUtils.init(this);
 
-      moveStepsHandler = new MoveStepsHandler(this);
-      moveStepsHandler.init(documentState);
+
       
       
       ModeSelectSettings.gotoGenerateMode();

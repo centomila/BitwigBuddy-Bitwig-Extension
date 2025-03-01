@@ -16,7 +16,7 @@ public class PostActionSettings {
         static Setting launchClipSetting;
         static Setting[] allSettings;
 
-        private static String CATEGORY_POST_ACTIONS = "Post Actions";
+        private static String CATEGORY_POST_ACTIONS = "9 Post Actions";
 
         public static void init(BitwigBuddyExtension extension) {
                 // Initialize spacer for "Post Actions"

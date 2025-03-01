@@ -36,7 +36,7 @@ public class NoteDestinationSettings {
       noteDestSettings = settings;
    }
 
-   private static String CATEGORY_NOTE_DESTINATION = "Note Destination";
+   private static String CATEGORY_NOTE_DESTINATION = "4 Note Destination";
 
    /**
     * Initializes all note destination settings and observers.
@@ -64,19 +64,19 @@ public class NoteDestinationSettings {
 
       noteDestinationSetting = (Setting) createEnumSetting(
             "Note Destination",
-            "Note Destination",
+            CATEGORY_NOTE_DESTINATION,
             noteDestinationOptions,
             noteDestinationOptions[0]);
       noteOctaveSetting = (Setting) createEnumSetting(
             "Note Octave",
-            "Note Destination",
+            CATEGORY_NOTE_DESTINATION,
             octaveDestinationOptions,
             octaveDestinationOptions[3]);
 
       // Setup note channel setting
       noteChannelSetting = (Setting) createNumberSetting(
             "Note Channel",
-            "Note Destination",
+            CATEGORY_NOTE_DESTINATION,
             1,
             16,
             1,
@@ -93,7 +93,7 @@ public class NoteDestinationSettings {
       final String[] LEARN_NOTE_OPTIONS = new String[] { "On", "Off" };
 
       learnNoteSetting = (Setting) createEnumSetting(
-            "Learn Note", "Note Destination", LEARN_NOTE_OPTIONS, "Off");
+            "Learn Note", CATEGORY_NOTE_DESTINATION, LEARN_NOTE_OPTIONS, "Off");
 
       // Setup note destination observers
       setupNoteDestinationObservers(extension);

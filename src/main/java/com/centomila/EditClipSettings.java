@@ -21,7 +21,7 @@ public class EditClipSettings {
     public static Setting editClipSpacer;
     public static Setting editClipBtnSignal;
     public static Setting[] allSettings;
-    private static final String CATEGORY_EDIT_CLIP = "Edit Clip";
+    private static final String CATEGORY_EDIT_CLIP = "3 Edit Clip";
 
     public static void init(BitwigBuddyExtension extension) {
         EditClipSettings.extension = extension;
