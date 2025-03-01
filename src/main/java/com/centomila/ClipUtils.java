@@ -188,29 +188,25 @@ public class ClipUtils {
         }
     }
 
-    public static List<NoteStep> returnSelectedSteps(BitwigBuddyExtension extension) {
+    public static List<NoteStep> applyVelocityShapeToSelectedNotes(BitwigBuddyExtension extension) {
         Clip clip = extension.getLauncherOrArrangerAsClip();
         BeatTimeValue clipStart = clip.getPlayStart();
         BeatTimeValue clipStop = clip.getPlayStop();
         int channel = NoteDestinationSettings.getCurrentChannelAsInt();
-        int noteDestination = NoteDestinationSettings.getCurrentNoteDestinationAsInt();
 
         // Calculate clip length
         double clipLength = clipStop.get() - clipStart.get();
         extension.getHost().println("Clip length: " + clipLength);
-
-        // Count the number of possible steps in the clip
-        int numSteps = (int) Math.round(clipLength * 1.0 / Utils.getNoteLengthAsDouble("1/16", "1"));
-        extension.getHost().println("Number of steps: " + numSteps);
-        
+       
 
         List<NoteStep> selectedSteps = new ArrayList<>();
-        for (int i = 0; i < numSteps; i++) {
-            NoteStep step = clip.getStep(channel, i, noteDestination);
+        for (int i = 0; i < 127; i++) {
+            for (int note = 0; note < 128; note++) {
+            NoteStep step = clip.getStep(channel, i, note);
             if (step != null && step.isIsSelected()) {
                 selectedSteps.add(step);
             }
-            extension.getHost().println("Step " + i + " selected: " + step.isIsSelected());
+            }
         }
         selectedSteps.forEach(step -> extension.getHost().println("Step: " + step.x() + ", " + step.y()));
 

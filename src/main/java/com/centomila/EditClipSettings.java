@@ -62,7 +62,7 @@ public class EditClipSettings {
         // double clipLength = clipStop.get() - clipStart.get();
         // showPopup("Clip length: " + clipLength);
 
-        ClipUtils.returnSelectedSteps(extension);
+        ClipUtils.applyVelocityShapeToSelectedNotes(extension);
         
         
 
