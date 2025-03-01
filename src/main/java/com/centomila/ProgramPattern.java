@@ -139,7 +139,9 @@ public class ProgramPattern {
                 // Apply velocity type
                 String velocityType = ((SettableEnumValue) programVelocitySettingShape).get();
 
-                applyVelocityShape(pattern, velocityType, minVelocity, maxVelocity);
+                int[] velocityPattern = applyVelocityShape(pattern, velocityType, minVelocity, maxVelocity);
+
+                pattern = velocityPattern;
 
                 // Count how many steps are > 0 and show a popup
                 int count = 0;

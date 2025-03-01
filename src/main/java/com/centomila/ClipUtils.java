@@ -1,7 +1,9 @@
 package com.centomila;
 
+import static com.centomila.VelocityShape.velocityShapes;
 import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.utils.SettingsHelper.*;
+import com.centomila.ProgramPattern;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -10,10 +12,14 @@ import java.util.List;
 import com.centomila.BitwigBuddyExtension;
 import com.bitwig.extension.controller.api.BeatTimeValue;
 import com.bitwig.extension.controller.api.Clip;
+import com.bitwig.extension.controller.api.DoubleValue;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.IntegerValue;
 import com.bitwig.extension.controller.api.NoteStep;
+import com.bitwig.extension.controller.api.RangedValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
+import com.bitwig.extension.controller.api.Value;
 
 public class ClipUtils {
     private static String CATEGORY_OTHER = "99 Other";
@@ -26,7 +32,8 @@ public class ClipUtils {
      * @param extension The BitwigBuddyExtension object to which the settings will
      *                  be added.
      */
-    public static void init(BitwigBuddyExtension extension) {;
+    public static void init(BitwigBuddyExtension extension) {
+        ;
         Setting spacerOther = (Setting) createStringSetting(
                 "OTHER--------------------------------",
                 CATEGORY_OTHER,
@@ -197,23 +204,37 @@ public class ClipUtils {
         // Calculate clip length
         double clipLength = clipStop.get() - clipStart.get();
         extension.getHost().println("Clip length: " + clipLength);
-       
 
         List<NoteStep> selectedSteps = new ArrayList<>();
         for (int i = 0; i < 127; i++) {
             for (int note = 0; note < 128; note++) {
-            NoteStep step = clip.getStep(channel, i, note);
-            if (step != null && step.isIsSelected()) {
-                selectedSteps.add(step);
-            }
+                NoteStep step = clip.getStep(channel, i, note);
+                if (step != null && step.isIsSelected()) {
+                    selectedSteps.add(step);
+                }
             }
         }
         selectedSteps.forEach(step -> extension.getHost().println("Step: " + step.x() + ", " + step.y()));
 
-        // Set velocity of selected steps
-        selectedSteps.forEach(step -> step.setVelocity(127.0 / 127.0));
+        int[] selectedStepsAsInt = selectedSteps.stream().mapToInt(step -> {
+            int shapeIndex = (int) Math.round((velocityShapes.length - 1) * Math.random());
+            return (int) shapeIndex;
+        }).toArray();
 
-        extension.getHost().println(    "Selected steps: " + selectedSteps.size());
+        extension.getHost().println("Selected steps as int: " + selectedStepsAsInt.length);
+
+        int[] velocityShapesInt = VelocityShape.applyVelocityShape(selectedStepsAsInt,
+                (((EnumValue) ProgramPattern.programVelocitySettingShape).get()),
+                1, 127);
+
+        // apply velocity to selected steps mapping the velocity shapes
+        for (int i = 0; i < selectedSteps.size(); i++) {
+            selectedSteps.get(i).setVelocity(velocityShapesInt[i] / 127.0);
+        }
+
+        // Set velocity of selected steps
+        // selectedSteps.forEach(step -> step.setVelocity(127.0 / 127.0));
+        extension.getHost().println("Selected steps: " + selectedSteps.size());
 
         // return selected steps
         return selectedSteps;
