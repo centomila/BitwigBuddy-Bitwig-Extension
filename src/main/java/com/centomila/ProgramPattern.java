@@ -12,18 +12,18 @@ import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Setting;
 
-public class RandomPattern {
-        public static Setting randomMinVelocityVariationSetting;
-        public static Setting randomMaxVelocityVariationSetting;
-        public static Setting randomDensitySetting;
-        public static Setting randomVelocitySettingShape;
-        public static Setting randomStepQtySetting;
+public class ProgramPattern {
+        public static Setting programMinVelocityVariationSetting;
+        public static Setting programMaxVelocityVariationSetting;
+        public static Setting programDensitySetting;
+        public static Setting programVelocitySettingShape;
+        public static Setting programStepQtySetting;
         public static Setting[] allSettings;
 
         public static void init(BitwigBuddyExtension extension) {
 
                 // Initialize Random Pattern Settings
-                randomMinVelocityVariationSetting = (Setting) createNumberSetting(
+                programMinVelocityVariationSetting = (Setting) createNumberSetting(
                                 "Min Velocity",
                                 "Generate Pattern",
                                 1,
@@ -31,7 +31,7 @@ public class RandomPattern {
                                 1,
                                 "",
                                 1);
-                randomMaxVelocityVariationSetting = (Setting) createNumberSetting(
+                programMaxVelocityVariationSetting = (Setting) createNumberSetting(
                                 "Max Velocity",
                                 "Generate Pattern",
                                 1,
@@ -40,13 +40,13 @@ public class RandomPattern {
                                 "",
                                 127);
 
-                randomVelocitySettingShape = (Setting) createEnumSetting(
+                programVelocitySettingShape = (Setting) createEnumSetting(
                                 "Velocity Shape",
                                 "Generate Pattern",
                                 VelocityShape.velocityShapes,
                                 "Random");
 
-                randomDensitySetting = (Setting) createNumberSetting(
+                programDensitySetting = (Setting) createNumberSetting(
                                 "Density",
                                 "Generate Pattern",
                                 1,
@@ -55,7 +55,7 @@ public class RandomPattern {
                                 "%",
                                 50);
 
-                randomStepQtySetting = (Setting) createNumberSetting(
+                programStepQtySetting = (Setting) createNumberSetting(
                                 "Step Quantity",
                                 "Generate Pattern",
                                 1,
@@ -66,34 +66,34 @@ public class RandomPattern {
 
                 // init observers
                 initiObserver(extension);
-                allSettings = new Setting[] { randomMinVelocityVariationSetting, randomMaxVelocityVariationSetting,
-                                randomDensitySetting, randomVelocitySettingShape, randomStepQtySetting };
+                allSettings = new Setting[] { programMinVelocityVariationSetting, programMaxVelocityVariationSetting,
+                                programDensitySetting, programVelocitySettingShape, programStepQtySetting };
         }
 
         // Observers
         public static void initiObserver(BitwigBuddyExtension extension) {
-                ((SettableRangedValue) randomMinVelocityVariationSetting).addValueObserver(newValue -> {
+                ((SettableRangedValue) programMinVelocityVariationSetting).addValueObserver(newValue -> {
                         // Force max velocity to be greater than min velocity
                         double scaledNewValue = newValue * 126 + 1;
-                        double maxValue = ((SettableRangedValue) randomMaxVelocityVariationSetting).get()
+                        double maxValue = ((SettableRangedValue) programMaxVelocityVariationSetting).get()
                                         * 126 + 1;
                         if (scaledNewValue > maxValue) {
-                                ((SettableRangedValue) randomMaxVelocityVariationSetting).set(newValue);
+                                ((SettableRangedValue) programMaxVelocityVariationSetting).set(newValue);
                         }
 
                 });
 
-                ((SettableRangedValue) randomMaxVelocityVariationSetting).addValueObserver(newValue -> {
+                ((SettableRangedValue) programMaxVelocityVariationSetting).addValueObserver(newValue -> {
                         // Force max velocity to be greater than min velocity
                         double scaledNewValue = newValue * 126 + 1;
-                        double minValue = ((SettableRangedValue) randomMinVelocityVariationSetting).get()
+                        double minValue = ((SettableRangedValue) programMinVelocityVariationSetting).get()
                                         * 126 + 1;
                         if (scaledNewValue < minValue) {
-                                ((SettableRangedValue) randomMinVelocityVariationSetting).set(newValue);
+                                ((SettableRangedValue) programMinVelocityVariationSetting).set(newValue);
                         }
                 });
 
-                ((SettableRangedValue) randomDensitySetting).addValueObserver(newValue -> {
+                ((SettableRangedValue) programDensitySetting).addValueObserver(newValue -> {
 
                 });
 
@@ -102,13 +102,13 @@ public class RandomPattern {
         public static int[] generateRandomPattern(BitwigBuddyExtension extension) {
                 Random random = new Random();
                 int minVelocity = (int) Math
-                                .round(((SettableRangedValue) randomMinVelocityVariationSetting).getRaw());
+                                .round(((SettableRangedValue) programMinVelocityVariationSetting).getRaw());
                 int maxVelocity = (int) Math
-                                .round(((SettableRangedValue) randomMaxVelocityVariationSetting).getRaw());
-                double density = (double) (((SettableRangedValue) randomDensitySetting).getRaw());
+                                .round(((SettableRangedValue) programMaxVelocityVariationSetting).getRaw());
+                double density = (double) (((SettableRangedValue) programDensitySetting).getRaw());
                 showPopup("Min Velocity: " + minVelocity + " Max Velocity: " + maxVelocity + " Density: " + density);
 
-                int stepsQty = (int) Math.round(((SettableRangedValue) randomStepQtySetting).getRaw());
+                int stepsQty = (int) Math.round(((SettableRangedValue) programStepQtySetting).getRaw());
 
                 int[] pattern = new int[stepsQty];
 
@@ -137,7 +137,7 @@ public class RandomPattern {
                 }
 
                 // Apply velocity type
-                String velocityType = ((SettableEnumValue) randomVelocitySettingShape).get();
+                String velocityType = ((SettableEnumValue) programVelocitySettingShape).get();
 
                 applyVelocityShape(pattern, velocityType, minVelocity, maxVelocity);
 

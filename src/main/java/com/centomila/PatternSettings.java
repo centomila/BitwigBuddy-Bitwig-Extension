@@ -22,8 +22,8 @@ import com.centomila.CustomPresetsHandler.CustomPreset;
  */
 public class PatternSettings {
        // Pattern settings
-    public static Setting generateBtnSignalSetting; // Pattern Type "Preset", "Random", "Custom"
-    public static Setting patternTypeSetting; // Pattern Type "Preset", "Random", "Custom"
+    public static Setting generateBtnSignalSetting; // Pattern Type "Preset", "Program", "Custom"
+    public static Setting patternTypeSetting; // Pattern Type "Preset", "Program", "Custom"
     public static Setting patternSelectorSetting; // List of default patterns
     public static Setting customPresetSetting; // List of custom patterns
     public static Setting presetPatternStringSetting; // Custom pattern string
@@ -98,7 +98,7 @@ public class PatternSettings {
      * @param documentState The current document state.
      */
     public void initPatternTypeSetting(DocumentState documentState) {
-        String[] options = { "Presets", "Random", "Custom" };
+        String[] options = { "Presets", "Program", "Custom" };
         patternTypeSetting = (Setting) documentState.getEnumSetting("Pattern Type", CATEGORY_GENERATE_PATTERN,
                 options, "Presets");
 
@@ -115,11 +115,11 @@ public class PatternSettings {
                         reversePatternSetting };
                 Setting[] settingsToHide = {
                         customPresetSetting,
-                        RandomPattern.randomDensitySetting,
-                        RandomPattern.randomMinVelocityVariationSetting,
-                        RandomPattern.randomMaxVelocityVariationSetting,
-                        RandomPattern.randomStepQtySetting,
-                        RandomPattern.randomVelocitySettingShape };
+                        ProgramPattern.programDensitySetting,
+                        ProgramPattern.programMinVelocityVariationSetting,
+                        ProgramPattern.programMaxVelocityVariationSetting,
+                        ProgramPattern.programStepQtySetting,
+                        ProgramPattern.programVelocitySettingShape };
                 showAndEnableSetting(settingsToShow);
                 hideAndDisableSetting(settingsToHide);
 
@@ -132,11 +132,11 @@ public class PatternSettings {
                         reversePatternSetting };
                 Setting[] settingsToHideCustom = {
                         patternSelectorSetting,
-                        RandomPattern.randomDensitySetting,
-                        RandomPattern.randomMinVelocityVariationSetting,
-                        RandomPattern.randomMaxVelocityVariationSetting,
-                        RandomPattern.randomStepQtySetting,
-                        RandomPattern.randomVelocitySettingShape };
+                        ProgramPattern.programDensitySetting,
+                        ProgramPattern.programMinVelocityVariationSetting,
+                        ProgramPattern.programMaxVelocityVariationSetting,
+                        ProgramPattern.programStepQtySetting,
+                        ProgramPattern.programVelocitySettingShape };
                 showAndEnableSetting(settingsToShowCustom);
                 hideAndDisableSetting(settingsToHideCustom);
 
@@ -145,11 +145,11 @@ public class PatternSettings {
                 }
 
                 break;
-            case "Random":
-                Setting[] settingsToShowRandom = { RandomPattern.randomDensitySetting,
-                        RandomPattern.randomMinVelocityVariationSetting,
-                        RandomPattern.randomMaxVelocityVariationSetting, RandomPattern.randomStepQtySetting,
-                        RandomPattern.randomVelocitySettingShape };
+            case "Program":
+                Setting[] settingsToShowRandom = { ProgramPattern.programDensitySetting,
+                        ProgramPattern.programMinVelocityVariationSetting,
+                        ProgramPattern.programMaxVelocityVariationSetting, ProgramPattern.programStepQtySetting,
+                        ProgramPattern.programVelocitySettingShape };
                 Setting[] settingsToHideRandom = { patternSelectorSetting, customPresetSetting,
                         reversePatternSetting };
                 showAndEnableSetting(settingsToShowRandom);
@@ -223,7 +223,7 @@ public class PatternSettings {
 
     private static void setPatternString(String patternByName) {
         String patternType = ((EnumValue) patternTypeSetting).get();
-        if (patternType.equals("Random")) {
+        if (patternType.equals("Program")) {
             patternByName = new int[16].toString();
         } else {
             ((SettableStringValue) presetPatternStringSetting).set(patternByName);

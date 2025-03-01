@@ -78,7 +78,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
 
       PatternSettings.init(this);
-      RandomPattern.init(this);
+      ProgramPattern.init(this);
       EditClipSettings.init(this);
       NoteDestinationSettings.init(this);
       StepSizeSettings.init(this);

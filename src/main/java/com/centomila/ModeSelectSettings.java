@@ -82,7 +82,7 @@ public class ModeSelectSettings {
         // RandomPattern.hideSettings();
         // for each Setting in RandomPattern.allSettings, hideSetting(setting);
 
-        for (Setting setting : RandomPattern.allSettings) {
+        for (Setting setting : ProgramPattern.allSettings) {
             setting.hide();
         }
 

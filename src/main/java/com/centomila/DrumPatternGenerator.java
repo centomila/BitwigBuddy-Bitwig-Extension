@@ -62,8 +62,8 @@ public class DrumPatternGenerator {
         // Determine the type of pattern to generate
         int[] pattern = new int[16];
         String patternType = ((EnumValue) PatternSettings.patternTypeSetting).get();
-        if (patternType.equals("Random")) {
-            pattern = RandomPattern.generateRandomPattern(extension);
+        if (patternType.equals("Program")) {
+            pattern = ProgramPattern.generateRandomPattern(extension);
 
         } else {
             String patternString = ((StringValue) PatternSettings.presetPatternStringSetting).get();

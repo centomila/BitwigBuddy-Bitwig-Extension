@@ -1,8 +1,11 @@
 package com.centomila;
 
+import static com.centomila.utils.PopupUtils.showPopup;
 import static com.centomila.utils.SettingsHelper.createSignalSetting;
 import static com.centomila.utils.SettingsHelper.createStringSetting;
 import static com.centomila.utils.SettingsHelper.disableSetting;    
+import com.centomila.VelocityShape;
+
 
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
@@ -24,6 +27,15 @@ public class EditClipSettings {
         editClipBtnSignal = (Setting) createSignalSetting("Edit Clip", CATEGORY_EDIT_CLIP, "Edit Clip");
 
         allSettings = new Setting[] { editClipSpacer, editClipBtnSignal };
+
+        // Obsereve the edit clip button signal
+        ((Signal) editClipBtnSignal).addSignalObserver(() -> {
+            editClipAction();
+        });
+    }
+
+    public static void editClipAction() {
+        showPopup("Edit Clip");
     }
 
     public static void showEditClipSettings() {
