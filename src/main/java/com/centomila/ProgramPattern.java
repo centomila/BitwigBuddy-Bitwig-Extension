@@ -156,4 +156,12 @@ public class ProgramPattern {
                 return pattern;
         }
 
+        public static void showProgramPatternSettings() {
+                showAndEnableSetting(allSettings);
+        }
+
+        public static void hideProgramPatternSettings() {
+                hideAndDisableSetting(allSettings);
+        }
+
 }

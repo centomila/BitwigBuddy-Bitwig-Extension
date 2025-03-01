@@ -29,7 +29,7 @@ public class EditClipSettings {
     }
 
     private static void initEditClipSettings() {
-        editClipSpacer = (Setting) createStringSetting("Edit Clip---------------------", CATEGORY_EDIT_CLIP, 0,
+        editClipSpacer = (Setting) createStringSetting("Edit Clip------------------------", CATEGORY_EDIT_CLIP,9999,
                 "---------------------------------------------------");
         disableSetting(editClipSpacer);
 

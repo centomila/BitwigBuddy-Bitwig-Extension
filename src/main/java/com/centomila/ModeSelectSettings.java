@@ -27,7 +27,7 @@ public class ModeSelectSettings {
         // Mode select setting
         final String[] MODE_SELECT_OPTIONS = new String[] { "Generate", "Edit" };
 
-        modeGenerateEditToggleSetting = (Setting) createEnumSetting("Generate/Edit Mode", CATEGORY_OTHER,
+        modeGenerateEditToggleSetting = (Setting) createEnumSetting("Generate/Edit Mode", "A",
                 MODE_SELECT_OPTIONS,
                 MODE_SELECT_OPTIONS[0]);
 
@@ -90,7 +90,10 @@ public class ModeSelectSettings {
             setting.hide();
         }
 
+        ProgramPattern.showProgramPatternSettings();;
+
         EditClipSettings.showEditClipSettings();
+        
 
         // StepSizeSettings.hideSettings();
         // NoteDestinationSettings.hideSettings();
