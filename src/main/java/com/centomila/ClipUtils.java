@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import com.centomila.BitwigBuddyExtension;
+import com.bitwig.extension.controller.api.BeatTimeValue;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.NoteStep;
@@ -24,7 +26,7 @@ public class ClipUtils {
      * @param extension The BitwigBuddyExtension object to which the settings will
      *                  be added.
      */
-    public static void init(BitwigBuddyExtension extension) {
+    public static void init(BitwigBuddyExtension extension) {;
         Setting spacerOther = (Setting) createStringSetting(
                 "OTHER--------------------------------",
                 CATEGORY_OTHER,
@@ -184,6 +186,38 @@ public class ClipUtils {
         } else {
             moveSteps(clip, stepsToMove, stepOffset, channel);
         }
+    }
+
+    public static List<NoteStep> returnSelectedSteps(BitwigBuddyExtension extension) {
+        Clip clip = extension.getLauncherOrArrangerAsClip();
+        BeatTimeValue clipStart = clip.getPlayStart();
+        BeatTimeValue clipStop = clip.getPlayStop();
+        int channel = NoteDestinationSettings.getCurrentChannelAsInt();
+        int noteDestination = NoteDestinationSettings.getCurrentNoteDestinationAsInt();
+
+        // Calculate clip length
+        double clipLength = clipStop.get() - clipStart.get();
+        extension.getHost().println("Clip length: " + clipLength);
+        
+
+        List<NoteStep> selectedSteps = new ArrayList<>();
+        for (int i = 0; i < 128; i++) {
+            NoteStep step = clip.getStep(channel, i, noteDestination);
+            if (step != null && step.isIsSelected()) {
+                selectedSteps.add(step);
+            }
+            extension.getHost().println("Step " + i + " selected: " + step.isIsSelected());
+        }
+        selectedSteps.forEach(step -> extension.getHost().println("Step: " + step.x() + ", " + step.y()));
+
+        // Set velocity of selected steps
+        selectedSteps.forEach(step -> step.setVelocity(127.0 / 127.0));
+
+        extension.getHost().println(    "Selected steps: " + selectedSteps.size());
+
+        // return selected steps
+        return selectedSteps;
+
     }
 
 }

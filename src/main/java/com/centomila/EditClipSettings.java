@@ -55,13 +55,14 @@ public class EditClipSettings {
         }
 
         // Get the clip size
-        SettableBeatTimeValue  clipStart = clip.getPlayStart();
-        SettableBeatTimeValue  clipStop = clip.getPlayStop();
+        // SettableBeatTimeValue  clipStart = clip.getPlayStart();
+        // SettableBeatTimeValue  clipStop = clip.getPlayStop();
         
-        // Get the clip length
-        double clipLength = clipStop.get() - clipStart.get();
-        showPopup("Clip length: " + clipLength);
+        // // Get the clip length
+        // double clipLength = clipStop.get() - clipStart.get();
+        // showPopup("Clip length: " + clipLength);
 
+        ClipUtils.returnSelectedSteps(extension);
         
         
 
