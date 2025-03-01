@@ -179,4 +179,7 @@ public class SettingsHelper {
     public static Signal createSignalSetting(String label, String category, String action) {
         return documentState.getSignalSetting(label, category, action);
     }
+
+    
+
 }

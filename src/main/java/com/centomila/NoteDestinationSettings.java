@@ -20,76 +20,23 @@ import java.util.Arrays;
  * value constraints.
  */
 public class NoteDestinationSettings {
-   private static String CATEGORY_NOTE_DESTINATION = "Note Destination";
+   public static Setting learnNoteSetting; // On or Off
+   public static Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
+   public static Setting noteOctaveSetting; // Note Octave -2 to 8
+   public static Setting noteChannelSetting; // Note Channel 1 to 16
 
-   public int currentNoteAsInt;
-   private String currentNoteAsString;
-   private int currentOctaveAsInt;
-   private final Setting noteChannelSetting;
+   public static int currentNoteAsInt;
 
-   /**
-    * Constructs a new NoteDestinationSettings instance with initial values.
-    * 
-    * @param noteChannelSetting The Setting object controlling the MIDI channel
-    * @param initialNote The initial note value (e.g., "C", "F#")
-    * @param initialOctave The initial octave value (-2 to 8)
-    */
-   public NoteDestinationSettings(Setting noteChannelSetting, String initialNote, int initialOctave) {
-      this.noteChannelSetting = noteChannelSetting;
-      this.currentNoteAsString = initialNote;
-      this.currentOctaveAsInt = initialOctave;
+   public static String currentNoteAsString;
+   public static int currentOctaveAsInt;
+
+   private static NoteDestinationSettings noteDestSettings;
+
+   private static void setNoteDestSettings(NoteDestinationSettings settings) {
+      noteDestSettings = settings;
    }
 
-   /**
-    * Calculates and returns the current MIDI note number.
-    * Combines the current note and octave settings to determine the MIDI note number.
-    * 
-    * @return The MIDI note number (0-127)
-    */
-   public int getCurrentNoteDestinationAsInt() {
-      currentNoteAsInt = Utils.getMIDINoteNumberFromStringAndOctave(currentNoteAsString, currentOctaveAsInt);
-      return currentNoteAsInt;
-   }
-
-   /**
-    * Displays a popup notification showing the current note destination.
-    * The popup shows the note name concatenated with the octave number.
-    */
-   public void popupNoteDestination() {
-      showPopup("Note Destination: " + currentNoteAsString + currentOctaveAsInt);
-   }
-
-   /**
-    * Retrieves the current MIDI channel number from settings.
-    * 
-    * @return The MIDI channel number (0-15, zero-indexed)
-    */
-   public int getCurrentChannelAsInt() {
-      int channel = (int) Math.round(((SettableRangedValue) noteChannelSetting).getRaw());
-      return channel - 1;
-   }
-
-   /**
-    * Updates the current note value and triggers a display update.
-    * 
-    * @param note The new note value (e.g., "C", "F#")
-    */
-   public void setCurrentNote(String note) {
-      this.currentNoteAsString = note;
-      getCurrentNoteDestinationAsInt();
-      popupNoteDestination();
-   }
-
-   /**
-    * Updates the current octave value and triggers a display update.
-    * 
-    * @param octave The new octave value (-2 to 8)
-    */
-   public void setCurrentOctave(int octave) {
-      this.currentOctaveAsInt = octave;
-      getCurrentNoteDestinationAsInt();
-      popupNoteDestination();
-   }
+   private static String CATEGORY_NOTE_DESTINATION = "4 Note Destination";
 
    /**
     * Initializes all note destination settings and observers.
@@ -115,98 +62,44 @@ public class NoteDestinationSettings {
             .mapToObj(i -> String.valueOf(i))
             .toArray(String[]::new);
 
-      extension.noteDestinationSetting = (Setting) createEnumSetting(
+      noteDestinationSetting = (Setting) createEnumSetting(
             "Note Destination",
-            "Note Destination",
+            CATEGORY_NOTE_DESTINATION,
             noteDestinationOptions,
             noteDestinationOptions[0]);
-      extension.noteOctaveSetting = (Setting) createEnumSetting(
+      noteOctaveSetting = (Setting) createEnumSetting(
             "Note Octave",
-            "Note Destination",
+            CATEGORY_NOTE_DESTINATION,
             octaveDestinationOptions,
             octaveDestinationOptions[3]);
 
       // Setup note channel setting
-      extension.noteChannelSetting = (Setting) createNumberSetting(
+      noteChannelSetting = (Setting) createNumberSetting(
             "Note Channel",
-            "Note Destination",
+            CATEGORY_NOTE_DESTINATION,
             1,
             16,
             1,
             "MIDI Channel",
             1);
 
-      String initialNote = ((EnumValue) extension.noteDestinationSetting).get();
-      int initialOctave = Integer.parseInt(((EnumValue) extension.noteOctaveSetting).get());
+      String initialNote = ((EnumValue) noteDestinationSetting).get();
+      int initialOctave = Integer.parseInt(((EnumValue) noteOctaveSetting).get());
 
-      extension.setNoteDestSettings(new NoteDestinationSettings(
-            extension.noteChannelSetting, initialNote, initialOctave));
+      setNoteDestSettings(new NoteDestinationSettings(
+            noteChannelSetting, initialNote, initialOctave));
 
       // Setup learn note setting
       final String[] LEARN_NOTE_OPTIONS = new String[] { "On", "Off" };
 
-      extension.learnNoteSetting = (Setting) createEnumSetting(
-            "Learn Note", "Note Destination", LEARN_NOTE_OPTIONS, "Off");
+      learnNoteSetting = (Setting) createEnumSetting(
+            "Learn Note", CATEGORY_NOTE_DESTINATION, LEARN_NOTE_OPTIONS, "Off");
 
       // Setup note destination observers
       setupNoteDestinationObservers(extension);
       // Setup playing notes observer
       setupPlayingNotesObserver(extension, host);
    }
-
-   /**
-    * Configures value observers for note and octave destination changes.
-    * Updates the current note/octave values and enforces the G8 maximum note constraint.
-    * 
-    * @param extension The BitwigBuddy extension instance
-    */
-   private static void setupNoteDestinationObservers(BitwigBuddyExtension extension) {
-      // Register observer for note changes
-      ((EnumValue) extension.noteDestinationSetting).addValueObserver(newValue -> {
-         ((NoteDestinationSettings) extension.noteDestSettings).setCurrentNote(newValue);
-         forceNoteRangeMaxToG8(extension);
-      });
-
-      // Register observer for octave changes
-      ((EnumValue) extension.noteOctaveSetting).addValueObserver(newValue -> {
-         ((NoteDestinationSettings) extension.noteDestSettings)
-               .setCurrentOctave(Integer.parseInt(newValue));
-         forceNoteRangeMaxToG8(extension);
-      });
-   }
-
-   /**
-    * Sets up note learning functionality by observing played notes.
-    * When enabled, automatically updates note destination settings based on played notes.
-    * 
-    * @param extension The BitwigBuddy extension instance
-    * @param host The Bitwig Studio controller host
-    */
-   private static void setupPlayingNotesObserver(BitwigBuddyExtension extension, ControllerHost host) {
-      Channel cursorChannel = host.createCursorTrack(0, 0);
-      PlayingNoteArrayValue playingNotes = cursorChannel.playingNotes();
-      playingNotes.markInterested();
-
-      playingNotes.addValueObserver(notes -> {
-         if (((EnumValue) extension.learnNoteSetting).get().equals("On")) {
-            for (PlayingNote note : notes) {
-               String noteName = getNoteNameFromKey(note.pitch());
-               String[] keyAndOctave = getKeyAndOctaveFromNoteName(noteName);
-               ((SettableEnumValue) extension.noteDestinationSetting).set(keyAndOctave[0]);
-               ((SettableEnumValue) extension.noteOctaveSetting).set(keyAndOctave[1]);
-            }
-         }
-      });
-
-      ((EnumValue) extension.learnNoteSetting).addValueObserver(value -> {
-         if (value.equals("On")) {
-            playingNotes.subscribe();
-         } else {
-            playingNotes.unsubscribe();
-         }
-      });
-   }
-
    /**
     * Converts a MIDI note number to its corresponding note name with octave.
     * 
@@ -219,7 +112,6 @@ public class NoteDestinationSettings {
       int noteIndex = key % 12;
       return noteNames[noteIndex] + octave;
    }
-
    /**
     * Separates a combined note name into its note and octave components.
     * 
@@ -246,6 +138,58 @@ public class NoteDestinationSettings {
       }
       return new String[] { note, String.valueOf(octave) };
    }
+   /**
+    * Configures value observers for note and octave destination changes.
+    * Updates the current note/octave values and enforces the G8 maximum note constraint.
+    * 
+    * @param extension The BitwigBuddy extension instance
+    */
+   private static void setupNoteDestinationObservers(BitwigBuddyExtension extension) {
+      // Register observer for note changes
+      ((EnumValue) noteDestinationSetting).addValueObserver(newValue -> {
+         ((NoteDestinationSettings) noteDestSettings).setCurrentNote(newValue);
+         forceNoteRangeMaxToG8(extension);
+      });
+
+      // Register observer for octave changes
+      ((EnumValue) noteOctaveSetting).addValueObserver(newValue -> {
+         ((NoteDestinationSettings) noteDestSettings)
+               .setCurrentOctave(Integer.parseInt(newValue));
+         forceNoteRangeMaxToG8(extension);
+      });
+   }
+
+   /**
+    * Sets up note learning functionality by observing played notes.
+    * When enabled, automatically updates note destination settings based on played notes.
+    * 
+    * @param extension The BitwigBuddy extension instance
+    * @param host The Bitwig Studio controller host
+    */
+   private static void setupPlayingNotesObserver(BitwigBuddyExtension extension, ControllerHost host) {
+      Channel cursorChannel = host.createCursorTrack(0, 0);
+      PlayingNoteArrayValue playingNotes = cursorChannel.playingNotes();
+      playingNotes.markInterested();
+
+      playingNotes.addValueObserver(notes -> {
+         if (((EnumValue) learnNoteSetting).get().equals("On")) {
+            for (PlayingNote note : notes) {
+               String noteName = getNoteNameFromKey(note.pitch());
+               String[] keyAndOctave = getKeyAndOctaveFromNoteName(noteName);
+               ((SettableEnumValue) noteDestinationSetting).set(keyAndOctave[0]);
+               ((SettableEnumValue) noteOctaveSetting).set(keyAndOctave[1]);
+            }
+         }
+      });
+
+      ((EnumValue) learnNoteSetting).addValueObserver(value -> {
+         if (value.equals("On")) {
+            playingNotes.subscribe();
+         } else {
+            playingNotes.unsubscribe();
+         }
+      });
+   }
 
    /**
     * Enforces the maximum playable note constraint of G8.
@@ -254,12 +198,72 @@ public class NoteDestinationSettings {
     * @param extension The BitwigBuddy extension instance
     */
    private static void forceNoteRangeMaxToG8(BitwigBuddyExtension extension) {
-      String currentNote = ((EnumValue) extension.noteDestinationSetting).get();
-      int currentOctave = Integer.parseInt(((EnumValue) extension.noteOctaveSetting).get());
+      String currentNote = ((EnumValue) noteDestinationSetting).get();
+      int currentOctave = Integer.parseInt(((EnumValue) noteOctaveSetting).get());
       if (currentOctave == 8 &&
             (currentNote.equals("G#") || currentNote.equals("A") ||
                   currentNote.equals("A#") || currentNote.equals("B"))) {
-         ((SettableEnumValue) extension.noteDestinationSetting).set("G");
+         ((SettableEnumValue) noteDestinationSetting).set("G");
       }
+   }
+
+
+
+
+   /**
+    * Calculates and returns the current MIDI note number.
+    * Combines the current note and octave settings to determine the MIDI note number.
+    * 
+    * @return The MIDI note number (0-127)
+    */
+   public static int getCurrentNoteDestinationAsInt() {
+      currentNoteAsInt = Utils.getMIDINoteNumberFromStringAndOctave(currentNoteAsString, currentOctaveAsInt);
+      return currentNoteAsInt;
+   }
+
+   /**
+    * Displays a popup notification showing the current note destination.
+    * The popup shows the note name concatenated with the octave number.
+    */
+   public void popupNoteDestination() {
+      showPopup("Note Destination: " + currentNoteAsString + currentOctaveAsInt);
+   }
+
+   /**
+    * Retrieves the current MIDI channel number from settings.
+    * 
+    * @return The MIDI channel number (0-15, zero-indexed)
+    */
+   public static int getCurrentChannelAsInt() {
+      int channel = (int) Math.round(((SettableRangedValue) noteChannelSetting).getRaw());
+      return channel - 1;
+   }
+
+   /**
+    * Updates the current note value and triggers a display update.
+    * 
+    * @param note The new note value (e.g., "C", "F#")
+    */
+   public void setCurrentNote(String note) {
+      currentNoteAsString = note;
+      getCurrentNoteDestinationAsInt();
+      popupNoteDestination();
+   }
+
+   /**
+    * Updates the current octave value and triggers a display update.
+    * 
+    * @param octave The new octave value (-2 to 8)
+    */
+   public void setCurrentOctave(int octave) {
+      currentOctaveAsInt = octave;
+      getCurrentNoteDestinationAsInt();
+      popupNoteDestination();
+   }
+
+   public NoteDestinationSettings(Setting channelSetting, String note, int octave) {
+      currentNoteAsString = note;
+      currentOctaveAsInt = octave;
+      noteChannelSetting = channelSetting;
    }
 }

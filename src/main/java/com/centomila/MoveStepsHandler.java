@@ -1,17 +1,21 @@
 package com.centomila;
 
+import static com.centomila.utils.PopupUtils.*;
+import static com.centomila.utils.SettingsHelper.*;
+
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
-import static com.centomila.utils.PopupUtils.*;
+import com.centomila.utils.SettingsHelper;
 
 /**
  * Handles the movement and rotation of steps in a Bitwig clip.
  * This class manages settings and signals for step manipulation operations.
  */
 public class MoveStepsHandler {
-    private static final String CATEGORY_MOVE_STEPS = "Move Steps";
+    private static final String CATEGORY_MOVE_STEPS = "2 Move Steps";
     private static final String[] MOVE_MODES = { "Move", "Rotate" };
     private static final String DEFAULT_MOVE_MODE = MOVE_MODES[0];
     private static final String ERROR_NO_CLIP = "No clip selected";
@@ -20,7 +24,11 @@ public class MoveStepsHandler {
     private static final int MAX_STEP_OFFSET = 128;
 
     private final BitwigBuddyExtension extension;
-    private EnumValue moveRotateStepsSetting;
+    private Setting moveRotateStepsSetting;
+    private Setting moveFwd;
+    private Setting moveBwd;
+    private Setting spacerMoveSteps;
+    public static Setting[] allSettings;
 
     /**
      * Creates a new MoveStepsHandler instance.
@@ -45,13 +53,22 @@ public class MoveStepsHandler {
         if (documentState == null) {
             throw new IllegalArgumentException("DocumentState cannot be null");
         }
+        // Initialize SettingsHelper with the extension
 
         initializeMoveRotateSetting(documentState);
         initializeMoveSignals(documentState);
     }
 
     private void initializeMoveRotateSetting(DocumentState documentState) {
-        moveRotateStepsSetting = documentState.getEnumSetting(
+        // Spacer
+        spacerMoveSteps = (Setting) SettingsHelper.createStringSetting(
+                "MOVE/ROTATE STEPS-------------",
+                CATEGORY_MOVE_STEPS,
+                0,
+                "---------------------------------------------------");
+        SettingsHelper.disableSetting(spacerMoveSteps);
+        // Replace direct call with SettingsHelper
+        moveRotateStepsSetting = (Setting) SettingsHelper.createEnumSetting(
                 "Move/Rotate",
                 CATEGORY_MOVE_STEPS,
                 MOVE_MODES,
@@ -59,17 +76,22 @@ public class MoveStepsHandler {
     }
 
     private void initializeMoveSignals(DocumentState documentState) {
-        Signal moveFwd = documentState.getSignalSetting(
+
+        // Use SettingsHelper to create signal settings
+        moveFwd = (Setting) SettingsHelper.createSignalSetting(
                 "Move Steps Forward",
                 CATEGORY_MOVE_STEPS,
                 ">>>");
-        Signal moveBwd = documentState.getSignalSetting(
+        moveBwd = (Setting) SettingsHelper.createSignalSetting(
                 "Move Steps Backward",
                 CATEGORY_MOVE_STEPS,
                 "<<<");
 
-        moveFwd.addSignalObserver(() -> handleStepMovement(1));
-        moveBwd.addSignalObserver(() -> handleStepMovement(-1));
+        allSettings = new Setting[] { (Setting) spacerMoveSteps, (Setting) moveRotateStepsSetting, (Setting) moveFwd,
+                (Setting) moveBwd };
+
+        ((Signal) moveFwd).addSignalObserver(() -> handleStepMovement(1));
+        ((Signal) moveBwd).addSignalObserver(() -> handleStepMovement(-1));
     }
 
     /**
@@ -92,12 +114,11 @@ public class MoveStepsHandler {
         }
 
         try {
-            int channel = ((NoteDestinationSettings) extension.noteDestSettings).getCurrentChannelAsInt();
-            int noteDestination = ((NoteDestinationSettings) extension.noteDestSettings)
-                    .getCurrentNoteDestinationAsInt();
+            int channel = NoteDestinationSettings.getCurrentChannelAsInt();
+            int noteDestination = NoteDestinationSettings.getCurrentNoteDestinationAsInt();
 
-            EnumValue stepSizeSetting = (EnumValue) extension.stepSizSetting;
-            EnumValue subdivisionSetting = (EnumValue) extension.stepSizSubdivisionSetting;
+            EnumValue stepSizeSetting = (EnumValue) StepSizeSettings.stepSizSetting;
+            EnumValue subdivisionSetting = (EnumValue) StepSizeSettings.stepSizSubdivisionSetting;
 
             if (stepSizeSetting == null || subdivisionSetting == null) {
                 showPopup(ERROR_INVALID_SETTINGS);
@@ -106,7 +127,7 @@ public class MoveStepsHandler {
 
             String stepSize = stepSizeSetting.get();
             String subdivision = subdivisionSetting.get();
-            boolean isRotate = moveRotateStepsSetting.get().equals(MOVE_MODES[1]);
+            boolean isRotate = ((EnumValue) moveRotateStepsSetting).get().equals(MOVE_MODES[1]);
 
             ClipUtils.handleStepMovement(
                     clip,

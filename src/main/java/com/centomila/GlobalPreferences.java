@@ -30,13 +30,6 @@ import com.bitwig.extension.controller.api.BooleanValue;
  */
 public class GlobalPreferences {
 
-    private static final String PRESETS_SETTING_CATEGORY = "Preset Path";
-    private static final String SUPPORT_CATEGORY = "Support";
-    private static final int MAX_PATH_LENGTH = 10000;
-    private static final String PATREON_URL = "https://www.patreon.com/Centomila";
-    private static final String GITHUB_URL = "https://github.com/centomila/BitwigBuddy-Bitwig-Extension";
-    private static final String CENTOMILA_URL = "https://centomila.com";
-
     private enum PlatformCommand {
         WINDOWS("explorer.exe", "cmd", "/c", "start"),
         MAC("open", "open", "", ""),
@@ -48,6 +41,13 @@ public class GlobalPreferences {
             this.fileExplorer = fileExplorer;
         }
     }
+    private static final String PRESETS_SETTING_CATEGORY = "Preset Path";
+    private static final String SUPPORT_CATEGORY = "Support";
+    private static final int MAX_PATH_LENGTH = 10000;
+    private static final String PATREON_URL = "https://www.patreon.com/Centomila";
+    private static final String GITHUB_URL = "https://github.com/centomila/BitwigBuddy-Bitwig-Extension";
+
+    private static final String CENTOMILA_URL = "https://centomila.com";
 
     private String defaultPresetsPath;
     private Preferences preferences;
@@ -57,7 +57,6 @@ public class GlobalPreferences {
     private Signal resetToDefaultButton;
     private BooleanValue showChannelDestination;
     private ControllerHost host;
-    private BitwigBuddyExtension extension;
     
     private CustomPresetsHandler presetsHandler;
 
@@ -71,7 +70,6 @@ public class GlobalPreferences {
      */
     public GlobalPreferences(ControllerHost host, BitwigBuddyExtension extension) {
         this.host = host;
-        this.extension = extension;
         this.defaultPresetsPath = ExtensionPath.getExstensionsSubfolderPath("BitwigBuddy");
         this.preferences = host.getPreferences();
 
@@ -82,6 +80,47 @@ public class GlobalPreferences {
         initPreferencesObservers();
 
         this.presetsHandler = new CustomPresetsHandler(host, this);
+    }
+
+    public String getPresetsPath() {
+        return presetsPath.get();
+    }
+
+    public void setPresetsPath(String path) {
+        presetsPath.set(path);
+    }
+
+    public String getDefaultPresetsPath() {
+        return defaultPresetsPath;
+    }
+
+    public void setDefaultPresetsPath(String defaultPresetsPath) {
+        this.defaultPresetsPath = defaultPresetsPath;
+    }
+
+    public Preferences getPreferences() {
+        return preferences;
+    }
+
+    public Signal getOpenPresetsFolder() {
+        return openPresetsFolder;
+    }
+
+    public Signal getBrowseFolderButton() {
+        return browseFolderButton;
+    }
+
+
+    public Signal getResetToDefaultButton() {
+        return resetToDefaultButton;
+    }
+
+    public boolean isJfxInitialized() {
+        return JavaFXInitializer.isInitialized();
+    }
+
+    public CustomPresetsHandler.CustomPreset[] getCustomPresets() {
+        return presetsHandler.getCustomPresets();
     }
 
     private void initPreferencesSettings() {
@@ -141,11 +180,11 @@ public class GlobalPreferences {
         this.showChannelDestination.addValueObserver(value -> {
             host.println("Show Channel Destination: " + value);
             if (value) {
-                showSetting(extension.noteChannelSetting);
+                showSetting(NoteDestinationSettings.noteChannelSetting);
                 showPopup("Channel Destination enabled");
             } else {
-                ((SettableRangedValue) extension.noteChannelSetting).set(0); // Set to Channel 1
-                hideSetting(extension.noteChannelSetting);
+                ((SettableRangedValue) NoteDestinationSettings.noteChannelSetting).set(0); // Set to Channel 1
+                hideSetting(NoteDestinationSettings.noteChannelSetting);
                 showPopup("Channel Destination disabled. All notes will be sent to Channel 1.");
             }
         });
@@ -196,7 +235,6 @@ public class GlobalPreferences {
     private void openCentomilaPage() {
         OpenWebUrl.openUrl(host, CENTOMILA_URL, "Centomila");
     }
-
 
     private boolean isValidPresetsFolder(Path folder) {
         return folder != null && Files.exists(folder) && Files.isDirectory(folder);
@@ -290,49 +328,5 @@ public class GlobalPreferences {
         } else {
             showPopup("Default presets folder not found: " + defaultPath);
         }
-    }
-
-    public String getPresetsPath() {
-        return presetsPath.get();
-    }
-
-    public void setPresetsPath(String path) {
-        presetsPath.set(path);
-    }
-
-    public String getDefaultPresetsPath() {
-        return defaultPresetsPath;
-    }
-
-    public void setDefaultPresetsPath(String defaultPresetsPath) {
-        this.defaultPresetsPath = defaultPresetsPath;
-    }
-
-    public Preferences getPreferences() {
-        return preferences;
-    }
-
-    public Signal getOpenPresetsFolder() {
-        return openPresetsFolder;
-    }
-
-    public Signal getBrowseFolderButton() {
-        return browseFolderButton;
-    }
-
-    public Signal getResetToDefaultButton() {
-        return resetToDefaultButton;
-    }
-
-    public ControllerHost getHost() {
-        return host;
-    }
-
-    public boolean isJfxInitialized() {
-        return JavaFXInitializer.isInitialized();
-    }
-
-    public CustomPresetsHandler.CustomPreset[] getCustomPresets() {
-        return presetsHandler.getCustomPresets();
     }
 }

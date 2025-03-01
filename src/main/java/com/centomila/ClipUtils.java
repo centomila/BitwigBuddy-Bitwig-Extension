@@ -1,47 +1,66 @@
 package com.centomila;
 
+import static com.centomila.VelocityShape.velocityShapes;
 import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.utils.SettingsHelper.*;
+import com.centomila.ProgramPattern;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import com.centomila.BitwigBuddyExtension;
+import com.bitwig.extension.controller.api.BeatTimeValue;
 import com.bitwig.extension.controller.api.Clip;
+import com.bitwig.extension.controller.api.DoubleValue;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.IntegerValue;
 import com.bitwig.extension.controller.api.NoteStep;
+import com.bitwig.extension.controller.api.RangedValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
+import com.bitwig.extension.controller.api.Value;
 
-/**
- * Utility class providing methods for manipulating clips in Bitwig Studio.
- * This class contains various static methods for handling clip operations such as
- * loop length modification, step movement, and rotation.
- * 
- * <p>The class primarily works with Bitwig's Clip API and provides functionality for:
- * <ul>
- *   <li>Switching between launcher and arranger clips</li>
- *   <li>Modifying clip loop lengths and playback points</li>
- *   <li>Moving and rotating steps within clips</li>
- *   <li>Initializing clip-related settings and controls</li>
- * </ul>
- * 
- * <p>The class uses a concept of "steps" which represent individual note events
- * within a clip, and provides methods to manipulate these steps either by moving
- * them linearly or rotating them within the clip boundaries.
- * 
- * <p>Note: This class is designed to work with the Bitwig Studio API and requires
- * appropriate initialization of the Bitwig extension system.
- * 
- * @see com.bitwig.extension.controller.api.Clip
- * @see com.bitwig.extension.controller.api.NoteStep
- * @see com.centomila.BitwigBuddyExtension
- * 
- * @author centomila
- * @version 1.0
- */
 public class ClipUtils {
-    private static String CATEGORY_OTHER = "Other";
+    private static String CATEGORY_OTHER = "99 Other";
+
+    /**
+     * Initializes the ClipUtils class by creating and configuring settings for
+     * clip operations.
+     * This method should be called during the extension initialization process.
+     * 
+     * @param extension The BitwigBuddyExtension object to which the settings will
+     *                  be added.
+     */
+    public static void init(BitwigBuddyExtension extension) {
+        ;
+        Setting spacerOther = (Setting) createStringSetting(
+                "OTHER--------------------------------",
+                CATEGORY_OTHER,
+                0,
+                "---------------------------------------------------");
+
+        disableSetting(spacerOther); // Spacers are always disabled
+
+        Setting clearClipSetting = (Setting) createSignalSetting(
+                "Clear current clip",
+                CATEGORY_OTHER,
+                "Clear current clip");
+
+        Setting clearCurrentNoteDestination = (Setting) createSignalSetting(
+                "Clear current note destination",
+                CATEGORY_OTHER,
+                "Clear current note destination");
+
+        ((Signal) clearClipSetting).addSignalObserver(() -> extension.getLauncherOrArrangerAsClip().clearSteps());
+
+        ((Signal) clearCurrentNoteDestination)
+                .addSignalObserver(() -> {
+                    int noteDestination = NoteDestinationSettings.getCurrentNoteDestinationAsInt();
+                    int noteChannel = NoteDestinationSettings.getCurrentChannelAsInt();
+                    extension.getLauncherOrArrangerAsClip().clearStepsAtY(noteChannel, noteDestination);
+                });
+    }
 
     /**
      * Returns the Clip object for either the Arranger Clip Launcher or the Launcher
@@ -150,8 +169,13 @@ public class ClipUtils {
      * @param stepOffset      The offset to apply.
      * @param isRotate        If true, rotate steps; otherwise, move steps.
      */
-    public static void handleStepMovement(Clip clip, int channel, int noteDestination,
-            String stepSize, String subdivision, int stepOffset, boolean isRotate) {
+    public static void handleStepMovement(Clip clip,
+            int channel,
+            int noteDestination,
+            String stepSize,
+            String subdivision,
+            int stepOffset,
+            boolean isRotate) {
         double loopLength = clip.getLoopLength().get();
         double stepsPerBeat = 1.0 / Utils.getNoteLengthAsDouble(stepSize, subdivision);
         int loopLengthInt = (int) Math.round(loopLength * stepsPerBeat);
@@ -171,39 +195,59 @@ public class ClipUtils {
         }
     }
 
-    /**
-     * Initializes the ClipUtils class by creating and configuring settings for
-     * clip operations.
-     * This method should be called during the extension initialization process.
-     *  
-     * @param extension The BitwigBuddyExtension object to which the settings will be added.
-     */
-    public static void init(BitwigBuddyExtension extension) {
-        Setting spacerOther = (Setting) createStringSetting(
-                "OTHER--------------------------------",
-                CATEGORY_OTHER,
-                0,
-                "---------------------------------------------------");
+    public static List<NoteStep> applyVelocityShapeToSelectedNotes(BitwigBuddyExtension extension) {
+        Clip clip = extension.getLauncherOrArrangerAsClip();
+        BeatTimeValue clipStart = clip.getPlayStart();
+        BeatTimeValue clipStop = clip.getPlayStop();
+        int channel = NoteDestinationSettings.getCurrentChannelAsInt();
 
-        disableSetting(spacerOther); // Spacers are always disabled
+        // Calculate clip length
+        double clipLength = clipStop.get() - clipStart.get();
+        extension.getHost().println("Clip length: " + clipLength);
 
-        Setting clearClipSetting = (Setting) createSignalSetting(
-                "Clear current clip",
-                CATEGORY_OTHER,
-                "Clear current clip");
+        List<NoteStep> selectedSteps = new ArrayList<>();
+        for (int i = 0; i < 128; i++) {
+            for (int note = 0; note < 128; note++) {
+                NoteStep step = clip.getStep(channel, i, note);
+                if (step != null && step.isIsSelected()) {
+                    selectedSteps.add(step);
+                }
+            }
+        }
+        // selectedSteps.forEach(step -> extension.getHost().println("Step: " + step.x() + ", " + step.y()));
 
-        Setting clearCurrentNoteDestination = (Setting) createSignalSetting(
-                "Clear current note destination",
-                CATEGORY_OTHER,
-                "Clear current note destination");
+        selectedSteps.sort(Comparator.comparingInt(NoteStep::x));
+        int minX = selectedSteps.get(0).x();
+        // Adjust normalized x values to avoid a zero for the first step
+        int[] selectedStepsAsInt = selectedSteps.stream()
+            .mapToInt(step -> (step.x() - minX) + 1)
+            .toArray();
 
-        ((Signal) clearClipSetting).addSignalObserver(() -> extension.getLauncherOrArrangerAsClip().clearSteps());
-        ((Signal) clearCurrentNoteDestination)
-                .addSignalObserver(() -> {
-                    int noteDestination = extension.noteDestSettings.getCurrentNoteDestinationAsInt();
-                    int noteChannel = extension.noteDestSettings.getCurrentChannelAsInt();
-                    extension.getLauncherOrArrangerAsClip().clearStepsAtY(noteChannel, noteDestination);
-                });
+        // extension.getHost().println("Selected steps as int: " + selectedStepsAsInt.length);
+
+        String velocityType = ((EnumValue) ProgramPattern.programVelocitySettingShape).get();
+        int minVelocity = ProgramPattern.getMinVelocityAsInt();
+        int maxVelocity = ProgramPattern.getMaxVelocityAsInt();
+
+
+        int[] velocityShapesInt = VelocityShape.applyVelocityShape(selectedStepsAsInt, velocityType, minVelocity, maxVelocity);
+
+        // apply velocity to selected steps mapping the velocity shapes
+        for (int i = 0; i < selectedSteps.size(); i++) {
+            // Use maxVelocity for proper scaling instead of 127.0
+            double velocityValue = velocityShapesInt[i] / (double) maxVelocity;
+            NoteStep currentStep = selectedSteps.get(i);
+            extension.getHost().println("Step " + i + ": x=" + currentStep.x() + ", velocity=" + velocityValue);
+            currentStep.setVelocity(velocityValue);
+        }
+
+        // Set velocity of selected steps
+        // selectedSteps.forEach(step -> step.setVelocity(127.0 / 127.0));
+        // extension.getHost().println("Selected steps: " + selectedSteps.size());
+
+        // return selected steps
+        return selectedSteps;
+
     }
-    
+
 }

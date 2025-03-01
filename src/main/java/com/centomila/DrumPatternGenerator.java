@@ -1,9 +1,8 @@
 package com.centomila;
 
 // import static com.centomila.utils.PopupUtils.*;
-import static com.centomila.RandomPattern.*;
-import static com.centomila.utils.PopupUtils.showPopup;
 import static com.centomila.PostActionSettings.*;
+import com.centomila.NoteDestinationSettings.*;
 
 import java.util.Arrays;
 import com.bitwig.extension.controller.api.Clip;
@@ -11,11 +10,6 @@ import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.StringValue;
 import com.bitwig.extension.controller.api.ClipLauncherSlot;
-import com.bitwig.extension.controller.api.TimelineEditor;
-import com.bitwig.extension.controller.api.DetailEditor;
-import com.bitwig.extension.controller.api.Settings;
-
-import com.bitwig.extension.controller.api.Setting;
 
 public class DrumPatternGenerator {
     private final GlobalPreferences preferences;
@@ -29,13 +23,6 @@ public class DrumPatternGenerator {
      * 
      * @param extension                 The BitwigBuddy extension instance
      * @param clip                      Target clip for pattern generation
-     * @param noteLengthSetting         Note duration setting
-     * @param stepSizSubdivisionSetting Step subdivision setting
-     * @param stepSizSetting            Step size setting
-     * @param noteDestSettings          Note destination and channel settings
-     * @param patternSelectorSetting    Pattern preset selector
-     * @param patternTypeSetting        Pattern type (Random/Custom/Predefined)
-     * @param autoReversePatternSetting Pattern reversal setting
      * 
      *                                  Process:
      *                                  1. Configures note length and step size
@@ -48,52 +35,44 @@ public class DrumPatternGenerator {
      *                                  enabled
      */
     public static void generatePattern(BitwigBuddyExtension extension,
-            Clip clip,
-            Setting noteLengthSetting,
-            Setting stepSizSubdivisionSetting,
-            Setting stepSizSetting,
-            NoteDestinationSettings noteDestSettings,
-            Setting patternSelectorSetting,
-            Setting patternTypeSetting,
-            Setting presetPatternStringSetting,
-            Setting autoReversePatternSetting) {
+            Clip clip) {
 
         // Make visible if is out of view
-        if (((EnumValue) extension.toggleLauncherArrangerSetting).get().equals("Launcher")) {
+        if (((EnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).get().equals("Launcher")) {
             clip.getTrack().makeVisibleInMixer();
         } else {
             clip.getTrack().makeVisibleInArranger();
         }
 
         // Retrieve note length and subdivision settings
-        String noteLength = ((EnumValue) noteLengthSetting).get();
-        String subdivision = ((EnumValue) stepSizSubdivisionSetting).get();
+        String noteLength = ((EnumValue) StepSizeSettings.noteLengthSetting).get();
+        String subdivision = ((EnumValue) StepSizeSettings.stepSizSubdivisionSetting).get();
         double duration = Utils.getNoteLengthAsDouble(noteLength, subdivision);
 
         // Retrieve and set step size based on note settings
-        String stepSize = ((EnumValue) stepSizSetting).get();
+        String stepSize = ((EnumValue) StepSizeSettings.stepSizSetting).get();
         double patternStepSize = Utils.getNoteLengthAsDouble(stepSize, subdivision);
         clip.setStepSize(patternStepSize);
 
         // Get channel and note destination values
-        int channel = noteDestSettings.getCurrentChannelAsInt();
-        int noteDestination = noteDestSettings.getCurrentNoteDestinationAsInt();
+        int channel = NoteDestinationSettings.getCurrentChannelAsInt();
+        int noteDestination = NoteDestinationSettings.getCurrentNoteDestinationAsInt();
         clip.clearStepsAtY(channel, noteDestination);
 
         // Determine the type of pattern to generate
         int[] pattern = new int[16];
-        String patternType = ((EnumValue) patternTypeSetting).get();
-        if (patternType.equals("Random")) {
-            pattern = generateRandomPattern(extension);
+        String patternType = ((EnumValue) PatternSettings.patternTypeSetting).get();
+        if (patternType.equals("Program")) {
+            pattern = ProgramPattern.generateRandomPattern(extension);
 
         } else {
-            String patternString = ((StringValue) presetPatternStringSetting).get();
+            String patternString = ((StringValue) PatternSettings.presetPatternStringSetting).get();
             // convert to an int array
             pattern = parsePatternString(patternString);
         }
 
         // Optionally reverse the pattern if required
-        if (((EnumValue) autoReversePatternSetting).get().equals("Reverse")) {
+        if (((EnumValue) PatternSettings.reversePatternSetting).get().equals("Reverse")) {
             reversePattern(pattern);
         }
 
@@ -105,7 +84,7 @@ public class DrumPatternGenerator {
         if (((EnumValue) duplicateClipSetting).get().equals("On")) {
             ClipLauncherSlot clipLauncherSlot = clip.clipLauncherSlot();
 
-            if (((EnumValue) extension.toggleLauncherArrangerSetting).get().equals("Launcher")) {
+            if (((EnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).get().equals("Launcher")) {
 
                 if (clipLauncherSlot != null) {
                     clipLauncherSlot.duplicateClip();
@@ -121,6 +100,7 @@ public class DrumPatternGenerator {
 
         // Zoom to fit if enabled in settings
         clip.selectStepContents(channel, noteDestination, false);
+
         if (((EnumValue) zoomToFitAfterGenerateSetting).get().equals("On")) {
             extension.getApplication().zoomToFit();
         }

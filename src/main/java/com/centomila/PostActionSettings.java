@@ -8,14 +8,15 @@ import com.bitwig.extension.controller.api.EnumValue;
 public class PostActionSettings {
         // Post actions settings
         static Setting postActionsToggleCategorySetting;
-        
+
         static Setting autoResizeLoopLengthSetting;
         static Setting zoomToFitAfterGenerateSetting;
         static Setting switchToEditLayoutSetting;
         static Setting duplicateClipSetting;
         static Setting launchClipSetting;
-        
-        private static String CATEGORY_POST_ACTIONS = "Post Actions";
+        static Setting[] allSettings;
+
+        private static String CATEGORY_POST_ACTIONS = "9 Post Actions";
 
         public static void init(BitwigBuddyExtension extension) {
                 // Initialize spacer for "Post Actions"
@@ -57,7 +58,7 @@ public class PostActionSettings {
                                 CATEGORY_POST_ACTIONS,
                                 new String[] { "Off", "On" },
                                 "Off");
-                
+
                 launchClipSetting = (Setting) createEnumSetting(
                                 "Launch Clip",
                                 CATEGORY_POST_ACTIONS,
@@ -65,27 +66,37 @@ public class PostActionSettings {
                                 "Off");
 
                 setupPostActionsObserver(extension);
+                allSettings = new Setting[] { spacerPostActions, postActionsToggleCategorySetting,
+                                autoResizeLoopLengthSetting,
+                                zoomToFitAfterGenerateSetting, switchToEditLayoutSetting, duplicateClipSetting,
+                                launchClipSetting };
         }
 
         // Observer for post actions setting
         private static void setupPostActionsObserver(BitwigBuddyExtension extension) {
 
                 ((EnumValue) postActionsToggleCategorySetting).addValueObserver(newValue -> {
-                        // Array with all settings to be hidden
-                        Setting[] settingsToHideAndShow = {
-                                        autoResizeLoopLengthSetting,
-                                        zoomToFitAfterGenerateSetting,
-                                        switchToEditLayoutSetting,
-                                        duplicateClipSetting,
-                                        launchClipSetting
-                        };
-
-                        if (newValue.equals("Hide")) {
-                                hideSetting(settingsToHideAndShow);
-
-                        } else {
-                                showSetting(settingsToHideAndShow);
-                        }
+                        showPostActionsSettings();
                 });
+        }
+
+        public static void showPostActionsSettings() {
+                String showPostActionToggle = ((EnumValue) postActionsToggleCategorySetting).get();
+
+                // Array with all settings to be hidden
+                Setting[] settingsToHideAndShow = {
+                                autoResizeLoopLengthSetting,
+                                zoomToFitAfterGenerateSetting,
+                                switchToEditLayoutSetting,
+                                duplicateClipSetting,
+                                launchClipSetting
+                };
+
+                if (showPostActionToggle.equals("Hide")) {
+                        hideSetting(settingsToHideAndShow);
+
+                } else {
+                        showSetting(settingsToHideAndShow);
+                }
         }
 }

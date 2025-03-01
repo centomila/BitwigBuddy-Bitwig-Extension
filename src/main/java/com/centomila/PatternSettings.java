@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
-import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
+import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.centomila.CustomPresetsHandler.CustomPreset;
@@ -21,10 +21,19 @@ import com.centomila.CustomPresetsHandler.CustomPreset;
  * random, and custom patterns.
  */
 public class PatternSettings {
+       // Pattern settings
+    public static Setting generateBtnSignalSetting; // Pattern Type "Preset", "Program", "Custom"
+    public static Setting patternTypeSetting; // Pattern Type "Preset", "Program", "Custom"
+    public static Setting patternSelectorSetting; // List of default patterns
+    public static Setting customPresetSetting; // List of custom patterns
+    public static Setting presetPatternStringSetting; // Custom pattern string
+    public static Setting reversePatternSetting;
+    public static Setting spacerGenerate;
+    public static Setting[] allSettings;
     private final BitwigBuddyExtension extension;
-    private static String CATEGORY_GENERATE_PATTERN = "Generate Pattern";
-    private String lastDefaultPresetUsed = "Kick: Four on the Floor";
-    private String lastCustomPresetUsed = null;
+    private static String CATEGORY_GENERATE_PATTERN = "3 Generate Pattern";
+    private static String lastDefaultPresetUsed = "Kick: Four on the Floor";
+    private static String lastCustomPresetUsed = null;
     private String lastStringPatternUsed = "100,0,0,0,100,0,0,0,100,0,0,0,100,0,0,0";
 
     /**
@@ -64,6 +73,8 @@ public class PatternSettings {
         initCustomPresetSetting(documentState);
         initCustomPresetPatternSetting(documentState);
         initReversePatternSetting(documentState);
+        allSettings = new Setting[] { spacerGenerate, generateBtnSignalSetting, patternTypeSetting, patternSelectorSetting, customPresetSetting,
+                presetPatternStringSetting, reversePatternSetting };
     }
 
     /**
@@ -73,8 +84,11 @@ public class PatternSettings {
      * @param documentState The current document state.
      */
     private void initGenerateButton(DocumentState documentState) {
-        Signal generateButton = documentState.getSignalSetting("Generate!", CATEGORY_GENERATE_PATTERN, "Generate!");
-        generateButton.addSignalObserver(extension::generateDrumPattern);
+        // Signal generateButton = documentState.getSignalSetting("Generate!", CATEGORY_GENERATE_PATTERN, "Generate!");
+        generateBtnSignalSetting = (Setting) documentState.getSignalSetting("Generate!", CATEGORY_GENERATE_PATTERN,
+                "Generate!");
+
+        ((Signal) generateBtnSignalSetting).addSignalObserver(extension::generateDrumPattern);
     }
 
     /**
@@ -83,61 +97,65 @@ public class PatternSettings {
      *
      * @param documentState The current document state.
      */
-    private void initPatternTypeSetting(DocumentState documentState) {
-        String[] options = { "Presets", "Random", "Custom" };
-        extension.patternTypeSetting = (Setting) documentState.getEnumSetting("Pattern Type", CATEGORY_GENERATE_PATTERN,
+    public void initPatternTypeSetting(DocumentState documentState) {
+        String[] options = { "Presets", "Program", "Custom" };
+        patternTypeSetting = (Setting) documentState.getEnumSetting("Pattern Type", CATEGORY_GENERATE_PATTERN,
                 options, "Presets");
 
-        ((EnumValue) extension.patternTypeSetting).addValueObserver(newValue -> {
-            switch (newValue) {
-                case "Presets":
-                    Setting[] settingsToShow = {
-                            extension.patternSelectorSetting,
-                            extension.reversePatternSetting };
-                    Setting[] settingsToHide = {
-                            extension.customPresetSetting,
-                            extension.randomDensitySetting,
-                            extension.randomMinVelocityVariationSetting,
-                            extension.randomMaxVelocityVariationSetting,
-                            extension.randomStepQtySetting,
-                            extension.randomVelocitySettingShape };
-                    showAndEnableSetting(settingsToShow);
-                    hideAndDisableSetting(settingsToHide);
-
-                    ((SettableEnumValue) extension.patternSelectorSetting).set(lastDefaultPresetUsed);
-                    setPatternString(getDefaultPresetsContentPatternStrings(lastDefaultPresetUsed));
-                    break;
-                case "Custom":
-                    Setting[] settingsToShowCustom = {
-                            extension.customPresetSetting,
-                            extension.reversePatternSetting };
-                    Setting[] settingsToHideCustom = {
-                            extension.patternSelectorSetting,
-                            extension.randomDensitySetting,
-                            extension.randomMinVelocityVariationSetting,
-                            extension.randomMaxVelocityVariationSetting,
-                            extension.randomStepQtySetting,
-                            extension.randomVelocitySettingShape };
-                    showAndEnableSetting(settingsToShowCustom);
-                    hideAndDisableSetting(settingsToHideCustom);
-
-                    if (lastCustomPresetUsed != null) {
-                        ((SettableEnumValue) extension.customPresetSetting).set(lastCustomPresetUsed);
-                    }
-
-                    break;
-                case "Random":
-                    Setting[] settingsToShowRandom = { extension.randomDensitySetting,
-                            extension.randomMinVelocityVariationSetting,
-                            extension.randomMaxVelocityVariationSetting, extension.randomStepQtySetting,
-                            extension.randomVelocitySettingShape };
-                    Setting[] settingsToHideRandom = { extension.patternSelectorSetting, extension.customPresetSetting,
-                            extension.reversePatternSetting };
-                    showAndEnableSetting(settingsToShowRandom);
-                    hideAndDisableSetting(settingsToHideRandom);
-                    break;
-            }
+        ((EnumValue) patternTypeSetting).addValueObserver(newValue -> {
+            generatorTypeSelector(newValue);
         });
+    }
+
+    public static void generatorTypeSelector(String newValue) {
+        switch (newValue) {
+            case "Presets":
+                Setting[] settingsToShow = {
+                        patternSelectorSetting,
+                        reversePatternSetting };
+                Setting[] settingsToHide = {
+                        customPresetSetting,
+                        ProgramPattern.programDensitySetting,
+                        ProgramPattern.programMinVelocityVariationSetting,
+                        ProgramPattern.programMaxVelocityVariationSetting,
+                        ProgramPattern.programStepQtySetting,
+                        ProgramPattern.programVelocitySettingShape };
+                showAndEnableSetting(settingsToShow);
+                hideAndDisableSetting(settingsToHide);
+
+                ((SettableEnumValue) patternSelectorSetting).set(lastDefaultPresetUsed);
+                setPatternString(getDefaultPresetsContentPatternStrings(lastDefaultPresetUsed));
+                break;
+            case "Custom":
+                Setting[] settingsToShowCustom = {
+                        customPresetSetting,
+                        reversePatternSetting };
+                Setting[] settingsToHideCustom = {
+                        patternSelectorSetting,
+                        ProgramPattern.programDensitySetting,
+                        ProgramPattern.programMinVelocityVariationSetting,
+                        ProgramPattern.programMaxVelocityVariationSetting,
+                        ProgramPattern.programStepQtySetting,
+                        ProgramPattern.programVelocitySettingShape };
+                showAndEnableSetting(settingsToShowCustom);
+                hideAndDisableSetting(settingsToHideCustom);
+
+                if (lastCustomPresetUsed != null) {
+                    ((SettableEnumValue) customPresetSetting).set(lastCustomPresetUsed);
+                }
+
+                break;
+            case "Program":
+                Setting[] settingsToShowRandom = { ProgramPattern.programDensitySetting,
+                        ProgramPattern.programMinVelocityVariationSetting,
+                        ProgramPattern.programMaxVelocityVariationSetting, ProgramPattern.programStepQtySetting,
+                        ProgramPattern.programVelocitySettingShape };
+                Setting[] settingsToHideRandom = { patternSelectorSetting, customPresetSetting,
+                        reversePatternSetting };
+                showAndEnableSetting(settingsToShowRandom);
+                hideAndDisableSetting(settingsToHideRandom);
+                break;
+        }
     }
 
     /**
@@ -150,12 +168,12 @@ public class PatternSettings {
                 .map(pattern -> pattern[0].toString())
                 .toArray(String[]::new);
 
-        extension.patternSelectorSetting = (Setting) documentState.getEnumSetting("Pattern", CATEGORY_GENERATE_PATTERN,
+        patternSelectorSetting = (Setting) documentState.getEnumSetting("Pattern", CATEGORY_GENERATE_PATTERN,
                 LIST_OF_DEFAULT_PATTERNS,
                 "Kick: Four on the Floor");
 
-        ((EnumValue) extension.patternSelectorSetting).addValueObserver(newValue -> {
-            if (!((EnumValue) extension.patternTypeSetting).get().equals("Presets")) {
+        ((EnumValue) patternSelectorSetting).addValueObserver(newValue -> {
+            if (!((EnumValue) patternTypeSetting).get().equals("Presets")) {
                 return;
             }
             lastDefaultPresetUsed = newValue.toString();
@@ -165,7 +183,7 @@ public class PatternSettings {
         });
     }
 
-    private String getDefaultPresetsContentPatternStrings(String newValue) {
+    private static String getDefaultPresetsContentPatternStrings(String newValue) {
         String patternByName = Arrays.stream(DefaultPatterns.getPatternByName(newValue.toString()))
                 .mapToObj(String::valueOf)
                 .collect(Collectors.joining(","));
@@ -180,15 +198,15 @@ public class PatternSettings {
      */
     private void initCustomPresetSetting(DocumentState documentState) {
         String[] presets = getCustomPresetsContentNameStrings();
-        extension.customPresetSetting = (Setting) documentState.getEnumSetting("Custom Presets",
+        customPresetSetting = (Setting) documentState.getEnumSetting("Custom Presets",
                 CATEGORY_GENERATE_PATTERN, presets,
                 presets[0]);
 
-        hideAndDisableSetting(extension.customPresetSetting);
+        hideAndDisableSetting(customPresetSetting);
 
-        ((EnumValue) extension.customPresetSetting).addValueObserver(newValue -> {
+        ((EnumValue) customPresetSetting).addValueObserver(newValue -> {
             // if preset type
-            if (!((EnumValue) extension.patternTypeSetting).get().equals("Custom")) {
+            if (!((EnumValue) patternTypeSetting).get().equals("Custom")) {
                 return;
             }
             if (newValue != null) {
@@ -203,17 +221,17 @@ public class PatternSettings {
         });
     }
 
-    private void setPatternString(String patternByName) {
-        String patternType = ((EnumValue) extension.patternTypeSetting).get();
-        if (patternType.equals("Random")) {
+    private static void setPatternString(String patternByName) {
+        String patternType = ((EnumValue) patternTypeSetting).get();
+        if (patternType.equals("Program")) {
             patternByName = new int[16].toString();
         } else {
-            ((SettableStringValue) extension.presetPatternStringSetting).set(patternByName);
+            ((SettableStringValue) presetPatternStringSetting).set(patternByName);
         }
     }
 
     private void initCustomPresetPatternSetting(DocumentState documentState) {
-        extension.presetPatternStringSetting = (Setting) documentState.getStringSetting("Steps",
+        presetPatternStringSetting = (Setting) documentState.getStringSetting("Steps",
                 CATEGORY_GENERATE_PATTERN, 0,
                 lastStringPatternUsed);
     }
@@ -224,7 +242,7 @@ public class PatternSettings {
      * @param documentState The current document state.
      */
     private void initReversePatternSetting(DocumentState documentState) {
-        extension.reversePatternSetting = (Setting) documentState.getEnumSetting("Reverse Pattern",
+        reversePatternSetting = (Setting) documentState.getEnumSetting("Reverse Pattern",
                 CATEGORY_GENERATE_PATTERN,
                 new String[] { "Normal", "Reverse" }, "Normal");
     }
@@ -235,7 +253,7 @@ public class PatternSettings {
      * @param documentState The current document state.
      */
     private void initSpacer(DocumentState documentState) {
-        Setting spacerGenerate = (Setting) documentState.getStringSetting("PATTERN-----------------------------",
+        spacerGenerate = (Setting) documentState.getStringSetting("PATTERN-----------------------------",
                 CATEGORY_GENERATE_PATTERN, 0,
                 "---------------------------------------------------");
         disableSetting(spacerGenerate); // Spacers are always disabled

@@ -29,37 +29,11 @@ public class BitwigBuddyExtension extends ControllerExtension {
    Clip arrangerClip;
 
    DocumentState documentState;
-   // Pattern settings
-   Setting patternTypeSetting; // Pattern Type "Preset", "Random", "Custom"
-   Setting patternSelectorSetting; // List of default patterns
-   Setting customPresetSetting; // List of custom patterns
-   Setting presetPatternStringSetting; // Custom pattern string
-   Setting reversePatternSetting;
-
-   // Random Settings
-   Setting randomMinVelocityVariationSetting;
-   Setting randomMaxVelocityVariationSetting;
-   Setting randomDensitySetting;
-   Setting randomVelocitySettingShape;
-   Setting randomStepQtySetting;
-
-   // Step Size / Note Length settings
-   Setting noteLengthSetting; // How long each note should be
-   Setting stepSizSetting;
-   Setting stepSizSubdivisionSetting; // Subdivisions Straight | Dotted | Triplet | Quintuplet | Septuplet
-   Setting learnNoteSetting; // On or Off
-
-   // Note Destination settings
-   Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#",
-                                   // "B"
-   Setting noteOctaveSetting; // Note Octave -2 to 8
-   Setting noteChannelSetting; // Note Channel 1 to 16
-   NoteDestinationSettings noteDestSettings; // Class to handle note destination settings
 
    // Step movement settings
    private MoveStepsHandler moveStepsHandler;
 
-   Setting toggleLauncherArrangerSetting;
+   
 
    GlobalPreferences preferences;
 
@@ -94,50 +68,36 @@ public class BitwigBuddyExtension extends ControllerExtension {
       arrangerClip.getPlayStop().markInterested();
       arrangerClip.clipLauncherSlot().isPlaying().markInterested();
 
+      SettingsHelper.init(this);
+      
+      // Initialize launcher/arranger toggle
+      
+      ModeSelectSettings.init(this);
+
       moveStepsHandler = new MoveStepsHandler(this);
       moveStepsHandler.init(documentState);
-
-      SettingsHelper.init(this);
-
+      
+      EditClipSettings.init(this);
+      
       PatternSettings.init(this);
-      RandomPattern.init(this);
+      ProgramPattern.init(this);
       NoteDestinationSettings.init(this);
       StepSizeSettings.init(this);
       PostActionSettings.init(this);
       ClipUtils.init(this);
 
-      // Initialize launcher/arranger toggle
-      initToggleLauncherArrangerSetting();
+
+      
+      
+      ModeSelectSettings.gotoGenerateMode();
+
 
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BitwigBuddy Initialized! Have fun!");
    }
 
-   public void testConsole() {
-      getHost().println("Test console message");
-   }
 
-   /**
-    * Initializes the clip destination toggle.
-    * Allows switching between launcher and arranger clip modes,
-    * determining where patterns will be generated.
-    */
-   private void initToggleLauncherArrangerSetting() {
-      // Launcher/Arranger toggle
-      final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] { "Launcher", "Arranger", };
-      toggleLauncherArrangerSetting = (Setting) documentState.getEnumSetting("Destination Launcher/Arranger", "Z",
-            TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
-            TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
 
-      ((EnumValue) toggleLauncherArrangerSetting).addValueObserver(newValue -> {
-         PopupUtils.showPopup("Destination: " + newValue);
-         if (newValue.equals("Arranger")) {
-            disableSetting(PostActionSettings.duplicateClipSetting);
-         } else {
-            enableSetting(PostActionSettings.duplicateClipSetting);
-         }
-      });
-   }
 
    /**
     * Generates a drum pattern based on current settings.
@@ -147,9 +107,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public void generateDrumPattern() {
       Clip clip = getLauncherOrArrangerAsClip();
       DrumPatternGenerator.generatePattern(
-            this, clip, noteLengthSetting, stepSizSubdivisionSetting,
-            stepSizSetting, noteDestSettings, patternSelectorSetting, patternTypeSetting, presetPatternStringSetting,
-            reversePatternSetting);
+            this, clip);
    }
 
    /**
@@ -159,7 +117,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
     * @return The active Clip object (either launcher or arranger clip)
     */
    public Clip getLauncherOrArrangerAsClip() {
-      return ClipUtils.getLauncherOrArrangerAsClip(toggleLauncherArrangerSetting, arrangerClip, cursorClip);
+      return ClipUtils.getLauncherOrArrangerAsClip(ModeSelectSettings.toggleLauncherArrangerSetting, arrangerClip, cursorClip);
    }
 
    @Override
@@ -183,51 +141,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
       return documentState;
    }
 
-   public void setPatternSelectorSetting(Setting patternSelectorSetting) {
-      this.patternSelectorSetting = patternSelectorSetting;
-   }
-
-   public void setCustomPresetSetting(Setting customPresetSetting) {
-      this.customPresetSetting = customPresetSetting;
-   }
-
-   public void setNoteLengthSetting(Setting noteLengthSetting) {
-      this.noteLengthSetting = noteLengthSetting;
-   }
-
-   public void setStepSizSetting(Setting stepSizSetting) {
-      this.stepSizSetting = stepSizSetting;
-   }
-
-   public void setStepSizSubdivisionSetting(Setting stepSizSubdivisionSetting) {
-      this.stepSizSubdivisionSetting = stepSizSubdivisionSetting;
-   }
-
-   public void setNoteDestinationSetting(Setting noteDestinationSetting) {
-      this.noteDestinationSetting = noteDestinationSetting;
-   }
-
-   public void setNoteOctaveSetting(Setting noteOctaveSetting) {
-      this.noteOctaveSetting = noteOctaveSetting;
-   }
-
-   public void getNoteChannelSetting(Setting noteChannelSetting) {
-      this.noteChannelSetting = noteChannelSetting;
-   }
-
-   public void setNoteChannelSetting(Setting noteChannelSetting) {
-      this.noteChannelSetting = noteChannelSetting;
-   }
-
-   public void setToggleLauncherArrangerSetting(Setting toggleLauncherArrangerSetting) {
-      this.toggleLauncherArrangerSetting = toggleLauncherArrangerSetting;
-   }
-
-
-   public void setReversePatternSetting(Setting reversePatternSetting) {
-      this.reversePatternSetting = reversePatternSetting;
-   }
-
    public MoveStepsHandler getMoveStepsHandler() {
       return moveStepsHandler;
    }
@@ -236,20 +149,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.moveStepsHandler = moveStepsHandler;
    }
 
-   public void setNoteDestSettings(NoteDestinationSettings noteDestSettings) {
-      this.noteDestSettings = noteDestSettings;
-   }
-
-   public void setPreferences(GlobalPreferences preferences) {
-      this.preferences = preferences;
-   }
-
-   public Setting getPresetPatternStringSetting() {
-      return presetPatternStringSetting;
-   }
-
-   public void setPresetPatternStringSetting(Setting customPresetPatternSetting) {
-      this.presetPatternStringSetting = customPresetPatternSetting;
+   public void restart() {
+      getHost().restart();
    }
 
 }
