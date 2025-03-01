@@ -44,7 +44,7 @@ public class ClipUtils {
                 "Clear current note destination");
 
         ((Signal) clearClipSetting).addSignalObserver(() -> extension.getLauncherOrArrangerAsClip().clearSteps());
-        
+
         ((Signal) clearCurrentNoteDestination)
                 .addSignalObserver(() -> {
                     int noteDestination = NoteDestinationSettings.getCurrentNoteDestinationAsInt();
@@ -160,8 +160,13 @@ public class ClipUtils {
      * @param stepOffset      The offset to apply.
      * @param isRotate        If true, rotate steps; otherwise, move steps.
      */
-    public static void handleStepMovement(Clip clip, int channel, int noteDestination,
-            String stepSize, String subdivision, int stepOffset, boolean isRotate) {
+    public static void handleStepMovement(Clip clip,
+            int channel,
+            int noteDestination,
+            String stepSize,
+            String subdivision,
+            int stepOffset,
+            boolean isRotate) {
         double loopLength = clip.getLoopLength().get();
         double stepsPerBeat = 1.0 / Utils.getNoteLengthAsDouble(stepSize, subdivision);
         int loopLengthInt = (int) Math.round(loopLength * stepsPerBeat);

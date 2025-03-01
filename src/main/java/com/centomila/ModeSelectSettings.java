@@ -17,40 +17,32 @@ import com.bitwig.extension.controller.api.Signal;
 import com.centomila.utils.PopupUtils;
 
 public class ModeSelectSettings {
+    private static final String CATEGORY_OTHER = "Mode Select";
 
-    static Setting modeSelectSetting;
-    static Setting toggleLauncherArrangerSetting;
+    public static Setting modeGenerateEditToggleSetting;
+    public static Setting toggleLauncherArrangerSetting;
 
     public static void init(BitwigBuddyExtension extension) {
 
-        initToggleModesSettings();
-        initiObservers();
-    }
-
-    /**
-     * Initializes the clip destination toggle.
-     * Allows switching between launcher and arranger clip modes,
-     * determining where patterns will be generated.
-     */
-    private static void initToggleModesSettings() {
         // Mode select setting
         final String[] MODE_SELECT_OPTIONS = new String[] { "Generate", "Edit" };
 
-        modeSelectSetting = (Setting) createEnumSetting("Mode Select", "Z",
+        modeGenerateEditToggleSetting = (Setting) createEnumSetting("Generate/Edit Mode", CATEGORY_OTHER,
                 MODE_SELECT_OPTIONS,
                 MODE_SELECT_OPTIONS[0]);
 
         // Launcher/Arranger toggle
         final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] { "Launcher", "Arranger", };
 
-        toggleLauncherArrangerSetting = (Setting) createEnumSetting("Destination Launcher/Arranger", "Z",
+        toggleLauncherArrangerSetting = (Setting) createEnumSetting("Destination Launcher/Arranger", CATEGORY_OTHER,
                 TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
                 TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
 
+        initToggleModeObservers();
     }
 
-    private static void initiObservers() {
-        ((EnumValue) modeSelectSetting).addValueObserver(newValue -> {
+    private static void initToggleModeObservers() {
+        ((EnumValue) modeGenerateEditToggleSetting).addValueObserver(newValue -> {
             // PopupUtils.showPopup("Mode: " + newValue);
             toggleMode(newValue);
         });
@@ -130,9 +122,9 @@ public class ModeSelectSettings {
         // VelocityShapeSettings.showSettings();
 
         showSetting(PostActionSettings.allSettings);
-       PostActionSettings.showPostActionsSettings();
+        PostActionSettings.showPostActionsSettings();
 
-       EditClipSettings.hideEditClipSettings();
+        EditClipSettings.hideEditClipSettings();
     }
 
 }
