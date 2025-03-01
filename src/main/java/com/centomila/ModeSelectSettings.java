@@ -110,9 +110,10 @@ public class ModeSelectSettings {
         // for each Setting in RandomPattern.allSettings, showSetting(setting);
         // if presetPatternType is random
 
-        // for each Setting in MoveStepsHandler.allSettings, showSetting(setting);
+
+
         for (Setting setting : MoveStepsHandler.allSettings) {
-            setting.hide();
+            setting.show();
         }
 
         // hide PatternSettings
