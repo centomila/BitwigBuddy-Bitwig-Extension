@@ -206,7 +206,7 @@ public class ClipUtils {
         extension.getHost().println("Clip length: " + clipLength);
 
         List<NoteStep> selectedSteps = new ArrayList<>();
-        for (int i = 0; i < 127; i++) {
+        for (int i = 0; i < 128; i++) {
             for (int note = 0; note < 128; note++) {
                 NoteStep step = clip.getStep(channel, i, note);
                 if (step != null && step.isIsSelected()) {
@@ -214,27 +214,36 @@ public class ClipUtils {
                 }
             }
         }
-        selectedSteps.forEach(step -> extension.getHost().println("Step: " + step.x() + ", " + step.y()));
+        // selectedSteps.forEach(step -> extension.getHost().println("Step: " + step.x() + ", " + step.y()));
 
-        int[] selectedStepsAsInt = selectedSteps.stream().mapToInt(step -> {
-            int shapeIndex = (int) Math.round((velocityShapes.length - 1) * Math.random());
-            return (int) shapeIndex;
-        }).toArray();
+        selectedSteps.sort(Comparator.comparingInt(NoteStep::x));
+        int minX = selectedSteps.get(0).x();
+        // Adjust normalized x values to avoid a zero for the first step
+        int[] selectedStepsAsInt = selectedSteps.stream()
+            .mapToInt(step -> (step.x() - minX) + 1)
+            .toArray();
 
-        extension.getHost().println("Selected steps as int: " + selectedStepsAsInt.length);
+        // extension.getHost().println("Selected steps as int: " + selectedStepsAsInt.length);
 
-        int[] velocityShapesInt = VelocityShape.applyVelocityShape(selectedStepsAsInt,
-                (((EnumValue) ProgramPattern.programVelocitySettingShape).get()),
-                ProgramPattern.getMinVelocityAsInt(),ProgramPattern.getMaxVelocityAsInt());
+        String velocityType = ((EnumValue) ProgramPattern.programVelocitySettingShape).get();
+        int minVelocity = ProgramPattern.getMinVelocityAsInt();
+        int maxVelocity = ProgramPattern.getMaxVelocityAsInt();
+
+
+        int[] velocityShapesInt = VelocityShape.applyVelocityShape(selectedStepsAsInt, velocityType, minVelocity, maxVelocity);
 
         // apply velocity to selected steps mapping the velocity shapes
         for (int i = 0; i < selectedSteps.size(); i++) {
-            selectedSteps.get(i).setVelocity(velocityShapesInt[i] / 127.0);
+            // Use maxVelocity for proper scaling instead of 127.0
+            double velocityValue = velocityShapesInt[i] / (double) maxVelocity;
+            NoteStep currentStep = selectedSteps.get(i);
+            extension.getHost().println("Step " + i + ": x=" + currentStep.x() + ", velocity=" + velocityValue);
+            currentStep.setVelocity(velocityValue);
         }
 
         // Set velocity of selected steps
         // selectedSteps.forEach(step -> step.setVelocity(127.0 / 127.0));
-        extension.getHost().println("Selected steps: " + selectedSteps.size());
+        // extension.getHost().println("Selected steps: " + selectedSteps.size());
 
         // return selected steps
         return selectedSteps;
