@@ -1,6 +1,5 @@
 package com.centomila;
 
-
 import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.utils.SettingsHelper.*;
 import com.bitwig.extension.controller.api.SettableRangedValue;
@@ -22,7 +21,8 @@ import java.util.Arrays;
  */
 public class NoteDestinationSettings {
    public static Setting learnNoteSetting; // On or Off
-   public static Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
+   public static Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#",
+                                                 // "A", "A#", "B"
    public static Setting noteOctaveSetting; // Note Octave -2 to 8
    public static Setting noteChannelSetting; // Note Channel 1 to 16
    public static Setting[] allSettings;
@@ -42,7 +42,8 @@ public class NoteDestinationSettings {
 
    /**
     * Initializes all note destination settings and observers.
-    * Sets up note selection, octave selection, MIDI channel, and note learning functionality.
+    * Sets up note selection, octave selection, MIDI channel, and note learning
+    * functionality.
     * 
     * @param extension The BitwigBuddy extension instance containing the settings
     */
@@ -104,15 +105,16 @@ public class NoteDestinationSettings {
 
       // get the value from GlobalPreferences of showChannelDestination
       if (GlobalPreferences.showChannelDestinationPref.get()) {
-         allSettings = new Setting[] { spacerNoteDestination, noteDestinationSetting, noteOctaveSetting, noteChannelSetting,
+         allSettings = new Setting[] { spacerNoteDestination, noteDestinationSetting, noteOctaveSetting,
+               noteChannelSetting,
                learnNoteSetting };
       } else {
-         allSettings = new Setting[] { spacerNoteDestination, noteDestinationSetting, noteOctaveSetting, learnNoteSetting };
+         allSettings = new Setting[] { spacerNoteDestination, noteDestinationSetting, noteOctaveSetting,
+               learnNoteSetting };
       }
-      
-
 
    }
+
    /**
     * Converts a MIDI note number to its corresponding note name with octave.
     * 
@@ -125,11 +127,13 @@ public class NoteDestinationSettings {
       int noteIndex = key % 12;
       return noteNames[noteIndex] + octave;
    }
+
    /**
     * Separates a combined note name into its note and octave components.
     * 
     * @param noteName The combined note name (e.g., "C#4", "F-2")
-    * @return A String array where [0] is the note name and [1] is the octave number
+    * @return A String array where [0] is the note name and [1] is the octave
+    *         number
     */
    public static String[] getKeyAndOctaveFromNoteName(String noteName) {
       String note;
@@ -151,9 +155,11 @@ public class NoteDestinationSettings {
       }
       return new String[] { note, String.valueOf(octave) };
    }
+
    /**
     * Configures value observers for note and octave destination changes.
-    * Updates the current note/octave values and enforces the G8 maximum note constraint.
+    * Updates the current note/octave values and enforces the G8 maximum note
+    * constraint.
     * 
     * @param extension The BitwigBuddy extension instance
     */
@@ -174,10 +180,11 @@ public class NoteDestinationSettings {
 
    /**
     * Sets up note learning functionality by observing played notes.
-    * When enabled, automatically updates note destination settings based on played notes.
+    * When enabled, automatically updates note destination settings based on played
+    * notes.
     * 
     * @param extension The BitwigBuddy extension instance
-    * @param host The Bitwig Studio controller host
+    * @param host      The Bitwig Studio controller host
     */
    private static void setupPlayingNotesObserver(BitwigBuddyExtension extension, ControllerHost host) {
       Channel cursorChannel = host.createCursorTrack(0, 0);
@@ -220,12 +227,10 @@ public class NoteDestinationSettings {
       }
    }
 
-
-
-
    /**
     * Calculates and returns the current MIDI note number.
-    * Combines the current note and octave settings to determine the MIDI note number.
+    * Combines the current note and octave settings to determine the MIDI note
+    * number.
     * 
     * @return The MIDI note number (0-127)
     */
@@ -238,7 +243,7 @@ public class NoteDestinationSettings {
     * Displays a popup notification showing the current note destination.
     * The popup shows the note name concatenated with the octave number.
     */
-   public void popupNoteDestination() {
+   public static void popupNoteDestination() {
       showPopup("Note Destination: " + currentNoteAsString + currentOctaveAsInt);
    }
 
@@ -257,7 +262,7 @@ public class NoteDestinationSettings {
     * 
     * @param note The new note value (e.g., "C", "F#")
     */
-   public void setCurrentNote(String note) {
+   public static void setCurrentNote(String note) {
       currentNoteAsString = note;
       getCurrentNoteDestinationAsInt();
       popupNoteDestination();
@@ -268,7 +273,7 @@ public class NoteDestinationSettings {
     * 
     * @param octave The new octave value (-2 to 8)
     */
-   public void setCurrentOctave(int octave) {
+   public static void setCurrentOctave(int octave) {
       currentOctaveAsInt = octave;
       getCurrentNoteDestinationAsInt();
       popupNoteDestination();
@@ -278,5 +283,18 @@ public class NoteDestinationSettings {
       currentNoteAsString = note;
       currentOctaveAsInt = octave;
       noteChannelSetting = channelSetting;
+   }
+
+   public static void setNoteAndOctaveFromString(String noteAndOctave) {
+      String[] noteAndOctaveArray = getKeyAndOctaveFromNoteName(noteAndOctave);
+      // setCurrentNote(noteAndOctaveArray[0]);
+      // setCurrentOctave(Integer.parseInt(noteAndOctaveArray[1]));
+      ((SettableEnumValue) noteDestinationSetting).set(noteAndOctaveArray[0]);
+      ((SettableEnumValue) noteOctaveSetting).set(noteAndOctaveArray[1]);
+
+      // print in console
+      showPopup(noteAndOctaveArray[0] + " | " + noteAndOctaveArray[1]);
+
+      
    }
 }

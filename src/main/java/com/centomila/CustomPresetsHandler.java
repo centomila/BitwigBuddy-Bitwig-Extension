@@ -209,4 +209,6 @@ public class CustomPresetsHandler {
         public String getDefaultNote() { return defaultNote; }
         public int[] getPattern() { return Arrays.copyOf(pattern, pattern.length); }
     }
+
+    
 }

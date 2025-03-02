@@ -2,6 +2,7 @@ package com.centomila;
 
 import static com.centomila.utils.PopupUtils.showPopup;
 import static com.centomila.utils.SettingsHelper.*;
+import  com.centomila.NoteDestinationSettings;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -230,6 +231,11 @@ public class PatternSettings {
             showPopup("Custom Preset selected: " + newValue.toString() + " with pattern: " + pattern);
             // convert pattern to Setting
             setPatternString(pattern);
+            
+            String defaultNote = getCustomPresetDefaultNote(newValue.toString());
+            setDefaultNoteString(defaultNote);
+            NoteDestinationSettings.setNoteAndOctaveFromString(defaultNote);
+            
         });
     }
 
@@ -240,6 +246,10 @@ public class PatternSettings {
         } else {
             ((SettableStringValue) presetPatternStringSetting).set(patternByName);
         }
+    }
+
+    private static void setDefaultNoteString(String note) {
+        ((SettableStringValue) customPresetDefaultNoteSetting).set(note);
     }
 
     private void initCustomPresetPatternSetting(DocumentState documentState) {
@@ -306,6 +316,17 @@ public class PatternSettings {
         CustomPresetsHandler handler = new CustomPresetsHandler(extension.getHost(), extension.preferences);
         int[] pattern = handler.getCustomPatternByName(presetName);
         return Arrays.stream(pattern).mapToObj(String::valueOf).toArray(String[]::new);
+    }
+
+    private String getCustomPresetDefaultNote(String presetName) {
+        for (CustomPreset preset : extension.preferences.getCustomPresets()) {
+            if (preset.getName().equals(presetName)) {
+                extension.getHost().println("Found preset: " + presetName + " with default note: " + preset.getDefaultNote());
+                return preset.getDefaultNote();
+            }
+        }
+
+        return "";
     }
 
 }
