@@ -171,15 +171,14 @@ public class SettingsHelper {
     /**
      * Creates a signal setting (A button that sends a signal when pressed).
      *
-     * @param label  the setting id
+     * @param label    the setting id
      * @param category the setting name
-     * @param action the action string as displayed on the related Bitwig Studio button
+     * @param action   the action string as displayed on the related Bitwig Studio
+     *                 button
      * @return the created signal setting
      */
     public static Signal createSignalSetting(String label, String category, String action) {
         return documentState.getSignalSetting(label, category, action);
     }
-
-    
 
 }

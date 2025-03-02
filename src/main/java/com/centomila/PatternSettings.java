@@ -1,9 +1,7 @@
 package com.centomila;
 
 import static com.centomila.utils.PopupUtils.showPopup;
-import static com.centomila.utils.SettingsHelper.disableSetting;
-import static com.centomila.utils.SettingsHelper.hideAndDisableSetting;
-import static com.centomila.utils.SettingsHelper.showAndEnableSetting;
+import static com.centomila.utils.SettingsHelper.*;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -15,18 +13,20 @@ import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.centomila.CustomPresetsHandler.CustomPreset;
+import com.centomila.utils.SettingsHelper;
 
 /**
  * Manages the pattern settings for the BitwigBuddy extension including presets,
  * random, and custom patterns.
  */
 public class PatternSettings {
-       // Pattern settings
+    // Pattern settings
     public static Setting generateBtnSignalSetting; // Pattern Type "Preset", "Program", "Custom"
     public static Setting patternTypeSetting; // Pattern Type "Preset", "Program", "Custom"
     public static Setting patternSelectorSetting; // List of default patterns
     public static Setting customPresetSetting; // List of custom patterns
     public static Setting refreshCustomPresetsSetting; // Refresh custom presets
+    public static Setting customPresetDefaultNoteSetting;
     public static Setting presetPatternStringSetting; // Custom pattern string
     public static Setting reversePatternSetting;
     public static Setting spacerGenerate;
@@ -75,8 +75,10 @@ public class PatternSettings {
         initCustomPresetPatternSetting(documentState);
         initRefreshCustomPresetsSetting(documentState);
         initReversePatternSetting(documentState);
-        allSettings = new Setting[] { spacerGenerate, generateBtnSignalSetting, patternTypeSetting, patternSelectorSetting, customPresetSetting,
-                presetPatternStringSetting, refreshCustomPresetsSetting, reversePatternSetting };
+        initCustomPresetDefaultNoteSetting(documentState);
+        allSettings = new Setting[] { spacerGenerate, generateBtnSignalSetting, patternTypeSetting,
+                patternSelectorSetting, customPresetSetting,
+                presetPatternStringSetting, refreshCustomPresetsSetting, reversePatternSetting, customPresetDefaultNoteSetting };
     }
 
     /**
@@ -86,7 +88,8 @@ public class PatternSettings {
      * @param documentState The current document state.
      */
     private void initGenerateButton(DocumentState documentState) {
-        // Signal generateButton = documentState.getSignalSetting("Generate!", CATEGORY_GENERATE_PATTERN, "Generate!");
+        // Signal generateButton = documentState.getSignalSetting("Generate!",
+        // CATEGORY_GENERATE_PATTERN, "Generate!");
         generateBtnSignalSetting = (Setting) documentState.getSignalSetting("Generate!", CATEGORY_GENERATE_PATTERN,
                 "Generate!");
 
@@ -150,12 +153,17 @@ public class PatternSettings {
 
                 break;
             case "Program":
-                Setting[] settingsToShowRandom = { ProgramPattern.programDensitySetting,
+                Setting[] settingsToShowRandom = {
+                        ProgramPattern.programDensitySetting,
                         ProgramPattern.programMinVelocityVariationSetting,
-                        ProgramPattern.programMaxVelocityVariationSetting, ProgramPattern.programStepQtySetting,
+                        ProgramPattern.programMaxVelocityVariationSetting,
+                        ProgramPattern.programStepQtySetting,
                         ProgramPattern.programVelocitySettingShape };
-                Setting[] settingsToHideRandom = { patternSelectorSetting, customPresetSetting,
-                        reversePatternSetting, refreshCustomPresetsSetting };
+                Setting[] settingsToHideRandom = {
+                        patternSelectorSetting,
+                        customPresetSetting,
+                        reversePatternSetting,
+                        refreshCustomPresetsSetting };
                 showAndEnableSetting(settingsToShowRandom);
                 hideAndDisableSetting(settingsToHideRandom);
                 break;
@@ -249,15 +257,24 @@ public class PatternSettings {
         });
     }
 
+    private void initCustomPresetDefaultNoteSetting (DocumentState documentState) {
+        customPresetDefaultNoteSetting = (Setting) createStringSetting(
+                "Default Note",
+                CATEGORY_GENERATE_PATTERN, 0,
+                "C1");
+    }
+
     /**
      * Initializes the reverse pattern setting.
      *
      * @param documentState The current document state.
      */
     private void initReversePatternSetting(DocumentState documentState) {
-        reversePatternSetting = (Setting) documentState.getEnumSetting("Reverse Pattern",
+        reversePatternSetting = (Setting) createEnumSetting(
+                "Reverse Pattern",
                 CATEGORY_GENERATE_PATTERN,
-                new String[] { "Normal", "Reverse" }, "Normal");
+                new String[] { "Normal", "Reverse" },
+                "Normal");
     }
 
     /**
@@ -266,7 +283,8 @@ public class PatternSettings {
      * @param documentState The current document state.
      */
     private void initSpacer(DocumentState documentState) {
-        spacerGenerate = (Setting) documentState.getStringSetting("PATTERN-----------------------------",
+        spacerGenerate = (Setting) createStringSetting(
+                "PATTERN-----------------------------",
                 CATEGORY_GENERATE_PATTERN, 0,
                 "---------------------------------------------------");
         disableSetting(spacerGenerate); // Spacers are always disabled
