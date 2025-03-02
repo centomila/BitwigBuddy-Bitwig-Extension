@@ -4,7 +4,7 @@
   <groupId>com.centomila</groupId>
   <artifactId>bitwigbuddy</artifactId>
   <name>BitwigBuddy</name>
-  <version>0.9.0</version>
+  <version>0.9.4</version>
   <build>
     <plugins>
       <plugin>
