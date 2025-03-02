@@ -1,5 +1,7 @@
 package com.centomila;
 
+import static com.centomila.GlobalPreferences.*;
+
 import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.utils.SettingsHelper.*;
 import com.bitwig.extension.controller.api.SettableRangedValue;
@@ -24,6 +26,7 @@ public class NoteDestinationSettings {
    public static Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
    public static Setting noteOctaveSetting; // Note Octave -2 to 8
    public static Setting noteChannelSetting; // Note Channel 1 to 16
+   public static Setting[] allSettings;
 
    public static int currentNoteAsInt;
 
@@ -99,6 +102,17 @@ public class NoteDestinationSettings {
       setupNoteDestinationObservers(extension);
       // Setup playing notes observer
       setupPlayingNotesObserver(extension, host);
+
+      // get the value from GlobalPreferences of showChannelDestination
+      if (GlobalPreferences.showChannelDestination.get()) {
+         allSettings = new Setting[] { spacerNoteDestination, noteDestinationSetting, noteOctaveSetting, noteChannelSetting,
+               learnNoteSetting };
+      } else {
+         allSettings = new Setting[] { spacerNoteDestination, noteDestinationSetting, noteOctaveSetting, learnNoteSetting };
+      }
+      
+
+
    }
    /**
     * Converts a MIDI note number to its corresponding note name with octave.

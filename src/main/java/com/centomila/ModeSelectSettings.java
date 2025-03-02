@@ -4,7 +4,6 @@ import static com.centomila.utils.SettingsHelper.*;
 
 import java.util.Random;
 
-
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
@@ -25,7 +24,8 @@ public class ModeSelectSettings {
         // Mode select setting
         final String[] MODE_SELECT_OPTIONS = new String[] { "Generate", "Edit" };
 
-        spacerSelectModSetting = (Setting) createStringSetting("MODE SELECT------------------------", CATEGORY_MODE_SELECT, 0,
+        spacerSelectModSetting = (Setting) createStringSetting("MODE SELECT------------------------",
+                CATEGORY_MODE_SELECT, 0,
                 "---------------------------------------------------");
         disableSetting(spacerSelectModSetting);
 
@@ -36,7 +36,8 @@ public class ModeSelectSettings {
         // Launcher/Arranger toggle
         final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] { "Launcher", "Arranger", };
 
-        toggleLauncherArrangerSetting = (Setting) createEnumSetting("Destination Launcher/Arranger", CATEGORY_MODE_SELECT,
+        toggleLauncherArrangerSetting = (Setting) createEnumSetting("Destination Launcher/Arranger",
+                CATEGORY_MODE_SELECT,
                 TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
                 TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
 
@@ -81,7 +82,7 @@ public class ModeSelectSettings {
         }
 
         for (Setting setting : MoveStepsHandler.allSettings) {
-            setting.show();
+            setting.hide();
         }
 
         for (Setting setting : PatternSettings.allSettings) {
@@ -92,10 +93,21 @@ public class ModeSelectSettings {
             setting.hide();
         }
 
-        ProgramPattern.showProgramPatternSettings();;
+        for (Setting setting : NoteDestinationSettings.allSettings) {
+            setting.hide();
+        }
+
+
+        ProgramPattern.showProgramPatternSettings();
+        
 
         EditClipSettings.showEditClipSettings();
-        
+
+        NoteDestinationSettings.noteDestinationSetting.hide();
+        NoteDestinationSettings.noteChannelSetting.hide();
+        ProgramPattern.programStepQtySetting.hide();
+        ProgramPattern.programDensitySetting.hide();
+
 
         // StepSizeSettings.hideSettings();
         // NoteDestinationSettings.hideSettings();
@@ -110,8 +122,6 @@ public class ModeSelectSettings {
         // for each Setting in RandomPattern.allSettings, showSetting(setting);
         // if presetPatternType is random
 
-
-
         for (Setting setting : MoveStepsHandler.allSettings) {
             setting.show();
         }
@@ -119,6 +129,16 @@ public class ModeSelectSettings {
         // hide PatternSettings
         for (Setting setting : PatternSettings.allSettings) {
             setting.show();
+        }
+
+        for (Setting setting : NoteDestinationSettings.allSettings) {
+            setting.show();
+        }
+
+        // get the value from GlobalPreferences of showChannelDestination
+        if (!GlobalPreferences.showChannelDestination.get()) {
+
+            hideSetting(NoteDestinationSettings.noteChannelSetting);
         }
 
         PatternSettings.generatorTypeSelector(((EnumValue) PatternSettings.patternTypeSetting).get());

@@ -55,7 +55,7 @@ public class GlobalPreferences {
     private Signal openPresetsFolder;
     private Signal browseFolderButton;
     private Signal resetToDefaultButton;
-    private BooleanValue showChannelDestination;
+    public static BooleanValue showChannelDestination;
     private ControllerHost host;
     
     private CustomPresetsHandler presetsHandler;
