@@ -2,7 +2,7 @@ package com.centomila;
 
 import static com.centomila.utils.PopupUtils.showPopup;
 import static com.centomila.utils.SettingsHelper.*;
-import  com.centomila.NoteDestinationSettings;
+import com.centomila.NoteDestinationSettings;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -26,8 +26,9 @@ public class PatternSettings {
     public static Setting patternTypeSetting; // Pattern Type "Preset", "Program", "Custom"
     public static Setting patternSelectorSetting; // List of default patterns
     public static Setting customPresetSetting; // List of custom patterns
-    public static Setting refreshCustomPresetsSetting; // Refresh custom presets
+    public static Setting customRefreshPresetsSetting; // Refresh custom presets
     public static Setting customPresetDefaultNoteSetting;
+    public static Setting customPresetNoteDestinationSelectorSetting;
     public static Setting presetPatternStringSetting; // Custom pattern string
     public static Setting reversePatternSetting;
     public static Setting spacerGenerate;
@@ -77,9 +78,17 @@ public class PatternSettings {
         initRefreshCustomPresetsSetting(documentState);
         initReversePatternSetting(documentState);
         initCustomPresetDefaultNoteSetting(documentState);
-        allSettings = new Setting[] { spacerGenerate, generateBtnSignalSetting, patternTypeSetting,
-                patternSelectorSetting, customPresetSetting,
-                presetPatternStringSetting, refreshCustomPresetsSetting, reversePatternSetting, customPresetDefaultNoteSetting };
+        allSettings = new Setting[] {
+                spacerGenerate,
+                generateBtnSignalSetting,
+                patternTypeSetting,
+                patternSelectorSetting,
+                customPresetSetting,
+                presetPatternStringSetting,
+                customRefreshPresetsSetting,
+                reversePatternSetting,
+                customPresetDefaultNoteSetting,
+                customPresetNoteDestinationSelectorSetting };
     }
 
     /**
@@ -126,7 +135,8 @@ public class PatternSettings {
                         ProgramPattern.programMaxVelocityVariationSetting,
                         ProgramPattern.programStepQtySetting,
                         ProgramPattern.programVelocitySettingShape,
-                        refreshCustomPresetsSetting, };
+                        customRefreshPresetsSetting, customPresetDefaultNoteSetting,
+                        customPresetNoteDestinationSelectorSetting };
                 showAndEnableSetting(settingsToShow);
                 hideAndDisableSetting(settingsToHide);
 
@@ -136,8 +146,9 @@ public class PatternSettings {
             case "Custom":
                 Setting[] settingsToShowCustom = {
                         customPresetSetting,
-                        refreshCustomPresetsSetting,
-                        reversePatternSetting };
+                        customRefreshPresetsSetting,
+                        reversePatternSetting, customPresetDefaultNoteSetting,
+                        customPresetNoteDestinationSelectorSetting };
                 Setting[] settingsToHideCustom = {
                         patternSelectorSetting,
                         ProgramPattern.programDensitySetting,
@@ -164,7 +175,8 @@ public class PatternSettings {
                         patternSelectorSetting,
                         customPresetSetting,
                         reversePatternSetting,
-                        refreshCustomPresetsSetting };
+                        customRefreshPresetsSetting, customPresetDefaultNoteSetting,
+                        customPresetNoteDestinationSelectorSetting };
                 showAndEnableSetting(settingsToShowRandom);
                 hideAndDisableSetting(settingsToHideRandom);
                 break;
@@ -231,11 +243,11 @@ public class PatternSettings {
             showPopup("Custom Preset selected: " + newValue.toString() + " with pattern: " + pattern);
             // convert pattern to Setting
             setPatternString(pattern);
-            
+
             String defaultNote = getCustomPresetDefaultNote(newValue.toString());
             setDefaultNoteString(defaultNote);
             NoteDestinationSettings.setNoteAndOctaveFromString(defaultNote);
-            
+
         });
     }
 
@@ -259,19 +271,27 @@ public class PatternSettings {
     }
 
     private void initRefreshCustomPresetsSetting(DocumentState documentState) {
-        refreshCustomPresetsSetting = (Setting) documentState.getSignalSetting("Refresh Custom Presets",
+        customRefreshPresetsSetting = (Setting) documentState.getSignalSetting("Refresh Custom Presets",
                 CATEGORY_GENERATE_PATTERN, "Refresh Custom Presets");
 
-        ((Signal) refreshCustomPresetsSetting).addSignalObserver(() -> {
+        ((Signal) customRefreshPresetsSetting).addSignalObserver(() -> {
             extension.restart();
         });
     }
 
-    private void initCustomPresetDefaultNoteSetting (DocumentState documentState) {
+    private void initCustomPresetDefaultNoteSetting(DocumentState documentState) {
         customPresetDefaultNoteSetting = (Setting) createStringSetting(
                 "Default Note",
                 CATEGORY_GENERATE_PATTERN, 0,
                 "C1");
+
+        disableSetting(customPresetDefaultNoteSetting);
+
+        customPresetNoteDestinationSelectorSetting = (Setting) createEnumSetting(
+                "Note Destination",
+                CATEGORY_GENERATE_PATTERN,
+                new String[] { "Note Destination", "Preset Default Note" },
+                "Note Destination");
     }
 
     /**
@@ -321,7 +341,8 @@ public class PatternSettings {
     private String getCustomPresetDefaultNote(String presetName) {
         for (CustomPreset preset : extension.preferences.getCustomPresets()) {
             if (preset.getName().equals(presetName)) {
-                extension.getHost().println("Found preset: " + presetName + " with default note: " + preset.getDefaultNote());
+                extension.getHost()
+                        .println("Found preset: " + presetName + " with default note: " + preset.getDefaultNote());
                 return preset.getDefaultNote();
             }
         }
