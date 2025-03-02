@@ -1,6 +1,5 @@
 package com.centomila;
 
-import static com.centomila.GlobalPreferences.*;
 
 import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.utils.SettingsHelper.*;
@@ -104,7 +103,7 @@ public class NoteDestinationSettings {
       setupPlayingNotesObserver(extension, host);
 
       // get the value from GlobalPreferences of showChannelDestination
-      if (GlobalPreferences.showChannelDestination.get()) {
+      if (GlobalPreferences.showChannelDestinationPref.get()) {
          allSettings = new Setting[] { spacerNoteDestination, noteDestinationSetting, noteOctaveSetting, noteChannelSetting,
                learnNoteSetting };
       } else {

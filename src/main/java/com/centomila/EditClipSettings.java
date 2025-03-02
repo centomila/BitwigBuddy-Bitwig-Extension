@@ -5,14 +5,7 @@ import static com.centomila.utils.SettingsHelper.createSignalSetting;
 import static com.centomila.utils.SettingsHelper.createStringSetting;
 import static com.centomila.utils.SettingsHelper.disableSetting;
 
-import javax.swing.text.Document;
-
-import com.centomila.VelocityShape;
-import com.bitwig.extension.controller.api.BeatTimeFormatter;
 import com.bitwig.extension.controller.api.Clip;
-import com.bitwig.extension.controller.api.DocumentState;
-import com.bitwig.extension.controller.api.NoteStep;
-import com.bitwig.extension.controller.api.SettableBeatTimeValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 

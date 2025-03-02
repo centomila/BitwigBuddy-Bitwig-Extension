@@ -2,7 +2,6 @@ package com.centomila;
 
 // import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.PostActionSettings.*;
-import com.centomila.NoteDestinationSettings.*;
 
 import java.util.Arrays;
 import com.bitwig.extension.controller.api.Clip;

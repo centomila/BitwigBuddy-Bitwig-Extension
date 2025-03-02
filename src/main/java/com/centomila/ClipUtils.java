@@ -1,26 +1,22 @@
 package com.centomila;
 
-import static com.centomila.VelocityShape.velocityShapes;
+
 import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.utils.SettingsHelper.*;
-import com.centomila.ProgramPattern;
+
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import com.centomila.BitwigBuddyExtension;
+
 import com.bitwig.extension.controller.api.BeatTimeValue;
 import com.bitwig.extension.controller.api.Clip;
-import com.bitwig.extension.controller.api.DoubleValue;
 import com.bitwig.extension.controller.api.EnumValue;
-import com.bitwig.extension.controller.api.IntegerValue;
 import com.bitwig.extension.controller.api.NoteStep;
-import com.bitwig.extension.controller.api.RangedValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
-import com.bitwig.extension.controller.api.Value;
 
 public class ClipUtils {
     private static String CATEGORY_OTHER = "99 Other";

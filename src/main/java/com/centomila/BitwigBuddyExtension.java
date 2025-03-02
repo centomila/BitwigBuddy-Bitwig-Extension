@@ -2,14 +2,10 @@ package com.centomila;
 
 import com.bitwig.extension.controller.api.ControllerHost;
 
-import static com.centomila.utils.SettingsHelper.*;
-
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.DocumentState;
-import com.bitwig.extension.controller.api.EnumValue;
-import com.bitwig.extension.controller.api.Setting;
 
 import com.centomila.utils.PopupUtils;
 import com.centomila.utils.SettingsHelper;

@@ -2,15 +2,9 @@ package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
 
-import java.util.Random;
 
-import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
-import com.bitwig.extension.controller.api.SettableStringValue;
-import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.Setting;
-import com.bitwig.extension.controller.api.Signal;
-import com.centomila.utils.PopupUtils;
 
 public class ModeSelectSettings {
     private static final String CATEGORY_MODE_SELECT = "1 Mode Select";
@@ -136,7 +130,7 @@ public class ModeSelectSettings {
         }
 
         // get the value from GlobalPreferences of showChannelDestination
-        if (!GlobalPreferences.showChannelDestination.get()) {
+        if (!GlobalPreferences.showChannelDestinationPref.get()) {
 
             hideSetting(NoteDestinationSettings.noteChannelSetting);
         }

@@ -55,7 +55,7 @@ public class GlobalPreferences {
     private Signal openPresetsFolder;
     private Signal browseFolderButton;
     private Signal resetToDefaultButton;
-    public static BooleanValue showChannelDestination;
+    public static BooleanValue showChannelDestinationPref;
     private ControllerHost host;
     
     private CustomPresetsHandler presetsHandler;
@@ -148,7 +148,7 @@ public class GlobalPreferences {
                 "Reset to default location");
 
         // Channel destination setting
-        this.showChannelDestination = preferences.getBooleanSetting(
+        showChannelDestinationPref = preferences.getBooleanSetting(
                 "Show Channel Destination Selector",
                 "Note Destination Settings",
                 true);
@@ -177,7 +177,7 @@ public class GlobalPreferences {
         this.resetToDefaultButton.addSignalObserver(this::resetToDefaultPath);
 
         // Add observer for channel destination
-        this.showChannelDestination.addValueObserver(value -> {
+        showChannelDestinationPref.addValueObserver(value -> {
             host.println("Show Channel Destination: " + value);
             if (value) {
                 showSetting(NoteDestinationSettings.noteChannelSetting);
