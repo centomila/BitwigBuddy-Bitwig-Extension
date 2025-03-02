@@ -26,6 +26,7 @@ public class PatternSettings {
     public static Setting patternTypeSetting; // Pattern Type "Preset", "Program", "Custom"
     public static Setting patternSelectorSetting; // List of default patterns
     public static Setting customPresetSetting; // List of custom patterns
+    public static Setting refreshCustomPresetsSetting; // Refresh custom presets
     public static Setting presetPatternStringSetting; // Custom pattern string
     public static Setting reversePatternSetting;
     public static Setting spacerGenerate;
@@ -72,9 +73,10 @@ public class PatternSettings {
         initPatternSelectorSetting(documentState);
         initCustomPresetSetting(documentState);
         initCustomPresetPatternSetting(documentState);
+        initRefreshCustomPresetsSetting(documentState);
         initReversePatternSetting(documentState);
         allSettings = new Setting[] { spacerGenerate, generateBtnSignalSetting, patternTypeSetting, patternSelectorSetting, customPresetSetting,
-                presetPatternStringSetting, reversePatternSetting };
+                presetPatternStringSetting, refreshCustomPresetsSetting, reversePatternSetting };
     }
 
     /**
@@ -119,7 +121,8 @@ public class PatternSettings {
                         ProgramPattern.programMinVelocityVariationSetting,
                         ProgramPattern.programMaxVelocityVariationSetting,
                         ProgramPattern.programStepQtySetting,
-                        ProgramPattern.programVelocitySettingShape };
+                        ProgramPattern.programVelocitySettingShape,
+                        refreshCustomPresetsSetting, };
                 showAndEnableSetting(settingsToShow);
                 hideAndDisableSetting(settingsToHide);
 
@@ -129,6 +132,7 @@ public class PatternSettings {
             case "Custom":
                 Setting[] settingsToShowCustom = {
                         customPresetSetting,
+                        refreshCustomPresetsSetting,
                         reversePatternSetting };
                 Setting[] settingsToHideCustom = {
                         patternSelectorSetting,
@@ -151,7 +155,7 @@ public class PatternSettings {
                         ProgramPattern.programMaxVelocityVariationSetting, ProgramPattern.programStepQtySetting,
                         ProgramPattern.programVelocitySettingShape };
                 Setting[] settingsToHideRandom = { patternSelectorSetting, customPresetSetting,
-                        reversePatternSetting };
+                        reversePatternSetting, refreshCustomPresetsSetting };
                 showAndEnableSetting(settingsToShowRandom);
                 hideAndDisableSetting(settingsToHideRandom);
                 break;
@@ -234,6 +238,15 @@ public class PatternSettings {
         presetPatternStringSetting = (Setting) documentState.getStringSetting("Steps",
                 CATEGORY_GENERATE_PATTERN, 0,
                 lastStringPatternUsed);
+    }
+
+    private void initRefreshCustomPresetsSetting(DocumentState documentState) {
+        refreshCustomPresetsSetting = (Setting) documentState.getSignalSetting("Refresh Custom Presets",
+                CATEGORY_GENERATE_PATTERN, "Refresh Custom Presets");
+
+        ((Signal) refreshCustomPresetsSetting).addSignalObserver(() -> {
+            extension.restart();
+        });
     }
 
     /**

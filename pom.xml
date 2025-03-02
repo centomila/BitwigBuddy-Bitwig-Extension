@@ -6,7 +6,7 @@
 	<artifactId>bitwigbuddy</artifactId>
 	<packaging>jar</packaging>
 	<name>BitwigBuddy</name>
-	<version>0.9.0</version>
+	<version>0.9.4</version>
 	
 	<repositories>
        <repository>
