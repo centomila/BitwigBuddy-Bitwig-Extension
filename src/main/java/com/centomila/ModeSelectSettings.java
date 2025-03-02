@@ -91,6 +91,10 @@ public class ModeSelectSettings {
             setting.hide();
         }
 
+        for (Setting setting : StepSizeSettings.allSettings) {
+            setting.hide();
+        }
+
 
         ProgramPattern.showProgramPatternSettings();
         
@@ -126,6 +130,10 @@ public class ModeSelectSettings {
         }
 
         for (Setting setting : NoteDestinationSettings.allSettings) {
+            setting.show();
+        }
+
+        for (Setting setting : StepSizeSettings.allSettings) {
             setting.show();
         }
 
