@@ -168,6 +168,18 @@ public class SettingsHelper {
                 initialText);
     }
 
+    public static String titleWithLine(String title) {
+        
+        String line = "------------------------ ";
+        // count the title length
+        int titleLength = title.length();
+        // remove the title length from the line string characters (if the title is 4 caracters long, remove 4 characters from the line)
+        line = line.substring(0, line.length() - titleLength/2);
+
+        return title + " " + line;
+        
+    }
+
     /**
      * Creates a signal setting (A button that sends a signal when pressed).
      *

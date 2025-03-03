@@ -344,7 +344,7 @@ public class PatternSettings {
      */
     private void initSpacer(DocumentState documentState) {
         spacerGenerate = (Setting) createStringSetting(
-                "PATTERN-----------------------------",
+                titleWithLine("GENERATE PATTERN"),
                 CATEGORY_GENERATE_PATTERN, 0,
                 "---------------------------------------------------");
         disableSetting(spacerGenerate); // Spacers are always disabled

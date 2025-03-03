@@ -52,7 +52,7 @@ public class NoteDestinationSettings {
 
       // Setup spacer
       Setting spacerNoteDestination = (Setting) createStringSetting(
-            "NOTE DESTINATION---------------",
+            titleWithLine("NOTE DESTINATION"),
             CATEGORY_NOTE_DESTINATION,
             0,
             "---------------------------------------------------");

@@ -21,7 +21,7 @@ public class PostActionSettings {
         public static void init(BitwigBuddyExtension extension) {
                 // Initialize spacer for "Post Actions"
                 Setting spacerPostActions = (Setting) createStringSetting(
-                                "POST ACTIONS----------------------",
+                                titleWithLine("POST ACTIONS"),
                                 CATEGORY_POST_ACTIONS,
                                 9999,
                                 "---------------------------------------------------");

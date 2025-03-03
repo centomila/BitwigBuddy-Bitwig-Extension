@@ -18,7 +18,7 @@ public class ModeSelectSettings {
         // Mode select setting
         final String[] MODE_SELECT_OPTIONS = new String[] { "Generate", "Edit" };
 
-        spacerSelectModSetting = (Setting) createStringSetting("MODE SELECT------------------------",
+        spacerSelectModSetting = (Setting) createStringSetting(titleWithLine("MODE SELECT"),
                 CATEGORY_MODE_SELECT, 0,
                 "---------------------------------------------------");
         disableSetting(spacerSelectModSetting);

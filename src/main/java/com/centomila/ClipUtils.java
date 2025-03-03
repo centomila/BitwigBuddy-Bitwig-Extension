@@ -32,7 +32,7 @@ public class ClipUtils {
     public static void init(BitwigBuddyExtension extension) {
         ;
         Setting spacerOther = (Setting) createStringSetting(
-                "OTHER--------------------------------",
+                titleWithLine("OTHER"),
                 CATEGORY_OTHER,
                 0,
                 "---------------------------------------------------");

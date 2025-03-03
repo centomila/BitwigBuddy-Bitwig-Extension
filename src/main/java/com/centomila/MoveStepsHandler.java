@@ -61,7 +61,7 @@ public class MoveStepsHandler {
     private void initializeMoveRotateSetting(DocumentState documentState) {
         // Spacer
         spacerMoveSteps = (Setting) SettingsHelper.createStringSetting(
-                "MOVE/ROTATE STEPS-------------",
+                SettingsHelper.titleWithLine("MOVE - ROTATE STEPS"),
                 CATEGORY_MOVE_STEPS,
                 0,
                 "---------------------------------------------------");

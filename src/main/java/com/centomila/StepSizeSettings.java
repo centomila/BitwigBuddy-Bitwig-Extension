@@ -15,7 +15,7 @@ public class StepSizeSettings {
 
       public static void init(BitwigBuddyExtension extension) {
             Setting spacerStepSize = (Setting) createStringSetting(
-                        "STEP SIZE/NOTE LENGTH---------",
+                        titleWithLine("STEP SIZE - NOTE LENGTH"),
                         CATEGORY_CLIP, 0,
                         "---------------------------------------------------");
 
