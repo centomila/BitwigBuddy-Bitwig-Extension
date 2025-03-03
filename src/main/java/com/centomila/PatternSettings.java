@@ -181,6 +181,8 @@ public class PatternSettings {
                 hideAndDisableSetting(settingsToHideRandom);
                 break;
         }
+        // Reset the note destination setting for custom presets
+        toggleCustomPresetNoteDestinationSelectorSetting();
     }
 
     /**
@@ -246,7 +248,9 @@ public class PatternSettings {
 
             String defaultNote = getCustomPresetDefaultNote(newValue.toString());
             setDefaultNoteString(defaultNote);
-            NoteDestinationSettings.setNoteAndOctaveFromString(defaultNote);
+            if (((EnumValue) customPresetNoteDestinationSelectorSetting).get().equals("Preset Default Note")) {
+                NoteDestinationSettings.setNoteAndOctaveFromString(defaultNote);
+            }
 
         });
     }
@@ -281,7 +285,7 @@ public class PatternSettings {
 
     private void initCustomPresetDefaultNoteSetting(DocumentState documentState) {
         customPresetDefaultNoteSetting = (Setting) createStringSetting(
-                "Default Note",
+                "Default Note from Preset",
                 CATEGORY_GENERATE_PATTERN, 0,
                 "C1");
 
@@ -290,8 +294,34 @@ public class PatternSettings {
         customPresetNoteDestinationSelectorSetting = (Setting) createEnumSetting(
                 "Note Destination",
                 CATEGORY_GENERATE_PATTERN,
-                new String[] { "Note Destination", "Preset Default Note" },
+                new String[] { "Preset Default Note", "Note Destination" },
                 "Note Destination");
+
+        ((EnumValue) customPresetNoteDestinationSelectorSetting).addValueObserver(newValue -> {
+            toggleCustomPresetNoteDestinationSelectorSetting();
+        });
+    }
+
+    public static void toggleCustomPresetNoteDestinationSelectorSetting() {
+        String value = ((EnumValue) customPresetNoteDestinationSelectorSetting).get();
+        String patternType = ((EnumValue) patternTypeSetting).get();
+        if (!patternType.equals("Custom")) {
+            enableSetting(NoteDestinationSettings.noteDestinationSetting);
+            enableSetting(NoteDestinationSettings.noteOctaveSetting);
+            hideAndDisableSetting(customPresetDefaultNoteSetting);
+            return;
+        }
+        if (value.equals("Preset Default Note")) {
+            disableSetting(NoteDestinationSettings.noteDestinationSetting);
+            disableSetting(NoteDestinationSettings.noteOctaveSetting);
+            showAndEnableSetting(customPresetDefaultNoteSetting);
+        } else {
+            enableSetting(NoteDestinationSettings.noteDestinationSetting);
+            enableSetting(NoteDestinationSettings.noteOctaveSetting);
+            hideAndDisableSetting(customPresetDefaultNoteSetting);
+        }
+        
+
     }
 
     /**
