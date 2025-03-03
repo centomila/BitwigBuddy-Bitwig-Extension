@@ -8,7 +8,7 @@ import com.bitwig.extension.controller.api.ControllerHost;
 
 public class BitwigBuddyExtensionDefinition extends ControllerExtensionDefinition
 {
-   private static final UUID DRIVER_ID = UUID.fromString("8afdc6aa-bfe9-41f2-a689-8738031806ee");
+   private static final UUID DRIVER_ID = UUID.fromString("27615dbe-6d9f-4bb6-9b32-fe6707040a02");
    
    public BitwigBuddyExtensionDefinition()
    {

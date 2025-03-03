@@ -356,10 +356,11 @@ public class PatternSettings {
      * @return An array containing the names of the custom presets.
      */
     private String[] getCustomPresetsContentNameStrings() {
-        return Arrays.stream(extension.preferences.getCustomPresets())
-                .map(CustomPreset::getName)
-                .sorted((a, b) -> Utils.naturalCompare(a, b))
-                .toArray(String[]::new);
+        String[] presets = Arrays.stream(extension.preferences.getCustomPresets())
+            .map(CustomPreset::getName)
+            .sorted((a, b) -> Utils.naturalCompare(a, b))
+            .toArray(String[]::new);
+        return presets.length == 0 ? new String[]{"NO CUSTOM PRESETS"} : presets;
     }
 
     private String[] getCustomPresetsContentPatternStrings(String presetName) {

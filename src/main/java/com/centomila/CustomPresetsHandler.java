@@ -40,34 +40,47 @@ public class CustomPresetsHandler {
      */
     public CustomPreset[] getCustomPresets() {
         File presetsDir = new File(preferences.getPresetsPath());
+        List<CustomPreset> presetList = new ArrayList<>();
+        
+        // Early return with default preset if directory doesn't exist or isn't accessible
         if (!presetsDir.exists() || !presetsDir.isDirectory()) {
-            host.errorln("Presets directory does not exist or is not a directory: " + presetsDir);
+            host.errorln("Using default preset - directory does not exist or is not accessible: " + presetsDir);
             return new CustomPreset[] { createDefaultPreset() };
         }
 
         File[] files = presetsDir.listFiles();
         if (files == null) {
-            host.errorln("Failed to list files in presets directory: " + presetsDir);
+            host.errorln("Using default preset - failed to list files in directory: " + presetsDir);
             return new CustomPreset[] { createDefaultPreset() };
         }
 
-        List<CustomPreset> presetList = new ArrayList<>();
 
+        // Sort files by name
+        Arrays.sort(files);
+
+        // Check if directory is empty
+        if (files.length == 0) {
+            host.errorln("Using default preset - directory is empty");
+            return new CustomPreset[] { createDefaultPreset() };
+        }
+
+        // Process each file
         for (File file : files) {
             if (file.isFile()) {
-                try {
-                    CustomPreset preset = readPresetFile(file);
-                    if (preset != null) {
-                        presetList.add(preset);
-                    }
-                } catch (IOException e) {
-                    host.errorln("Failed to read preset file " + file.getName() + ": " + e.getMessage());
+            try {
+                CustomPreset preset = readPresetFile(file);
+                if (preset != null) {
+                presetList.add(preset);
                 }
+            } catch (IOException e) {
+                host.errorln("Failed to read preset file " + file.getName() + ": " + e.getMessage());
+            }
             }
         }
 
         // Return default preset if no valid presets were found
         if (presetList.isEmpty()) {
+            host.errorln("Using default preset - no valid preset files found");
             return new CustomPreset[] { createDefaultPreset() };
         }
 
