@@ -40,6 +40,8 @@ public class CustomPresetsHandler {
      */
     public CustomPreset[] getCustomPresets() {
         File presetsDir = new File(preferences.getPresetsPath());
+        String subdir = "Custom Presets";
+        presetsDir = new File(presetsDir, subdir);
         List<CustomPreset> presetList = new ArrayList<>();
         
         // Early return with default preset if directory doesn't exist or isn't accessible

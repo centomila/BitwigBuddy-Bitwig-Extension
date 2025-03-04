@@ -53,7 +53,7 @@ public class BitwigBuddyExtensionDefinition extends ControllerExtensionDefinitio
    /** {@inheritDoc} */
    @Override
    public String getHelpFilePath() {
-      return "https://github.com/centomila/BitwigBuddy-Bitwig-Extension-MIDI-Drum-Generator";
+      return "https://github.com/centomila/BitwigBuddy-Bitwig-Extension";
    }
 
    @Override

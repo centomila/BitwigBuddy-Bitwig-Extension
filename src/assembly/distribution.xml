@@ -18,7 +18,7 @@
     <fileSets>
         <fileSet>
             <directory>src/main/java/com/centomila/customPresetsTxt</directory>
-            <outputDirectory>BitwigBuddy</outputDirectory>
+            <outputDirectory>BitwigBuddy/CustomPresets</outputDirectory>
             <includes>
                 <include>**/*.txt</include>
             </includes>

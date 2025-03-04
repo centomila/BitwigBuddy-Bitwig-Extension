@@ -1,5 +1,30 @@
 # 📋 Changelog:
 
+## 0.9.7
+
+Edit mode is here! 🥳
+
+- [X] BeatBuddy becomes BitwigBuddy
+- [X] _Random_ became _Program_
+- New velocity shapes!
+  - Complete list: "Random", "Flat (Value by Min Velocity)", "Linear Inc", "Linear Dec", "Ease Out Cubic Inc", "Ease In Cubic Inc", "Ease Out Cubic Dec", "Ease In Cubic Dec", "Ease InOut Inc", "Ease InOut Dec", "Arc", "Sine", "Cosine", "Double Cosine", "Alternate Min Vel and High Vel", "Alternate High and Min Vel", "Saw 2 Inc", "Saw 2 Dec", "Saw 3 Inc", "Saw 3 Dec", "Saw 4 Inc", "Saw 4 Dec",
+            "Triangle", "Square Inc", "Square Dec", "Square 2 Inc", "Square 2 Dec", "Square 3 Inc", "Square 3 Dec", "Square 4 Inc", "Square 4 Dec"
+- [X] New Generate/Edit selector
+  - In Edit mode, you can apply a velocity shape to the selected steps.
+    - If no steps are selected, nothing happens. 😲
+  - More features to come in this section! 🚀
+- [X] Custom presets now load the default note
+  - Add a row with _DefaultNote: "D#1"_ to automatically assign that note when the custom preset is selected
+- [X] Custom preset folder moved from _Extensions/BeatBuddy_ to _Extensions/BitwigBuddy/Custom Presets_
+- [X] Added a _Refresh Custom Presets_ button. This button restarts the extension with the updated custom preset list
+- [X] Post Action: _Switch to Edit View Layout_
+  - When enabled, your view automatically changes to the Edit View Layout after pattern generation
+  - Default: Off
+- [X] Preferences: _Show Channel Destination Selector_
+  - If enabled, shows the Note MIDI Channel destination (Default: Enabled)
+  - When this setting is disabled, the MIDI Channel destination is always 1
+
+
 ## 0.9.0
 
 Another big update! 🎉
