@@ -232,26 +232,26 @@ public class PatternSettings {
         hideAndDisableSetting(customPresetSetting);
 
         ((EnumValue) customPresetSetting).addValueObserver(newValue -> {
-            // if preset type
-            if (!((EnumValue) patternTypeSetting).get().equals("Custom")) {
+            if (!((EnumValue) patternTypeSetting).get().equals("Custom") || newValue == null) {
                 return;
             }
-            if (newValue != null) {
-                lastCustomPresetUsed = newValue.toString();
-            } else {
-                lastCustomPresetUsed = presets[0];
+            
+            lastCustomPresetUsed = newValue.toString();
+            if (lastCustomPresetUsed.equals("NO CUSTOM PRESETS")) {
+                setPatternString("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0");
+                setDefaultNoteString("C1");
+                return;
             }
+
             String pattern = String.join(",", getCustomPresetsContentPatternStrings(newValue));
-            showPopup("Custom Preset selected: " + newValue.toString() + " with pattern: " + pattern);
-            // convert pattern to Setting
+            showPopup("Custom Preset selected: " + newValue.toString());
             setPatternString(pattern);
 
             String defaultNote = getCustomPresetDefaultNote(newValue.toString());
-            setDefaultNoteString(defaultNote);
+            setDefaultNoteString(defaultNote.isEmpty() ? "C1" : defaultNote);
             if (((EnumValue) customPresetNoteDestinationSelectorSetting).get().equals("Preset Default Note")) {
-                NoteDestinationSettings.setNoteAndOctaveFromString(defaultNote);
+                NoteDestinationSettings.setNoteAndOctaveFromString(defaultNote.isEmpty() ? "C1" : defaultNote);
             }
-
         });
     }
 
@@ -366,6 +366,11 @@ public class PatternSettings {
     private String[] getCustomPresetsContentPatternStrings(String presetName) {
         CustomPresetsHandler handler = new CustomPresetsHandler(extension.getHost(), extension.preferences);
         int[] pattern = handler.getCustomPatternByName(presetName);
+        if (pattern == null) {
+            // Return a default empty pattern if the preset is not found
+            showPopup("Preset not found: " + presetName + ". Using default pattern.");
+            return new String[]{"0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"};
+        }
         return Arrays.stream(pattern).mapToObj(String::valueOf).toArray(String[]::new);
     }
 
