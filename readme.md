@@ -1,10 +1,10 @@
-# BitwigBuddy - Bitwig Studio Extension for Generating Drum Patterns (v0.9.7)
+# BitwigBuddy - Bitwig Studio Extension for Generating Drum Patterns (v0.9.8)
 
-[![Screenshot v0.9.7](image.png)](image.png)
+[![Screenshot v0.9.8](image.png)](image.png)
 
 ## ⚙️ Installation
 
-1. ⬇️ Download **_BitwigBuddy-0.9.7.zip_** from the Release page
+1. ⬇️ Download **_BitwigBuddy-0.9.8-alpha.zip_** from the Release page
 2. 📂 Extract the zip to the **_/Bitwig Studio/Extensions/_** folder. Be sure to extract the BitwigBuddy subfolder as well. It contains sample custom presets as txt files.
    1. **Windows:** `%USERPROFILE%\Documents\Bitwig Studio\Extensions`
       1. If your Documents folder is in OneDrive, it might be in `%USERPROFILE%\OneDrive\Documents\Bitwig Studio\Extensions`
