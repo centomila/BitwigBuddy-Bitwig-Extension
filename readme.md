@@ -1,4 +1,4 @@
-# BeatBuddy - Bitwig Studio Extension for Generating Drum Patterns (v0.9.7)
+# BitwigBuddy - Bitwig Studio Extension for Generating Drum Patterns (v0.9.7)
 
 [![Screenshot v0.9.7](image.png)](image.png)
 
