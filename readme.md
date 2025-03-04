@@ -1,16 +1,16 @@
-# BeatBuddy - Bitwig Studio Extension for Generating Drum Patterns (v0.9.0)
+# BeatBuddy - Bitwig Studio Extension for Generating Drum Patterns (v0.9.7)
 
 [![Screenshot v0.9.7](image.png)](image.png)
 
 ## ⚙️ Installation
 
-1. ⬇️ Download **_BeatBuddy-0.9.0.zip_** from the Release page
-2. 📂 Extract the zip to the **_/Bitwig Studio/Extensions/_** folder. Be sure to extract the BeatBuddy subfolder as well. It contains sample custom presets as txt files.
+1. ⬇️ Download **_BitwigBuddy-0.9.7.zip_** from the Release page
+2. 📂 Extract the zip to the **_/Bitwig Studio/Extensions/_** folder. Be sure to extract the BitwigBuddy subfolder as well. It contains sample custom presets as txt files.
    1. **Windows:** `%USERPROFILE%\Documents\Bitwig Studio\Extensions`
       1. If your Documents folder is in OneDrive, it might be in `%USERPROFILE%\OneDrive\Documents\Bitwig Studio\Extensions`
    2. **macOS:** `~/Documents/Bitwig Studio/Extensions`
    3. **Linux:** `~/Bitwig Studio/Extensions`
-3. 🟧 In Bitwig, go to **Settings > Controller > Add Extension > Centomila > BeatBuddy**  
+3. 🟧 In Bitwig, go to **Settings > Controller > Add Extension > Centomila > BitwigBuddy**  
 
 
 # Changelog
