@@ -106,9 +106,15 @@ public class DrumPatternGenerator {
         // Launch Clip
         if (((EnumValue) launchClipSetting).get().equals("On")) {
             
-            if (!clip.clipLauncherSlot().isPlaying().get()) {
-                clip.clipLauncherSlot().launch();
-            }
+            // if (!clip.clipLauncherSlot().isPlaying().get()) {
+                extension.getHost().scheduleTask(() -> {
+                    // Get the duplicated clip and launch it
+                    clip.clipLauncherSlot().select();
+                    clip.clipLauncherSlot().launch();
+                    
+                 }, 200); // Small delay to ensure duplication is complete
+                
+            // }
          
         }
 
