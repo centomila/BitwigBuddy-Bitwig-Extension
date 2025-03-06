@@ -1,7 +1,11 @@
 # 📋 Changelog:
 
+## 0.9.8 beta
+- [X] Fixed bug when using _Duplicate Clip_ and _Launch Clip_ together as Post Actions. Now the duplicated clip is the one launched.
+
 ## 0.9.8 alpha
 - [X] Fixed bug with Custom Presets folder 🤞. Thanks @Cris-- !
+
 
 ## 0.9.7
 
