@@ -142,7 +142,7 @@ public class PatternSettings {
                         ProgramPattern.programStepQtySetting,
                         ProgramPattern.programVelocitySettingShape,
                         customRefreshPresetsSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting };
+                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting };
                 showAndEnableSetting(settingsToShow);
                 hideAndDisableSetting(settingsToHide);
 
@@ -154,7 +154,7 @@ public class PatternSettings {
                         customPresetSetting,
                         customRefreshPresetsSetting,
                         reversePatternSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting };
+                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting };
                 Setting[] settingsToHideCustom = {
                         patternSelectorSetting,
                         ProgramPattern.programDensitySetting,
@@ -166,7 +166,13 @@ public class PatternSettings {
                 hideAndDisableSetting(settingsToHideCustom);
 
                 if (lastCustomPresetUsed != null) {
-                    ((SettableEnumValue) customPresetSetting).set(lastCustomPresetUsed);
+                    try {
+                        ((SettableEnumValue) customPresetSetting).set(lastCustomPresetUsed);
+                    } catch (Exception e) {
+                        showPopup("Custom Preset not found: " + lastCustomPresetUsed);
+                        lastCustomPresetUsed = "NO CUSTOM PRESETS";
+                        ((SettableEnumValue) customPresetSetting).set(lastCustomPresetUsed);
+                    }
                 }
 
                 break;
@@ -182,7 +188,7 @@ public class PatternSettings {
                         customPresetSetting,
                         reversePatternSetting,
                         customRefreshPresetsSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting };
+                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting };
                 showAndEnableSetting(settingsToShowRandom);
                 hideAndDisableSetting(settingsToHideRandom);
                 break;
