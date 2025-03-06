@@ -7,23 +7,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import com.bitwig.extension.controller.api.ControllerHost;
+import com.bitwig.extension.controller.api.StringValue;
 
 /**
- * Handles the loading and parsing of custom presets for the BitwigBuddy extension.
- * Each preset is stored in a text file with a specific format containing name, default MIDI note,
+ * Handles the loading and parsing of custom presets for the BitwigBuddy
+ * extension.
+ * Each preset is stored in a text file with a specific format containing name,
+ * default MIDI note,
  * and pattern information.
  */
 public class CustomPresetsHandler {
     private static final String NAME_PREFIX = "Name:";
     private static final String DEFAULT_NOTE_PREFIX = "DefaultNote:";
     private static final String PATTERN_PREFIX = "Pattern:";
-    
+
     private final ControllerHost host;
     private final GlobalPreferences preferences;
 
     /**
      * Creates a new CustomPresetsHandler instance.
-     * @param host The Bitwig controller host for logging
+     * 
+     * @param host        The Bitwig controller host for logging
      * @param preferences Global preferences containing the presets path
      * @throws NullPointerException if host or preferences is null
      */
@@ -43,8 +47,9 @@ public class CustomPresetsHandler {
         String subdir = "Custom Presets";
         presetsDir = new File(presetsDir, subdir);
         List<CustomPreset> presetList = new ArrayList<>();
-        
-        // Early return with default preset if directory doesn't exist or isn't accessible
+
+        // Early return with default preset if directory doesn't exist or isn't
+        // accessible
         if (!presetsDir.exists() || !presetsDir.isDirectory()) {
             host.errorln("Using default preset - directory does not exist or is not accessible: " + presetsDir);
             return new CustomPreset[] { createDefaultPreset() };
@@ -55,7 +60,6 @@ public class CustomPresetsHandler {
             host.errorln("Using default preset - failed to list files in directory: " + presetsDir);
             return new CustomPreset[] { createDefaultPreset() };
         }
-
 
         // Sort files by name
         Arrays.sort(files);
@@ -69,14 +73,14 @@ public class CustomPresetsHandler {
         // Process each file
         for (File file : files) {
             if (file.isFile()) {
-            try {
-                CustomPreset preset = readPresetFile(file);
-                if (preset != null) {
-                presetList.add(preset);
+                try {
+                    CustomPreset preset = readPresetFile(file);
+                    if (preset != null) {
+                        presetList.add(preset);
+                    }
+                } catch (IOException e) {
+                    host.errorln("Failed to read preset file " + file.getName() + ": " + e.getMessage());
                 }
-            } catch (IOException e) {
-                host.errorln("Failed to read preset file " + file.getName() + ": " + e.getMessage());
-            }
             }
         }
 
@@ -93,11 +97,10 @@ public class CustomPresetsHandler {
         // Simple default pattern: quarter notes
         int[] defaultPattern = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         return new CustomPreset(
-            "default.txt",
-            "NO CUSTOM PATTERN",
-            "C1",
-            defaultPattern
-        );
+                "default.txt",
+                "NO CUSTOM PATTERN",
+                "C1",
+                defaultPattern);
     }
 
     /**
@@ -117,7 +120,7 @@ public class CustomPresetsHandler {
                 return preset.getPattern();
             }
         }
-        
+
         host.errorln("No preset found with name: " + patternName);
         return null;
     }
@@ -137,7 +140,8 @@ public class CustomPresetsHandler {
 
         for (String line : lines) {
             line = line.trim();
-            if (line.isEmpty()) continue;
+            if (line.isEmpty())
+                continue;
 
             try {
                 if (line.startsWith(NAME_PREFIX)) {
@@ -163,6 +167,7 @@ public class CustomPresetsHandler {
 
     /**
      * Extracts a value enclosed in quotes from a line.
+     * 
      * @throws IllegalArgumentException if the format is invalid
      */
     private String extractQuotedValue(String line) {
@@ -176,6 +181,7 @@ public class CustomPresetsHandler {
 
     /**
      * Parses a pattern array from a line containing comma-separated integers.
+     * 
      * @throws IllegalArgumentException if the format is invalid
      */
     private int[] parsePatternArray(String line) {
@@ -187,16 +193,16 @@ public class CustomPresetsHandler {
 
         String[] parts = line.substring(start + 1, end).split(",");
         return Arrays.stream(parts)
-            .map(String::trim)
-            .filter(s -> !s.isEmpty())
-            .mapToInt(s -> {
-                try {
-                    return Integer.parseInt(s);
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Invalid number format: " + s);
-                }
-            })
-            .toArray();
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .mapToInt(s -> {
+                    try {
+                        return Integer.parseInt(s);
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException("Invalid number format: " + s);
+                    }
+                })
+                .toArray();
     }
 
     /**
@@ -210,6 +216,7 @@ public class CustomPresetsHandler {
 
         /**
          * Creates a new CustomPreset instance.
+         * 
          * @throws NullPointerException if any parameter is null
          */
         public CustomPreset(String fileName, String name, String defaultNote, int[] pattern) {
@@ -219,11 +226,60 @@ public class CustomPresetsHandler {
             this.pattern = Arrays.copyOf(Objects.requireNonNull(pattern, "pattern cannot be null"), pattern.length);
         }
 
-        public String getFileName() { return fileName; }
-        public String getName() { return name; }
-        public String getDefaultNote() { return defaultNote; }
-        public int[] getPattern() { return Arrays.copyOf(pattern, pattern.length); }
+        public String getFileName() {
+            return fileName;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getDefaultNote() {
+            return defaultNote;
+        }
+
+        public int[] getPattern() {
+            return Arrays.copyOf(pattern, pattern.length);
+        }
     }
 
-    
+    /**
+     * Saves a custom preset to file, ensuring it has a .txt extension.
+     * 
+     * @param preset      The preset to save
+     * @param preferences Global preferences containing the presets path
+     * @param host        The Bitwig controller host for logging
+     */
+    public static void saveCustomPreset(CustomPreset preset, GlobalPreferences preferences, ControllerHost host) {
+        File presetsDir = new File(preferences.getPresetsPath());
+        String subdir = "Custom Presets";
+        presetsDir = new File(presetsDir, subdir);
+        
+        // Ensure filename has .txt extension
+        String presetName =  ((StringValue) PatternSettings.customPresetSaveNamSetting).get();
+        String fileName = presetName;
+        if (!fileName.toLowerCase().endsWith(".txt")) {
+            fileName = fileName + ".txt";
+        }
+
+        String defaultNote = NoteDestinationSettings.currentNoteAsString + NoteDestinationSettings.currentOctaveAsInt;
+        
+        File presetFile = new File(presetsDir, fileName);
+
+        try {
+            if (!presetsDir.exists() && !presetsDir.mkdirs()) {
+                host.errorln("Failed to create directory: " + presetsDir);
+                return;
+            }
+
+            List<String> lines = new ArrayList<>();
+            lines.add(NAME_PREFIX + " \"" + presetName + "\"");
+            lines.add(DEFAULT_NOTE_PREFIX + " \"" + defaultNote + "\"");
+            lines.add(PATTERN_PREFIX + " [" + Arrays.toString(preset.getPattern()).replaceAll("[\\[\\]]", "") + "]");
+
+            java.nio.file.Files.write(presetFile.toPath(), lines);
+        } catch (IOException e) {
+            host.errorln("Failed to save preset file " + fileName + ": " + e.getMessage());
+        }
+    }
 }
