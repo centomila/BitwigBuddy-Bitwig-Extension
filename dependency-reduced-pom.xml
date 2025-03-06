@@ -45,13 +45,6 @@
                   </excludes>
                 </filter>
               </filters>
-              <artifactSet>
-                <includes>
-                  <include>org.openjfx:javafx-base:jar:*</include>
-                  <include>org.openjfx:javafx-controls:jar:*</include>
-                  <include>org.openjfx:javafx-graphics:jar:*</include>
-                </includes>
-              </artifactSet>
               <minimizeJar>false</minimizeJar>
             </configuration>
           </execution>
@@ -135,106 +128,6 @@
       </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>windows</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.openjfx</groupId>
-          <artifactId>javafx-base</artifactId>
-          <version>${javafx.version}</version>
-          <classifier>win</classifier>
-        </dependency>
-        <dependency>
-          <groupId>org.openjfx</groupId>
-          <artifactId>javafx-graphics</artifactId>
-          <version>${javafx.version}</version>
-          <classifier>win</classifier>
-        </dependency>
-        <dependency>
-          <groupId>org.openjfx</groupId>
-          <artifactId>javafx-controls</artifactId>
-          <version>${javafx.version}</version>
-          <classifier>win</classifier>
-        </dependency>
-      </dependencies>
-      <properties>
-        <platform.classifier>win</platform.classifier>
-      </properties>
-    </profile>
-    <profile>
-      <id>macos</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.13.0</version>
-            <configuration>
-              <source>${maven.compiler.source}</source>
-              <target>${maven.compiler.target}</target>
-            </configuration>
-          </plugin>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.5.2</version>
-            <configuration>
-              <argLine>--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
-                            --add-exports=javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED</argLine>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-      <dependencies>
-        <dependency>
-          <groupId>org.openjfx</groupId>
-          <artifactId>javafx-base</artifactId>
-          <version>${javafx.version}</version>
-          <classifier>mac-aarch64</classifier>
-        </dependency>
-        <dependency>
-          <groupId>org.openjfx</groupId>
-          <artifactId>javafx-controls</artifactId>
-          <version>${javafx.version}</version>
-          <classifier>mac-aarch64</classifier>
-        </dependency>
-        <dependency>
-          <groupId>org.openjfx</groupId>
-          <artifactId>javafx-graphics</artifactId>
-          <version>${javafx.version}</version>
-          <classifier>mac-aarch64</classifier>
-        </dependency>
-      </dependencies>
-      <properties>
-        <platform.classifier>mac-aarch64</platform.classifier>
-      </properties>
-    </profile>
-    <profile>
-      <id>linux</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.openjfx</groupId>
-          <artifactId>javafx-base</artifactId>
-          <version>${javafx.version}</version>
-          <classifier>linux</classifier>
-        </dependency>
-        <dependency>
-          <groupId>org.openjfx</groupId>
-          <artifactId>javafx-controls</artifactId>
-          <version>${javafx.version}</version>
-          <classifier>linux</classifier>
-        </dependency>
-        <dependency>
-          <groupId>org.openjfx</groupId>
-          <artifactId>javafx-graphics</artifactId>
-          <version>${javafx.version}</version>
-          <classifier>linux</classifier>
-        </dependency>
-      </dependencies>
-      <properties>
-        <platform.classifier>linux</platform.classifier>
-      </properties>
-    </profile>
-  </profiles>
   <repositories>
     <repository>
       <id>bitwig</id>
@@ -242,14 +135,6 @@
       <url>https://maven.bitwig.com</url>
     </repository>
   </repositories>
-  <dependencies>
-    <dependency>
-      <groupId>com.bitwig</groupId>
-      <artifactId>extension-api</artifactId>
-      <version>19</version>
-      <scope>compile</scope>
-    </dependency>
-  </dependencies>
   <properties>
     <bitwig.extension.directory.onedrive.ita>${env.USERPROFILE}/OneDrive/Documenti/Bitwig Studio/Extensions</bitwig.extension.directory.onedrive.ita>
     <maven.compiler.source>21</maven.compiler.source>
