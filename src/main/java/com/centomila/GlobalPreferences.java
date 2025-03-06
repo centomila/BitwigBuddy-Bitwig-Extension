@@ -6,16 +6,11 @@ import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import javafx.application.Platform;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
-
 import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.utils.SettingsHelper.*;
 
 import com.centomila.utils.ExtensionPath;
 import com.centomila.utils.OpenWebUrl;
-import com.centomila.utils.JavaFXInitializer;
 
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.Preferences;
@@ -113,10 +108,6 @@ public class GlobalPreferences {
 
     public Signal getResetToDefaultButton() {
         return resetToDefaultButton;
-    }
-
-    public boolean isJfxInitialized() {
-        return JavaFXInitializer.isInitialized();
     }
 
     public CustomPresetsHandler.CustomPreset[] getCustomPresets() {
@@ -266,55 +257,151 @@ public class GlobalPreferences {
 
     private void browseForPresetsFolder() {
         try {
-            // Initialize JavaFX first using the utility class
-            if (!JavaFXInitializer.initialize(host)) {
-                showPopup("Failed to initialize JavaFX. Please try again or use manual path input.");
-                return;
-            }
+            // Get the initial directory to start browsing from
+            Path initialDirectory = getValidInitialDirectory();
+            String result = null;
 
-            // Ensure we're on the FX thread before proceeding
-            if (!Platform.isFxApplicationThread()) {
-                Platform.runLater(this::showDirectoryChooser);
+            if (host.platformIsWindows()) {
+                // Windows: Use PowerShell approach
+                String script = String.format(
+                    "Add-Type -AssemblyName System.Windows.Forms; " +
+                    "$form = New-Object System.Windows.Forms.Form; " +
+                    "$form.Text = 'Select Presets Folder'; " +
+                    "$form.Size = New-Object System.Drawing.Size(600, 150); " +
+                    "$form.StartPosition = [System.Windows.Forms.FormStartPosition]::CenterScreen; " +
+                    
+                    "$textBox = New-Object System.Windows.Forms.TextBox; " +
+                    "$textBox.Location = New-Object System.Drawing.Point(10, 25); " +
+                    "$textBox.Size = New-Object System.Drawing.Size(460, 20); " +
+                    "$textBox.Text = '%s'; " +
+                    "$form.Controls.Add($textBox); " +
+                    
+                    "$browseButton = New-Object System.Windows.Forms.Button; " +
+                    "$browseButton.Location = New-Object System.Drawing.Point(480, 24); " +
+                    "$browseButton.Size = New-Object System.Drawing.Size(90, 23); " +
+                    "$browseButton.Text = 'Browse...'; " +
+                    "$browseButton.Add_Click({ " +
+                    "    $folderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog; " +
+                    "    $folderBrowser.Description = 'Select Presets Folder'; " +
+                    "    $startPath = $textBox.Text; " +
+                    "    if (Test-Path $startPath) { " +
+                    "        $folderBrowser.SelectedPath = $startPath; " +
+                    "    } " +
+                    "    $folderBrowser.ShowNewFolderButton = $true; " +
+                    "    if ($folderBrowser.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) { " +
+                    "        $textBox.Text = $folderBrowser.SelectedPath; " +
+                    "    } " +
+                    "}); " +
+                    "$form.Controls.Add($browseButton); " +
+                    
+                    "$label = New-Object System.Windows.Forms.Label; " +
+                    "$label.Location = New-Object System.Drawing.Point(10, 5); " +
+                    "$label.Size = New-Object System.Drawing.Size(500, 20); " +
+                    "$label.Text = 'Enter or select presets folder path:'; " +
+                    "$form.Controls.Add($label); " +
+                    
+                    "$okButton = New-Object System.Windows.Forms.Button; " +
+                    "$okButton.Location = New-Object System.Drawing.Point(400, 70); " +
+                    "$okButton.Size = New-Object System.Drawing.Size(75, 23); " +
+                    "$okButton.Text = 'OK'; " +
+                    "$okButton.DialogResult = [System.Windows.Forms.DialogResult]::OK; " +
+                    "$form.AcceptButton = $okButton; " +
+                    "$form.Controls.Add($okButton); " +
+                    
+                    "$cancelButton = New-Object System.Windows.Forms.Button; " +
+                    "$cancelButton.Location = New-Object System.Drawing.Point(490, 70); " +
+                    "$cancelButton.Size = New-Object System.Drawing.Size(75, 23); " +
+                    "$cancelButton.Text = 'Cancel'; " +
+                    "$cancelButton.DialogResult = [System.Windows.Forms.DialogResult]::Cancel; " +
+                    "$form.CancelButton = $cancelButton; " +
+                    "$form.Controls.Add($cancelButton); " +
+                    
+                    "if ($form.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) { " +
+                    "    Write-Output $textBox.Text; " +
+                    "} else { " +
+                    "    Write-Output 'CANCELED'; " +
+                    "}",
+                    initialDirectory.toAbsolutePath().toString()
+                );
+                
+                Process process = Runtime.getRuntime().exec(new String[] {
+                    "powershell.exe", "-Command", script
+                });
+                
+                result = readProcessOutput(process);
+                
+            } else if (host.platformIsMac()) {
+                // macOS: Use osascript (AppleScript)
+                String script = String.format(
+                    "osascript -e 'tell application \"System Events\"' " +
+                    "-e 'set folderPath to POSIX path of (choose folder with prompt \"Select Presets Folder\" " +
+                    "default location POSIX file \"%s\")' " +
+                    "-e 'return folderPath' " +
+                    "-e 'end tell'",
+                    initialDirectory.toAbsolutePath().toString()
+                );
+                
+                Process process = Runtime.getRuntime().exec(new String[] { "bash", "-c", script });
+                result = readProcessOutput(process);
+                
             } else {
-                showDirectoryChooser();
+                // Linux: Use zenity if available
+                Process checkZenity = Runtime.getRuntime().exec(new String[] {"which", "zenity"});
+                if (checkZenity.waitFor() == 0) {
+                    String command = String.format(
+                        "zenity --file-selection --directory --title=\"Select Presets Folder\" " +
+                        "--filename=\"%s/\"",
+                        initialDirectory.toAbsolutePath().toString()
+                    );
+                    Process process = Runtime.getRuntime().exec(new String[] { "bash", "-c", command });
+                    result = readProcessOutput(process);
+                } else {
+                    // Fallback for Linux without zenity
+                    showPopup("Directory selection requires zenity to be installed");
+                    host.println("Directory selection requires zenity on Linux");
+                    return;
+                }
             }
+            
+            // Process the result
+            if (result != null && !result.isEmpty() && !result.equals("CANCELED")) {
+                result = result.trim();
+                Path selectedPath = Paths.get(result);
+                
+                if (isValidPresetsFolder(selectedPath)) {
+                    setPresetsPath(selectedPath.toString());
+                    showPopup("Presets folder set to: " + selectedPath);
+                    host.println("Presets folder set to: " + selectedPath);
+                } else {
+                    showPopup("Selected folder is not valid: " + selectedPath);
+                    host.println("Selected folder is not valid: " + selectedPath);
+                }
+            } else {
+                host.println("Folder selection was canceled or returned empty result");
+            }
+            
         } catch (Exception e) {
-            host.errorln("Browse folder operation failed: " + e.getMessage());
-            showPopup("Failed to open folder browser. Please try again.");
+            host.errorln("Error in folder selection: " + e.getMessage());
+            showPopup("Failed to open folder browser: " + e.getMessage());
         }
     }
 
-    private void showDirectoryChooser() {
-        try {
-            host.println("Creating directory chooser...");
-            DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setTitle("Select BitwigBuddy Presets Folder");
-
-            Path initialDir = getValidInitialDirectory();
-            if (initialDir != null) {
-                File dir = initialDir.toFile();
-                if (dir.exists() && dir.isDirectory()) {
-                    chooser.setInitialDirectory(dir);
-                }
+    private String readProcessOutput(Process process) throws IOException, InterruptedException {
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(
+                new java.io.InputStreamReader(process.getInputStream()))) {
+            
+            StringBuilder output = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
             }
-
-            Stage stage = new Stage();
-            File selectedDirectory = chooser.showDialog(stage);
-
-            if (selectedDirectory != null) {
-                Path selectedPath = selectedDirectory.toPath();
-                if (isValidPresetsFolder(selectedPath)) {
-                    setPresetsPath(selectedPath.toAbsolutePath().toString());
-                    showPopup("Presets folder updated to: " + selectedPath);
-                } else {
-                    showPopup("Invalid presets folder selected: " + selectedPath);
-                }
+            
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                host.println("Process exited with code " + exitCode);
             }
-
-            stage.close();
-        } catch (Exception e) {
-            host.errorln("Directory chooser error: " + e.getMessage());
-            showPopup("Failed to open folder browser: " + e.getMessage());
+            
+            return output.toString();
         }
     }
 
