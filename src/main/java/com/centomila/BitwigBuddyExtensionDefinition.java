@@ -29,7 +29,7 @@ public class BitwigBuddyExtensionDefinition extends ControllerExtensionDefinitio
    @Override
    public String getVersion()
    {
-      return "0.9.7";
+      return "0.9.8";
    }
 
    @Override
