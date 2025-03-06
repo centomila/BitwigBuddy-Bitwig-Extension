@@ -29,6 +29,9 @@ public class PatternSettings {
     public static Setting customRefreshPresetsSetting; // Refresh custom presets
     public static Setting customPresetDefaultNoteSetting;
     public static Setting customPresetNoteDestinationSelectorSetting;
+    public static Setting customPresetSaveBtnSignal;
+    public static Setting customPresetSaveNamSetting;
+
     public static Setting presetPatternStringSetting; // Custom pattern string
     public static Setting reversePatternSetting;
     public static Setting spacerGenerate;
@@ -75,6 +78,7 @@ public class PatternSettings {
         initPatternSelectorSetting(documentState);
         initCustomPresetSetting(documentState);
         initCustomPresetPatternSetting(documentState);
+        initCustomSavePresetSetting(documentState);
         initRefreshCustomPresetsSetting(documentState);
         initReversePatternSetting(documentState);
         initCustomPresetDefaultNoteSetting(documentState);
@@ -88,7 +92,9 @@ public class PatternSettings {
                 customRefreshPresetsSetting,
                 reversePatternSetting,
                 customPresetDefaultNoteSetting,
-                customPresetNoteDestinationSelectorSetting };
+                customPresetNoteDestinationSelectorSetting,
+                customPresetSaveBtnSignal,
+                customPresetSaveNamSetting};
     }
 
     /**
@@ -136,7 +142,7 @@ public class PatternSettings {
                         ProgramPattern.programStepQtySetting,
                         ProgramPattern.programVelocitySettingShape,
                         customRefreshPresetsSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting };
+                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting };
                 showAndEnableSetting(settingsToShow);
                 hideAndDisableSetting(settingsToHide);
 
@@ -148,7 +154,7 @@ public class PatternSettings {
                         customPresetSetting,
                         customRefreshPresetsSetting,
                         reversePatternSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting };
+                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting };
                 Setting[] settingsToHideCustom = {
                         patternSelectorSetting,
                         ProgramPattern.programDensitySetting,
@@ -160,7 +166,13 @@ public class PatternSettings {
                 hideAndDisableSetting(settingsToHideCustom);
 
                 if (lastCustomPresetUsed != null) {
-                    ((SettableEnumValue) customPresetSetting).set(lastCustomPresetUsed);
+                    try {
+                        ((SettableEnumValue) customPresetSetting).set(lastCustomPresetUsed);
+                    } catch (Exception e) {
+                        showPopup("Custom Preset not found: " + lastCustomPresetUsed);
+                        lastCustomPresetUsed = "NO CUSTOM PRESETS";
+                        ((SettableEnumValue) customPresetSetting).set(lastCustomPresetUsed);
+                    }
                 }
 
                 break;
@@ -176,7 +188,7 @@ public class PatternSettings {
                         customPresetSetting,
                         reversePatternSetting,
                         customRefreshPresetsSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting };
+                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting };
                 showAndEnableSetting(settingsToShowRandom);
                 hideAndDisableSetting(settingsToHideRandom);
                 break;
@@ -272,6 +284,30 @@ public class PatternSettings {
         presetPatternStringSetting = (Setting) documentState.getStringSetting("Steps",
                 CATEGORY_GENERATE_PATTERN, 0,
                 lastStringPatternUsed);
+    }
+
+    private void initCustomSavePresetSetting(DocumentState documentState) {
+        customPresetSaveBtnSignal = (Setting) documentState.getSignalSetting("Save Custom Preset",
+                CATEGORY_GENERATE_PATTERN, "Save Custom Preset");
+
+        ((Signal) customPresetSaveBtnSignal).addSignalObserver(() -> {
+            String presetName = ((EnumValue) customPresetSetting).get();
+            String patternString = ((SettableStringValue)presetPatternStringSetting).get().trim();
+            int[] patternIntArray = Arrays.stream(patternString.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .mapToInt(Integer::parseInt)
+                    .toArray();
+            String defaultNote = ((SettableStringValue) customPresetDefaultNoteSetting).get();
+            CustomPreset preset = new CustomPreset(presetName, presetName, defaultNote, patternIntArray);
+            CustomPresetsHandler.saveCustomPreset(preset, extension.preferences, extension.getHost());
+            showPopup("Custom Preset saved: " + presetName);
+            extension.restart();
+        });
+
+        customPresetSaveNamSetting = (Setting) documentState.getStringSetting("Preset Name",
+                CATEGORY_GENERATE_PATTERN, 0,
+                "New Custom Preset");
     }
 
     private void initRefreshCustomPresetsSetting(DocumentState documentState) {
