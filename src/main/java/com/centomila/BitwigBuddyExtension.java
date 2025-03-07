@@ -81,6 +81,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       StepSizeSettings.init(this);
       PostActionSettings.init(this);
       ClipUtils.init(this);
+      MacroActionSettings.init(this);
 
 
       
