@@ -1,0 +1,2 @@
+Macro: "Show Advanced Setting (Graphics)"
+show_advanced_settings

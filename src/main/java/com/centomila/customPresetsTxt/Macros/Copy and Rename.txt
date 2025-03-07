@@ -1,0 +1,5 @@
+Macro: "Rename and duplicate"
+bb: Clip Rename (Bitwig)
+bb: Duplicate
+bb: Clip Rename (Buddy)
+bb: Clip Color (FF0000)

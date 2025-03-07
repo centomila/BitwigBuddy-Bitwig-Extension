@@ -2,6 +2,7 @@ package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
 import com.centomila.BitwigBuddyExtension;
+import com.centomila.utils.ExecuteBitwigAction;
 
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
@@ -25,7 +26,7 @@ public class MacroActionSettings {
     public static Setting macroLaunchBtnSignalSetting;
     public static Setting macroSelectorSetting;
     public static Setting macroPrintAllActionsBtnSignalSetting;
-    public static Setting[] AllSettings;
+    public static Setting[] allSettings;
     private static ControllerHost host;
     private static GlobalPreferences preferences;
     private static final String MACRO_PREFIX = "Macro:";
@@ -55,7 +56,7 @@ public class MacroActionSettings {
         macroPrintAllActionsBtnSignalSetting = (Setting) createSignalSetting("macroPrintAllActionsBtnSignal",
                 "Print All Actions Button Signal", "Signal to print all available actions");
 
-        AllSettings = new Setting[] { macroLaunchBtnSignalSetting, macroSelectorSetting,
+        allSettings = new Setting[] { macroLaunchBtnSignalSetting, macroSelectorSetting,
                 macroPrintAllActionsBtnSignalSetting };
     }
 
@@ -79,10 +80,17 @@ public class MacroActionSettings {
             host.println("Executing command: " + command);
             host.scheduleTask(() -> {
                 host.println("command" + command);
-                extension.getApplication().getAction(command).invoke();
+                // if the command starts with bb: then it is a Bitwig Buddy command, else is a Bitwig Action
+                if (command.startsWith("bb:")) {
+                    ExecuteBitwigAction.executeBitwigAction(command, extension);
+                } else {
+                    extension.getApplication().getAction(command).invoke();
+                }
             }, 100);
         }
     }
+
+
 
     /**
      * Reads all macro files from the configured macros directory.
@@ -92,7 +100,7 @@ public class MacroActionSettings {
      */
     public static Macro[] getMacros() {
         File macrosDir = new File(preferences.getPresetsPath());
-        String subdir = "macros";
+        String subdir = "Macros";
         macrosDir = new File(macrosDir, subdir);
         List<Macro> macroList = new ArrayList<>();
 
@@ -191,8 +199,9 @@ public class MacroActionSettings {
     private static void printAllAvailableActions(BitwigBuddyExtension extension) {
         host.println("Available actions:");
         for (Action action : extension.getApplication().getActions()) {
-            host.println(action.getName());
+            host.println(action.getName() + " | Menu Item Text:" + action.getMenuItemText() + " | ID:" + action.getId());
         }
+        extension.getApplication().getAction("show_control_script_console").invoke();
 
     }
 

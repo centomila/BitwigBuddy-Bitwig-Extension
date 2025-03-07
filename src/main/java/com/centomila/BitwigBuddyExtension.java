@@ -6,7 +6,7 @@ import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.DocumentState;
-
+import com.bitwig.extension.controller.api.Transport;
 import com.centomila.utils.PopupUtils;
 import com.centomila.utils.SettingsHelper;
 import com.centomila.utils.ExtensionPath;
@@ -20,9 +20,10 @@ import com.centomila.utils.ExtensionPath;
  * and various clip manipulation tools.
  */
 public class BitwigBuddyExtension extends ControllerExtension {
-   Application application;
-   Clip cursorClip;
-   Clip arrangerClip;
+   public Application application;
+   public Clip cursorClip;
+   public Clip arrangerClip;
+   public Transport transport;
 
    DocumentState documentState;
 
@@ -50,6 +51,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       cursorClip = host.createLauncherCursorClip((16 * 8), 128);
       arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
       documentState = host.getDocumentState();
+      transport = host.createTransport();
 
       this.application.panelLayout().markInterested();
 

@@ -16,7 +16,7 @@ public class ModeSelectSettings {
     public static void init(BitwigBuddyExtension extension) {
 
         // Mode select setting
-        final String[] MODE_SELECT_OPTIONS = new String[] { "Generate", "Edit" };
+        final String[] MODE_SELECT_OPTIONS = new String[] { "Generate", "Edit", "Macro" };
 
         spacerSelectModSetting = (Setting) createStringSetting(titleWithLine("MODE SELECT"),
                 CATEGORY_MODE_SELECT, 0,
@@ -60,9 +60,12 @@ public class ModeSelectSettings {
         if (currentMode.equals("Generate")) {
             // ((SettableEnumValue) modeSelectSetting).set("Edit");
             gotoGenerateMode();
-        } else {
+        } else if (currentMode.equals("Edit")) {
             // ((SettableEnumValue) modeSelectSetting).set("Generate");
             gotoEditMode();
+        } else if (currentMode.equals("Macro")) {
+            // ((SettableEnumValue) modeSelectSetting).set("Generate");
+            gotoMacroMode();
         }
     }
 
@@ -152,6 +155,71 @@ public class ModeSelectSettings {
         showSetting(PostActionSettings.allSettings);
         PostActionSettings.showPostActionsSettings();
 
+        EditClipSettings.hideEditClipSettings();
+    }
+
+    public static void gotoMacroMode() {
+
+
+        for (Setting setting : ProgramPattern.allSettings) {
+            setting.hide();
+        }
+
+        for (Setting setting : MoveStepsHandler.allSettings) {
+            setting.hide();
+        }
+
+        for (Setting setting : PatternSettings.allSettings) {
+            setting.hide();
+        }
+
+        for (Setting setting : PostActionSettings.allSettings) {
+            setting.hide();
+        }
+
+        for (Setting setting : NoteDestinationSettings.allSettings) {
+            setting.hide();
+        }
+
+        for (Setting setting : StepSizeSettings.allSettings) {
+            setting.hide();
+        }
+
+        for (Setting setting : ProgramPattern.allSettings) {
+            setting.hide();
+        }
+
+        for (Setting setting : MoveStepsHandler.allSettings) {
+            setting.hide();
+        }
+
+        for (Setting setting : PatternSettings.allSettings) {
+            setting.hide();
+        }
+
+        for (Setting setting : PostActionSettings.allSettings) {
+            setting.hide();
+        }
+
+        for (Setting setting : NoteDestinationSettings.allSettings) {
+            setting.hide();
+        }
+
+        for (Setting setting : ProgramPattern.allSettings) {
+            setting.hide();
+        }
+
+        for (Setting setting : ClipUtils.allSettings) {
+            setting.hide();
+        }
+
+        for (Setting setting : MacroActionSettings.allSettings) {
+            setting.show();
+        }
+
+
+
+        ProgramPattern.hideProgramPatternSettings();
         EditClipSettings.hideEditClipSettings();
     }
 

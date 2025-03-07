@@ -1,0 +1,9 @@
+Macro: "Add Cue Markers"
+jump_to_beginning_of_arranger_window
+insert_arranger_cue_marker_at_play_position
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position

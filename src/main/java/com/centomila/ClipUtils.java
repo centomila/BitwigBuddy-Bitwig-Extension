@@ -1,14 +1,11 @@
 package com.centomila;
 
-
 import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.utils.SettingsHelper.*;
-
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
 
 import com.bitwig.extension.controller.api.BeatTimeValue;
 import com.bitwig.extension.controller.api.Clip;
@@ -20,6 +17,7 @@ import com.bitwig.extension.controller.api.Signal;
 
 public class ClipUtils {
     private static String CATEGORY_OTHER = "99 Other";
+    public static Setting[] allSettings;
 
     /**
      * Initializes the ClipUtils class by creating and configuring settings for
@@ -57,6 +55,8 @@ public class ClipUtils {
                     int noteChannel = NoteDestinationSettings.getCurrentChannelAsInt();
                     extension.getLauncherOrArrangerAsClip().clearStepsAtY(noteChannel, noteDestination);
                 });
+
+        allSettings = new Setting[] { spacerOther, clearClipSetting, clearCurrentNoteDestination };
     }
 
     /**
