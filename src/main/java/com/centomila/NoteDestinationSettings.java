@@ -187,8 +187,8 @@ public class NoteDestinationSettings {
     * @param host      The Bitwig Studio controller host
     */
    private static void setupPlayingNotesObserver(BitwigBuddyExtension extension, ControllerHost host) {
-      Channel cursorChannel = host.createCursorTrack(0, 0);
-      PlayingNoteArrayValue playingNotes = extension.trackBank.getItemAt(currentNoteAsInt).playingNotes();
+      
+      PlayingNoteArrayValue playingNotes = extension.cursorTrack.playingNotes();
       playingNotes.markInterested();
 
       playingNotes.addValueObserver(notes -> {
