@@ -30,6 +30,8 @@ public class MacroActionSettings {
     private static ControllerHost host;
     private static GlobalPreferences preferences;
     private static final String MACRO_PREFIX = "Macro:";
+    private static long lastExecutionTime = 0;
+    private static final long DEBOUNCE_MS = 500; // Adjust as needed
 
     public static void init(BitwigBuddyExtension extension) {
 
@@ -62,12 +64,18 @@ public class MacroActionSettings {
 
     private static void initMacroActionObservers(BitwigBuddyExtension extension) {
         ((Signal) macroLaunchBtnSignalSetting).addSignalObserver(() -> {
-
-            Macro macro = getSelectedMacro();
-            if (macro != null) {
-                executeMacro(macro, extension);
+            host.println("Signal triggered at " + System.currentTimeMillis());
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastExecutionTime > DEBOUNCE_MS) {
+                lastExecutionTime = currentTime;
+                
+                Macro macro = getSelectedMacro();
+                if (macro != null) {
+                    executeMacro(macro, extension);
+                }
+            } else {
+                host.println("Ignoring rapid signal trigger, wait " + DEBOUNCE_MS + "ms between triggers");
             }
-
         });
 
         ((Signal) macroPrintAllActionsBtnSignalSetting).addSignalObserver(() -> {
@@ -76,21 +84,50 @@ public class MacroActionSettings {
     }
 
     private static void executeMacro(Macro macro, BitwigBuddyExtension extension) {
-        for (String command : macro.getCommands()) {
-            host.println("Executing command: " + command);
-            host.scheduleTask(() -> {
-                host.println("command" + command);
-                // if the command starts with bb: then it is a Bitwig Buddy command, else is a Bitwig Action
-                if (command.startsWith("bb:")) {
-                    ExecuteBitwigAction.executeBitwigAction(command, extension);
-                } else {
-                    extension.getApplication().getAction(command).invoke();
-                }
-            }, 100);
+        // Add timestamp to track when execution starts
+        host.println("=== MACRO EXECUTION START: " + System.currentTimeMillis() + " ===");
+        host.println("Executing macro: " + macro.getTitle());
+        String[] commands = macro.getCommands();
+        host.println("Commands sequence (total " + commands.length + "):");
+        for (int i = 0; i < commands.length; i++) {
+            host.println((i+1) + ": " + commands[i]);
         }
+        
+        // Schedule sequential execution of commands with proper delays
+        scheduleCommands(commands, 0, extension);
     }
 
-
+    /**
+     * Recursively schedules commands to be executed one after another with delays.
+     * @param commands The array of commands to execute
+     * @param index The current index in the commands array
+     * @param extension The Bitwig extension
+     */
+    private static void scheduleCommands(String[] commands, int index, BitwigBuddyExtension extension) {
+        if (index >= commands.length) {
+            host.println("=== MACRO EXECUTION END: " + System.currentTimeMillis() + " ===");
+            return;
+        }
+        
+        String command = commands[index];
+        final long startTime = System.currentTimeMillis();
+        host.println("Executing command " + (index+1) + "/" + commands.length + ": " + command + " at " + startTime);
+        
+        // Execute the current command
+        if (command.startsWith("bb:")) {
+            ExecuteBitwigAction.executeBitwigAction(command, extension);
+        } else {
+            extension.getApplication().getAction(command).invoke();
+        }
+        
+        host.println("Completed command " + (index+1) + "/" + commands.length + ": " + command + 
+            " after " + (System.currentTimeMillis() - startTime) + "ms");
+        
+        // Schedule the next command with a delay
+        extension.getHost().scheduleTask(() -> {
+            scheduleCommands(commands, index + 1, extension);
+        }, 10); // 50ms delay between commands
+    }
 
     /**
      * Reads all macro files from the configured macros directory.
@@ -182,7 +219,7 @@ public class MacroActionSettings {
 
         // Rest of the lines are commands
         for (int i = 1; i < lines.size(); i++) {
-            String line = lines.get(i).trim();
+            String line = lines.get(i);
             if (!line.isEmpty()) {
                 commands.add(line);
             }
@@ -199,10 +236,10 @@ public class MacroActionSettings {
     private static void printAllAvailableActions(BitwigBuddyExtension extension) {
         host.println("Available actions:");
         for (Action action : extension.getApplication().getActions()) {
-            host.println(action.getName() + " | Menu Item Text:" + action.getMenuItemText() + " | ID:" + action.getId());
+            host.println(
+                    action.getName() + " | Menu Item Text:" + action.getMenuItemText() + " | ID:" + action.getId());
         }
         extension.getApplication().getAction("show_control_script_console").invoke();
-
     }
 
     /**
@@ -236,6 +273,18 @@ public class MacroActionSettings {
         }
 
         return null;
+    }
+
+    public static void hideMacroSettings() {
+        for (Setting setting : allSettings) {
+            setting.hide();
+        }
+    }
+
+    public static void showMacroSettings() {
+        for (Setting setting : allSettings) {
+            setting.show();
+        }
     }
 
     /**

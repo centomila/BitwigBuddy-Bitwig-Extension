@@ -1,0 +1,193 @@
+Macro: "Rainbow"
+bb: Clip Rename (FF0000 - Red)
+bb: Clip Color (FF0000)
+bb: Duplicate
+bb: Clip Rename (FF1100 - Red)
+bb: Clip Color (FF1100)
+bb: Duplicate
+bb: Clip Rename (FF2200 - Red)
+bb: Clip Color (FF2200)
+bb: Duplicate
+bb: Clip Rename (FF3300 - Red)
+bb: Clip Color (FF3300)
+bb: Duplicate
+bb: Clip Rename (FF4400 - Red)
+bb: Clip Color (FF4400)
+bb: Duplicate
+bb: Clip Rename (FF5500 - Red)
+bb: Clip Color (FF5500)
+bb: Duplicate
+bb: Clip Rename (FF6600 - Orange)
+bb: Clip Color (FF6600)
+bb: Duplicate
+bb: Clip Rename (FF7700 - Orange)
+bb: Clip Color (FF7700)
+bb: Duplicate
+bb: Clip Rename (FF8800 - Orange)
+bb: Clip Color (FF8800)
+bb: Duplicate
+bb: Clip Rename (FF9900 - Orange)
+bb: Clip Color (FF9900)
+bb: Duplicate
+bb: Clip Rename (FFAA00 - Orange)
+bb: Clip Color (FFAA00)
+bb: Duplicate
+bb: Clip Rename (FFBB00 - Orange)
+bb: Clip Color (FFBB00)
+bb: Duplicate
+bb: Clip Rename (FFCC00 - Orange)
+bb: Clip Color (FFCC00)
+bb: Duplicate
+bb: Clip Rename (FFDD00 - Yellow)
+bb: Clip Color (FFDD00)
+bb: Duplicate
+bb: Clip Rename (FFEE00 - Yellow)
+bb: Clip Color (FFEE00)
+bb: Duplicate
+bb: Clip Rename (FFFF00 - Yellow)
+bb: Clip Color (FFFF00)
+bb: Duplicate
+bb: Clip Rename (EEFF00 - Yellow)
+bb: Clip Color (EEFF00)
+bb: Duplicate
+bb: Clip Rename (DDFF00 - Yellow)
+bb: Clip Color (DDFF00)
+bb: Duplicate
+bb: Clip Rename (CCFF00 - Yellow)
+bb: Clip Color (CCFF00)
+bb: Duplicate
+bb: Clip Rename (BBFF00 - Yellow)
+bb: Clip Color (BBFF00)
+bb: Duplicate
+bb: Clip Rename (AAFF00 - Yellow)
+bb: Clip Color (AAFF00)
+bb: Duplicate
+bb: Clip Rename (99FF00 - Green)
+bb: Clip Color (99FF00)
+bb: Duplicate
+bb: Clip Rename (88FF00 - Green)
+bb: Clip Color (88FF00)
+bb: Duplicate
+bb: Clip Rename (77FF00 - Green)
+bb: Clip Color (77FF00)
+bb: Duplicate
+bb: Clip Rename (66FF00 - Green)
+bb: Clip Color (66FF00)
+bb: Duplicate
+bb: Clip Rename (55FF00 - Green)
+bb: Clip Color (55FF00)
+bb: Duplicate
+bb: Clip Rename (44FF00 - Green)
+bb: Clip Color (44FF00)
+bb: Duplicate
+bb: Clip Rename (33FF00 - Green)
+bb: Clip Color (33FF00)
+bb: Duplicate
+bb: Clip Rename (22FF00 - Green)
+bb: Clip Color (22FF00)
+bb: Duplicate
+bb: Clip Rename (11FF00 - Green)
+bb: Clip Color (11FF00)
+bb: Duplicate
+bb: Clip Rename (00FF00 - Green)
+bb: Clip Color (00FF00)
+bb: Duplicate
+bb: Clip Rename (00FF11 - Green)
+bb: Clip Color (00FF11)
+bb: Duplicate
+bb: Clip Rename (00FF22 - Green)
+bb: Clip Color (00FF22)
+bb: Duplicate
+bb: Clip Rename (00FF33 - Green)
+bb: Clip Color (00FF33)
+bb: Duplicate
+bb: Clip Rename (00FF44 - Green)
+bb: Clip Color (00FF44)
+bb: Duplicate
+bb: Clip Rename (00FF55 - Green)
+bb: Clip Color (00FF55)
+bb: Duplicate
+bb: Clip Rename (00FF66 - Green)
+bb: Clip Color (00FF66)
+bb: Duplicate
+bb: Clip Rename (00FF77 - Green)
+bb: Clip Color (00FF77)
+bb: Duplicate
+bb: Clip Rename (00FF88 - Green)
+bb: Clip Color (00FF88)
+bb: Duplicate
+bb: Clip Rename (00FF99 - Green)
+bb: Clip Color (00FF99)
+bb: Duplicate
+bb: Clip Rename (00FFAA - Green)
+bb: Clip Color (00FFAA)
+bb: Duplicate
+bb: Clip Rename (00FFBB - Green)
+bb: Clip Color (00FFBB)
+bb: Duplicate
+bb: Clip Rename (00FFCC - Green)
+bb: Clip Color (00FFCC)
+bb: Duplicate
+bb: Clip Rename (00FFDD - Green)
+bb: Clip Color (00FFDD)
+bb: Duplicate
+bb: Clip Rename (00FFEE - Green)
+bb: Clip Color (00FFEE)
+bb: Duplicate
+bb: Clip Rename (00FFFF - Cyan)
+bb: Clip Color (00FFFF)
+bb: Duplicate
+bb: Clip Rename (00EEFF - Cyan)
+bb: Clip Color (00EEFF)
+bb: Duplicate
+bb: Clip Rename (00DDFF - Cyan)
+bb: Clip Color (00DDFF)
+bb: Duplicate
+bb: Clip Rename (00CCFF - Cyan)
+bb: Clip Color (00CCFF)
+bb: Duplicate
+bb: Clip Rename (00BBFF - Cyan)
+bb: Clip Color (00BBFF)
+bb: Duplicate
+bb: Clip Rename (00AAFF - Cyan)
+bb: Clip Color (00AAFF)
+bb: Duplicate
+bb: Clip Rename (0099FF - Cyan)
+bb: Clip Color (0099FF)
+bb: Duplicate
+bb: Clip Rename (0088FF - Cyan)
+bb: Clip Color (0088FF)
+bb: Duplicate
+bb: Clip Rename (0077FF - Cyan)
+bb: Clip Color (0077FF)
+bb: Duplicate
+bb: Clip Rename (0066FF - Cyan)
+bb: Clip Color (0066FF)
+bb: Duplicate
+bb: Clip Rename (0055FF - Cyan)
+bb: Clip Color (0055FF)
+bb: Duplicate
+bb: Clip Rename (0044FF - Cyan)
+bb: Clip Color (0044FF)
+bb: Duplicate
+bb: Clip Rename (0033FF - Cyan)
+bb: Clip Color (0033FF)
+bb: Duplicate
+bb: Clip Rename (0022FF - Cyan)
+bb: Clip Color (0022FF)
+bb: Duplicate
+bb: Clip Rename (0011FF - Cyan)
+bb: Clip Color (0011FF)
+bb: Duplicate
+bb: Clip Rename (0000FF - Blue)
+bb: Clip Color (0000FF)
+bb: Duplicate
+bb: Clip Rename (1100FF - Blue)
+bb: Clip Color (1100FF)
+bb: Duplicate
+bb: Clip Rename (2200FF - Blue)
+bb: Clip Color (2200FF)
+bb: Duplicate
+bb: Clip Rename (3300FF - Blue)
+bb: Clip Color (3300FF)
+bb: Duplicate

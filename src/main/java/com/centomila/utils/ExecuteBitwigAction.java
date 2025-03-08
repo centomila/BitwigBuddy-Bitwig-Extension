@@ -4,18 +4,22 @@ import com.centomila.BitwigBuddyExtension;
 import com.centomila.ClipUtils;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.SettableColorValue;
+
+import static com.centomila.utils.PopupUtils.showPopup;
+
 import com.bitwig.extension.api.Color;
 import com.bitwig.extension.controller.api.ColorValue;
 
 public class ExecuteBitwigAction {
-    
+
     public static void executeBitwigAction(String actionId, BitwigBuddyExtension extension) {
         ControllerHost host = extension.getHost();
         host.println("Executing Bitwig action: " + actionId);
         // strip the bb: prefix
         actionId = actionId.split(":")[1].trim();
         String[] params;
-        // action id could be like bb:actionId(param1, param2). Parameters are separated by comma. Qty of parameters is not fixed.
+        // action id could be like bb:actionId(param1, param2). Parameters are separated
+        // by comma. Qty of parameters is not fixed.
         if (actionId.contains("(")) {
             int start = actionId.indexOf("(");
             int end = actionId.indexOf(")");
@@ -30,7 +34,7 @@ public class ExecuteBitwigAction {
         if (actionId.contains("(")) {
             actionId = actionId.substring(0, actionId.indexOf("("));
         }
-        
+
         host.println("Executing Bitwig action: " + actionId);
         // switch case actionId. Case 1 starts with NewCueMarker
         switch (actionId) {
@@ -53,7 +57,7 @@ public class ExecuteBitwigAction {
                 extension.getApplication().escape();
                 break;
             case "Copy":
-                extension.getApplication().copy();;
+                extension.getApplication().copy();
                 break;
             case "Paste":
                 extension.getApplication().paste();
@@ -77,7 +81,7 @@ public class ExecuteBitwigAction {
                 extension.getApplication().selectNone();
                 break;
             case "Select First":
-                extension.getApplication().selectFirst();;
+                extension.getApplication().selectFirst();
                 break;
             case "Select Last":
                 extension.getApplication().selectLast();
@@ -85,11 +89,18 @@ public class ExecuteBitwigAction {
             case "Select Next":
                 extension.getApplication().selectNext();
                 break;
-            case "SelectPrevious":
+            case "Select Previous":
                 extension.getApplication().selectPrevious();
+                break;
+            case "Clip Select":
+                extension.getLauncherOrArrangerAsClip().clipLauncherSlot().select();
+                break;
+            case "Clip Duplicate":
+                extension.getLauncherOrArrangerAsClip().clipLauncherSlot().duplicateClip();
                 break;
             case "Project Name":
                 extension.getApplication().projectName();
+                showPopup(extension.getApplication().projectName().toString());
                 break;
             case "Rename":
                 extension.getApplication().rename();
@@ -105,8 +116,22 @@ public class ExecuteBitwigAction {
                 Color color = Color.fromHex(colorStr);
                 extension.getLauncherOrArrangerAsClip().color().set(color);
                 break;
-            
-                
+            case "Wait":
+                int waitTime = 500; // Default wait time in ms
+                if (params.length > 0) {
+                    try {
+                        waitTime = Integer.parseInt(params[0]);
+                    } catch (NumberFormatException e) {
+                        // Use default if parameter is not a valid number
+                    }
+                }
+                try {
+                    Thread.sleep(waitTime);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                break;
+
         }
 
     }

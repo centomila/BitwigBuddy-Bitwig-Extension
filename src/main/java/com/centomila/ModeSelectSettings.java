@@ -5,6 +5,7 @@ import static com.centomila.utils.SettingsHelper.*;
 
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
+import com.centomila.MacroActionSettings.Macro;
 
 public class ModeSelectSettings {
     private static final String CATEGORY_MODE_SELECT = "1 Mode Select";
@@ -110,10 +111,8 @@ public class ModeSelectSettings {
         ProgramPattern.programDensitySetting.hide();
 
 
-        // StepSizeSettings.hideSettings();
-        // NoteDestinationSettings.hideSettings();
-        // VelocityShapeSettings.hideSettings();
-        // PostActionSettings.hideSettings();
+        MacroActionSettings.hideMacroSettings();
+
     }
 
     // GENERATE MODE
@@ -148,14 +147,11 @@ public class ModeSelectSettings {
 
         PatternSettings.generatorTypeSelector(((EnumValue) PatternSettings.patternTypeSetting).get());
 
-        // StepSizeSettings.showSettings();
-        // NoteDestinationSettings.showSettings();
-        // VelocityShapeSettings.showSettings();
-
         showSetting(PostActionSettings.allSettings);
         PostActionSettings.showPostActionsSettings();
 
         EditClipSettings.hideEditClipSettings();
+        MacroActionSettings.hideMacroSettings();
     }
 
     public static void gotoMacroMode() {
@@ -213,14 +209,13 @@ public class ModeSelectSettings {
             setting.hide();
         }
 
-        for (Setting setting : MacroActionSettings.allSettings) {
-            setting.show();
-        }
-
-
-
+        
+        
+        
         ProgramPattern.hideProgramPatternSettings();
         EditClipSettings.hideEditClipSettings();
+        MacroActionSettings.showMacroSettings();
+        
     }
 
 }
