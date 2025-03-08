@@ -49,10 +49,13 @@ public class ExecuteBitwigAction {
                 }
                 break;
             case "DeleteAllCueMarkers":
-                for (int i = 0; i < 32; i++) {
-                    CueMarker cueMarker = extension.cueMarkerBank.getItemAt(i);
-                    cueMarker.deleteObject();
-                    
+                for (int pass = 0; pass < 4; pass++) {
+                    for (int i = 0; i < 128; i++) {
+                        CueMarker cueMarker = extension.cueMarkerBank.getItemAt(i);
+                        if (cueMarker.exists().get()) {
+                            cueMarker.deleteObject();
+                        }
+                    }
                 }
                 break;
             case "Left":

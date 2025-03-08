@@ -1,2 +1,3 @@
 Macro: "Show Advanced Setting (Graphics)"
+Description: "Open the Bitwig's Advanced Settings Page (Graphics)"
 show_advanced_settings

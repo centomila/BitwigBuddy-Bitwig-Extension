@@ -61,10 +61,10 @@ public class BitwigBuddyExtension extends ControllerExtension {
       transport = host.createTransport();
       arranger = host.createArranger();
       project = host.getProject();
-      cueMarkerBank = arranger.createCueMarkerBank(32);
+      cueMarkerBank = arranger.createCueMarkerBank(128);
       
       cueMarkerBank.subscribe();
-      for (int i = 0; i < 32; i++) {
+      for (int i = 0; i < 128; i++) {
          cueMarkerBank.getItemAt(i).name().markInterested();
          cueMarkerBank.getItemAt(i).getColor().markInterested();
          cueMarkerBank.getItemAt(i).exists().markInterested();
