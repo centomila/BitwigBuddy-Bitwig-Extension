@@ -148,6 +148,15 @@ public class ExecuteBitwigAction {
             case "Audio Track Create":
                 extension.getApplication().createAudioTrack(128);
                 break;
+            case "Fx Track Create":
+                extension.getApplication().createEffectTrack(128);
+                break;
+            case "Arranger Loop Start":
+                extension.transport.arrangerLoopStart().set(Double.parseDouble(params[0]));
+                break;
+            case "Arranger Loop End":
+                extension.transport.arrangerLoopDuration().set(Double.parseDouble(params[0]));
+                break;
             case "Wait":
                 int waitTime = 250; // Default wait time in ms
                 if (params.length > 0) {

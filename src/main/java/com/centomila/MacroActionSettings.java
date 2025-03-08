@@ -140,7 +140,12 @@ public class MacroActionSettings {
         if (command.startsWith("bb:")) {
             ExecuteBitwigAction.executeBitwigAction(command, extension);
         } else {
-            extension.getApplication().getAction(command).invoke();
+            Action action = extension.getApplication().getAction(command);
+            if (action != null) {
+                action.invoke();
+            } else {
+                host.errorln("Action not found: " + command);
+            }
         }
         
         host.println("Completed command " + (index+1) + "/" + commands.length + ": " + command + 
