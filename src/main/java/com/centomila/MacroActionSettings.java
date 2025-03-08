@@ -11,6 +11,7 @@ import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableBooleanValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
+import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Action;
 import com.bitwig.extension.controller.api.ActionCategory;
 
@@ -25,7 +26,9 @@ public class MacroActionSettings {
 
     public static Setting macroLaunchBtnSignalSetting;
     public static Setting macroSelectorSetting;
+    public static Setting macroDescriptionSetting;
     public static Setting macroPrintAllActionsBtnSignalSetting;
+    public static Setting macroSpacerSetting;
     public static Setting[] allSettings;
     private static ControllerHost host;
     private static GlobalPreferences preferences;
@@ -43,8 +46,11 @@ public class MacroActionSettings {
     }
 
     private static void initMacroActionSettings() {
-        macroLaunchBtnSignalSetting = (Setting) createSignalSetting("macroLaunchBtnSignal",
-                "Macro Launch Button Signal", "Signal to launch the macro action");
+
+        macroSpacerSetting = (Setting) createStringSetting(titleWithLine("MACRO") , "Macro", 0,
+                "---------------------------------------------------");
+        disableSetting(macroSpacerSetting);
+
 
         // Get macro titles for the selector
         String[] macroTitles = getMacroTitles();
@@ -52,14 +58,21 @@ public class MacroActionSettings {
             macroTitles = new String[] { "No Macros Found" };
         }
 
-        macroSelectorSetting = (Setting) createEnumSetting("macroSelector", "Macro Selector", macroTitles,
+        macroSelectorSetting = (Setting) createEnumSetting("Select a Macro", "Macro", macroTitles,
                 macroTitles[0]);
+        
+                macroDescriptionSetting = (Setting) createStringSetting("Macro Description", "Macro", 0,
+                "Select a macro to execute");
 
-        macroPrintAllActionsBtnSignalSetting = (Setting) createSignalSetting("macroPrintAllActionsBtnSignal",
-                "Print All Actions Button Signal", "Signal to print all available actions");
+                macroLaunchBtnSignalSetting = (Setting) createSignalSetting("Execute Macro",
+                "Macro", "Execute the selected macro");
 
-        allSettings = new Setting[] { macroLaunchBtnSignalSetting, macroSelectorSetting,
-                macroPrintAllActionsBtnSignalSetting };
+        // macroPrintAllActionsBtnSignalSetting = (Setting) createSignalSetting("Print All Actions in Console",
+        //         "Macro", "Signal to print all available actions");
+
+        allSettings = new Setting[] { macroLaunchBtnSignalSetting, macroSelectorSetting,macroDescriptionSetting, macroSpacerSetting
+                // macroPrintAllActionsBtnSignalSetting
+                 };
     }
 
     private static void initMacroActionObservers(BitwigBuddyExtension extension) {
@@ -77,10 +90,20 @@ public class MacroActionSettings {
                 host.println("Ignoring rapid signal trigger, wait " + DEBOUNCE_MS + "ms between triggers");
             }
         });
-
-        ((Signal) macroPrintAllActionsBtnSignalSetting).addSignalObserver(() -> {
-            printAllAvailableActions(extension);
+        
+        // Add observer for macro selection changes
+        ((SettableEnumValue) macroSelectorSetting).addValueObserver(newValue -> {
+            Macro macro = getSelectedMacro();
+            if (macro != null) {
+                ((SettableStringValue) macroDescriptionSetting).set(macro.getDescription());
+            } else {
+                ((SettableStringValue) macroDescriptionSetting).set("No description");
+            }
         });
+
+        // ((Signal) macroPrintAllActionsBtnSignalSetting).addSignalObserver(() -> {
+        //     printAllAvailableActions(extension);
+        // });
     }
 
     private static void executeMacro(Macro macro, BitwigBuddyExtension extension) {
@@ -201,6 +224,7 @@ public class MacroActionSettings {
     private static Macro readMacroFile(File file) throws IOException {
         List<String> lines = java.nio.file.Files.readAllLines(file.toPath());
         String title = "";
+        String description = "No description";
         List<String> commands = new ArrayList<>();
 
         // First line should be the macro title
@@ -217,8 +241,25 @@ public class MacroActionSettings {
             return null;
         }
 
+        // Process remaining lines
+        int commandStartIndex = 1;
+        
+        // Check for description in the second line
+        if (lines.size() > 1) {
+            String secondLine = lines.get(1).trim();
+            if (secondLine.startsWith("Description:") || secondLine.startsWith("Descritpion:")) {
+                try {
+                    description = extractQuotedValue(secondLine);
+                    commandStartIndex = 2; // Skip description line when collecting commands
+                } catch (IllegalArgumentException e) {
+                    host.errorln("Invalid description format in file " + file.getName());
+                    // Continue without the description
+                }
+            }
+        }
+
         // Rest of the lines are commands
-        for (int i = 1; i < lines.size(); i++) {
+        for (int i = commandStartIndex; i < lines.size(); i++) {
             String line = lines.get(i);
             if (!line.isEmpty()) {
                 commands.add(line);
@@ -230,7 +271,7 @@ public class MacroActionSettings {
             return null;
         }
 
-        return new Macro(file.getName(), title, commands.toArray(new String[0]));
+        return new Macro(file.getName(), title, commands.toArray(new String[0]), description);
     }
 
     private static void printAllAvailableActions(BitwigBuddyExtension extension) {
@@ -294,16 +335,18 @@ public class MacroActionSettings {
         private final String fileName;
         private final String title;
         private final String[] commands;
+        private final String description;
 
         /**
          * Creates a new Macro instance.
          * 
          * @throws NullPointerException if any parameter is null
          */
-        public Macro(String fileName, String title, String[] commands) {
+        public Macro(String fileName, String title, String[] commands, String description) {
             this.fileName = Objects.requireNonNull(fileName, "fileName cannot be null");
             this.title = Objects.requireNonNull(title, "title cannot be null");
             this.commands = Arrays.copyOf(Objects.requireNonNull(commands, "commands cannot be null"), commands.length);
+            this.description = description != null ? description : "No description";
         }
 
         public String getFileName() {
@@ -316,6 +359,10 @@ public class MacroActionSettings {
 
         public String[] getCommands() {
             return Arrays.copyOf(commands, commands.length);
+        }
+        
+        public String getDescription() {
+            return description;
         }
     }
 }

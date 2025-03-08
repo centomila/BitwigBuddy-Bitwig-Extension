@@ -3,6 +3,7 @@ package com.centomila.utils;
 import com.centomila.BitwigBuddyExtension;
 import com.centomila.ClipUtils;
 import com.bitwig.extension.controller.api.ControllerHost;
+import com.bitwig.extension.controller.api.CueMarker;
 import com.bitwig.extension.controller.api.SettableColorValue;
 
 import static com.centomila.utils.PopupUtils.showPopup;
@@ -38,6 +39,22 @@ public class ExecuteBitwigAction {
         host.println("Executing Bitwig action: " + actionId);
         // switch case actionId. Case 1 starts with NewCueMarker
         switch (actionId) {
+            case "CueMarkerName":
+                if (params.length == 2) {
+                    int itemNumber = Integer.parseInt(params[0].trim()) - 1;
+                    String name = params[1].trim();
+                    CueMarker cueMarker = extension.cueMarkerBank.getItemAt(itemNumber);
+                    cueMarker.name().set(name);
+                    
+                }
+                break;
+            case "DeleteAllCueMarkers":
+                for (int i = 0; i < 32; i++) {
+                    CueMarker cueMarker = extension.cueMarkerBank.getItemAt(i);
+                    cueMarker.deleteObject();
+                    
+                }
+                break;
             case "Left":
                 extension.getApplication().arrowKeyLeft();
                 break;
@@ -131,7 +148,6 @@ public class ExecuteBitwigAction {
                     Thread.currentThread().interrupt();
                 }
                 break;
-
         }
 
     }

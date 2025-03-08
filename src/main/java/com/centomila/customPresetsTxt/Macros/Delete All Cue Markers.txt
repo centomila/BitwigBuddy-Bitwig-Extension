@@ -1,0 +1,4 @@
+Macro: "Cue Markers: Delete All"
+Descritpion: "Delete all cue markers"
+
+bb: DeleteAllCueMarkers

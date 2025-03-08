@@ -1,0 +1,122 @@
+Macro: "New Cue Marker"
+Descritpion: "Test Cue Marker Name"
+
+bb: DeleteAllCueMarkers
+
+bb: Wait (300)
+
+jump_to_beginning_of_arranger_window
+
+bb: Wait (300)
+
+bb: // Cue Marker 1
+insert_arranger_cue_marker_at_play_position
+
+bb: Wait (300)
+
+jump_forward_8_bars
+
+bb: Wait (300)
+
+bb: // Cue Marker 2
+insert_arranger_cue_marker_at_play_position
+
+bb: Wait (300)
+
+jump_forward_8_bars
+
+bb: Wait (300)
+
+bb: // Cue Marker 3
+insert_arranger_cue_marker_at_play_position
+
+bb: Wait (300)
+
+jump_forward_8_bars
+
+bb: Wait (300)
+
+bb: // Cue Marker 4
+insert_arranger_cue_marker_at_play_position
+
+bb: Wait (300)
+
+jump_forward_8_bars
+
+bb: Wait (300)
+
+bb: // Cue Marker 5
+insert_arranger_cue_marker_at_play_position
+
+bb: Wait (300)
+
+jump_forward_8_bars
+
+bb: Wait (300)
+
+bb: // Cue Marker 6
+insert_arranger_cue_marker_at_play_position
+
+bb: Wait (300)
+
+jump_forward_8_bars
+
+bb: Wait (300)
+
+bb: // Cue Marker 7
+insert_arranger_cue_marker_at_play_position
+
+bb: Wait (300)
+
+jump_forward_8_bars
+
+bb: Wait (300)
+
+bb: // Cue Marker 8
+insert_arranger_cue_marker_at_play_position
+
+bb: Wait (300)
+
+jump_forward_8_bars
+
+bb: Wait (300)
+
+bb: // Cue Marker 9
+insert_arranger_cue_marker_at_play_position
+
+bb: Wait (300)
+
+jump_forward_8_bars
+
+bb: Wait (300)
+
+bb: // Cue Marker 10
+insert_arranger_cue_marker_at_play_position
+
+bb: Wait (300)
+
+jump_forward_8_bars
+
+bb: Wait (300)
+
+
+
+bb: CueMarkerName (1, Intro)
+bb: Wait (100)
+bb: CueMarkerName (2, Verse)
+bb: Wait (100)
+bb: CueMarkerName (3, Chorus)
+bb: Wait (100)
+bb: CueMarkerName (4, Verse)
+bb: Wait (100)
+bb: CueMarkerName (5, Chorus)
+bb: Wait (100)
+bb: CueMarkerName (6, Breakdown)
+bb: Wait (100)
+bb: CueMarkerName (7, Verse)
+bb: Wait (100)
+bb: CueMarkerName (8, Chorus)
+bb: Wait (100)
+bb: CueMarkerName (9, Chorus)
+bb: Wait (100)
+bb: CueMarkerName (10, Outro)

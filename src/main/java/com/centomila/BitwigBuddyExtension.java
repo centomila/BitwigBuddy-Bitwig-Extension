@@ -1,11 +1,14 @@
 package com.centomila;
 
 import com.bitwig.extension.controller.api.ControllerHost;
-
+import com.bitwig.extension.controller.api.CueMarker;
+import com.bitwig.extension.controller.api.CueMarkerBank;
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
+import com.bitwig.extension.controller.api.Arranger;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.DocumentState;
+import com.bitwig.extension.controller.api.Project;
 import com.bitwig.extension.controller.api.Transport;
 import com.centomila.utils.PopupUtils;
 import com.centomila.utils.SettingsHelper;
@@ -23,7 +26,11 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public Application application;
    public Clip cursorClip;
    public Clip arrangerClip;
+   public Arranger arranger;
    public Transport transport;
+   public Project project;
+   public CueMarkerBank cueMarkerBank;
+   public CueMarker cueMarker;
 
    DocumentState documentState;
 
@@ -52,6 +59,20 @@ public class BitwigBuddyExtension extends ControllerExtension {
       arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
       documentState = host.getDocumentState();
       transport = host.createTransport();
+      arranger = host.createArranger();
+      project = host.getProject();
+      cueMarkerBank = arranger.createCueMarkerBank(32);
+      
+      cueMarkerBank.subscribe();
+      for (int i = 0; i < 32; i++) {
+         cueMarkerBank.getItemAt(i).name().markInterested();
+         cueMarkerBank.getItemAt(i).getColor().markInterested();
+         cueMarkerBank.getItemAt(i).exists().markInterested();
+         cueMarkerBank.getItemAt(i).position().markInterested();
+
+      }
+      cueMarkerBank.scrollPosition().markInterested();
+      cueMarkerBank.itemCount().markInterested();
 
       this.application.panelLayout().markInterested();
 
@@ -65,6 +86,10 @@ public class BitwigBuddyExtension extends ControllerExtension {
       arrangerClip.getPlayStart().markInterested();
       arrangerClip.getPlayStop().markInterested();
       arrangerClip.clipLauncherSlot().isPlaying().markInterested();
+
+      
+      
+      
 
       SettingsHelper.init(this);
       
