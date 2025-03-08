@@ -21,19 +21,14 @@ public class ExecuteBitwigAction {
         String[] params;
         // action id could be like bb:actionId(param1, param2). Parameters are separated
         // by comma. Qty of parameters is not fixed.
-        if (actionId.contains("(")) {
+        if (actionId.contains("(") && actionId.contains(")")) {
             int start = actionId.indexOf("(");
-            int end = actionId.indexOf(")");
+            int end = actionId.lastIndexOf(")");
             String paramsStr = actionId.substring(start + 1, end).trim();
             actionId = actionId.substring(0, start).trim();
             params = paramsStr.split(",");
         } else {
             params = new String[0];
-        }
-        // actionId without parameters
-        // Remove parameters from actionId if present
-        if (actionId.contains("(")) {
-            actionId = actionId.substring(0, actionId.indexOf("("));
         }
 
         host.println("Executing Bitwig action: " + actionId);
@@ -142,6 +137,12 @@ public class ExecuteBitwigAction {
                 Color color = Color.fromHex(colorStr);
                 extension.getLauncherOrArrangerAsClip().color().set(color);
                 break;
+            case "Clip Create":
+                int clipPosition = Integer.parseInt(params[0].trim())-1;
+                extension.clipLauncherSlot.select();
+                extension.clipLauncherSlot.replaceInsertionPoint();
+                extension.clipLauncherSlot.createEmptyClip(4);
+                break;
             case "Instrument Track Create":
                 extension.getApplication().createInstrumentTrack(128);
                 break;
@@ -150,6 +151,11 @@ public class ExecuteBitwigAction {
                 break;
             case "Fx Track Create":
                 extension.getApplication().createEffectTrack(128);
+                break;
+            case "Track Color":
+                String trackColorStr = params[0].trim();
+                Color trackColor = Color.fromHex(trackColorStr);
+                extension.track.color().set(trackColor);
                 break;
             case "Arranger Loop Start":
                 extension.transport.arrangerLoopStart().set(Double.parseDouble(params[0]));

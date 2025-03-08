@@ -7,8 +7,12 @@ import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Arranger;
 import com.bitwig.extension.controller.api.Clip;
+import com.bitwig.extension.controller.api.ClipLauncherSlot;
+import com.bitwig.extension.controller.api.ClipLauncherSlotBank;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.Project;
+import com.bitwig.extension.controller.api.Track;
+import com.bitwig.extension.controller.api.TrackBank;
 import com.bitwig.extension.controller.api.Transport;
 import com.centomila.utils.PopupUtils;
 import com.centomila.utils.SettingsHelper;
@@ -31,6 +35,10 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public Project project;
    public CueMarkerBank cueMarkerBank;
    public CueMarker cueMarker;
+   public Track track;
+   public TrackBank trackBank;
+   public ClipLauncherSlot clipLauncherSlot;
+   public ClipLauncherSlotBank clipLauncherSlotBank;
 
    DocumentState documentState;
 
@@ -61,6 +69,13 @@ public class BitwigBuddyExtension extends ControllerExtension {
       transport = host.createTransport();
       arranger = host.createArranger();
       project = host.getProject();
+      clipLauncherSlot = cursorClip.clipLauncherSlot();
+      
+      // trackBank = host.createTrackBank(8, 2, 0);
+      track = host.createTrackBank(1, 0, 0).getItemAt(0);
+      
+      
+      
       cueMarkerBank = arranger.createCueMarkerBank(128);
       
       cueMarkerBank.subscribe();
@@ -69,8 +84,20 @@ public class BitwigBuddyExtension extends ControllerExtension {
          cueMarkerBank.getItemAt(i).getColor().markInterested();
          cueMarkerBank.getItemAt(i).exists().markInterested();
          cueMarkerBank.getItemAt(i).position().markInterested();
-
+         
+         // trackBank.getItemAt(i).name().markInterested();
+         // trackBank.getItemAt(i).color().markInterested();
+         // trackBank.getItemAt(i).exists().markInterested();
+         // trackBank.getItemAt(i).position().markInterested();
       }
+      track.name().markInterested();
+      track.color().markInterested();
+      track.exists().markInterested();
+      track.position().markInterested();
+      track.volume().markInterested();
+      track.pan().markInterested();
+      
+
       cueMarkerBank.scrollPosition().markInterested();
       cueMarkerBank.itemCount().markInterested();
 
@@ -87,6 +114,11 @@ public class BitwigBuddyExtension extends ControllerExtension {
       arrangerClip.getPlayStop().markInterested();
       arrangerClip.clipLauncherSlot().isPlaying().markInterested();
 
+      clipLauncherSlot.isPlaybackQueued().markInterested();
+      clipLauncherSlot.name().markInterested();
+      clipLauncherSlot.color().markInterested();
+      clipLauncherSlot.exists().markInterested();
+      clipLauncherSlot.hasContent().markInterested();
       
       
       
