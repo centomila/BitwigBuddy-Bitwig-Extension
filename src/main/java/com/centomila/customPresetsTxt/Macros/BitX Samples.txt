@@ -1,5 +1,8 @@
 Macro: "BitX Sample"
 Descritpion: "Generate all BitX Clips"
-bb: Clip Create (4)
+bb: Clip Create (1,4)
 bb: Wait
 bb: Clip Rename (()SPN Provona)
+bb: Clip Create (2,4)
+bb: Wait
+bb: Clip Rename (()SPN Evviva)

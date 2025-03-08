@@ -5,8 +5,13 @@ import com.centomila.ClipUtils;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.CueMarker;
 import com.bitwig.extension.controller.api.SettableColorValue;
+import com.bitwig.extension.controller.api.Track;
+import com.bitwig.extension.controller.api.Channel;
+import com.bitwig.extension.controller.api.ClipLauncherSlotBank;
 
 import static com.centomila.utils.PopupUtils.showPopup;
+
+import java.util.UUID;
 
 import com.bitwig.extension.api.Color;
 import com.bitwig.extension.controller.api.ColorValue;
@@ -46,7 +51,7 @@ public class ExecuteBitwigAction {
                     String name = params[1].trim();
                     CueMarker cueMarker = extension.cueMarkerBank.getItemAt(itemNumber);
                     cueMarker.name().set(name);
-                    
+
                 }
                 break;
             case "DeleteAllCueMarkers":
@@ -138,10 +143,35 @@ public class ExecuteBitwigAction {
                 extension.getLauncherOrArrangerAsClip().color().set(color);
                 break;
             case "Clip Create":
-                int clipPosition = Integer.parseInt(params[0].trim())-1;
-                extension.clipLauncherSlot.select();
-                extension.clipLauncherSlot.replaceInsertionPoint();
-                extension.clipLauncherSlot.createEmptyClip(4);
+            // Use Clip Create (slot, length) to create a clip in the selected slot with the specified length
+                int clipLength = 4; // Default length
+                if (params.length > 1) {
+                    try {
+                        clipLength = Integer.parseInt(params[1].trim());
+                    } catch (NumberFormatException e) {
+                        extension.getHost().println("Invalid clip length parameter, using default of 4 beats");
+                    }
+                }
+                
+                // Get the currently selected slot in the clip launcher
+                int slotIndex = Integer.parseInt(params[0].trim()) - 1;
+                
+                // Get the current track - first try to get selected track, fall back to first track if none selected
+                int currentTrack = extension.trackBank.cursorIndex().get();
+                if (currentTrack < 0) {
+                    // No track selected, use track 0 as fallback
+                    currentTrack = 0;
+                    extension.getHost().println("No track selected, using first track (index 0)");
+                }
+                
+                host.println("Creating clip in slot: " + slotIndex + " with length: " + clipLength + " in track: " + currentTrack);
+                
+                if (slotIndex >= 0) {
+                    extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().createEmptyClip(slotIndex, clipLength);
+                    extension.getHost().println("Created empty clip with length: " + clipLength);
+                } else {
+                    extension.getHost().println("No clip slot selected. Please select a clip slot first.");
+                }
                 break;
             case "Instrument Track Create":
                 extension.getApplication().createInstrumentTrack(128);
@@ -155,7 +185,7 @@ public class ExecuteBitwigAction {
             case "Track Color":
                 String trackColorStr = params[0].trim();
                 Color trackColor = Color.fromHex(trackColorStr);
-                extension.track.color().set(trackColor);
+                extension.trackBank.getItemAt(0).color().set(trackColor);
                 break;
             case "Arranger Loop Start":
                 extension.transport.arrangerLoopStart().set(Double.parseDouble(params[0]));
