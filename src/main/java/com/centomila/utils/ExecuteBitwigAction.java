@@ -142,8 +142,14 @@ public class ExecuteBitwigAction {
                 Color color = Color.fromHex(colorStr);
                 extension.getLauncherOrArrangerAsClip().color().set(color);
                 break;
+            case "Instrument Track Create":
+                extension.getApplication().createInstrumentTrack(128);
+                break;
+            case "Audio Track Create":
+                extension.getApplication().createAudioTrack(128);
+                break;
             case "Wait":
-                int waitTime = 500; // Default wait time in ms
+                int waitTime = 250; // Default wait time in ms
                 if (params.length > 0) {
                     try {
                         waitTime = Integer.parseInt(params[0]);

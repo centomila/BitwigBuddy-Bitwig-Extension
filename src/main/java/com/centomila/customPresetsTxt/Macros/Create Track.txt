@@ -1,0 +1,5 @@
+Macro: "Create Two Tracks"
+Description: "Create Two Tracks"
+
+bb: Instrument Track Create
+bb: Audio Track Create
