@@ -39,6 +39,12 @@ public class ExecuteBitwigAction {
         host.println("Executing Bitwig action: " + actionId);
         // switch case actionId. Case 1 starts with NewCueMarker
         switch (actionId) {
+            case "Bpm":
+                if (params.length == 1) {
+                    int bpm = Integer.parseInt(params[0].trim());
+                    extension.transport.tempo().setRaw(bpm);
+                }
+                break;
             case "CueMarkerName":
                 if (params.length == 2) {
                     int itemNumber = Integer.parseInt(params[0].trim()) - 1;

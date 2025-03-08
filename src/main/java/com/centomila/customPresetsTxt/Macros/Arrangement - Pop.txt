@@ -99,8 +99,6 @@ jump_forward_8_bars
 
 bb: Wait (200)
 
-
-
 bb: CueMarkerName (1, Intro)
 bb: Wait (100)
 bb: CueMarkerName (2, Verse)
@@ -120,3 +118,6 @@ bb: Wait (100)
 bb: CueMarkerName (9, Chorus)
 bb: Wait (100)
 bb: CueMarkerName (10, Outro)
+
+bb: Wait (100)
+bb: Bpm (120)
