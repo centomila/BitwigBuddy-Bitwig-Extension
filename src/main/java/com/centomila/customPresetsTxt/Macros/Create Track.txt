@@ -1,8 +1,0 @@
-Macro: "Create Two Tracks"
-Description: "Create Two Tracks"
-
-bb: Instrument Track Create
-bb: Wait
-bb: Audio Track Create
-bb: Wait
-bb: Track Color (FF0000)

@@ -108,7 +108,7 @@ public class MacroActionSettings {
 
     private static void executeMacro(Macro macro, BitwigBuddyExtension extension) {
         // Add timestamp to track when execution starts
-        host.println("=== MACRO EXECUTION START: " + System.currentTimeMillis() + " ===");
+        host.println("=== MACRO EXECUTION START: " + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
         host.println("Executing macro: " + macro.getTitle());
         String[] commands = macro.getCommands();
         host.println("Commands sequence (total " + commands.length + "):");
@@ -128,7 +128,7 @@ public class MacroActionSettings {
      */
     private static void scheduleCommands(String[] commands, int index, BitwigBuddyExtension extension) {
         if (index >= commands.length) {
-            host.println("=== MACRO EXECUTION END: " + System.currentTimeMillis() + " ===");
+            host.println("=== MACRO EXECUTION END: " + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
             return;
         }
         

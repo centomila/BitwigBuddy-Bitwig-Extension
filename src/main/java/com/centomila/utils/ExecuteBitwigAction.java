@@ -18,6 +18,10 @@ import com.bitwig.extension.controller.api.ColorValue;
 
 public class ExecuteBitwigAction {
 
+    /**
+     * @param actionId
+     * @param extension
+     */
     public static void executeBitwigAction(String actionId, BitwigBuddyExtension extension) {
         ControllerHost host = extension.getHost();
         host.println("Executing Bitwig action: " + actionId);
@@ -47,7 +51,7 @@ public class ExecuteBitwigAction {
         }
 
         host.println("Executing Bitwig action: " + actionId);
-        // switch case actionId. Case 1 starts with NewCueMarker
+
         switch (actionId) {
             case "Bpm":
                 if (params.length == 1) {
@@ -203,6 +207,17 @@ public class ExecuteBitwigAction {
                     extension.getHost().println("No track selected, using first track (index 0)");
                 }
                 extension.trackBank.getItemAt(currentTrackIndex).color().set(trackColor);
+                break;
+            case "Track Rename":
+                String trackName = params[0].trim();
+                // get the current track
+                int currentTrackIndex2 = extension.trackBank.cursorIndex().get();
+                if (currentTrackIndex2 < 0) {
+                    // No track selected, use track 0 as fallback
+                    currentTrackIndex2 = 0;
+                    extension.getHost().println("No track selected, using first track (index 0)");
+                }
+                extension.trackBank.getItemAt(currentTrackIndex2).name().set(trackName);
                 break;
             case "Arranger Loop Start":
                 extension.transport.arrangerLoopStart().set(Double.parseDouble(params[0]));
