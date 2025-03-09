@@ -219,6 +219,17 @@ public class ExecuteBitwigAction {
                 }
                 extension.trackBank.getItemAt(currentTrackIndex2).name().set(trackName);
                 break;
+            case "Track Select":
+                int trackIndex = Integer.parseInt(params[0].trim()) - 1;
+                extension.trackBank.getItemAt(trackIndex).selectInMixer();
+                break;
+            case "Drum Machine Create":
+                int trackIdx = extension.trackBank.cursorIndex().get();
+                if (trackIdx < 0) trackIdx = 0;
+                Track track = extension.trackBank.getItemAt(trackIdx);
+                track.startOfDeviceChainInsertionPoint().insertBitwigDevice(UUID.fromString("8ea97e45-0255-40fd-bc7e-94419741e9d1"));
+                
+                break;
             case "Arranger Loop Start":
                 extension.transport.arrangerLoopStart().set(Double.parseDouble(params[0]));
                 break;
