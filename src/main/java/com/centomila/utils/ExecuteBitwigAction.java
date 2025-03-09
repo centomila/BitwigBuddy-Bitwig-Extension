@@ -21,17 +21,27 @@ public class ExecuteBitwigAction {
     public static void executeBitwigAction(String actionId, BitwigBuddyExtension extension) {
         ControllerHost host = extension.getHost();
         host.println("Executing Bitwig action: " + actionId);
-        // strip the bb: prefix
-        actionId = actionId.split(":")[1].trim();
+        // strip the bb: prefix - only take what's after the first colon
+        actionId = actionId.substring(actionId.indexOf(":") + 1).trim();
         String[] params;
         // action id could be like bb:actionId(param1, param2). Parameters are separated
-        // by comma. Qty of parameters is not fixed.
-        if (actionId.contains("(") && actionId.contains(")")) {
+        // by comma. Parameters can contain any characters including parentheses and colons.
+        if (actionId.contains("(")) {
             int start = actionId.indexOf("(");
             int end = actionId.lastIndexOf(")");
-            String paramsStr = actionId.substring(start + 1, end).trim();
+            // Ensure we have both opening and closing parentheses
+            if (end > start) {
+            String paramsStr = actionId.substring(start + 1, end);
             actionId = actionId.substring(0, start).trim();
-            params = paramsStr.split(",");
+            // Split by comma but not if inside quotes
+            params = paramsStr.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+            // Trim each parameter
+            for (int i = 0; i < params.length; i++) {
+            params[i] = params[i].trim();
+            }
+            } else {
+            params = new String[0];
+            }
         } else {
             params = new String[0];
         }
@@ -185,7 +195,14 @@ public class ExecuteBitwigAction {
             case "Track Color":
                 String trackColorStr = params[0].trim();
                 Color trackColor = Color.fromHex(trackColorStr);
-                extension.trackBank.getItemAt(0).color().set(trackColor);
+                // get the current track
+                int currentTrackIndex = extension.trackBank.cursorIndex().get();
+                if (currentTrackIndex < 0) {
+                    // No track selected, use track 0 as fallback
+                    currentTrackIndex = 0;
+                    extension.getHost().println("No track selected, using first track (index 0)");
+                }
+                extension.trackBank.getItemAt(currentTrackIndex).color().set(trackColor);
                 break;
             case "Arranger Loop Start":
                 extension.transport.arrangerLoopStart().set(Double.parseDouble(params[0]));

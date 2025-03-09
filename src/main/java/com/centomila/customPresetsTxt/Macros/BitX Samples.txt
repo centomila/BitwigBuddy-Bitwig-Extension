@@ -1,8 +1,38 @@
-Macro: "BitX Sample"
-Descritpion: "Generate all BitX Clips"
+Macro: "BitX All Shortcodes"
+Descritpion: "Generate all BitX Clips (Requires BitX)"
 bb: Clip Create (1,4)
+bb: Clip Color (FFB3B3)
 bb: Wait
-bb: Clip Rename (()SPN Provona)
-bb: Clip Create (2,4)
+bb: Clip Rename (()SPN I Love BitX)
+bb: Clip Duplicate
+bb: Clip Color (FFE6B3)
 bb: Wait
-bb: Clip Rename (()SPN Evviva)
+bb: Clip Rename (()SPN I Love BitwigBuddy)
+bb: Clip Duplicate
+bb: Clip Color (FFFFB3)
+bb: Wait
+bb: Clip Rename (()BPM 130)
+bb: Clip Duplicate
+bb: Clip Color (B3FFB3)
+bb: Wait
+bb: Clip Rename (()SMW Setting up drum sounds)
+bb: Clip Duplicate
+bb: Clip Color (B3FFFF)
+bb: Wait
+bb: Clip Rename (()LDR Electronic Kit)
+bb: Clip Duplicate
+bb: Clip Color (B3B3FF)
+bb: Wait
+bb: Clip Rename (()LIR Synth Lead:3)
+bb: Clip Duplicate
+bb: Clip Color (FFB3FF)
+bb: Wait
+bb: Clip Rename (()SCF 1:3:5)
+bb: Clip Duplicate
+bb: Clip Color (E6B3FF)
+bb: Wait
+bb: Clip Rename (()SNF C2:C5)
+bb: Clip Duplicate
+bb: Clip Color (FFB3E6)
+bb: Wait
+bb: Clip Rename (()SNT 1:20:-10)
