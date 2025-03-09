@@ -8,7 +8,7 @@ bb: Track Color (D32F2F)
 bb: Wait
 bb: Track Rename (Drums)
 bb: Wait
-bb: Drum Machine Create
+bb: Device Create (Drum Machine)
 bb: Wait
 
 // Track 2: Bass (Green)
@@ -60,7 +60,7 @@ bb: Track Rename (Arp)
 bb: Wait
 
 // Track 8: Vocals (Pink)
-bb: Audio Track Create
+Create Audio Track
 bb: Wait
 bb: Track Color (EC407A)
 bb: Wait

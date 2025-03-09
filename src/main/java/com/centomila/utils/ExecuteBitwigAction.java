@@ -1,4 +1,5 @@
 package com.centomila.utils;
+import static com.centomila.utils.ReturnBitwigDeviceUUID.getDeviceUUID;
 
 import com.centomila.BitwigBuddyExtension;
 import com.centomila.ClipUtils;
@@ -199,18 +200,16 @@ public class ExecuteBitwigAction {
                 extension.trackBank.getItemAt(trackIndex).makeVisibleInArranger();
                 extension.trackBank.getItemAt(trackIndex).makeVisibleInMixer();
                 break;
-            case "Drum Machine Create":
-                int trackIdx = extension.trackBank.cursorIndex().get();
-                if (trackIdx < 0) trackIdx = 0;
-                Track track = extension.trackBank.getItemAt(trackIdx);
-                track.endOfDeviceChainInsertionPoint().insertBitwigDevice(UUID.fromString("8ea97e45-0255-40fd-bc7e-94419741e9d1"));
+            case "Device Create":
+                UUID deviceUUID = getDeviceUUID(params[0]);
+                if (deviceUUID != null) {
+                    extension.trackBank.getItemAt(currentTrack).endOfDeviceChainInsertionPoint().insertBitwigDevice(deviceUUID);
+                } else {
+                    extension.getHost().println("Device not found: " + params[0]);
+                    showPopup("Device not found: " + params[0]);
+                }
                 break;
-            case "Polymer Create":
-            // 8f58138b-03aa-4e9d-83bd-a038c99a4ed5
-                Track track2 = extension.trackBank.getItemAt(currentTrack);
-            // TODO: Remove repetition of device UUID. Create a helper class to generate bitwig devices
-                track2.endOfDeviceChainInsertionPoint().insertBitwigDevice(UUID.fromString("8f58138b-03aa-4e9d-83bd-a038c99a4ed5"));
-                break;
+            
             case "Arranger Loop Start":
             // Usage: Arranger Loop Start (loopStart) - E.g. Arranger Loop Start (2.0)
                 extension.transport.arrangerLoopStart().set(Double.parseDouble(params[0]));
