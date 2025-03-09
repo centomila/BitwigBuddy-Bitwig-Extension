@@ -192,15 +192,6 @@ public class ExecuteBitwigAction {
                     extension.getHost().println("No clip slot selected. Please select a clip slot first.");
                 }
                 break;
-            case "Instrument Track Create":
-                extension.getApplication().createInstrumentTrack(128);
-                break;
-            case "Audio Track Create":
-                extension.getApplication().createAudioTrack(128);
-                break;
-            case "Fx Track Create":
-                extension.getApplication().createEffectTrack(128);
-                break;
             case "Track Color":
                 String trackColorStr = params[0].trim();
                 Color trackColor = Color.fromHex(trackColorStr);
@@ -272,6 +263,11 @@ public class ExecuteBitwigAction {
                     Thread.sleep(waitTime);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
+                }
+                break;
+            case "Message":
+                if (params.length > 0) {
+                    showPopup(params[0]);
                 }
                 break;
         }

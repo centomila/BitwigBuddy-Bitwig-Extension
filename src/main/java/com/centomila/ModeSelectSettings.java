@@ -12,7 +12,7 @@ public class ModeSelectSettings {
     public static final String MODE_GENERATE = "Generate";
     public static final String MODE_EDIT = "Edit";
     public static final String MODE_MACRO = "Macro";
-    
+
     private static final String DESTINATION_LAUNCHER = "Launcher";
     private static final String DESTINATION_ARRANGER = "Arranger";
 
@@ -34,16 +34,15 @@ public class ModeSelectSettings {
                 MODE_SELECT_OPTIONS[0]);
 
         // Launcher/Arranger toggle
-        final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] { 
-            DESTINATION_LAUNCHER, DESTINATION_ARRANGER 
+        final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] {
+                DESTINATION_LAUNCHER, DESTINATION_ARRANGER
         };
 
         toggleLauncherArrangerSetting = (Setting) createEnumSetting(
-            "Destination Launcher/Arranger",
-            CATEGORY_MODE_SELECT,
-            TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
-            TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]
-        );
+                "Destination Launcher/Arranger",
+                CATEGORY_MODE_SELECT,
+                TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
+                TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
 
         initToggleModeObservers();
     }
@@ -80,32 +79,30 @@ public class ModeSelectSettings {
         // for each Setting in RandomPattern.allSettings, hideSetting(setting);
 
         for (Setting setting : ProgramPattern.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : MoveStepsHandler.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : PatternSettings.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : PostActionSettings.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : NoteDestinationSettings.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : StepSizeSettings.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
-
         ProgramPattern.showProgramPatternSettings();
-        
 
         EditClipSettings.showEditClipSettings();
 
@@ -113,7 +110,6 @@ public class ModeSelectSettings {
         NoteDestinationSettings.noteChannelSetting.hide();
         ProgramPattern.programStepQtySetting.hide();
         ProgramPattern.programDensitySetting.hide();
-
 
         MacroActionSettings.hideMacroSettings();
 
@@ -160,66 +156,67 @@ public class ModeSelectSettings {
 
     public static void gotoMacroMode() {
 
-
         for (Setting setting : ProgramPattern.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : MoveStepsHandler.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : PatternSettings.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : PostActionSettings.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : NoteDestinationSettings.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : StepSizeSettings.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : ProgramPattern.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : MoveStepsHandler.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : PatternSettings.allSettings) {
-            setting.hide();
+            if (setting == PatternSettings.customRefreshPresetsSetting) {
+                showAndEnableSetting(setting);
+            } else {
+                hideSetting(setting);
+            }
+
         }
 
         for (Setting setting : PostActionSettings.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : NoteDestinationSettings.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : ProgramPattern.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : ClipUtils.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
-        
-        
-        
         ProgramPattern.hideProgramPatternSettings();
         EditClipSettings.hideEditClipSettings();
         MacroActionSettings.showMacroSettings();
-        
+
     }
 
 }

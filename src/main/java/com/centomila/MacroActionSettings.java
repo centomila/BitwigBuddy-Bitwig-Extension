@@ -67,8 +67,8 @@ public class MacroActionSettings {
                 macroLaunchBtnSignalSetting = (Setting) createSignalSetting("Execute Macro",
                 "Macro", "Execute the selected macro");
 
-        // macroPrintAllActionsBtnSignalSetting = (Setting) createSignalSetting("Print All Actions in Console",
-        //         "Macro", "Signal to print all available actions");
+        macroPrintAllActionsBtnSignalSetting = (Setting) createSignalSetting("Print All Actions in Console",
+                "Macro", "Signal to print all available actions");
 
         allSettings = new Setting[] { macroLaunchBtnSignalSetting, macroSelectorSetting,macroDescriptionSetting, macroSpacerSetting
                 // macroPrintAllActionsBtnSignalSetting
@@ -101,9 +101,9 @@ public class MacroActionSettings {
             }
         });
 
-        // ((Signal) macroPrintAllActionsBtnSignalSetting).addSignalObserver(() -> {
-        //     printAllAvailableActions(extension);
-        // });
+        ((Signal) macroPrintAllActionsBtnSignalSetting).addSignalObserver(() -> {
+            printAllAvailableActions(extension);
+        });
     }
 
     private static void executeMacro(Macro macro, BitwigBuddyExtension extension) {
@@ -277,16 +277,42 @@ public class MacroActionSettings {
         }
 
         return new Macro(file.getName(), title, commands.toArray(new String[0]), description);
-    }
-
-    private static void printAllAvailableActions(BitwigBuddyExtension extension) {
-        host.println("Available actions:");
-        for (Action action : extension.getApplication().getActions()) {
-            host.println(
-                    action.getName() + " | Menu Item Text:" + action.getMenuItemText() + " | ID:" + action.getId());
         }
-        extension.getApplication().getAction("show_control_script_console").invoke();
-    }
+
+        private static void printAllAvailableActions(BitwigBuddyExtension extension) {
+        host.println("Collecting available actions...");
+        
+        // Prepare the content
+        StringBuilder content = new StringBuilder();
+        content.append("Action ID | Action Name | Action Category\n");
+        content.append("----------------------------------------\n");
+
+        ActionCategory[] categories = extension.getApplication().getActionCategories();
+        for (ActionCategory category : categories) {
+            for (Action action : category.getActions()) {
+            content.append(String.format("%s | %s | %s\n", 
+                action.getId(), 
+                action.getName(),
+                category.getName()));
+            
+            // Also print to console
+            host.println(action.getId() + " | " + action.getName());
+            }
+        }
+
+        // Save to file
+        File presetsDir = new File(preferences.getPresetsPath());
+        String timestamp = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
+        File outputFile = new File(presetsDir, "actions_list_" + timestamp + ".txt");
+
+        try {
+            java.nio.file.Files.write(outputFile.toPath(), content.toString().getBytes());
+            host.println("Actions list saved to: " + outputFile.getAbsolutePath());
+        } catch (IOException e) {
+            host.errorln("Failed to save actions list: " + e.getMessage());
+        }
+        }
+
 
     /**
      * Extracts a value enclosed in quotes from a line.

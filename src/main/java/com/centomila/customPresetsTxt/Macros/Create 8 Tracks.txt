@@ -2,7 +2,7 @@ Macro: "Create 8 Tracks"
 Description: "Create Eight Tracks with Colors. Drums, Bass, Bass 2, Pad, Keys, Lead, Arp, and Vocals"
 
 // Track 1: Drums (Red)
-bb: Instrument Track Create
+Create Instrument Track
 bb: Wait
 bb: Track Color (D32F2F)
 bb: Wait
@@ -12,7 +12,7 @@ bb: Drum Machine Create
 bb: Wait
 
 // Track 2: Bass (Green)
-bb: Instrument Track Create
+Create Instrument Track
 bb: Wait
 bb: Track Color (43A047)
 bb: Wait
@@ -20,7 +20,7 @@ bb: Track Rename (Bass)
 bb: Wait
 
 // Track 3: Bass 2 (Teal)
-bb: Instrument Track Create
+Create Instrument Track
 bb: Wait
 bb: Track Color (00897B)
 bb: Wait
@@ -28,7 +28,7 @@ bb: Track Rename (Bass 2)
 bb: Wait
 
 // Track 4: Pad (Violet)
-bb: Instrument Track Create
+Create Instrument Track
 bb: Wait
 bb: Track Color (7B1FA2)
 bb: Wait
@@ -36,7 +36,7 @@ bb: Track Rename (Pad)
 bb: Wait
 
 // Track 5: Keys (Yellow)
-bb: Instrument Track Create
+Create Instrument Track
 bb: Wait
 bb: Track Color (F9A825)
 bb: Wait
@@ -44,7 +44,7 @@ bb: Track Rename (Keys)
 bb: Wait
 
 // Track 6: Lead (Cyan)
-bb: Instrument Track Create
+Create Instrument Track
 bb: Wait
 bb: Track Color (00ACC1)
 bb: Wait
@@ -52,7 +52,7 @@ bb: Track Rename (Lead)
 bb: Wait
 
 // Track 7: Arp (Fuchsia)
-bb: Instrument Track Create
+Create Instrument Track
 bb: Wait
 bb: Track Color (C2185B)
 bb: Wait
