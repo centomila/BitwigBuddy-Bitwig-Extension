@@ -2,22 +2,27 @@ package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
 
+import java.util.List;
 
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
-import com.centomila.MacroActionSettings.Macro;
 
 public class ModeSelectSettings {
     private static final String CATEGORY_MODE_SELECT = "1 Mode Select";
+    public static final String MODE_GENERATE = "Generate";
+    public static final String MODE_EDIT = "Edit";
+    public static final String MODE_MACRO = "Macro";
+    
+    private static final String DESTINATION_LAUNCHER = "Launcher";
+    private static final String DESTINATION_ARRANGER = "Arranger";
 
     private static Setting spacerSelectModSetting;
     public static Setting modeGenerateEditToggleSetting;
     public static Setting toggleLauncherArrangerSetting;
 
     public static void init(BitwigBuddyExtension extension) {
-
         // Mode select setting
-        final String[] MODE_SELECT_OPTIONS = new String[] { "Generate", "Edit", "Macro" };
+        final String[] MODE_SELECT_OPTIONS = new String[] { MODE_GENERATE, MODE_EDIT, MODE_MACRO };
 
         spacerSelectModSetting = (Setting) createStringSetting(titleWithLine("MODE SELECT"),
                 CATEGORY_MODE_SELECT, 0,
@@ -29,12 +34,16 @@ public class ModeSelectSettings {
                 MODE_SELECT_OPTIONS[0]);
 
         // Launcher/Arranger toggle
-        final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] { "Launcher", "Arranger", };
+        final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] { 
+            DESTINATION_LAUNCHER, DESTINATION_ARRANGER 
+        };
 
-        toggleLauncherArrangerSetting = (Setting) createEnumSetting("Destination Launcher/Arranger",
-                CATEGORY_MODE_SELECT,
-                TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
-                TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
+        toggleLauncherArrangerSetting = (Setting) createEnumSetting(
+            "Destination Launcher/Arranger",
+            CATEGORY_MODE_SELECT,
+            TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
+            TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]
+        );
 
         initToggleModeObservers();
     }
@@ -47,25 +56,20 @@ public class ModeSelectSettings {
 
         ((EnumValue) toggleLauncherArrangerSetting).addValueObserver(newValue -> {
             // PopupUtils.showPopup("Destination: " + newValue);
-            if (newValue.equals("Arranger")) {
+            if (newValue.equals(DESTINATION_ARRANGER)) {
                 disableSetting(PostActionSettings.duplicateClipSetting);
             } else {
                 enableSetting(PostActionSettings.duplicateClipSetting);
             }
         });
-
     }
 
     private static void toggleMode(String newValue) {
-        String currentMode = newValue;
-        if (currentMode.equals("Generate")) {
-            // ((SettableEnumValue) modeSelectSetting).set("Edit");
+        if (MODE_GENERATE.equals(newValue)) {
             gotoGenerateMode();
-        } else if (currentMode.equals("Edit")) {
-            // ((SettableEnumValue) modeSelectSetting).set("Generate");
+        } else if (MODE_EDIT.equals(newValue)) {
             gotoEditMode();
-        } else if (currentMode.equals("Macro")) {
-            // ((SettableEnumValue) modeSelectSetting).set("Generate");
+        } else if (MODE_MACRO.equals(newValue)) {
             gotoMacroMode();
         }
     }
