@@ -57,6 +57,7 @@ public class ExecuteBitwigAction {
 
     // Extracted method:
     private static void handleAction(String actionId, String[] params, BitwigBuddyExtension extension) {
+        int currentTrack = getCurrentTrackIndex(extension);
         switch (actionId) {
             case "Bpm":
                 if (params.length == 1) {
@@ -162,7 +163,6 @@ public class ExecuteBitwigAction {
                 extension.getLauncherOrArrangerAsClip().color().set(color);
                 break;
             case "Clip Create":
-            // Use Clip Create (slot, length) to create a clip in the selected slot with the specified length
                 int clipLength = 4; // Default length
                 if (params.length > 1) {
                     try {
@@ -175,16 +175,6 @@ public class ExecuteBitwigAction {
                 // Get the currently selected slot in the clip launcher
                 int slotIndex = Integer.parseInt(params[0].trim()) - 1;
                 
-                // Get the current track - first try to get selected track, fall back to first track if none selected
-                int currentTrack = extension.trackBank.cursorIndex().get();
-                if (currentTrack < 0) {
-                    // No track selected, use track 0 as fallback
-                    currentTrack = 0;
-                    extension.getHost().println("No track selected, using first track (index 0)");
-                }
-                
-                extension.getHost().println("Creating clip in slot: " + slotIndex + " with length: " + clipLength + " in track: " + currentTrack);
-                
                 if (slotIndex >= 0) {
                     extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().createEmptyClip(slotIndex, clipLength);
                     extension.getHost().println("Created empty clip with length: " + clipLength);
@@ -195,25 +185,13 @@ public class ExecuteBitwigAction {
             case "Track Color":
                 String trackColorStr = params[0].trim();
                 Color trackColor = Color.fromHex(trackColorStr);
-                // get the current track
-                int currentTrackIndex = extension.trackBank.cursorIndex().get();
-                if (currentTrackIndex < 0) {
-                    // No track selected, use track 0 as fallback
-                    currentTrackIndex = 0;
-                    extension.getHost().println("No track selected, using first track (index 0)");
-                }
-                extension.trackBank.getItemAt(currentTrackIndex).color().set(trackColor);
+                
+                extension.trackBank.getItemAt(currentTrack).color().set(trackColor);
                 break;
             case "Track Rename":
                 String trackName = params[0].trim();
-                // get the current track
-                int currentTrackIndex2 = extension.trackBank.cursorIndex().get();
-                if (currentTrackIndex2 < 0) {
-                    // No track selected, use track 0 as fallback
-                    currentTrackIndex2 = 0;
-                    extension.getHost().println("No track selected, using first track (index 0)");
-                }
-                extension.trackBank.getItemAt(currentTrackIndex2).name().set(trackName);
+
+                extension.trackBank.getItemAt(currentTrack).name().set(trackName);
                 break;
             case "Track Select":
                 int trackIndex = Integer.parseInt(params[0].trim()) - 1;
@@ -229,10 +207,7 @@ public class ExecuteBitwigAction {
                 break;
             case "Polymer Create":
             // 8f58138b-03aa-4e9d-83bd-a038c99a4ed5
-            // TODO: Remove repetition of track cursor index retrieval
-                int trackIdx2 = extension.trackBank.cursorIndex().get();
-                if (trackIdx2 < 0) trackIdx2 = 0;
-                Track track2 = extension.trackBank.getItemAt(trackIdx2);
+                Track track2 = extension.trackBank.getItemAt(currentTrack);
             // TODO: Remove repetition of device UUID. Create a helper class to generate bitwig devices
                 track2.endOfDeviceChainInsertionPoint().insertBitwigDevice(UUID.fromString("8f58138b-03aa-4e9d-83bd-a038c99a4ed5"));
                 break;
@@ -271,5 +246,14 @@ public class ExecuteBitwigAction {
                 }
                 break;
         }
+    }
+
+    private static int getCurrentTrackIndex(BitwigBuddyExtension extension) {
+        int trackIndex = extension.trackBank.cursorIndex().get();
+        if (trackIndex < 0) {
+            extension.getHost().println("No track selected, using first track (index 0)");
+            trackIndex = 0;
+        }
+        return trackIndex;
     }
 }
