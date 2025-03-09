@@ -1,5 +1,5 @@
 Macro: "Create 8 Tracks"
-Description: "Create Eight Tracks with Colors"
+Description: "Create Eight Tracks with Colors. Drums, Bass, Bass 2, Pad, Keys, Lead, Arp, and Vocals"
 
 // Track 1: Drums (Red)
 bb: Instrument Track Create
@@ -67,4 +67,4 @@ bb: Wait
 bb: Track Rename (Vocals)
 bb: Wait
 
-bb: Track Select (4)
+bb: Track Select (1)
