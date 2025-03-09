@@ -52,6 +52,11 @@ public class ExecuteBitwigAction {
 
         host.println("Executing Bitwig action: " + actionId);
 
+        handleAction(actionId, params, extension);
+    }
+
+    // Extracted method:
+    private static void handleAction(String actionId, String[] params, BitwigBuddyExtension extension) {
         switch (actionId) {
             case "Bpm":
                 if (params.length == 1) {
@@ -178,7 +183,7 @@ public class ExecuteBitwigAction {
                     extension.getHost().println("No track selected, using first track (index 0)");
                 }
                 
-                host.println("Creating clip in slot: " + slotIndex + " with length: " + clipLength + " in track: " + currentTrack);
+                extension.getHost().println("Creating clip in slot: " + slotIndex + " with length: " + clipLength + " in track: " + currentTrack);
                 
                 if (slotIndex >= 0) {
                     extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().createEmptyClip(slotIndex, clipLength);
@@ -233,16 +238,26 @@ public class ExecuteBitwigAction {
                 break;
             case "Polymer Create":
             // 8f58138b-03aa-4e9d-83bd-a038c99a4ed5
+            // TODO: Remove repetition of track cursor index retrieval
                 int trackIdx2 = extension.trackBank.cursorIndex().get();
                 if (trackIdx2 < 0) trackIdx2 = 0;
                 Track track2 = extension.trackBank.getItemAt(trackIdx2);
+            // TODO: Remove repetition of device UUID. Create a helper class to generate bitwig devices
                 track2.endOfDeviceChainInsertionPoint().insertBitwigDevice(UUID.fromString("8f58138b-03aa-4e9d-83bd-a038c99a4ed5"));
                 break;
             case "Arranger Loop Start":
+            // Usage: Arranger Loop Start (loopStart) - E.g. Arranger Loop Start (2.0)
                 extension.transport.arrangerLoopStart().set(Double.parseDouble(params[0]));
                 break;
             case "Arranger Loop End":
+            // Usage: Arranger Loop End (loopEnd) - E.g. Arranger Loop End (4.0)
                 extension.transport.arrangerLoopDuration().set(Double.parseDouble(params[0]));
+                break;
+            case "Time Signature":
+            // Usage: Time Signature (timeSignature) - E.g. Time Signature (3/4)
+                String timeSign = params[0].trim();
+                
+                extension.transport.timeSignature().set(timeSign);
                 break;
             case "Wait":
                 int waitTime = 250; // Default wait time in ms
@@ -260,6 +275,5 @@ public class ExecuteBitwigAction {
                 }
                 break;
         }
-
     }
 }

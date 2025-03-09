@@ -12,6 +12,7 @@ import com.bitwig.extension.controller.api.ClipLauncherSlot;
 import com.bitwig.extension.controller.api.ClipLauncherSlotBank;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.Project;
+import com.bitwig.extension.controller.api.TimeSignatureValue;
 import com.bitwig.extension.controller.api.Track;
 import com.bitwig.extension.controller.api.TrackBank;
 import com.bitwig.extension.controller.api.Transport;
@@ -39,6 +40,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public Project project;
    public CueMarkerBank cueMarkerBank;
    public CueMarker cueMarker;
+   public TimeSignatureValue timeSignature;
    public TrackBank trackBank;
    public ClipLauncherSlot clipLauncherSlot;
    public ClipLauncherSlotBank clipLauncherSlotBank;
@@ -73,6 +75,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.arranger = host.createArranger();
       this.project = host.getProject();
       this.clipLauncherSlot = cursorClip.clipLauncherSlot();
+      this.timeSignature = transport.timeSignature();
 
       this.trackBank = host.createTrackBank(128, 0, 128);
 
