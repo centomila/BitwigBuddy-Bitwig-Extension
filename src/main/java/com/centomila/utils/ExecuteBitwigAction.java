@@ -13,6 +13,10 @@ import com.bitwig.extension.controller.api.ClipLauncherSlotBank;
 import static com.centomila.utils.PopupUtils.showPopup;
 
 import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.bitwig.extension.api.Color;
 import com.bitwig.extension.controller.api.ColorValue;
@@ -36,16 +40,43 @@ public class ExecuteBitwigAction {
             int end = actionId.lastIndexOf(")");
             // Ensure we have both opening and closing parentheses
             if (end > start) {
-            String paramsStr = actionId.substring(start + 1, end);
-            actionId = actionId.substring(0, start).trim();
-            // Split by comma but not if inside quotes
-            params = paramsStr.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-            // Trim each parameter
-            for (int i = 0; i < params.length; i++) {
-            params[i] = params[i].trim();
-            }
+                String paramsStr = actionId.substring(start + 1, end);
+                actionId = actionId.substring(0, start).trim();
+
+                // Detect bracketed arrays (rough approach)
+                // Replace bracketed parts with placeholders to avoid splitting them by comma
+                // and store them in an array for later processing
+                List<String> bracketed = new ArrayList<>();
+                Pattern bracketPattern = Pattern.compile("\\[.*?\\]");
+                Matcher m = bracketPattern.matcher(paramsStr);
+                int placeholderCount = 0;
+                while (m.find()) {
+                    bracketed.add(m.group());
+                    paramsStr = m.replaceFirst("__ARRAY_PLACEHOLDER_" + placeholderCount + "__");
+                    m = bracketPattern.matcher(paramsStr);
+                    placeholderCount++;
+                }
+
+                // Split by commas outside quotes
+                String[] rawParams = paramsStr.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+
+                for (int i = 0; i < rawParams.length; i++) {
+                    rawParams[i] = rawParams[i].trim();
+                    // Restore bracketed parts for array-like params
+                    for (int j = 0; j < bracketed.size(); j++) {
+                        rawParams[i] = rawParams[i].replace(
+                            "__ARRAY_PLACEHOLDER_" + j + "__",
+                            bracketed.get(j)
+                        );
+                    }
+                    // Remove surrounding quotes, if present
+                    if (rawParams[i].startsWith("\"") && rawParams[i].endsWith("\"") && rawParams[i].length() > 1) {
+                        rawParams[i] = rawParams[i].substring(1, rawParams[i].length() - 1);
+                    }
+                }
+                params = rawParams;
             } else {
-            params = new String[0];
+                params = new String[0];
             }
         } else {
             params = new String[0];
