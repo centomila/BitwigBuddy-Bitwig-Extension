@@ -2,6 +2,7 @@ Macro: "Test"
 Description: "This is just for testing"
 
 
-bb: Drum Machine Create
-bb: Polymer Create
 bb: Time Signature (3/4)
+bb: Clip Loop On
+bb: Select Next
+bb: Clip Loop Off

@@ -32,6 +32,13 @@ public class ExecuteBitwigAction {
         host.println("Executing Bitwig action: " + actionId);
         // strip the bb: prefix - only take what's after the first colon
         actionId = actionId.substring(actionId.indexOf(":") + 1).trim();
+
+        // If this line is a comment, show it and skip
+        if (actionId.startsWith("//")) {
+            host.println("Skipping comment line: " + actionId);
+            return;
+        }
+
         String[] params;
         // action id could be like bb:actionId(param1, param2). Parameters are separated
         // by comma. Parameters can contain any characters including parentheses and colons.
@@ -175,6 +182,12 @@ public class ExecuteBitwigAction {
                 break;
             case "Clip Duplicate":
                 extension.getLauncherOrArrangerAsClip().clipLauncherSlot().duplicateClip();
+                break;
+            case "Clip Loop Off":
+                extension.getLauncherOrArrangerAsClip().isLoopEnabled().set(false);
+                break;
+            case "Clip Loop On":
+                extension.getLauncherOrArrangerAsClip().isLoopEnabled().set(true);
                 break;
             case "Project Name":
                 extension.getApplication().projectName();

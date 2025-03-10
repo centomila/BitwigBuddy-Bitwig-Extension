@@ -22,6 +22,8 @@
 | **Clip Rename**                              | Renames the currently focused clip                            | _Clip Rename (Verse 1)_        |
 | **Clip Color**                               | Sets the color of the currently focused clip                  | _Clip Color (FF0000)_          |
 | **Clip Create**                              | Creates a new clip in a given slot with a specified length    |                                |
+| **Clip Loop On**                             | Enable Clip Looping Mode for the selected clip                |_Clip Loop On_                  |
+| **Clip Loop Off**                            | Disable Clip Looping Mode for the selected clip               |_Clip Loop Off_                 |
 | **Track Color**                              | Sets the color of the currently selected track                |                                |
 | **Track Rename**                             | Renames the currently selected track                          |                                |
 | **Track Select**                             | Selects a track by index                                      |                                |
