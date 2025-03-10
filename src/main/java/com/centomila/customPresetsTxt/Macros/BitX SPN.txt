@@ -3,4 +3,4 @@ Descritpion: "Show a Popup Notification that dissapears after a few seconds (Req
 
 bb: Clip Color (FFB3B3)
 bb: Wait
-bb: Clip Rename (()SPN I Love BitX)
+bb: Clip Rename ("()SPN I Love BitX")

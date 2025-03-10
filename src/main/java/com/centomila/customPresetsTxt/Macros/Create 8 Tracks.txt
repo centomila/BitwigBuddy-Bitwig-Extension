@@ -6,9 +6,9 @@ Create Instrument Track
 bb: Wait
 bb: Track Color (D32F2F)
 bb: Wait
-bb: Track Rename (Drums)
+bb: Track Rename ("Drums")
 bb: Wait
-bb: Device Create (Drum Machine)
+bb: Device Create ("Drum Machine")
 bb: Wait
 
 // Track 2: Bass (Green)
@@ -16,7 +16,7 @@ Create Instrument Track
 bb: Wait
 bb: Track Color (43A047)
 bb: Wait
-bb: Track Rename (Bass)
+bb: Track Rename ("Bass")
 bb: Wait
 
 // Track 3: Bass 2 (Teal)
@@ -24,7 +24,7 @@ Create Instrument Track
 bb: Wait
 bb: Track Color (00897B)
 bb: Wait
-bb: Track Rename (Bass 2)
+bb: Track Rename ("Bass 2")
 bb: Wait
 
 // Track 4: Pad (Violet)
@@ -32,7 +32,7 @@ Create Instrument Track
 bb: Wait
 bb: Track Color (7B1FA2)
 bb: Wait
-bb: Track Rename (Pad)
+bb: Track Rename ("Pad")
 bb: Wait
 
 // Track 5: Keys (Yellow)
@@ -40,7 +40,7 @@ Create Instrument Track
 bb: Wait
 bb: Track Color (F9A825)
 bb: Wait
-bb: Track Rename (Keys)
+bb: Track Rename ("Keys")
 bb: Wait
 
 // Track 6: Lead (Cyan)
@@ -48,7 +48,7 @@ Create Instrument Track
 bb: Wait
 bb: Track Color (00ACC1)
 bb: Wait
-bb: Track Rename (Lead)
+bb: Track Rename ("Lead")
 bb: Wait
 
 // Track 7: Arp (Fuchsia)
@@ -56,7 +56,7 @@ Create Instrument Track
 bb: Wait
 bb: Track Color (C2185B)
 bb: Wait
-bb: Track Rename (Arp)
+bb: Track Rename ("Arp")
 bb: Wait
 
 // Track 8: Vocals (Pink)
@@ -64,7 +64,7 @@ Create Audio Track
 bb: Wait
 bb: Track Color (EC407A)
 bb: Wait
-bb: Track Rename (Vocals)
+bb: Track Rename ("Vocals")
 bb: Wait
 
 bb: Track Select (1)
