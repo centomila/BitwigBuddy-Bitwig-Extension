@@ -27,7 +27,7 @@ public class MacroActionSettings {
     public static Setting macroLaunchBtnSignalSetting;
     public static Setting macroSelectorSetting;
     public static Setting macroDescriptionSetting;
-    public static Setting macroPrintAllActionsBtnSignalSetting;
+    // public static Setting macroPrintAllActionsBtnSignalSetting;
     public static Setting macroSpacerSetting;
     public static Setting[] allSettings;
     private static ControllerHost host;
@@ -67,8 +67,8 @@ public class MacroActionSettings {
                 macroLaunchBtnSignalSetting = (Setting) createSignalSetting("Execute Macro",
                 "Macro", "Execute the selected macro");
 
-        macroPrintAllActionsBtnSignalSetting = (Setting) createSignalSetting("Print All Actions in Console",
-                "Macro", "Signal to print all available actions");
+        // macroPrintAllActionsBtnSignalSetting = (Setting) createSignalSetting("Print All Actions in Console",
+        //         "Macro", "Signal to print all available actions");
 
         allSettings = new Setting[] { macroLaunchBtnSignalSetting, macroSelectorSetting,macroDescriptionSetting, macroSpacerSetting
                 // macroPrintAllActionsBtnSignalSetting
@@ -101,9 +101,9 @@ public class MacroActionSettings {
             }
         });
 
-        ((Signal) macroPrintAllActionsBtnSignalSetting).addSignalObserver(() -> {
-            printAllAvailableActions(extension);
-        });
+        // ((Signal) macroPrintAllActionsBtnSignalSetting).addSignalObserver(() -> {
+        //     printAllAvailableActions(extension);
+        // });
     }
 
     private static void executeMacro(Macro macro, BitwigBuddyExtension extension) {
