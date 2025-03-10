@@ -189,6 +189,9 @@ public class ExecuteBitwigAction {
             case "Clip Loop On":
                 extension.getLauncherOrArrangerAsClip().isLoopEnabled().set(true);
                 break;
+            case "Clip Accent":
+                extension.getLauncherOrArrangerAsClip().getAccent().setRaw(Double.parseDouble(params[0]));
+                break;
             case "Project Name":
                 extension.getApplication().projectName();
                 showPopup(extension.getApplication().projectName().toString());

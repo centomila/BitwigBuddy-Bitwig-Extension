@@ -2,7 +2,9 @@ Macro: "Test"
 Description: "This is just for testing"
 
 
-bb: Time Signature (3/4)
-bb: Clip Loop On
-bb: Select Next
-bb: Clip Loop Off
+// bb: Time Signature (3/4)
+// bb: Clip Loop On
+// bb: Select Next
+// bb: Clip Loop Off
+bb: Clip Accent (0.752)
+show_controller_script_console
