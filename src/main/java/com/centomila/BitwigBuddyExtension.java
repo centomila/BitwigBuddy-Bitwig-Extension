@@ -12,6 +12,7 @@ import com.bitwig.extension.controller.api.ClipLauncherSlot;
 import com.bitwig.extension.controller.api.ClipLauncherSlotBank;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.Project;
+import com.bitwig.extension.controller.api.SceneBank;
 import com.bitwig.extension.controller.api.TimeSignatureValue;
 import com.bitwig.extension.controller.api.Track;
 import com.bitwig.extension.controller.api.TrackBank;
@@ -43,8 +44,9 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public TimeSignatureValue timeSignature;
    public TrackBank trackBank;
    public ClipLauncherSlot clipLauncherSlot;
-   public ClipLauncherSlotBank clipLauncherSlotBank;
+   public SceneBank sceneBank;
    public Channel channel;
+   
 
    DocumentState documentState;
 
@@ -69,13 +71,14 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.application = host.createApplication();
       this.cursorClip = host.createLauncherCursorClip((16 * 8), 128);
       this.arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
-      this.cursorTrack = host.createCursorTrack("BB_CURSOR_TRACK", "BB Cursor Track", 0, 0, true);
+      this.cursorTrack = host.createCursorTrack("BB_CURSOR_TRACK", "BB Cursor Track", 128, 0, true);
       this.documentState = host.getDocumentState();
       this.transport = host.createTransport();
       this.arranger = host.createArranger();
       this.project = host.getProject();
       this.clipLauncherSlot = cursorClip.clipLauncherSlot();
       this.timeSignature = transport.timeSignature();
+      this.sceneBank = host.createSceneBank(128);
 
       this.trackBank = host.createTrackBank(128, 0, 128);
 
@@ -89,6 +92,14 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.trackBank.channelCount().markInterested();
       this.trackBank.scrollPosition().markInterested();
       this.trackBank.itemCount().markInterested();
+      this.trackBank.cursorIndex().markInterested();
+      this.trackBank.channelCount().markInterested();
+      this.trackBank.sceneBank().cursorIndex().markInterested();
+      this.trackBank.sceneBank().scrollPosition().markInterested();
+      this.trackBank.sceneBank().itemCount().markInterested();
+      
+      this.sceneBank.cursorIndex().markInterested();
+      this.sceneBank.scrollPosition().markInterested();
 
       this.cueMarkerBank.subscribe();
       for (int i = 0; i < 128; i++) {
@@ -96,6 +107,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
          this.cueMarkerBank.getItemAt(i).getColor().markInterested();
          this.cueMarkerBank.getItemAt(i).exists().markInterested();
          this.cueMarkerBank.getItemAt(i).position().markInterested();
+         
 
          this.trackBank.getItemAt(i).name().markInterested();
          this.trackBank.getItemAt(i).color().markInterested();
@@ -108,6 +120,13 @@ public class BitwigBuddyExtension extends ControllerExtension {
          this.trackBank.getItemAt(i).pan().markInterested();
 
          
+         this.trackBank.getItemAt(i).clipLauncherSlotBank().cursorIndex().markInterested();
+         this.trackBank.getItemAt(i).clipLauncherSlotBank().scrollPosition().markInterested();
+         this.trackBank.getItemAt(i).clipLauncherSlotBank().itemCount().markInterested();
+         this.trackBank.getItemAt(i).clipLauncherSlotBank().exists().markInterested();
+
+         
+
 
 
       }
@@ -122,6 +141,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.cursorClip.getPlayStart().markInterested();
       this.cursorClip.getPlayStop().markInterested();
       this.cursorClip.clipLauncherSlot().isPlaying().markInterested();
+      
       this.arrangerClip.getLoopLength().markInterested();
       this.arrangerClip.getLoopStart().markInterested();
       this.arrangerClip.getPlayStart().markInterested();
@@ -133,6 +153,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.clipLauncherSlot.color().markInterested();
       this.clipLauncherSlot.exists().markInterested();
       this.clipLauncherSlot.hasContent().markInterested();
+      this.clipLauncherSlot.sceneIndex().markInterested();
+      this.clipLauncherSlot.sceneIndex().markInterested();
 
       SettingsHelper.init(this);
 

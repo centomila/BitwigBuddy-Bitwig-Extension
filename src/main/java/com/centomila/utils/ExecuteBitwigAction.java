@@ -97,6 +97,7 @@ public class ExecuteBitwigAction {
     // Extracted method:
     private static void handleAction(String actionId, String[] params, BitwigBuddyExtension extension) {
         int currentTrack = getCurrentTrackIndex(extension);
+        
         switch (actionId) {
             case "Bpm":
                 if (params.length == 1) {
@@ -191,6 +192,16 @@ public class ExecuteBitwigAction {
                 break;
             case "Clip Accent":
                 extension.getLauncherOrArrangerAsClip().getAccent().setRaw(Double.parseDouble(params[0]));
+                break;
+            case "Insert File":
+            
+                // Create empty clip first
+                // extension.getLauncherOrArrangerAsClip().clipLauncherSlot().createEmptyClip(16);
+                int slotIndexInsertFile = Integer.parseInt(params[0].trim());
+                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().createEmptyClip(slotIndexInsertFile, 4);
+                // Insert file into the clip
+                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().getItemAt(slotIndexInsertFile).replaceInsertionPoint().insertFile(params[1]);
+                
                 break;
             case "Project Name":
                 extension.getApplication().projectName();
@@ -295,11 +306,15 @@ public class ExecuteBitwigAction {
     }
 
     private static int getCurrentTrackIndex(BitwigBuddyExtension extension) {
-        int trackIndex = extension.trackBank.cursorIndex().get();
+        int trackIndex = extension.trackBank.cursorIndex().getAsInt();
         if (trackIndex < 0) {
             extension.getHost().println("No track selected, using first track (index 0)");
             trackIndex = 0;
         }
         return trackIndex;
     }
+
+
+
+     
 }

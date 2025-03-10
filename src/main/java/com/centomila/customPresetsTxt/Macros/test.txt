@@ -6,5 +6,6 @@ Description: "This is just for testing"
 // bb: Clip Loop On
 // bb: Select Next
 // bb: Clip Loop Off
-bb: Clip Accent (0.752)
+// bb: Clip Accent (0.752)
+bb: Insert File (2, "c:\Program Files\Common Files\Native Instruments\Kontakt 8\Content\Tools\Phrases\Library Data\MIDI Files\ZA_Last_Dance_Phrases_E_Ionian_Flat_2\06_Last Dance_E_Phrygian Dom_E_Phrygian Dom.mid")
 show_controller_script_console
