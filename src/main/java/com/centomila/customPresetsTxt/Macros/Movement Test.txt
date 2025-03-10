@@ -1,0 +1,5 @@
+Macro: "Movement Test"
+bb: Right
+bb: Right
+bb: Down
+bb: Enter

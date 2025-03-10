@@ -95,7 +95,7 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${bitwig.extension.directory.onedrive.ita}/BitwigBuddy/Custom Presets</outputDirectory>
+              <outputDirectory>${bitwig.extension.directory.onedrive.ita}/BitwigBuddy/</outputDirectory>
               <resources>
                 <resource>
                   <directory>src/main/java/com/centomila/customPresetsTxt</directory>

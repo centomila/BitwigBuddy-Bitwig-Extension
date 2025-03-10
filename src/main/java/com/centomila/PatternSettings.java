@@ -311,8 +311,8 @@ public class PatternSettings {
     }
 
     private void initRefreshCustomPresetsSetting(DocumentState documentState) {
-        customRefreshPresetsSetting = (Setting) documentState.getSignalSetting("Refresh Custom Presets",
-                CATEGORY_GENERATE_PATTERN, "Refresh Custom Presets");
+        customRefreshPresetsSetting = (Setting) documentState.getSignalSetting("Refresh Custom Files",
+                CATEGORY_GENERATE_PATTERN, "Refresh Custom Files");
 
         ((Signal) customRefreshPresetsSetting).addSignalObserver(() -> {
             extension.restart();

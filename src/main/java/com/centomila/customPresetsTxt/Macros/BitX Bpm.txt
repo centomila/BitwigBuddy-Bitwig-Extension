@@ -1,0 +1,6 @@
+Macro: "BitX BPM (Tempo)"
+Descritpion: "Change the track tempo (Requires BitX)"
+
+bb: Clip Color (FFFFB3)
+bb: Wait
+bb: Clip Rename (()BPM 130)

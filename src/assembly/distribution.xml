@@ -17,11 +17,12 @@
     
     <fileSets>
         <fileSet>
-            <directory>src/main/java/com/centomila/customPresetsTxt</directory>
-            <outputDirectory>BitwigBuddy/Custom Presets</outputDirectory>
+            <directory>src/main/java/com/centomila/customPresetsTxt/</directory>
+            <outputDirectory>BitwigBuddy</outputDirectory>
             <includes>
-                <include>**/*.txt</include>
+                <include>**/**/*.*</include>
             </includes>
         </fileSet>
+
     </fileSets>
 </assembly>

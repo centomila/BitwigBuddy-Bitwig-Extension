@@ -51,7 +51,7 @@ public class EditClipSettings {
         try {
             ClipUtils.applyVelocityShapeToSelectedNotes(extension);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         }
         

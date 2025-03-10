@@ -4,6 +4,7 @@ import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.utils.SettingsHelper.*;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.Setting;
+import com.bitwig.extension.controller.api.TrackBank;
 import com.bitwig.extension.controller.api.Channel;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
@@ -166,14 +167,13 @@ public class NoteDestinationSettings {
    private static void setupNoteDestinationObservers(BitwigBuddyExtension extension) {
       // Register observer for note changes
       ((EnumValue) noteDestinationSetting).addValueObserver(newValue -> {
-         ((NoteDestinationSettings) noteDestSettings).setCurrentNote(newValue);
+         NoteDestinationSettings.setCurrentNote(newValue);
          forceNoteRangeMaxToG8(extension);
       });
 
       // Register observer for octave changes
       ((EnumValue) noteOctaveSetting).addValueObserver(newValue -> {
-         ((NoteDestinationSettings) noteDestSettings)
-               .setCurrentOctave(Integer.parseInt(newValue));
+         NoteDestinationSettings.setCurrentOctave(Integer.parseInt(newValue));
          forceNoteRangeMaxToG8(extension);
       });
    }
@@ -187,8 +187,8 @@ public class NoteDestinationSettings {
     * @param host      The Bitwig Studio controller host
     */
    private static void setupPlayingNotesObserver(BitwigBuddyExtension extension, ControllerHost host) {
-      Channel cursorChannel = host.createCursorTrack(0, 0);
-      PlayingNoteArrayValue playingNotes = cursorChannel.playingNotes();
+      
+      PlayingNoteArrayValue playingNotes = extension.cursorTrack.playingNotes();
       playingNotes.markInterested();
 
       playingNotes.addValueObserver(notes -> {

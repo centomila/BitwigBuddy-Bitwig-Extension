@@ -2,21 +2,27 @@ package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
 
+import java.util.List;
 
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
 
 public class ModeSelectSettings {
     private static final String CATEGORY_MODE_SELECT = "1 Mode Select";
+    public static final String MODE_GENERATE = "Generate";
+    public static final String MODE_EDIT = "Edit";
+    public static final String MODE_MACRO = "Macro";
+
+    private static final String DESTINATION_LAUNCHER = "Launcher";
+    private static final String DESTINATION_ARRANGER = "Arranger";
 
     private static Setting spacerSelectModSetting;
     public static Setting modeGenerateEditToggleSetting;
     public static Setting toggleLauncherArrangerSetting;
 
     public static void init(BitwigBuddyExtension extension) {
-
         // Mode select setting
-        final String[] MODE_SELECT_OPTIONS = new String[] { "Generate", "Edit" };
+        final String[] MODE_SELECT_OPTIONS = new String[] { MODE_GENERATE, MODE_EDIT, MODE_MACRO };
 
         spacerSelectModSetting = (Setting) createStringSetting(titleWithLine("MODE SELECT"),
                 CATEGORY_MODE_SELECT, 0,
@@ -28,9 +34,12 @@ public class ModeSelectSettings {
                 MODE_SELECT_OPTIONS[0]);
 
         // Launcher/Arranger toggle
-        final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] { "Launcher", "Arranger", };
+        final String[] TOGGLE_LAUNCHER_ARRANGER_OPTIONS = new String[] {
+                DESTINATION_LAUNCHER, DESTINATION_ARRANGER
+        };
 
-        toggleLauncherArrangerSetting = (Setting) createEnumSetting("Destination Launcher/Arranger",
+        toggleLauncherArrangerSetting = (Setting) createEnumSetting(
+                "Destination Launcher/Arranger",
                 CATEGORY_MODE_SELECT,
                 TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
                 TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
@@ -46,23 +55,21 @@ public class ModeSelectSettings {
 
         ((EnumValue) toggleLauncherArrangerSetting).addValueObserver(newValue -> {
             // PopupUtils.showPopup("Destination: " + newValue);
-            if (newValue.equals("Arranger")) {
+            if (newValue.equals(DESTINATION_ARRANGER)) {
                 disableSetting(PostActionSettings.duplicateClipSetting);
             } else {
                 enableSetting(PostActionSettings.duplicateClipSetting);
             }
         });
-
     }
 
     private static void toggleMode(String newValue) {
-        String currentMode = newValue;
-        if (currentMode.equals("Generate")) {
-            // ((SettableEnumValue) modeSelectSetting).set("Edit");
+        if (MODE_GENERATE.equals(newValue)) {
             gotoGenerateMode();
-        } else {
-            // ((SettableEnumValue) modeSelectSetting).set("Generate");
+        } else if (MODE_EDIT.equals(newValue)) {
             gotoEditMode();
+        } else if (MODE_MACRO.equals(newValue)) {
+            gotoMacroMode();
         }
     }
 
@@ -72,32 +79,30 @@ public class ModeSelectSettings {
         // for each Setting in RandomPattern.allSettings, hideSetting(setting);
 
         for (Setting setting : ProgramPattern.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : MoveStepsHandler.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : PatternSettings.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : PostActionSettings.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : NoteDestinationSettings.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
         for (Setting setting : StepSizeSettings.allSettings) {
-            setting.hide();
+            hideSetting(setting);
         }
 
-
         ProgramPattern.showProgramPatternSettings();
-        
 
         EditClipSettings.showEditClipSettings();
 
@@ -106,11 +111,8 @@ public class ModeSelectSettings {
         ProgramPattern.programStepQtySetting.hide();
         ProgramPattern.programDensitySetting.hide();
 
+        MacroActionSettings.hideMacroSettings();
 
-        // StepSizeSettings.hideSettings();
-        // NoteDestinationSettings.hideSettings();
-        // VelocityShapeSettings.hideSettings();
-        // PostActionSettings.hideSettings();
     }
 
     // GENERATE MODE
@@ -145,14 +147,76 @@ public class ModeSelectSettings {
 
         PatternSettings.generatorTypeSelector(((EnumValue) PatternSettings.patternTypeSetting).get());
 
-        // StepSizeSettings.showSettings();
-        // NoteDestinationSettings.showSettings();
-        // VelocityShapeSettings.showSettings();
-
         showSetting(PostActionSettings.allSettings);
         PostActionSettings.showPostActionsSettings();
 
         EditClipSettings.hideEditClipSettings();
+        MacroActionSettings.hideMacroSettings();
+    }
+
+    public static void gotoMacroMode() {
+
+        for (Setting setting : ProgramPattern.allSettings) {
+            hideSetting(setting);
+        }
+
+        for (Setting setting : MoveStepsHandler.allSettings) {
+            hideSetting(setting);
+        }
+
+        for (Setting setting : PatternSettings.allSettings) {
+            hideSetting(setting);
+        }
+
+        for (Setting setting : PostActionSettings.allSettings) {
+            hideSetting(setting);
+        }
+
+        for (Setting setting : NoteDestinationSettings.allSettings) {
+            hideSetting(setting);
+        }
+
+        for (Setting setting : StepSizeSettings.allSettings) {
+            hideSetting(setting);
+        }
+
+        for (Setting setting : ProgramPattern.allSettings) {
+            hideSetting(setting);
+        }
+
+        for (Setting setting : MoveStepsHandler.allSettings) {
+            hideSetting(setting);
+        }
+
+        for (Setting setting : PatternSettings.allSettings) {
+            if (setting == PatternSettings.customRefreshPresetsSetting) {
+                showAndEnableSetting(setting);
+            } else {
+                hideSetting(setting);
+            }
+
+        }
+
+        for (Setting setting : PostActionSettings.allSettings) {
+            hideSetting(setting);
+        }
+
+        for (Setting setting : NoteDestinationSettings.allSettings) {
+            hideSetting(setting);
+        }
+
+        for (Setting setting : ProgramPattern.allSettings) {
+            hideSetting(setting);
+        }
+
+        for (Setting setting : ClipUtils.allSettings) {
+            hideSetting(setting);
+        }
+
+        ProgramPattern.hideProgramPatternSettings();
+        EditClipSettings.hideEditClipSettings();
+        MacroActionSettings.showMacroSettings();
+
     }
 
 }

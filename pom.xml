@@ -6,7 +6,7 @@
 	<artifactId>bitwigbuddy</artifactId>
 	<packaging>jar</packaging>
 	<name>BitwigBuddy</name>
-	<version>0.9.8</version>
+	<version>0.9.9</version>
 	
 	<repositories>
        <repository>
@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>com.bitwig</groupId>
 			<artifactId>extension-api</artifactId>
-			<version>19</version>
+			<version>20</version>
 		</dependency>
 	</dependencies>
 
@@ -134,7 +134,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${bitwig.extension.directory.onedrive.ita}/BitwigBuddy/Custom Presets</outputDirectory>
+                            <outputDirectory>${bitwig.extension.directory.onedrive.ita}/BitwigBuddy/</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/java/com/centomila/customPresetsTxt</directory>
