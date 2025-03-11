@@ -40,6 +40,8 @@ public class NoteDestinationSettings {
    }
 
    private static String CATEGORY_NOTE_DESTINATION = "4 Note Destination";
+   public static String[] LEARN_NOTE_OPTIONS = new String[] { "Manual", "Learn", "DM" };
+
 
    /**
     * Initializes all note destination settings and observers.
@@ -94,10 +96,9 @@ public class NoteDestinationSettings {
             noteChannelSetting, initialNote, initialOctave));
 
       // Setup learn note setting
-      final String[] LEARN_NOTE_OPTIONS = new String[] { "On", "Off" };
 
       learnNoteSetting = (Setting) createEnumSetting(
-            "Learn Note", CATEGORY_NOTE_DESTINATION, LEARN_NOTE_OPTIONS, "Off");
+            "Learn Note", CATEGORY_NOTE_DESTINATION, LEARN_NOTE_OPTIONS, "DM");
 
       // Setup note destination observers
       setupNoteDestinationObservers(extension);
@@ -192,7 +193,7 @@ public class NoteDestinationSettings {
       playingNotes.markInterested();
 
       playingNotes.addValueObserver(notes -> {
-         if (((EnumValue) learnNoteSetting).get().equals("On")) {
+         if (((EnumValue) learnNoteSetting).get().equals("Learn")) {
             for (PlayingNote note : notes) {
                String noteName = getNoteNameFromKey(note.pitch());
                String[] keyAndOctave = getKeyAndOctaveFromNoteName(noteName);
@@ -203,10 +204,12 @@ public class NoteDestinationSettings {
       });
 
       ((EnumValue) learnNoteSetting).addValueObserver(value -> {
-         if (value.equals("On")) {
+         if (value.equals("Learn")) {
             playingNotes.subscribe();
          } else {
-            playingNotes.unsubscribe();
+            if (playingNotes.isSubscribed()){
+               playingNotes.unsubscribe();
+            }
          }
       });
    }
