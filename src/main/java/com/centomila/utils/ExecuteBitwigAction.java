@@ -272,12 +272,12 @@ public class ExecuteBitwigAction {
                 break;
             case "Insert VST3":
             String VST3StringID = ReturnVST3StringID.getVST3StringID(params[0]);
+            showPopup(params[0] + " - " + VST3StringID);
             if (VST3StringID != null) {
-                extension.trackBank.getItemAt(currentTrack).endOfDeviceChainInsertionPoint()
-                        .insertVST3Device(params[0]);
+                extension.trackBank.getItemAt(currentTrack).endOfDeviceChainInsertionPoint().insertVST3Device(VST3StringID);
             } else {
-                extension.getHost().println("VST3 not found: " + params[0]);
-                showPopup(VST3StringID + " not found: " + params[0]);
+                extension.getHost().println("VST3 not found: " + params[0] + " - " + VST3StringID);
+                showPopup(VST3StringID + " not found: " + params[0] + " - " + VST3StringID);
             }
                 break;
 
