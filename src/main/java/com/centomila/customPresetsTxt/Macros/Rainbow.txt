@@ -1,5 +1,7 @@
 Macro: "Rainbow (Clip Color and Rename Example)"
 Descritpion: "Duplicate the selected clip 64 times with rainbow colors"
+Author: "Centomila"
+
 bb: Clip Rename (FF0000 - Red)
 bb: Clip Color (FF0000)
 bb: Duplicate

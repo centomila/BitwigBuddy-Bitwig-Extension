@@ -1,5 +1,7 @@
 Macro: "BitX All Shortcodes"
 Descritpion: "Generate all BitX Clips (Requires BitX)"
+Author: "Centomila"
+
 bb: Clip Create (1,4)
 bb: Clip Color (FFB3B3)
 bb: Wait

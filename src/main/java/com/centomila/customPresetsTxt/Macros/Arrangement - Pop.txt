@@ -1,5 +1,6 @@
 Macro: "Arrangement - Pop (Cue Markers)"
 Descritpion: "Test Cue Marker Name"
+Author: "Centomila"
 
 bb: DeleteAllCueMarkers
 

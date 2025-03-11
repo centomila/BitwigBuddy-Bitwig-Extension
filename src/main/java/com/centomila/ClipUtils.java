@@ -196,33 +196,23 @@ public class ClipUtils {
         Clip clip = extension.getLauncherOrArrangerAsClip();
         BeatTimeValue clipStart = clip.getPlayStart();
         BeatTimeValue clipStop = clip.getPlayStop();
-        int channel = NoteDestinationSettings.getCurrentChannelAsInt();
 
         // Calculate clip length
         double clipLength = clipStop.get() - clipStart.get();
         extension.getHost().println("Clip length: " + clipLength);
 
-        List<NoteStep> selectedSteps = new ArrayList<>();
-        for (int i = 0; i < 128; i++) {
-            for (int note = 0; note < 128; note++) {
-                NoteStep step = clip.getStep(channel, i, note);
-                if (step != null && step.isIsSelected()) {
-                    selectedSteps.add(step);
-                }
-            }
-        }
-        // selectedSteps.forEach(step -> extension.getHost().println("Step: " + step.x()
-        // + ", " + step.y()));
+        // Get selected notes using the new function
+        List<NoteStep> selectedSteps = getSelectedNotes(extension);
 
-        selectedSteps.sort(Comparator.comparingInt(NoteStep::x));
+        if (selectedSteps.isEmpty()) {
+            return selectedSteps;
+        }
+
         int minX = selectedSteps.get(0).x();
         // Adjust normalized x values to avoid a zero for the first step
         int[] selectedStepsAsInt = selectedSteps.stream()
                 .mapToInt(step -> (step.x() - minX) + 1)
                 .toArray();
-
-        // extension.getHost().println("Selected steps as int: " +
-        // selectedStepsAsInt.length);
 
         String velocityType = ((EnumValue) ProgramPattern.programVelocitySettingShape).get();
         int minVelocity = (int) Math
@@ -235,7 +225,6 @@ public class ClipUtils {
 
         // apply velocity to selected steps mapping the velocity shapes
         for (int i = 0; i < selectedSteps.size(); i++) {
-            // Scale velocity between minVelocity and maxVelocity
             double velocityRange = maxVelocity - minVelocity;
             double velocityValue = (velocityShapesInt[i] / 127.0) * velocityRange + minVelocity;
             NoteStep currentStep = selectedSteps.get(i);
@@ -243,13 +232,34 @@ public class ClipUtils {
             currentStep.setVelocity(velocityValue / 127.0);
         }
 
-        // Set velocity of selected steps
-        // selectedSteps.forEach(step -> step.setVelocity(127.0 / 127.0));
-        // extension.getHost().println("Selected steps: " + selectedSteps.size());
-
-        // return selected steps
         return selectedSteps;
-
     }
 
+    /**
+     * Gets all selected notes from the current clip.
+     * 
+     * @param extension The BitwigBuddyExtension instance
+     * @return List of selected NoteSteps sorted by their x position
+     */
+    public static List<NoteStep> getSelectedNotes(BitwigBuddyExtension extension) {
+        Clip clip = extension.getLauncherOrArrangerAsClip();
+        int channel = NoteDestinationSettings.getCurrentChannelAsInt();
+        
+        List<NoteStep> selectedSteps = new ArrayList<>();
+        
+        // Collect all selected steps across all notes
+        for (int i = 0; i < 128; i++) {
+            for (int note = 0; note < 128; note++) {
+                NoteStep step = clip.getStep(channel, i, note);
+                if (step != null && step.isIsSelected()) {
+                    selectedSteps.add(step);
+                }
+            }
+        }
+        
+        // Sort steps by x position
+        selectedSteps.sort(Comparator.comparingInt(NoteStep::x));
+        
+        return selectedSteps;
+    }
 }

@@ -1,5 +1,6 @@
 Macro: "Test"
 Description: "This is just for testing"
+Author: "Centomila"
 
 // show_controller_script_console
 
