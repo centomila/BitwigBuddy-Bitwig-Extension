@@ -1,15 +1,11 @@
 package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
-import com.centomila.BitwigBuddyExtension;
 import com.centomila.utils.ExecuteBitwigAction;
 
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
-import com.bitwig.extension.controller.api.StringValue;
 import com.bitwig.extension.controller.api.ControllerHost;
-import com.bitwig.extension.controller.api.EnumValue;
-import com.bitwig.extension.controller.api.SettableBooleanValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Action;
@@ -22,6 +18,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Manages macro action settings and execution for the BitwigBuddy extension.
+ * This class handles the initialization, configuration, and execution of user-defined macros
+ * that can automate sequences of Bitwig Studio actions.
+ * 
+ * <p>A macro consists of a title, description, and a sequence of commands that can be
+ * executed in order with configurable delays between each command.</p>
+ * 
+ * <p>Macros are stored as text files in the Macros subdirectory of the extension's presets directory.</p>
+ */
 public class MacroActionSettings {
 
     public static Setting macroLaunchBtnSignalSetting;
@@ -35,7 +41,14 @@ public class MacroActionSettings {
     private static final String MACRO_PREFIX = "Macro:";
     private static long lastExecutionTime = 0;
     private static final long DEBOUNCE_MS = 500; // Adjust as needed
+    // TODO: 8 FIELDS FOR INSTA MACRO + SELECTOR: MACO FOLDER/INSTANT
 
+    /**
+     * Initializes the macro action settings for the extension.
+     * Sets up the necessary settings UI elements and observers.
+     *
+     * @param extension The BitwigBuddy extension instance
+     */
     public static void init(BitwigBuddyExtension extension) {
 
         host = extension.getHost();
@@ -45,6 +58,16 @@ public class MacroActionSettings {
         initMacroActionObservers(extension);
     }
 
+    /**
+     * Initializes the macro action UI settings.
+     * Creates and configures the following settings:
+     * <ul>
+     *   <li>Macro spacer - Visual separator</li>
+     *   <li>Macro selector - Dropdown to choose a macro</li>
+     *   <li>Macro description - Displays the selected macro's description</li>
+     *   <li>Execute button - Triggers the selected macro</li>
+     * </ul>
+     */
     private static void initMacroActionSettings() {
 
         macroSpacerSetting = (Setting) createStringSetting(titleWithLine("MACRO") , "Macro", 0,
@@ -75,6 +98,13 @@ public class MacroActionSettings {
                  };
     }
 
+    /**
+     * Sets up observers for macro-related UI interactions.
+     * Handles macro execution requests and updates the description when a new macro is selected.
+     * Includes debouncing logic to prevent rapid repeated executions.
+     *
+     * @param extension The BitwigBuddy extension instance
+     */
     private static void initMacroActionObservers(BitwigBuddyExtension extension) {
         ((Signal) macroLaunchBtnSignalSetting).addSignalObserver(() -> {
             host.println("Signal triggered at " + System.currentTimeMillis());
@@ -106,6 +136,13 @@ public class MacroActionSettings {
         // });
     }
 
+    /**
+     * Executes a macro by running its commands in sequence.
+     * Logs the execution start time and details of each command.
+     *
+     * @param macro The macro to execute
+     * @param extension The BitwigBuddy extension instance
+     */
     private static void executeMacro(Macro macro, BitwigBuddyExtension extension) {
         // Add timestamp to track when execution starts
         host.println("=== MACRO EXECUTION START: " + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
@@ -158,9 +195,27 @@ public class MacroActionSettings {
     }
 
     /**
-     * Reads all macro files from the configured macros directory.
-     * Files are sorted naturally by name before processing.
-     * 
+     * Hides all macro-related settings in the UI.
+     */
+    public static void hideMacroSettings() {
+        for (Setting setting : allSettings) {
+            setting.hide();
+        }
+    }
+
+    /**
+     * Shows all macro-related settings in the UI.
+     */
+    public static void showMacroSettings() {
+        for (Setting setting : allSettings) {
+            setting.show();
+        }
+    }
+
+    /**
+     * Returns an array of all available macros.
+     * Reads macro files from the configured macros directory and sorts them by name.
+     *
      * @return Array of Macro objects, empty array if no macros are found
      */
     public static Macro[] getMacros() {
@@ -205,6 +260,25 @@ public class MacroActionSettings {
         }
 
         return macroList.toArray(new Macro[0]);
+    }
+
+    /**
+     * Returns the currently selected macro based on the selector setting.
+     *
+     * @return The selected Macro or null if none is selected or available
+     */
+    public static Macro getSelectedMacro() {
+
+        String selectedTitle = ((SettableEnumValue) macroSelectorSetting).get();
+        Macro[] macros = getMacros();
+
+        for (Macro macro : macros) {
+            if (macro.getTitle().equals(selectedTitle)) {
+                return macro;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -326,37 +400,6 @@ public class MacroActionSettings {
             throw new IllegalArgumentException("Invalid format - expected quoted value");
         }
         return line.substring(firstQuote + 1, lastQuote);
-    }
-
-    /**
-     * Get the currently selected macro based on the selector setting.
-     * 
-     * @return The selected Macro or null if none is selected or available
-     */
-    public static Macro getSelectedMacro() {
-
-        String selectedTitle = ((SettableEnumValue) macroSelectorSetting).get();
-        Macro[] macros = getMacros();
-
-        for (Macro macro : macros) {
-            if (macro.getTitle().equals(selectedTitle)) {
-                return macro;
-            }
-        }
-
-        return null;
-    }
-
-    public static void hideMacroSettings() {
-        for (Setting setting : allSettings) {
-            setting.hide();
-        }
-    }
-
-    public static void showMacroSettings() {
-        for (Setting setting : allSettings) {
-            setting.show();
-        }
     }
 
     /**
