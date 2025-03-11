@@ -28,8 +28,8 @@
 | **Track Color**                              | Sets the color of the currently selected track                |                                            |
 | **Track Rename**                             | Renames the currently selected track                          |                                            |
 | **Track Select**                             | Selects a track by index                                      |                                            |
-| **Drum Machine Create**                      | Inserts a Drum Machine device on the current track            |                                            |
-| **Device Create**                            | Inserts a Bitwig device on the current track as last          |_Device Create (Drum Machine)_              |
+| **Insert Device**                            | Inserts a Bitwig device on the current track as last          |_Insert Device (Drum Machine)_              |
+| **Insert VST3**                              | Inserts a VST3 on the current track as last                   |_Insert VST3 (Drum Machine)_                |
 | **Arranger Loop Start**                      | Sets the arranger loop start position                         |                                            |
 | **Arranger Loop End**                        | Sets the arranger loop duration                               |                                            |
 | **Time Signature**                           | Sets the time signature                                       |_Time Signature (3/4)_                      |

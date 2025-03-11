@@ -132,6 +132,6 @@ public class ReturnBitwigDeviceUUID {
                 return UUID.fromString(device[1]);
             }
         }
-        return null;
+        return UUID.fromString(deviceName);
     }
 }

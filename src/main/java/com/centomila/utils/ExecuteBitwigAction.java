@@ -1,4 +1,5 @@
 package com.centomila.utils;
+
 import static com.centomila.utils.ReturnBitwigDeviceUUID.getDeviceUUID;
 
 import com.centomila.BitwigBuddyExtension;
@@ -41,7 +42,8 @@ public class ExecuteBitwigAction {
 
         String[] params;
         // action id could be like bb:actionId(param1, param2). Parameters are separated
-        // by comma. Parameters can contain any characters including parentheses and colons.
+        // by comma. Parameters can contain any characters including parentheses and
+        // colons.
         if (actionId.contains("(")) {
             int start = actionId.indexOf("(");
             int end = actionId.lastIndexOf(")");
@@ -72,9 +74,8 @@ public class ExecuteBitwigAction {
                     // Restore bracketed parts for array-like params
                     for (int j = 0; j < bracketed.size(); j++) {
                         rawParams[i] = rawParams[i].replace(
-                            "__ARRAY_PLACEHOLDER_" + j + "__",
-                            bracketed.get(j)
-                        );
+                                "__ARRAY_PLACEHOLDER_" + j + "__",
+                                bracketed.get(j));
                     }
                     // Remove surrounding quotes, if present
                     if (rawParams[i].startsWith("\"") && rawParams[i].endsWith("\"") && rawParams[i].length() > 1) {
@@ -97,7 +98,7 @@ public class ExecuteBitwigAction {
     // Extracted method:
     private static void handleAction(String actionId, String[] params, BitwigBuddyExtension extension) {
         int currentTrack = getCurrentTrackIndex(extension);
-        
+
         switch (actionId) {
             case "Bpm":
                 if (params.length == 1) {
@@ -194,15 +195,15 @@ public class ExecuteBitwigAction {
                 extension.getLauncherOrArrangerAsClip().getAccent().setRaw(Double.parseDouble(params[0]));
                 break;
             case "Insert File":
-            
                 // Create empty clip first
-                // extension.getLauncherOrArrangerAsClip().clipLauncherSlot().createEmptyClip(16);
                 int slotIndexInsertFile = Integer.parseInt(params[0].trim());
-                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().createEmptyClip(slotIndexInsertFile, 4);
+                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().createEmptyClip(slotIndexInsertFile,
+                        4);
                 // Insert file into the clip
-                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().getItemAt(slotIndexInsertFile).replaceInsertionPoint().insertFile(params[1]);
-                
+                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().getItemAt(slotIndexInsertFile)
+                        .replaceInsertionPoint().insertFile(params[1]);
                 break;
+
             case "Project Name":
                 extension.getApplication().projectName();
                 showPopup(extension.getApplication().projectName().toString());
@@ -230,12 +231,13 @@ public class ExecuteBitwigAction {
                         extension.getHost().println("Invalid clip length parameter, using default of 4 beats");
                     }
                 }
-                
+
                 // Get the currently selected slot in the clip launcher
                 int slotIndex = Integer.parseInt(params[0].trim()) - 1;
-                
+
                 if (slotIndex >= 0) {
-                    extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().createEmptyClip(slotIndex, clipLength);
+                    extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().createEmptyClip(slotIndex,
+                            clipLength);
                     extension.getHost().println("Created empty clip with length: " + clipLength);
                 } else {
                     extension.getHost().println("No clip slot selected. Please select a clip slot first.");
@@ -244,7 +246,7 @@ public class ExecuteBitwigAction {
             case "Track Color":
                 String trackColorStr = params[0].trim();
                 Color trackColor = Color.fromHex(trackColorStr);
-                
+
                 extension.trackBank.getItemAt(currentTrack).color().set(trackColor);
                 break;
             case "Track Rename":
@@ -258,28 +260,40 @@ public class ExecuteBitwigAction {
                 extension.trackBank.getItemAt(trackIndex).makeVisibleInArranger();
                 extension.trackBank.getItemAt(trackIndex).makeVisibleInMixer();
                 break;
-            case "Device Create":
+            case "Insert Device":
                 UUID deviceUUID = getDeviceUUID(params[0]);
                 if (deviceUUID != null) {
-                    extension.trackBank.getItemAt(currentTrack).endOfDeviceChainInsertionPoint().insertBitwigDevice(deviceUUID);
+                    extension.trackBank.getItemAt(currentTrack).endOfDeviceChainInsertionPoint()
+                            .insertBitwigDevice(deviceUUID);
                 } else {
                     extension.getHost().println("Device not found: " + params[0]);
                     showPopup("Device not found: " + params[0]);
                 }
                 break;
-            
+            case "Insert VST3":
+            String VST3StringID = ReturnVST3StringID.getVST3StringID(params[0]);
+            if (VST3StringID != null) {
+                extension.trackBank.getItemAt(currentTrack).endOfDeviceChainInsertionPoint()
+                        .insertVST3Device(params[0]);
+            } else {
+                extension.getHost().println("VST3 not found: " + params[0]);
+                showPopup(VST3StringID + " not found: " + params[0]);
+            }
+                break;
+
+
             case "Arranger Loop Start":
-            // Usage: Arranger Loop Start (loopStart) - E.g. Arranger Loop Start (2.0)
+                // Usage: Arranger Loop Start (loopStart) - E.g. Arranger Loop Start (2.0)
                 extension.transport.arrangerLoopStart().set(Double.parseDouble(params[0]));
                 break;
             case "Arranger Loop End":
-            // Usage: Arranger Loop End (loopEnd) - E.g. Arranger Loop End (4.0)
+                // Usage: Arranger Loop End (loopEnd) - E.g. Arranger Loop End (4.0)
                 extension.transport.arrangerLoopDuration().set(Double.parseDouble(params[0]));
                 break;
             case "Time Signature":
-            // Usage: Time Signature (timeSignature) - E.g. Time Signature (3/4)
+                // Usage: Time Signature (timeSignature) - E.g. Time Signature (3/4)
                 String timeSign = params[0].trim();
-                
+
                 extension.transport.timeSignature().set(timeSign);
                 break;
             case "Wait":
@@ -314,7 +328,4 @@ public class ExecuteBitwigAction {
         return trackIndex;
     }
 
-
-
-     
 }
