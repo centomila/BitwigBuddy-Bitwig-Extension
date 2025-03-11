@@ -1,5 +1,24 @@
 # 📋 Changelog:
 
+## 1.0.0
+- [X] Manual! 📖
+  - The manual is available in the repository and in the zip file
+- [X] Learn Note from selected drum pad
+  - Select _DM_ from the _Learn Note_ selection and click on a drum pad to set the note destination.
+  - Works on any Bitwig Drum Machine device.
+- [X] Save Custom Presets
+  - Save the current pattern as a custom preset.
+  - The custom presets are stored in the Custom Presets folder inside the BitwigBuddy folder as .txt files. 📃
+  - The custom presets can be selected from the Custom Preset dropdown.
+- [X] Macros! Yes. Macros.
+  - Now you can execute pre-defined sequences of actions using macros. These macros are stored as text files and can include both native Bitwig actions and additional custom actions provided by BitwigBuddy.
+  - Automate multiple sequence of actions like: Insert a Drum Machine, Insert a Midi File, Insert a Sample, Add Cue Markers, Rename Clips, Change Colors, Duplicate, Cursor Keys...
+    - See the complete list of available actions in the manual folder 📂.
+    - Multiple examples are provided in the Macros folder.
+  - Macros are stored in the Macros folder inside the BitwigBuddy folder as .txt files. 📃
+  - Macros can be executed from the BitwigBuddy panel.
+  - Once a macro is started, can't be stopped! Be careful! Save your work before running a macro! ⚠️⚠️⚠️
+
 ## 0.9.8 beta
 - [X] Fixed bug when using _Duplicate Clip_ and _Launch Clip_ together as Post Actions. Now the duplicated clip is the one launched.
 
