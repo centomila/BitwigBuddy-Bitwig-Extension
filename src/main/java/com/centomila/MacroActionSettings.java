@@ -43,6 +43,9 @@ public class MacroActionSettings {
     private static final long DEBOUNCE_MS = 500; // Adjust as needed
     // TODO: 8 FIELDS FOR INSTA MACRO + SELECTOR: MACO FOLDER/INSTANT
 
+    public static Setting[] instantMacroLines = new Setting[8];
+    public static Setting executeInstantMacroSignal;
+
     /**
      * Initializes the macro action settings for the extension.
      * Sets up the necessary settings UI elements and observers.
@@ -93,9 +96,31 @@ public class MacroActionSettings {
         // macroPrintAllActionsBtnSignalSetting = (Setting) createSignalSetting("Print All Actions in Console",
         //         "Macro", "Signal to print all available actions");
 
-        allSettings = new Setting[] { macroLaunchBtnSignalSetting, macroSelectorSetting,macroDescriptionSetting, macroSpacerSetting
-                // macroPrintAllActionsBtnSignalSetting
-                 };
+        // Initialize instant macro line settings
+        for (int i = 0; i < 8; i++) {
+            instantMacroLines[i] = (Setting) createStringSetting("Macro Line " + (i + 1), "Instant Macro", 
+                    256, "");
+        }
+
+        executeInstantMacroSignal = (Setting) createSignalSetting("Execute Instant Macro",
+                "Instant Macro", "Execute this commands sequence");
+
+        // Update allSettings array to include new settings
+        allSettings = new Setting[] { 
+            macroLaunchBtnSignalSetting, 
+            macroSelectorSetting,
+            macroDescriptionSetting, 
+            macroSpacerSetting,
+            instantMacroLines[0],
+            instantMacroLines[1],
+            instantMacroLines[2],
+            instantMacroLines[3],
+            instantMacroLines[4],
+            instantMacroLines[5],
+            instantMacroLines[6],
+            instantMacroLines[7],
+            executeInstantMacroSignal
+        };
     }
 
     /**
@@ -134,6 +159,31 @@ public class MacroActionSettings {
         // ((Signal) macroPrintAllActionsBtnSignalSetting).addSignalObserver(() -> {
         //     printAllAvailableActions(extension);
         // });
+
+        ((Signal) executeInstantMacroSignal).addSignalObserver(() -> {
+            List<String> commands = new ArrayList<>();
+            
+            // Collect non-empty commands from instant macro lines
+            for (Setting lineSetting : instantMacroLines) {
+                String command = ((SettableStringValue) lineSetting).get().trim();
+                if (!command.isEmpty()) {
+                    commands.add(command);
+                }
+            }
+
+            if (!commands.isEmpty()) {
+                // Create temporary macro
+                Macro instantMacro = new Macro(
+                    "instant_macro",
+                    "Instant Macro",
+                    commands.toArray(new String[0]),
+                    "Instant macro execution"
+                );
+
+                // Execute the macro
+                executeMacro(instantMacro, extension);
+            }
+        });
     }
 
     /**
