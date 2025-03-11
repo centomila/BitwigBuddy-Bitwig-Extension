@@ -182,6 +182,6 @@ public class ReturnVST3StringID {
                 return device[1];
             }
         }
-        return null;
+        return deviceName;
     }
 }

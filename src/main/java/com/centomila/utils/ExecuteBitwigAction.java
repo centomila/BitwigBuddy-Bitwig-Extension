@@ -194,15 +194,6 @@ public class ExecuteBitwigAction {
             case "Clip Accent":
                 extension.getLauncherOrArrangerAsClip().getAccent().setRaw(Double.parseDouble(params[0]));
                 break;
-            case "Insert File":
-                // Create empty clip first
-                int slotIndexInsertFile = Integer.parseInt(params[0].trim());
-                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().createEmptyClip(slotIndexInsertFile,
-                        4);
-                // Insert file into the clip
-                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().getItemAt(slotIndexInsertFile)
-                        .replaceInsertionPoint().insertFile(params[1]);
-                break;
 
             case "Project Name":
                 extension.getApplication().projectName();
@@ -271,16 +262,25 @@ public class ExecuteBitwigAction {
                 }
                 break;
             case "Insert VST3":
-            String VST3StringID = ReturnVST3StringID.getVST3StringID(params[0]);
-            showPopup(params[0] + " - " + VST3StringID);
-            if (VST3StringID != null) {
-                extension.trackBank.getItemAt(currentTrack).endOfDeviceChainInsertionPoint().insertVST3Device(VST3StringID);
-            } else {
-                extension.getHost().println("VST3 not found: " + params[0] + " - " + VST3StringID);
-                showPopup(VST3StringID + " not found: " + params[0] + " - " + VST3StringID);
-            }
+                String VST3StringID = ReturnVST3StringID.getVST3StringID(params[0]);
+                showPopup(params[0] + " - " + VST3StringID);
+                if (VST3StringID != null) {
+                    extension.trackBank.getItemAt(currentTrack).endOfDeviceChainInsertionPoint()
+                            .insertVST3Device(VST3StringID);
+                } else {
+                    extension.getHost().println("VST3 not found: " + params[0] + " - " + VST3StringID);
+                    showPopup(VST3StringID + " not found: " + params[0] + " - " + VST3StringID);
+                }
                 break;
-
+            case "Insert File":
+                // Create empty clip first
+                int slotIndexInsertFile = Integer.parseInt(params[0].trim()) -1;
+                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().createEmptyClip(slotIndexInsertFile,
+                        4);
+                // Insert file into the clip
+                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().getItemAt(slotIndexInsertFile)
+                        .replaceInsertionPoint().insertFile(params[1]);
+                break;
 
             case "Arranger Loop Start":
                 // Usage: Arranger Loop Start (loopStart) - E.g. Arranger Loop Start (2.0)
