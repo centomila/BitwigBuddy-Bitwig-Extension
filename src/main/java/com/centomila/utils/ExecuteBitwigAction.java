@@ -3,13 +3,8 @@ package com.centomila.utils;
 import static com.centomila.utils.ReturnBitwigDeviceUUID.getDeviceUUID;
 
 import com.centomila.BitwigBuddyExtension;
-import com.centomila.ClipUtils;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.CueMarker;
-import com.bitwig.extension.controller.api.SettableColorValue;
-import com.bitwig.extension.controller.api.Track;
-import com.bitwig.extension.controller.api.Channel;
-import com.bitwig.extension.controller.api.ClipLauncherSlotBank;
 
 import static com.centomila.utils.PopupUtils.showPopup;
 
@@ -20,7 +15,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.bitwig.extension.api.Color;
-import com.bitwig.extension.controller.api.ColorValue;
 
 public class ExecuteBitwigAction {
 
@@ -274,7 +268,7 @@ public class ExecuteBitwigAction {
                 break;
             case "Insert File":
                 // Create empty clip first
-                int slotIndexInsertFile = Integer.parseInt(params[0].trim()) -1;
+                int slotIndexInsertFile = Integer.parseInt(params[0].trim()) - 1;
                 extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().createEmptyClip(slotIndexInsertFile,
                         4);
                 // Insert file into the clip

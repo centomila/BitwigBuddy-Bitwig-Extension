@@ -1,7 +1,5 @@
 package com.centomila.utils;
 
-import com.centomila.utils.ReturnBitwigDeviceUUID;
-
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.Device;
 import com.bitwig.extension.controller.api.DeviceMatcher;
@@ -19,12 +17,6 @@ public class DeviceMatcherDrumMachine {
         device.exists().markInterested();
         device.name().markInterested();
         
-
-        // device.exists().addValueObserver((exists) -> {
-        // if (exists) {
-        // PopupUtils.showPopup("Drum Machine found!");
-        // }
-        // });
 
         for (int i = 0; i < extension.drumPadBank.getSizeOfBank(); i++) {
             DrumPad drumPad = extension.drumPadBank.getItemAt(i);

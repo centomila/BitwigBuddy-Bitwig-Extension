@@ -42,7 +42,6 @@ public class NoteDestinationSettings {
    private static String CATEGORY_NOTE_DESTINATION = "4 Note Destination";
    public static String[] LEARN_NOTE_OPTIONS = new String[] { "Manual", "Learn", "DM" };
 
-
    /**
     * Initializes all note destination settings and observers.
     * Sets up note selection, octave selection, MIDI channel, and note learning
@@ -61,6 +60,11 @@ public class NoteDestinationSettings {
             "---------------------------------------------------");
 
       disableSetting(spacerNoteDestination);
+
+      // Setup learn note setting
+
+      learnNoteSetting = (Setting) createEnumSetting(
+            "Learn Note", CATEGORY_NOTE_DESTINATION, LEARN_NOTE_OPTIONS, "DM");
 
       // Setup note and octave destination settings
       String[] noteDestinationOptions = Utils.NOTE_NAMES;
@@ -94,11 +98,6 @@ public class NoteDestinationSettings {
 
       setNoteDestSettings(new NoteDestinationSettings(
             noteChannelSetting, initialNote, initialOctave));
-
-      // Setup learn note setting
-
-      learnNoteSetting = (Setting) createEnumSetting(
-            "Learn Note", CATEGORY_NOTE_DESTINATION, LEARN_NOTE_OPTIONS, "DM");
 
       // Setup note destination observers
       setupNoteDestinationObservers(extension);
@@ -188,7 +187,7 @@ public class NoteDestinationSettings {
     * @param host      The Bitwig Studio controller host
     */
    private static void setupPlayingNotesObserver(BitwigBuddyExtension extension, ControllerHost host) {
-      
+
       PlayingNoteArrayValue playingNotes = extension.cursorTrack.playingNotes();
       playingNotes.markInterested();
 
@@ -207,7 +206,7 @@ public class NoteDestinationSettings {
          if (value.equals("Learn")) {
             playingNotes.subscribe();
          } else {
-            if (playingNotes.isSubscribed()){
+            if (playingNotes.isSubscribed()) {
                playingNotes.unsubscribe();
             }
          }
@@ -298,6 +297,5 @@ public class NoteDestinationSettings {
       // print in console
       showPopup(noteAndOctaveArray[0] + " | " + noteAndOctaveArray[1]);
 
-      
    }
 }
