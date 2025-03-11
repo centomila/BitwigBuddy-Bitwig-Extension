@@ -119,6 +119,15 @@ public class ExecuteBitwigAction {
             case "Clip Create": handleClipCreate(params, extension, currentTrack); break;
             case "Step Selected Length": handleStepSelectedLength(params, extension); break;
             case "Step Selected Velocity": handleStepSelectedVelocity(params, extension); break;
+            case "Step Selected Chance": handleStepSelectedChance(params, extension); break;
+            case "Step Selected Transpose": handleStepSelectedTranspose(params, extension); break;
+            case "Step Selected Gain": handleStepSelectedGain(params, extension); break;
+            case "Step Selected Pressure": handleStepSelectedPressure(params, extension); break;
+            case "Step Selected Timbre": handleStepSelectedTimbre(params, extension); break;
+            case "Step Selected Pan": handleStepSelectedPan(params, extension); break;
+            case "Step Selected Duration": handleStepSelectedDuration(params, extension); break;
+            case "Step Selected Velocity Spread": handleStepSelectedVelocitySpread(params, extension); break;
+            case "Step Selected Release Velocity": handleStepSelectedReleaseVelocity(params, extension); break;
             case "Track Color": handleTrackColor(params, extension, currentTrack); break;
             case "Track Rename": handleTrackRename(params, extension, currentTrack); break;
             case "Track Select": handleTrackSelect(params, extension); break;
@@ -312,6 +321,96 @@ public class ExecuteBitwigAction {
 
         for (NoteStep note : selectedNotes) {
             note.setVelocity(stepVelocity);
+        }
+    }
+
+    private static void handleStepSelectedChance(String[] params, BitwigBuddyExtension extension) {
+        double chance = Double.parseDouble(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        extension.getHost().println("Selected notes: " + selectedNotes.size());
+
+        for (NoteStep note : selectedNotes) {
+            note.setChance(chance);
+        }
+    }
+
+    private static void handleStepSelectedTranspose(String[] params, BitwigBuddyExtension extension) {
+        int transpose = Integer.parseInt(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        extension.getHost().println("Selected notes: " + selectedNotes.size());
+
+        for (NoteStep note : selectedNotes) {
+            note.setTranspose(transpose);
+        }
+    }
+
+    private static void handleStepSelectedGain(String[] params, BitwigBuddyExtension extension) {
+        double gain = Double.parseDouble(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        extension.getHost().println("Selected notes: " + selectedNotes.size());
+
+        for (NoteStep note : selectedNotes) {
+            note.setGain(gain);
+        }
+    }
+
+    private static void handleStepSelectedPressure(String[] params, BitwigBuddyExtension extension) {
+        double pressure = Double.parseDouble(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        extension.getHost().println("Selected notes: " + selectedNotes.size());
+
+        for (NoteStep note : selectedNotes) {
+            note.setPressure(pressure);
+        }
+    }
+
+    private static void handleStepSelectedTimbre(String[] params, BitwigBuddyExtension extension) {
+        double timbre = Double.parseDouble(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        extension.getHost().println("Selected notes: " + selectedNotes.size());
+
+        for (NoteStep note : selectedNotes) {
+            note.setTimbre(timbre);
+        }
+    }
+
+    private static void handleStepSelectedPan(String[] params, BitwigBuddyExtension extension) {
+        double pan = Double.parseDouble(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        extension.getHost().println("Selected notes: " + selectedNotes.size());
+
+        for (NoteStep note : selectedNotes) {
+            note.setPan(pan);
+        }
+    }
+
+    private static void handleStepSelectedDuration(String[] params, BitwigBuddyExtension extension) {
+        double duration = Double.parseDouble(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        extension.getHost().println("Selected notes: " + selectedNotes.size());
+
+        for (NoteStep note : selectedNotes) {
+            note.setDuration(duration);
+        }
+    }
+
+    private static void handleStepSelectedVelocitySpread(String[] params, BitwigBuddyExtension extension) {
+        double velocitySpread = Double.parseDouble(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        extension.getHost().println("Selected notes: " + selectedNotes.size());
+
+        for (NoteStep note : selectedNotes) {
+            note.setVelocitySpread(velocitySpread);
+        }
+    }
+
+    private static void handleStepSelectedReleaseVelocity(String[] params, BitwigBuddyExtension extension) {
+        double releaseVelocity = Double.parseDouble(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        extension.getHost().println("Selected notes: " + selectedNotes.size());
+
+        for (NoteStep note : selectedNotes) {
+            note.setReleaseVelocity(releaseVelocity);
         }
     }
 
