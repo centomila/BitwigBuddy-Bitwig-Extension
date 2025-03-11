@@ -14,22 +14,18 @@ import java.util.regex.Pattern;
 
 public class ExecuteBitwigAction {
 
-    public static void executeBitwigAction(String actionId, BitwigBuddyExtension extension) {
+    public static boolean executeBitwigAction(String actionId, BitwigBuddyExtension extension) {
         ControllerHost host = extension.getHost();
         host.println("Executing Bitwig action: " + actionId);
-        // strip the bb: prefix - only take what's after the first colon
-        actionId = actionId.substring(actionId.indexOf(":") + 1).trim();
 
         // If this line is a comment, show it and skip
         if (actionId.startsWith("//")) {
             host.println("Skipping comment line: " + actionId);
-            return;
+            return true;
         }
 
         String[] params;
-        // action id could be like bb:actionId(param1, param2). Parameters are separated
-        // by comma. Parameters can contain any characters including parentheses and
-        // colons.
+        // Parse parameters from action string
         if (actionId.contains("(")) {
             int start = actionId.indexOf("(");
             int end = actionId.lastIndexOf(")");
@@ -78,7 +74,13 @@ public class ExecuteBitwigAction {
 
         host.println("Executing Bitwig action: " + actionId);
 
-        handleAction(actionId, params, extension);
+        try {
+            handleAction(actionId, params, extension);
+            return true; // Action was handled by our switch statement
+        } catch (IllegalArgumentException e) {
+            // Action wasn't found in our switch statement
+            return false;
+        }
     }
 
     private static void handleAction(String actionId, String[] params, BitwigBuddyExtension extension) {
@@ -139,6 +141,7 @@ public class ExecuteBitwigAction {
             case "Time Signature": handleTimeSignature(params, extension); break;
             case "Wait": handleWait(params); break;
             case "Message": handleMessage(params); break;
+            default: throw new IllegalArgumentException("Unknown action: " + actionId);
         }
     }
 

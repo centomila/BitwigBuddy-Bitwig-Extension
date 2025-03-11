@@ -248,15 +248,21 @@ public class MacroActionSettings {
         host.println("Executing command " + (index + 1) + "/" + commands.length + ": " + command + " at " + startTime);
 
         // Execute the current command
-        if (command.startsWith("bb:")) {
-            ExecuteBitwigAction.executeBitwigAction(command, extension);
-        } else {
-            Action action = extension.getApplication().getAction(command);
-            if (action != null) {
-                action.invoke();
-            } else {
-                host.errorln("Action not found: " + command);
+        try {
+            // Try executing via ExecuteBitwigAction first
+            boolean handled = ExecuteBitwigAction.executeBitwigAction(command, extension);
+            
+            // If not handled, try default Bitwig action
+            if (!handled) {
+                Action action = extension.getApplication().getAction(command);
+                if (action != null) {
+                    action.invoke();
+                } else {
+                    host.errorln("Action not found: " + command);
+                }
             }
+        } catch (Exception e) {
+            host.errorln("Error executing command '" + command + "': " + e.getMessage());
         }
 
         host.println("Completed command " + (index + 1) + "/" + commands.length + ": " + command +

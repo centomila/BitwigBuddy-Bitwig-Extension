@@ -2,7 +2,7 @@ Macro: "Movement Test"
 Description: Test for moving in the launcher clip
 Author: "Centomila"
 
-bb: Right
-bb: Right
-bb: Down
-bb: Enter
+Right
+Right
+Down
+Enter

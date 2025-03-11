@@ -2,123 +2,123 @@ Macro: "Arrangement - Pop (Cue Markers)"
 Descritpion: "Test Cue Marker Name"
 Author: "Centomila"
 
-bb: DeleteAllCueMarkers
+DeleteAllCueMarkers
 
-bb: Wait (200)
+Wait (200)
 
 jump_to_beginning_of_arranger_window
 
-bb: Wait (200)
+Wait (200)
 
-bb: // Cue Marker 1
+// Cue Marker 1
 insert_arranger_cue_marker_at_play_position
 
-bb: Wait (200)
+Wait (200)
 
 jump_forward_8_bars
 
-bb: Wait (200)
+Wait (200)
 
-bb: // Cue Marker 2
+// Cue Marker 2
 insert_arranger_cue_marker_at_play_position
 
-bb: Wait (200)
+Wait (200)
 
 jump_forward_8_bars
 
-bb: Wait (200)
+Wait (200)
 
-bb: // Cue Marker 3
+// Cue Marker 3
 insert_arranger_cue_marker_at_play_position
 
-bb: Wait (200)
+Wait (200)
 
 jump_forward_8_bars
 
-bb: Wait (200)
+Wait (200)
 
-bb: // Cue Marker 4
+// Cue Marker 4
 insert_arranger_cue_marker_at_play_position
 
-bb: Wait (200)
+Wait (200)
 
 jump_forward_8_bars
 
-bb: Wait (200)
+Wait (200)
 
-bb: // Cue Marker 5
+// Cue Marker 5
 insert_arranger_cue_marker_at_play_position
 
-bb: Wait (200)
+Wait (200)
 
 jump_forward_8_bars
 
-bb: Wait (200)
+Wait (200)
 
-bb: // Cue Marker 6
+// Cue Marker 6
 insert_arranger_cue_marker_at_play_position
 
-bb: Wait (200)
+Wait (200)
 
 jump_forward_8_bars
 
-bb: Wait (200)
+Wait (200)
 
-bb: // Cue Marker 7
+// Cue Marker 7
 insert_arranger_cue_marker_at_play_position
 
-bb: Wait (200)
+Wait (200)
 
 jump_forward_8_bars
 
-bb: Wait (200)
+Wait (200)
 
-bb: // Cue Marker 8
+// Cue Marker 8
 insert_arranger_cue_marker_at_play_position
 
-bb: Wait (200)
+Wait (200)
 
 jump_forward_8_bars
 
-bb: Wait (200)
+Wait (200)
 
-bb: // Cue Marker 9
+// Cue Marker 9
 insert_arranger_cue_marker_at_play_position
 
-bb: Wait (200)
+Wait (200)
 
 jump_forward_8_bars
 
-bb: Wait (200)
+Wait (200)
 
-bb: // Cue Marker 10
+// Cue Marker 10
 insert_arranger_cue_marker_at_play_position
 
-bb: Wait (200)
+Wait (200)
 
 jump_forward_8_bars
 
-bb: Wait (200)
+Wait (200)
 
-bb: CueMarkerName (1, Intro)
-bb: Wait (100)
-bb: CueMarkerName (2, Verse)
-bb: Wait (100)
-bb: CueMarkerName (3, Chorus)
-bb: Wait (100)
-bb: CueMarkerName (4, Verse)
-bb: Wait (100)
-bb: CueMarkerName (5, Chorus)
-bb: Wait (100)
-bb: CueMarkerName (6, Breakdown)
-bb: Wait (100)
-bb: CueMarkerName (7, Verse)
-bb: Wait (100)
-bb: CueMarkerName (8, Chorus)
-bb: Wait (100)
-bb: CueMarkerName (9, Chorus)
-bb: Wait (100)
-bb: CueMarkerName (10, Outro)
+CueMarkerName (1, Intro)
+Wait (100)
+CueMarkerName (2, Verse)
+Wait (100)
+CueMarkerName (3, Chorus)
+Wait (100)
+CueMarkerName (4, Verse)
+Wait (100)
+CueMarkerName (5, Chorus)
+Wait (100)
+CueMarkerName (6, Breakdown)
+Wait (100)
+CueMarkerName (7, Verse)
+Wait (100)
+CueMarkerName (8, Chorus)
+Wait (100)
+CueMarkerName (9, Chorus)
+Wait (100)
+CueMarkerName (10, Outro)
 
-bb: Wait (100)
-bb: Bpm (120)
+Wait (100)
+Bpm (120)

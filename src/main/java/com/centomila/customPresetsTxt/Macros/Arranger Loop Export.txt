@@ -2,8 +2,8 @@ Macro: "Arranger Loop 16-32 to Export"
 Description: "Set the Arranger Loop position, go to export page and confirm with last used settings"
 Author: "Centomila"
 
-bb: Arranger Loop Start (16.0)
-bb: Wait (100)
-bb: Arranger Loop End (128.0)
+Arranger Loop Start (16.0)
+Wait (100)
+Arranger Loop End (128.0)
 Export Audio
-bb: Enter
+Enter
