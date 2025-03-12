@@ -127,6 +127,7 @@ The **Macro Mode** in BitwigBuddy allows users to execute pre-defined sequences 
 - 📂 **Select a Macro:** Loads a macro from the available macro files.
 - 📝 **Macro Description:** Displays details about the selected macro.
 - ▶️ **Execute Macro:** Runs the selected macro sequence.
+- ⏹️ **Stop Macro:** Stops the execution of the current macro.
 - 🔄 **Refresh Custom Files:** Reloads the available macro files.
 
 ### 📜 Available Actions
