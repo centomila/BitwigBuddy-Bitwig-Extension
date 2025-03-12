@@ -21,7 +21,7 @@
 | **Clip Delete**                              | Deletes the currently focused clip                            |                                            |
 | **Clip Rename**                              | Renames the currently focused clip                            |_Clip Rename (Verse 1)_                     |
 | **Clip Color**                               | Sets the color of the currently focused clip                  |_Clip Color (FF0000)_                       |
-| **Clip Create**                              | Creates a new clip in a given slot with a specified length    |                                            |
+| **Clip Create**                              | Create an empty clip. Param 1 = Slot ~ Param 2 Loop Length    |_Clip Create (3,32)_                        |
 | **Clip Loop On**                             | Enable Clip Looping Mode for the selected clip                |_Clip Loop On_                              |
 | **Clip Loop Off**                            | Disable Clip Looping Mode for the selected clip               |_Clip Loop Off_                             |
 | **Clip Accent**                              | Set the Clip Accent value (range 0.0-1.0. 0.752 = Acc 75.2%)  |_Clip Accent (0.75)_                        |

@@ -299,6 +299,7 @@ public class ExecuteBitwigAction {
     }
 
     private static void handleClipCreate(String[] params, BitwigBuddyExtension extension, int currentTrack) {
+        
         int clipLength = 4;
         if (params.length > 1) {
             try {
@@ -310,6 +311,7 @@ public class ExecuteBitwigAction {
 
         int slotIndex = Integer.parseInt(params[0].trim()) - 1;
         if (slotIndex >= 0) {
+            extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().getItemAt(slotIndex).deleteObject();
             extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank()
                     .createEmptyClip(slotIndex, clipLength);
             extension.getHost().println("Created empty clip with length: " + clipLength);

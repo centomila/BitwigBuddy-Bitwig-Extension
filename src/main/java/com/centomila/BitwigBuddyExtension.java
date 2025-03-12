@@ -73,7 +73,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.application = host.createApplication();
       this.cursorClip = host.createLauncherCursorClip((16 * 8), 128);
       this.arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
-      this.cursorTrack = host.createCursorTrack("BB_CURSOR_TRACK", "BB Cursor Track", 128, 0, true);
+      this.cursorTrack = host.createCursorTrack(0, 128);
       this.documentState = host.getDocumentState();
       this.transport = host.createTransport();
       this.arranger = host.createArranger();
