@@ -55,6 +55,10 @@ public class MacroActionSettings {
     public static Setting[] instantMacroLines = new Setting[8];
     public static Setting executeInstantMacroSignal;
 
+    // Add this near the other static fields at the top of the class
+    public static Setting macroStopBtnSignalSetting;
+    public static volatile boolean stopExecution = false;
+
     /**
      * Initializes the macro action settings for the extension.
      * Sets up the necessary settings UI elements and observers.
@@ -104,6 +108,10 @@ public class MacroActionSettings {
         macroLaunchBtnSignalSetting = (Setting) createSignalSetting("Execute Macro",
                 "Macro", "Execute the selected macro");
 
+        // Add this after the macroLaunchBtnSignalSetting initialization
+        macroStopBtnSignalSetting = (Setting) createSignalSetting("Stop Execution",
+                "Macro", "Stop the current macro execution");
+
         // macroPrintAllActionsBtnSignalSetting = (Setting) createSignalSetting("Print
         // All Actions in Console",
         // "Macro", "Signal to print all available actions");
@@ -124,6 +132,7 @@ public class MacroActionSettings {
         // Update allSettings array to include new settings
         allSettings = new Setting[] {
                 macroLaunchBtnSignalSetting,
+                macroStopBtnSignalSetting, // Add this line
                 macroSelectorSetting,
                 macroDescriptionSetting,
                 macroAuthorSetting, // Add this line
@@ -205,6 +214,13 @@ public class MacroActionSettings {
                 executeMacro(instantMacro, extension);
             }
         });
+
+        // Add this in initMacroActionObservers after other signal observers
+        ((Signal) macroStopBtnSignalSetting).addSignalObserver(() -> {
+            stopExecution = true;
+            host.println("Macro execution stop requested");
+            host.showPopupNotification("Stopping macro execution...");
+        });
     }
 
     /**
@@ -215,6 +231,8 @@ public class MacroActionSettings {
      * @param extension The BitwigBuddy extension instance
      */
     private static void executeMacro(Macro macro, BitwigBuddyExtension extension) {
+        stopExecution = false; // Reset the stop flag at start of execution
+        
         // Add timestamp to track when execution starts
         host.println("=== MACRO EXECUTION START: "
                 + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
@@ -237,9 +255,15 @@ public class MacroActionSettings {
      * @param extension The Bitwig extension
      */
     private static void scheduleCommands(String[] commands, int index, BitwigBuddyExtension extension) {
-        if (index >= commands.length) {
-            host.println("=== MACRO EXECUTION END: "
-                    + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
+        if (index >= commands.length || stopExecution) {
+            if (stopExecution) {
+                host.println("=== MACRO EXECUTION STOPPED BY USER ===");
+                host.showPopupNotification("Macro execution stopped");
+                stopExecution = false; // Reset the flag
+            } else {
+                host.println("=== MACRO EXECUTION END: "
+                        + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
+            }
             return;
         }
 
