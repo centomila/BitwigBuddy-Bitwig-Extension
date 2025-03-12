@@ -101,7 +101,7 @@ public class ExecuteBitwigAction {
             case "Cut": handleCut(extension); break;
             case "Undo": handleUndo(extension); break;
             case "Redo": handleRedo(extension); break;
-            case "Duplicate": handleDuplicate(extension); break;
+            // case "Duplicate": handleDuplicate(extension); break;
             case "Select All": handleSelectAll(extension); break;
             case "Select None": handleSelectNone(extension); break;
             case "Select First": handleSelectFirst(extension); break;
@@ -130,6 +130,17 @@ public class ExecuteBitwigAction {
             case "Step Selected Duration": handleStepSelectedDuration(params, extension); break;
             case "Step Selected Velocity Spread": handleStepSelectedVelocitySpread(params, extension); break;
             case "Step Selected Release Velocity": handleStepSelectedReleaseVelocity(params, extension); break;
+            case "Step Selected Is Chance Enabled": handleStepSelectedIsChanceEnabled(params, extension); break;
+            case "Step Selected Is Muted": handleStepSelectedIsMuted(params, extension); break;
+            case "Step Selected Is Occurrence Enabled": handleStepSelectedIsOccurrenceEnabled(params, extension); break;
+            case "Step Selected Is Recurrence Enabled": handleStepSelectedIsRecurrenceEnabled(params, extension); break;
+            case "Step Selected Is Repeat Enabled": handleStepSelectedIsRepeatEnabled(params, extension); break;
+            case "Step Selected Occurrence": handleStepSelectedOccurrence(params, extension); break;
+            case "Step Selected Recurrence": handleStepSelectedRecurrence(params, extension); break;
+            case "Step Selected Repeat Count": handleStepSelectedRepeatCount(params, extension); break;
+            case "Step Selected Repeat Curve": handleStepSelectedRepeatCurve(params, extension); break;
+            case "Step Selected Repeat Velocity Curve": handleStepSelectedRepeatVelocityCurve(params, extension); break;
+            case "Step Selected Repeat Velocity End": handleStepSelectedRepeatVelocityEnd(params, extension); break;
             case "Track Color": handleTrackColor(params, extension, currentTrack); break;
             case "Track Rename": handleTrackRename(params, extension, currentTrack); break;
             case "Track Select": handleTrackSelect(params, extension); break;
@@ -414,6 +425,95 @@ public class ExecuteBitwigAction {
 
         for (NoteStep note : selectedNotes) {
             note.setReleaseVelocity(releaseVelocity);
+        }
+    }
+
+    private static void handleStepSelectedIsChanceEnabled(String[] params, BitwigBuddyExtension extension) {
+        boolean isEnabled = Boolean.parseBoolean(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        for (NoteStep note : selectedNotes) {
+            note.setIsChanceEnabled(isEnabled);
+        }
+    }
+
+    private static void handleStepSelectedIsMuted(String[] params, BitwigBuddyExtension extension) {
+        boolean isMuted = Boolean.parseBoolean(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        for (NoteStep note : selectedNotes) {
+            note.setIsMuted(isMuted);
+        }
+    }
+
+    private static void handleStepSelectedIsOccurrenceEnabled(String[] params, BitwigBuddyExtension extension) {
+        boolean isEnabled = Boolean.parseBoolean(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        for (NoteStep note : selectedNotes) {
+            note.setIsOccurrenceEnabled(isEnabled);
+        }
+    }
+
+    private static void handleStepSelectedIsRecurrenceEnabled(String[] params, BitwigBuddyExtension extension) {
+        boolean isEnabled = Boolean.parseBoolean(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        for (NoteStep note : selectedNotes) {
+            note.setIsRecurrenceEnabled(isEnabled);
+        }
+    }
+
+    private static void handleStepSelectedIsRepeatEnabled(String[] params, BitwigBuddyExtension extension) {
+        boolean isEnabled = Boolean.parseBoolean(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        for (NoteStep note : selectedNotes) {
+            note.setIsRepeatEnabled(isEnabled);
+        }
+    }
+
+    private static void handleStepSelectedOccurrence(String[] params, BitwigBuddyExtension extension) {
+        NoteOccurrence condition = NoteOccurrence.valueOf(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        for (NoteStep note : selectedNotes) {
+            note.setOccurrence(condition);
+        }
+    }
+
+    private static void handleStepSelectedRecurrence(String[] params, BitwigBuddyExtension extension) {
+        int length = Integer.parseInt(params[0].trim());
+        int mask = Integer.parseInt(params[1].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        for (NoteStep note : selectedNotes) {
+            note.setRecurrence(length, mask);
+        }
+    }
+
+    private static void handleStepSelectedRepeatCount(String[] params, BitwigBuddyExtension extension) {
+        int count = Integer.parseInt(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        for (NoteStep note : selectedNotes) {
+            note.setRepeatCount(count);
+        }
+    }
+
+    private static void handleStepSelectedRepeatCurve(String[] params, BitwigBuddyExtension extension) {
+        double curve = Double.parseDouble(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        for (NoteStep note : selectedNotes) {
+            note.setRepeatCurve(curve);
+        }
+    }
+
+    private static void handleStepSelectedRepeatVelocityCurve(String[] params, BitwigBuddyExtension extension) {
+        double curve = Double.parseDouble(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        for (NoteStep note : selectedNotes) {
+            note.setRepeatVelocityCurve(curve);
+        }
+    }
+
+    private static void handleStepSelectedRepeatVelocityEnd(String[] params, BitwigBuddyExtension extension) {
+        double velocityEnd = Double.parseDouble(params[0].trim());
+        List<NoteStep> selectedNotes = ClipUtils.getSelectedNotes(extension);
+        for (NoteStep note : selectedNotes) {
+            note.setRepeatVelocityEnd(velocityEnd);
         }
     }
 
