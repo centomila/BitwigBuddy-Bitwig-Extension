@@ -1,5 +1,5 @@
 Macro: "Movement Test"
-Description: Test for moving in the launcher clip
+Description: "Test for moving in the launcher clip"
 Author: "Centomila"
 
 Right

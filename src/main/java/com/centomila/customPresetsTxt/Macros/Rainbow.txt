@@ -1,4 +1,4 @@
-Macro: "Rainbow (Clip Color and Rename Example)"
+Macro: "Rainbow Clip"
 Descritpion: "Duplicate the selected clip 64 times with rainbow colors"
 Author: "Centomila"
 
