@@ -4,23 +4,23 @@ import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.CueMarker;
 import com.bitwig.extension.controller.api.CueMarkerBank;
 import com.bitwig.extension.controller.api.CursorTrack;
+import com.bitwig.extension.controller.api.DeviceBank;
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Arranger;
 import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.ClipLauncherSlot;
-import com.bitwig.extension.controller.api.ClipLauncherSlotBank;
 import com.bitwig.extension.controller.api.DocumentState;
+import com.bitwig.extension.controller.api.DrumPadBank;
 import com.bitwig.extension.controller.api.Project;
 import com.bitwig.extension.controller.api.SceneBank;
 import com.bitwig.extension.controller.api.TimeSignatureValue;
-import com.bitwig.extension.controller.api.Track;
 import com.bitwig.extension.controller.api.TrackBank;
 import com.bitwig.extension.controller.api.Transport;
 import com.bitwig.extension.controller.api.Channel;
-import com.bitwig.extension.controller.api.ChannelBank;
 import com.centomila.utils.PopupUtils;
 import com.centomila.utils.SettingsHelper;
+import com.centomila.utils.DeviceMatcherDrumMachine;
 import com.centomila.utils.ExtensionPath;
 
 /**
@@ -36,6 +36,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public Clip cursorClip;
    public Clip arrangerClip;
    public CursorTrack cursorTrack;
+   public DeviceBank deviceBank;
+   public DrumPadBank drumPadBank;
    public Arranger arranger;
    public Transport transport;
    public Project project;
@@ -80,7 +82,10 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.timeSignature = transport.timeSignature();
       this.sceneBank = host.createSceneBank(128);
 
+      // Device Matcher
       this.trackBank = host.createTrackBank(128, 0, 128);
+      this.deviceBank = this.cursorTrack.createDeviceBank(1);
+      this.drumPadBank = deviceBank.getDevice(0).createDrumPadBank(128);
 
       // This makes sure the track bank tracks the selected track in Bitwig
       this.trackBank.followCursorTrack(cursorTrack);
@@ -176,6 +181,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
       MacroActionSettings.init(this);
 
       ModeSelectSettings.gotoGenerateMode();
+
+      DeviceMatcherDrumMachine.initializeDeviceMatcherDM(this, host);
 
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BitwigBuddy Initialized! Have fun!");

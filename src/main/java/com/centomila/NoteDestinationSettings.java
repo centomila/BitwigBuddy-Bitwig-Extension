@@ -40,6 +40,7 @@ public class NoteDestinationSettings {
    }
 
    private static String CATEGORY_NOTE_DESTINATION = "4 Note Destination";
+   public static String[] LEARN_NOTE_OPTIONS = new String[] { "Manual", "Learn", "DM" };
 
    /**
     * Initializes all note destination settings and observers.
@@ -59,6 +60,11 @@ public class NoteDestinationSettings {
             "---------------------------------------------------");
 
       disableSetting(spacerNoteDestination);
+
+      // Setup learn note setting
+
+      learnNoteSetting = (Setting) createEnumSetting(
+            "Learn Note", CATEGORY_NOTE_DESTINATION, LEARN_NOTE_OPTIONS, "DM");
 
       // Setup note and octave destination settings
       String[] noteDestinationOptions = Utils.NOTE_NAMES;
@@ -92,12 +98,6 @@ public class NoteDestinationSettings {
 
       setNoteDestSettings(new NoteDestinationSettings(
             noteChannelSetting, initialNote, initialOctave));
-
-      // Setup learn note setting
-      final String[] LEARN_NOTE_OPTIONS = new String[] { "On", "Off" };
-
-      learnNoteSetting = (Setting) createEnumSetting(
-            "Learn Note", CATEGORY_NOTE_DESTINATION, LEARN_NOTE_OPTIONS, "Off");
 
       // Setup note destination observers
       setupNoteDestinationObservers(extension);
@@ -187,12 +187,12 @@ public class NoteDestinationSettings {
     * @param host      The Bitwig Studio controller host
     */
    private static void setupPlayingNotesObserver(BitwigBuddyExtension extension, ControllerHost host) {
-      
+
       PlayingNoteArrayValue playingNotes = extension.cursorTrack.playingNotes();
       playingNotes.markInterested();
 
       playingNotes.addValueObserver(notes -> {
-         if (((EnumValue) learnNoteSetting).get().equals("On")) {
+         if (((EnumValue) learnNoteSetting).get().equals("Learn")) {
             for (PlayingNote note : notes) {
                String noteName = getNoteNameFromKey(note.pitch());
                String[] keyAndOctave = getKeyAndOctaveFromNoteName(noteName);
@@ -203,10 +203,12 @@ public class NoteDestinationSettings {
       });
 
       ((EnumValue) learnNoteSetting).addValueObserver(value -> {
-         if (value.equals("On")) {
+         if (value.equals("Learn")) {
             playingNotes.subscribe();
          } else {
-            playingNotes.unsubscribe();
+            if (playingNotes.isSubscribed()) {
+               playingNotes.unsubscribe();
+            }
          }
       });
    }
@@ -295,6 +297,5 @@ public class NoteDestinationSettings {
       // print in console
       showPopup(noteAndOctaveArray[0] + " | " + noteAndOctaveArray[1]);
 
-      
    }
 }

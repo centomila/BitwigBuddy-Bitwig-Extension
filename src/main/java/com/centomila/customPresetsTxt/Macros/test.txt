@@ -1,13 +1,14 @@
 Macro: "Test"
 Description: "This is just for testing"
+Author: "Centomila"
 
 // show_controller_script_console
 
-// bb: Time Signature (3/4)
-// bb: Clip Loop On
-// bb: Select Next
-// bb: Clip Loop Off
-// bb: Clip Accent (0.752)
-// bb: Insert File (2, "c:\Program Files\Common Files\Native Instruments\Kontakt 8\Content\Tools\Phrases\Library Data\MIDI Files\ZA_Last_Dance_Phrases_E_Ionian_Flat_2\06_Last Dance_E_Phrygian Dom_E_Phrygian Dom.mid")
-bb: Insert File (2, "c:\Users\Bach\AppData\Local\Bitwig Studio\installed-packages\5.0\Bitwig\Bitwig Drum Machines\Dub Techno Beat 2 126bpm.bwclip")
-// bb: Insert VST3 ("Reason Rack Plugin")
+// Time Signature (3/4)
+// Clip Loop On
+// Select Next
+// Clip Loop Off
+// Clip Accent (0.752)
+// Insert File (2, "c:\Program Files\Common Files\Native Instruments\Kontakt 8\Content\Tools\Phrases\Library Data\MIDI Files\ZA_Last_Dance_Phrases_E_Ionian_Flat_2\06_Last Dance_E_Phrygian Dom_E_Phrygian Dom.mid")
+Insert File (2, "c:\Users\Bach\AppData\Local\Bitwig Studio\installed-packages\5.0\Bitwig\Bitwig Drum Machines\Dub Techno Beat 2 126bpm.bwclip")
+// Insert VST3 ("Reason Rack Plugin")

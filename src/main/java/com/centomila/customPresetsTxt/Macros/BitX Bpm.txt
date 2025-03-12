@@ -1,6 +1,7 @@
 Macro: "BitX BPM (Tempo)"
 Descritpion: "Change the track tempo (Requires BitX)"
+Author: "Centomila"
 
-bb: Clip Color (FFFFB3)
-bb: Wait
-bb: Clip Rename (()BPM 130)
+Clip Color (FFFFB3)
+Wait
+Clip Rename (()BPM 130)

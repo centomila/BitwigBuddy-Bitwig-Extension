@@ -1,6 +1,7 @@
 Macro: "BitX SPN (Assign Name)"
 Descritpion: "Show a Popup Notification that dissapears after a few seconds (Requires BitX)"
+Author: "Centomila"
 
-bb: Clip Color (FFB3B3)
-bb: Wait
-bb: Clip Rename ("()SPN I Love BitX")
+Clip Color (FFB3B3)
+Wait
+Clip Rename ("()SPN I Love BitX")
