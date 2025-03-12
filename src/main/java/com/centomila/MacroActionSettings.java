@@ -59,6 +59,10 @@ public class MacroActionSettings {
     public static Setting macroStopBtnSignalSetting;
     public static volatile boolean stopExecution = false;
 
+    private static final int MAX_NESTING_LEVEL = 10;
+    private static boolean isExecutingMacro = false;
+    private static int nestingLevel = 0;
+
     /**
      * Initializes the macro action settings for the extension.
      * Sets up the necessary settings UI elements and observers.
@@ -245,6 +249,37 @@ public class MacroActionSettings {
 
         // Schedule sequential execution of commands with proper delays
         scheduleCommands(commands, 0, extension);
+    }
+
+    /**
+     * Executes a macro when called from another macro's action.
+     * This is a public static method to allow execution from ExecuteBitwigAction.
+     *
+     * @param macro     The macro to execute
+     * @param extension The BitwigBuddy extension instance
+     */
+    public static void executeMacroFromAction(Macro macro, BitwigBuddyExtension extension) {
+        // Check for recursive execution
+        if (isExecutingMacro) {
+            extension.getHost().println("Already executing a macro - nesting level: " + nestingLevel);
+            if (nestingLevel >= MAX_NESTING_LEVEL) {
+                extension.getHost().errorln("Maximum macro nesting level reached (" + MAX_NESTING_LEVEL + "). Stopping execution.");
+                return;
+            }
+            nestingLevel++;
+        } else {
+            isExecutingMacro = true;
+            nestingLevel = 1;
+        }
+
+        try {
+            executeMacro(macro, extension);
+        } finally {
+            nestingLevel--;
+            if (nestingLevel == 0) {
+                isExecutingMacro = false;
+            }
+        }
     }
 
     /**

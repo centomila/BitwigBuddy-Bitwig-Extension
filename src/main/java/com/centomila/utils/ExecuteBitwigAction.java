@@ -7,6 +7,7 @@ import com.centomila.BitwigBuddyExtension;
 import com.centomila.ClipUtils;
 import com.bitwig.extension.controller.api.*;
 import com.bitwig.extension.api.Color;
+import com.centomila.MacroActionSettings;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -152,6 +153,7 @@ public class ExecuteBitwigAction {
             case "Time Signature": handleTimeSignature(params, extension); break;
             case "Wait": handleWait(params); break;
             case "Message": handleMessage(params); break;
+            case "Macro": handleMacro(params, extension); break;
             default: throw new IllegalArgumentException("Unknown action: " + actionId);
         }
     }
@@ -593,6 +595,25 @@ public class ExecuteBitwigAction {
         if (params.length > 0) {
             showPopup(params[0]);
         }
+    }
+
+    private static void handleMacro(String[] params, BitwigBuddyExtension extension) {
+        if (params.length != 1) {
+            extension.getHost().errorln("Macro command requires exactly one parameter: the macro title");
+            return;
+        }
+
+        String macroTitle = params[0];
+        MacroActionSettings.Macro[] macros = MacroActionSettings.getMacros();
+        
+        for (MacroActionSettings.Macro macro : macros) {
+            if (macro.getTitle().equals(macroTitle)) {
+                MacroActionSettings.executeMacroFromAction(macro, extension);
+                return;
+            }
+        }
+        
+        extension.getHost().errorln("Macro not found: " + macroTitle);
     }
 
     private static int getCurrentTrackIndex(BitwigBuddyExtension extension) {
