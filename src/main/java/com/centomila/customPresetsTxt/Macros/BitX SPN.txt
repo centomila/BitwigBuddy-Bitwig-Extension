@@ -3,5 +3,4 @@ Descritpion: "Show a Popup Notification that dissapears after a few seconds (Req
 Author: "Centomila"
 
 Clip Color (FFB3B3)
-Wait
 Clip Rename ("()SPN I Love BitX")

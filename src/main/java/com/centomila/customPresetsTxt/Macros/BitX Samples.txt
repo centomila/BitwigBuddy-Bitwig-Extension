@@ -4,37 +4,37 @@ Author: "Centomila"
 
 Clip Create (1,4)
 Clip Color (FFB3B3)
-Wait
+
 Clip Rename ("()SPN I, Love, BitX")
 Clip Duplicate
 Clip Color (FFE6B3)
-Wait
+
 Clip Rename ("()SPN I Love BitwigBuddy")
 Clip Duplicate
 Clip Color (FFFFB3)
-Wait
+
 Clip Rename ("()BPM 130")
 Clip Duplicate
 Clip Color (B3FFB3)
-Wait
+
 Clip Rename ("()SMW Setting up drum sounds")
 Clip Duplicate
 Clip Color (B3FFFF)
-Wait
+
 Clip Rename ("()LDR Electronic Kit")
 Clip Duplicate
 Clip Color (B3B3FF)
-Wait
+
 Clip Rename ("()LIR Synth Lead:3")
 Clip Duplicate
 Clip Color (FFB3FF)
-Wait
+
 Clip Rename ("()SCF 1:3:5")
 Clip Duplicate
 Clip Color (E6B3FF)
-Wait
+
 Clip Rename ("()SNF C2:C5")
 Clip Duplicate
 Clip Color (FFB3E6)
-Wait
+
 Clip Rename ("()SNT 1:20:-10")

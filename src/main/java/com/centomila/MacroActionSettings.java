@@ -56,6 +56,7 @@ public class MacroActionSettings {
     public static Setting instantMacroSpacer;
     public static Setting[] instantMacroLines = new Setting[8];
     public static Setting executeInstantMacroSignal;
+    public static Setting clearAllInstantMacroLines; // Add this new field
 
     // Add this near the other static fields at the top of the class
     public static Setting macroStopBtnSignalSetting;
@@ -157,6 +158,9 @@ public class MacroActionSettings {
         executeInstantMacroSignal = (Setting) createSignalSetting("Execute Instant Macro",
                 "Instant Macro", "Execute this commands sequence");
 
+        clearAllInstantMacroLines = (Setting) createSignalSetting("Clear All Lines",
+                "Instant Macro", "Clear all instant macro lines");
+
         // Update allSettings array to include new settings
         allSettings = new Setting[] {
                 macroLaunchBtnSignalSetting,
@@ -173,7 +177,8 @@ public class MacroActionSettings {
                 instantMacroLines[5],
                 instantMacroLines[6],
                 instantMacroLines[7],
-                executeInstantMacroSignal
+                executeInstantMacroSignal,
+                clearAllInstantMacroLines  // Add this new setting
         };
     }
 
@@ -257,6 +262,15 @@ public class MacroActionSettings {
             stopExecution = true;
             host.println("Macro execution stop requested");
             host.showPopupNotification("Stopping macro execution...");
+        });
+
+        // Add this with other signal observers
+        ((Signal) clearAllInstantMacroLines).addSignalObserver(() -> {
+            // Clear all instant macro lines
+            for (Setting lineSetting : instantMacroLines) {
+                ((SettableStringValue) lineSetting).set("");
+            }
+            host.showPopupNotification("Cleared all instant macro lines");
         });
     }
 
