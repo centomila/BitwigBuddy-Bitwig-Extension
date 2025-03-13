@@ -63,6 +63,12 @@ public class MacroActionSettings {
     private static boolean isExecutingMacro = false;
     private static int nestingLevel = 0;
 
+    // Add these near other static fields at top of class
+    private static volatile boolean isExecuting = false;
+    private static final Object executionLock = new Object();
+    private static volatile String currentExecutionSource = null;
+    private static volatile long executionStartTime = 0;
+
     /**
      * Initializes the macro action settings for the extension.
      * Sets up the necessary settings UI elements and observers.
@@ -195,28 +201,36 @@ public class MacroActionSettings {
         // });
 
         ((Signal) executeInstantMacroSignal).addSignalObserver(() -> {
-            List<String> commands = new ArrayList<>();
-
-            // Collect non-empty commands from instant macro lines
-            for (Setting lineSetting : instantMacroLines) {
-                String command = ((SettableStringValue) lineSetting).get().trim();
-                if (!command.isEmpty()) {
-                    commands.add(command);
+            synchronized(executionLock) {
+                if (isExecuting) {
+                    host.println("Cannot start instant macro - execution in progress from: " + currentExecutionSource);
+                    host.showPopupNotification("Cannot start - execution in progress");
+                    return;
                 }
-            }
 
-            if (!commands.isEmpty()) {
-                // Create temporary macro
-                Macro instantMacro = new Macro(
-                        "instant_macro",
-                        "Instant Macro",
-                        commands.toArray(new String[0]),
-                        "Instant macro execution",
-                        "Unknown" // Default author for instant macros
-                );
+                List<String> commands = new ArrayList<>();
 
-                // Execute the macro
-                executeMacro(instantMacro, extension);
+                // Collect non-empty commands from instant macro lines
+                for (Setting lineSetting : instantMacroLines) {
+                    String command = ((SettableStringValue) lineSetting).get().trim();
+                    if (!command.isEmpty()) {
+                        commands.add(command);
+                    }
+                }
+
+                if (!commands.isEmpty()) {
+                    // Create temporary macro
+                    Macro instantMacro = new Macro(
+                            "instant_macro",
+                            "Instant Macro",
+                            commands.toArray(new String[0]),
+                            "Instant macro execution",
+                            "Unknown"
+                    );
+
+                    // Execute the macro
+                    executeMacro(instantMacro, extension);
+                }
             }
         });
 
@@ -236,20 +250,34 @@ public class MacroActionSettings {
      * @param extension The BitwigBuddy extension instance
      */
     private static void executeMacro(Macro macro, BitwigBuddyExtension extension) {
-        stopExecution = false; // Reset the stop flag at start of execution
-        
-        // Add timestamp to track when execution starts
-        host.println("=== MACRO EXECUTION START: "
-                + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
-        host.println("Executing macro: " + macro.getTitle());
-        String[] commands = macro.getCommands();
-        host.println("Commands sequence (total " + commands.length + "):");
-        for (int i = 0; i < commands.length; i++) {
-            host.println((i + 1) + ": " + commands[i]);
-        }
+        synchronized(executionLock) {
+            if (isExecuting) {
+                host.println("Another execution is in progress from: " + currentExecutionSource);
+                host.showPopupNotification("Cannot start macro - execution in progress");
+                return;
+            }
+            
+            try {
+                isExecuting = true;
+                currentExecutionSource = macro.getTitle();
+                executionStartTime = System.currentTimeMillis();
+                stopExecution = false;
+                
+                host.println("=== MACRO EXECUTION START: "
+                        + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
+                host.println("Executing macro: " + macro.getTitle());
+                String[] commands = macro.getCommands();
+                host.println("Commands sequence (total " + commands.length + "):");
+                for (int i = 0; i < commands.length; i++) {
+                    host.println((i + 1) + ": " + commands[i]);
+                }
 
-        // Schedule sequential execution of commands with proper delays
-        scheduleCommands(commands, 0, extension);
+                scheduleCommands(commands, 0, extension);
+
+            } finally {
+                // Note: Don't reset isExecuting here - it should be reset when all commands complete
+            }
+        }
     }
 
     /**
@@ -292,22 +320,29 @@ public class MacroActionSettings {
      */
     private static void scheduleCommands(String[] commands, int index, BitwigBuddyExtension extension) {
         if (index >= commands.length || stopExecution) {
-            if (stopExecution) {
-                host.println("=== MACRO EXECUTION STOPPED BY USER ===");
-                host.showPopupNotification("Macro execution stopped");
-                stopExecution = false; // Reset the flag
-            } else {
-                host.println("=== MACRO EXECUTION END: "
-                        + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
+            synchronized(executionLock) {
+                if (stopExecution) {
+                    host.println("=== MACRO EXECUTION STOPPED BY USER ===");
+                    host.showPopupNotification("Macro execution stopped");
+                    stopExecution = false;
+                } else {
+                    host.println("=== MACRO EXECUTION END: "
+                            + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
+                }
+                
+                // Reset execution state
+                isExecuting = false;
+                currentExecutionSource = null;
+                long duration = System.currentTimeMillis() - executionStartTime;
+                host.println("Total execution time: " + duration + "ms");
             }
             return;
         }
 
         String command = commands[index];
         final long startTime = System.currentTimeMillis();
-        host.println("Executing command " + (index + 1) + "/" + commands.length + ": " + command + " at " + startTime);
+        host.println("Executing command " + (index + 1) + "/" + commands.length + ": " + command);
 
-        // Execute the current command
         try {
             // Try executing via ExecuteBitwigAction first
             boolean handled = ExecuteBitwigAction.executeBitwigAction(command, extension);
@@ -328,10 +363,10 @@ public class MacroActionSettings {
         host.println("Completed command " + (index + 1) + "/" + commands.length + ": " + command +
                 " after " + (System.currentTimeMillis() - startTime) + "ms");
 
-        // Schedule the next command with a delay
+        // Schedule next command with delay
         extension.getHost().scheduleTask(() -> {
             scheduleCommands(commands, index + 1, extension);
-        }, 10); // 50ms delay between commands
+        }, 50); // Increased delay to 50ms for better reliability
     }
 
     /**

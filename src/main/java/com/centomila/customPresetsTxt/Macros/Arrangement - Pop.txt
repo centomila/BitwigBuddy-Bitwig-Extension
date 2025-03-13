@@ -4,121 +4,121 @@ Author: "Centomila"
 
 DeleteAllCueMarkers
 
-Wait (200)
+
 
 jump_to_beginning_of_arranger_window
 
-Wait (200)
+
 
 // Cue Marker 1
 insert_arranger_cue_marker_at_play_position
 
-Wait (200)
+
 
 jump_forward_8_bars
 
-Wait (200)
+
 
 // Cue Marker 2
 insert_arranger_cue_marker_at_play_position
 
-Wait (200)
+
 
 jump_forward_8_bars
 
-Wait (200)
+
 
 // Cue Marker 3
 insert_arranger_cue_marker_at_play_position
 
-Wait (200)
+
 
 jump_forward_8_bars
 
-Wait (200)
+
 
 // Cue Marker 4
 insert_arranger_cue_marker_at_play_position
 
-Wait (200)
+
 
 jump_forward_8_bars
 
-Wait (200)
+
 
 // Cue Marker 5
 insert_arranger_cue_marker_at_play_position
 
-Wait (200)
+
 
 jump_forward_8_bars
 
-Wait (200)
+
 
 // Cue Marker 6
 insert_arranger_cue_marker_at_play_position
 
-Wait (200)
+
 
 jump_forward_8_bars
 
-Wait (200)
+
 
 // Cue Marker 7
 insert_arranger_cue_marker_at_play_position
 
-Wait (200)
+
 
 jump_forward_8_bars
 
-Wait (200)
+
 
 // Cue Marker 8
 insert_arranger_cue_marker_at_play_position
 
-Wait (200)
+
 
 jump_forward_8_bars
 
-Wait (200)
+
 
 // Cue Marker 9
 insert_arranger_cue_marker_at_play_position
 
-Wait (200)
+
 
 jump_forward_8_bars
 
-Wait (200)
+
 
 // Cue Marker 10
 insert_arranger_cue_marker_at_play_position
 
-Wait (200)
+
 
 jump_forward_8_bars
 
-Wait (200)
+
 
 CueMarkerName (1, Intro)
-Wait (100)
+
 CueMarkerName (2, Verse)
-Wait (100)
+
 CueMarkerName (3, Chorus)
-Wait (100)
+
 CueMarkerName (4, Verse)
-Wait (100)
+
 CueMarkerName (5, Chorus)
-Wait (100)
+
 CueMarkerName (6, Breakdown)
-Wait (100)
+
 CueMarkerName (7, Verse)
-Wait (100)
+
 CueMarkerName (8, Chorus)
-Wait (100)
+
 CueMarkerName (9, Chorus)
-Wait (100)
+
 CueMarkerName (10, Outro)
 
-Wait (100)
+
 Bpm (120)
