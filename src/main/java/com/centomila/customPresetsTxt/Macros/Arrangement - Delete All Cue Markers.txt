@@ -1,4 +1,4 @@
-Macro: "Cue Markers: Delete All"
+Macro: "Arrangement: DELETE ALL CUE MARKERS"
 Descritpion: "Delete all cue markers"
 Author: "Centomila"
 

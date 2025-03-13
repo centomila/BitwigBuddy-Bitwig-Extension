@@ -2,123 +2,75 @@ Macro: "Arrangement - Pop (Cue Markers)"
 Descritpion: "Test Cue Marker Name"
 Author: "Centomila"
 
+Bpm (120)
+
 DeleteAllCueMarkers
 
-
-
-jump_to_beginning_of_arranger_window
-
-
-
 // Cue Marker 1
+jump_to_beginning_of_arranger_window
 insert_arranger_cue_marker_at_play_position
-
-
-
-jump_forward_8_bars
-
-
+CueMarkerName (1, Intro)
 
 // Cue Marker 2
-insert_arranger_cue_marker_at_play_position
-
-
-
 jump_forward_8_bars
-
-
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (2, Verse)
 
 // Cue Marker 3
-insert_arranger_cue_marker_at_play_position
-
-
-
 jump_forward_8_bars
-
-
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (3, Chorus)
 
 // Cue Marker 4
-insert_arranger_cue_marker_at_play_position
-
-
-
 jump_forward_8_bars
-
-
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (4, Verse)
 
 // Cue Marker 5
-insert_arranger_cue_marker_at_play_position
-
-
-
 jump_forward_8_bars
-
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (5, Chorus)
 
 
 // Cue Marker 6
-insert_arranger_cue_marker_at_play_position
-
-
-
 jump_forward_8_bars
-
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (6, Breakdown)
 
 
 // Cue Marker 7
-insert_arranger_cue_marker_at_play_position
-
-
-
 jump_forward_8_bars
-
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (7, Verse)
 
 
 // Cue Marker 8
-insert_arranger_cue_marker_at_play_position
-
-
-
 jump_forward_8_bars
-
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (8, Chorus)
 
 
 // Cue Marker 9
-insert_arranger_cue_marker_at_play_position
-
-
-
 jump_forward_8_bars
-
-
-
-// Cue Marker 10
 insert_arranger_cue_marker_at_play_position
-
-
-
-jump_forward_8_bars
-
-
-
-CueMarkerName (1, Intro)
-
-CueMarkerName (2, Verse)
-
-CueMarkerName (3, Chorus)
-
-CueMarkerName (4, Verse)
-
-CueMarkerName (5, Chorus)
-
-CueMarkerName (6, Breakdown)
-
-CueMarkerName (7, Verse)
-
-CueMarkerName (8, Chorus)
-
 CueMarkerName (9, Chorus)
 
+// Cue Marker 10
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
 CueMarkerName (10, Outro)
 
 
-Bpm (120)
+
+
+
+
+
+
+
+
+
+
+
+
+

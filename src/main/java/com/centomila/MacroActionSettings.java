@@ -667,9 +667,9 @@ public class MacroActionSettings {
         
         for (String command : macro.getCommands()) {
             // Check if this command is a macro reference
-            if (command.trim().startsWith("Macro(")) {
+            if (command.trim().matches("(?i)Macro\\s*\\(.*")) {
                 // Extract macro name using regex to handle whitespace variations
-                java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("Macro\\(\\s*\"([^\"]+)\"\\s*\\)");
+                java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("(?i)Macro\\s*\\(\\s*\"([^\"]+)\"\\s*\\)");
                 java.util.regex.Matcher matcher = pattern.matcher(command);
                 
                 if (matcher.find()) {

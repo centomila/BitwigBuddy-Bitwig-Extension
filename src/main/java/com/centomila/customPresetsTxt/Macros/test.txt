@@ -20,8 +20,8 @@ Message ("2")
 Message ("1")
 Wait
 
-Macro("Rainbow Clip")
+Macro ("Rainbow Clip")
 
-Message("Provona")
+Message ("Provona")
 
-Macro("Create 8 Tracks")
+Macro ("Create 8 Tracks")
