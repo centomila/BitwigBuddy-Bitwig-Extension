@@ -160,6 +160,8 @@ BB Toggle Launcher Arranger Mode
 Instant Macro is a sequence of 1 to 8 actions that can be executed instantly. They are stored with the project.
 - 📃 **Macro Line 1|2|3|4|5|6|7|8** Each line represents an action in the sequence.
 - 🚀 **Execute Instant Macro** Runs the instant macro sequence.
+- 🔃 **Refresh Custom Files:** Restart the extension and refresh the lists of Macros and Custom Presets.
+- 📝 **Open Macro File:** Opens the selected macro file in your default text editor for viewing or editing. No need for refresh the list after editing a macro already available in the list, just save the file.
 - 🧹 **Clear All Lines** Clears all instant macro lines.
 
 
