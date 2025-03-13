@@ -14,11 +14,14 @@ Author: "Centomila"
 // Insert VST3 ("Reason Rack Plugin")
 
 Message ("Colors in 3")
-Wait (1000)
-Message ("2")
-Wait (1000)
-Message ("1")
-Wait (1000)
 
-Macro (Rainbow Clip)
+Message ("2")
+
+Message ("1")
+
+
+Macro ("Rainbow Clip")
+
 Message ("Provona")
+
+Macro ("Create 8 Tracks")

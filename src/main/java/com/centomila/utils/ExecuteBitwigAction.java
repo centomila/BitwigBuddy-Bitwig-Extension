@@ -152,7 +152,7 @@ public class ExecuteBitwigAction {
             case "Arranger Loop Start": handleArrangerLoopStart(params, extension); break;
             case "Arranger Loop End": handleArrangerLoopEnd(params, extension); break;
             case "Time Signature": handleTimeSignature(params, extension); break;
-            case "Wait": handleWait(params); break;
+            case "Wait": handleWait(params, extension); break;
             case "Message": handleMessage(params); break;
             case "Macro": handleMacro(params, extension); break;
             case "BB Arranger Mode": handleArrangerMode(extension); break;
@@ -586,10 +586,11 @@ public class ExecuteBitwigAction {
         extension.transport.timeSignature().set(params[0].trim());
     }
 
-    private static void handleWait(String[] params) {
-        int waitTime = params.length > 0 ? Integer.parseInt(params[0]) : 250;
+    private static void handleWait(String[] params, BitwigBuddyExtension extension) {
+        int waitTime = params.length > 0 ? Integer.parseInt(params[0]) : 50;
         try {
             Thread.sleep(waitTime);
+            
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

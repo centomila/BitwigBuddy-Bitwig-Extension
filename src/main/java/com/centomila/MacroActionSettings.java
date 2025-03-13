@@ -163,7 +163,8 @@ public class MacroActionSettings {
      */
     private static void initMacroActionObservers(BitwigBuddyExtension extension) {
         ((Signal) macroLaunchBtnSignalSetting).addSignalObserver(() -> {
-            host.println("Signal triggered at " + System.currentTimeMillis());
+            host.println("Signal triggered at " + 
+                new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new java.util.Date()));
             long currentTime = System.currentTimeMillis();
             if (currentTime - lastExecutionTime > DEBOUNCE_MS) {
                 lastExecutionTime = currentTime;
