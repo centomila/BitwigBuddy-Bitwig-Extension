@@ -604,7 +604,7 @@ public class ExecuteBitwigAction {
 
     private static void handleMacro(String[] params, BitwigBuddyExtension extension) {
         if (params.length != 1) {
-            extension.getHost().errorln("Macro command requires exactly one parameter: the macro title");
+            extension.getHost().errorln("Macro command requires exactly one parameter (macro name)");
             return;
         }
 
@@ -613,8 +613,14 @@ public class ExecuteBitwigAction {
         
         for (MacroActionSettings.Macro macro : macros) {
             if (macro.getTitle().equals(macroTitle)) {
-                MacroActionSettings.executeMacroFromAction(macro, extension);
-                return;
+                // Execute in a synchronized block
+                synchronized(MacroActionSettings.getExecutionLock()) {
+                    // Reset execution state before nested execution
+                    MacroActionSettings.resetExecutionState();
+                    // Execute the nested macro
+                    MacroActionSettings.executeMacroFromAction(macro, extension);
+                    return;
+                }
             }
         }
         

@@ -15,8 +15,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Manages macro action settings and execution for the BitwigBuddy extension.
@@ -68,6 +70,22 @@ public class MacroActionSettings {
     private static final Object executionLock = new Object();
     private static volatile String currentExecutionSource = null;
     private static volatile long executionStartTime = 0;
+
+    // Add near the top with other static fields
+    private static final Object EXECUTION_LOCK = new Object();
+
+    // Add these public static methods
+    public static Object getExecutionLock() {
+        return EXECUTION_LOCK;
+    }
+
+    public static void resetExecutionState() {
+        synchronized(EXECUTION_LOCK) {
+            isExecuting = false;
+            currentExecutionSource = null;
+            stopExecution = false;
+        }
+    }
 
     /**
      * Initializes the macro action settings for the extension.
@@ -265,14 +283,17 @@ public class MacroActionSettings {
                 
                 host.println("=== MACRO EXECUTION START: "
                         + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
-                host.println("Executing macro: " + macro.getTitle());
-                String[] commands = macro.getCommands();
-                host.println("Commands sequence (total " + commands.length + "):");
-                for (int i = 0; i < commands.length; i++) {
-                    host.println((i + 1) + ": " + commands[i]);
+                host.println("Processing macro: " + macro.getTitle());
+
+                // Flatten macro commands
+                List<String> flattenedCommands = flattenMacroCommands(macro, extension, new HashSet<>());
+                
+                host.println("Commands sequence (total " + flattenedCommands.size() + "):");
+                for (int i = 0; i < flattenedCommands.size(); i++) {
+                    host.println((i + 1) + ": " + flattenedCommands.get(i));
                 }
 
-                scheduleCommands(commands, 0, extension);
+                scheduleCommands(flattenedCommands.toArray(new String[0]), 0, extension);
 
             } finally {
                 // Note: Don't reset isExecuting here - it should be reset when all commands complete
@@ -288,25 +309,29 @@ public class MacroActionSettings {
      * @param extension The BitwigBuddy extension instance
      */
     public static void executeMacroFromAction(Macro macro, BitwigBuddyExtension extension) {
-        // Check for recursive execution
-        if (isExecutingMacro) {
-            extension.getHost().println("Already executing a macro - nesting level: " + nestingLevel);
-            if (nestingLevel >= MAX_NESTING_LEVEL) {
-                extension.getHost().errorln("Maximum macro nesting level reached (" + MAX_NESTING_LEVEL + "). Stopping execution.");
-                return;
+        synchronized(EXECUTION_LOCK) {
+            // Check for recursive execution
+            if (isExecutingMacro) {
+                extension.getHost().println("Already executing a macro - nesting level: " + nestingLevel);
+                if (nestingLevel >= MAX_NESTING_LEVEL) {
+                    extension.getHost().errorln("Maximum macro nesting level reached (" + MAX_NESTING_LEVEL + "). Stopping execution.");
+                    return;
+                }
+                nestingLevel++;
+            } else {
+                isExecutingMacro = true;
+                nestingLevel = 1;
             }
-            nestingLevel++;
-        } else {
-            isExecutingMacro = true;
-            nestingLevel = 1;
-        }
 
-        try {
-            executeMacro(macro, extension);
-        } finally {
-            nestingLevel--;
-            if (nestingLevel == 0) {
-                isExecutingMacro = false;
+            try {
+                // Reset execution state before starting nested macro
+                resetExecutionState();
+                executeMacro(macro, extension);
+            } finally {
+                nestingLevel--;
+                if (nestingLevel == 0) {
+                    isExecutingMacro = false;
+                }
             }
         }
     }
@@ -627,5 +652,52 @@ public class MacroActionSettings {
         public String getDescription() {
             return description;
         }
+    }
+
+    private static List<String> flattenMacroCommands(Macro macro, BitwigBuddyExtension extension, Set<String> visitedMacros) {
+        List<String> flattenedCommands = new ArrayList<>();
+        
+        // Prevent infinite recursion
+        if (visitedMacros.contains(macro.getTitle())) {
+            extension.getHost().errorln("Circular macro reference detected: " + macro.getTitle());
+            return flattenedCommands;
+        }
+        
+        visitedMacros.add(macro.getTitle());
+        
+        for (String command : macro.getCommands()) {
+            // Check if this command is a macro reference
+            if (command.trim().startsWith("Macro(")) {
+                // Extract macro name using regex to handle whitespace variations
+                java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("Macro\\(\\s*\"([^\"]+)\"\\s*\\)");
+                java.util.regex.Matcher matcher = pattern.matcher(command);
+                
+                if (matcher.find()) {
+                    String macroName = matcher.group(1);
+                    
+                    // Find referenced macro
+                    Macro[] macros = getMacros();
+                    boolean macroFound = false;
+                    for (Macro referencedMacro : macros) {
+                        if (referencedMacro.getTitle().equals(macroName)) {
+                            // Recursively flatten nested macro
+                            flattenedCommands.addAll(flattenMacroCommands(referencedMacro, extension, visitedMacros));
+                            macroFound = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!macroFound) {
+                        extension.getHost().errorln("Referenced macro not found: " + macroName);
+                    }
+                } else {
+                    extension.getHost().errorln("Invalid macro reference format: " + command);
+                }
+            } else {
+                flattenedCommands.add(command);
+            }
+        }
+        
+        return flattenedCommands;
     }
 }
