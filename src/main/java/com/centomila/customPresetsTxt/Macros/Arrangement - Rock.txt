@@ -47,3 +47,5 @@ insert_arranger_cue_marker_at_play_position
 CueMarkerName (10, Outro)
 
 jump_to_beginning_of_next_bar
+
+Message ("Macro Finished")

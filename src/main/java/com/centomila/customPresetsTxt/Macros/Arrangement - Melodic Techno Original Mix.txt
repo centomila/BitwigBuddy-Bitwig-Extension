@@ -78,3 +78,5 @@ CueMarkerName (16, Outro Part 2 - Pads & FX Only)
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
 CueMarkerName (17, Track End - Silence)
+
+Message ("Macro Finished")

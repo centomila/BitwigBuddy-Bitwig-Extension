@@ -3,3 +3,5 @@ Descritpion: "Delete all cue markers"
 Author: "Centomila"
 
 DeleteAllCueMarkers
+
+Message ("Macro Finished")

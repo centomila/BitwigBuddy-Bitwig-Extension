@@ -194,3 +194,5 @@ Duplicate
 Clip Rename (3300FF - Blue)
 Clip Color (3300FF)
 Duplicate
+
+Message ("Macro Finished")
