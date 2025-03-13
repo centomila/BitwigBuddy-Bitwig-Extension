@@ -16,7 +16,6 @@ Clip Color (FF3300)
 Duplicate
 Clip Rename (FF4400 - Red)
 Clip Color (FF4400)
-Macro ("Create 8 Tracks")
 Duplicate
 Clip Rename (FF5500 - Red)
 Clip Color (FF5500)
