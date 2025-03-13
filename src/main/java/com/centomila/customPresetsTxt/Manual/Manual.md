@@ -168,7 +168,7 @@ Instant Macro is a sequence of 1 to 8 actions that can be executed instantly. Th
 - ⚡ **Use macros to automate repetitive tasks** like track renaming or cue marker adjustments.
 - 🔄 **Refresh the list** when adding new macro files to ensure they appear in the selection.
 - 📜 **Combine multiple actions** into a single macro for complex workflows.
-- 🔗 Launch a Macro from another Macro (Only as last action!).
+- 🔗 **Launch a Macro from another Macro** (In any position! The new Macro will pause the previous Macro!).
 - ⚠️ Keep in consideration that native windows actions are not supported (e.g., file dialogs like Save As).
 
 ---

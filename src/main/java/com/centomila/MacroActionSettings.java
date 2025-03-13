@@ -2,7 +2,7 @@ package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
 import com.centomila.utils.ExecuteBitwigAction;
-
+import com.centomila.utils.LoopProcessor;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.bitwig.extension.controller.api.ControllerHost;
@@ -679,7 +679,11 @@ public class MacroActionSettings {
         
         visitedMacros.add(macro.getTitle());
         
-        for (String command : macro.getCommands()) {
+        // Process commands through LoopProcessor first
+        LoopProcessor loopProcessor = new LoopProcessor();
+        List<String> processedCommands = loopProcessor.processLoop(Arrays.asList(macro.getCommands()));
+        
+        for (String command : processedCommands) {
             // Check if this command is a macro reference
             if (command.trim().matches("(?i)Macro\\s*\\(.*")) {
                 // Extract macro name using regex to handle whitespace variations
