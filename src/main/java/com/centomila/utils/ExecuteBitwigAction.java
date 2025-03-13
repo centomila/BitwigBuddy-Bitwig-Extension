@@ -5,6 +5,7 @@ import static com.centomila.utils.PopupUtils.showPopup;
 
 import com.centomila.BitwigBuddyExtension;
 import com.centomila.ClipUtils;
+import com.centomila.ModeSelectSettings;
 import com.bitwig.extension.controller.api.*;
 import com.bitwig.extension.api.Color;
 import com.centomila.MacroActionSettings;
@@ -154,6 +155,9 @@ public class ExecuteBitwigAction {
             case "Wait": handleWait(params); break;
             case "Message": handleMessage(params); break;
             case "Macro": handleMacro(params, extension); break;
+            case "BB Arranger Mode": handleArrangerMode(extension); break;
+            case "BB Launcher Mode": handleLauncherMode(extension); break;
+            case "BB Toggle Launcher Arranger Mode": handleToggleLauncherArrangerMode(extension); break;
             default: throw new IllegalArgumentException("Unknown action: " + actionId);
         }
     }
@@ -614,6 +618,20 @@ public class ExecuteBitwigAction {
         }
         
         extension.getHost().errorln("Macro not found: " + macroTitle);
+    }
+
+    private static void handleArrangerMode(BitwigBuddyExtension extension) {
+        ((SettableEnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).set("Arranger");
+    }
+
+    private static void handleLauncherMode(BitwigBuddyExtension extension) {
+        ((SettableEnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).set("Launcher");
+    }
+
+    private static void handleToggleLauncherArrangerMode(BitwigBuddyExtension extension) {
+        String currentMode = ((EnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).get();
+        String newMode = currentMode.equals("Launcher") ? "Arranger" : "Launcher";
+        ((SettableEnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).set(newMode);
     }
 
     private static int getCurrentTrackIndex(BitwigBuddyExtension extension) {

@@ -58,8 +58,8 @@ public class MacroActionSettings {
     // Add this near the other static fields at the top of the class
     public static Setting macroStopBtnSignalSetting;
     public static volatile boolean stopExecution = false;
-
-    private static final int MAX_NESTING_LEVEL = 10;
+    
+    private static final int MAX_NESTING_LEVEL = Integer.MAX_VALUE;
     private static boolean isExecutingMacro = false;
     private static int nestingLevel = 0;
 
