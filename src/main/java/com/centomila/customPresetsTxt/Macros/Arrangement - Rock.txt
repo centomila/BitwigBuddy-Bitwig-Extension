@@ -1,7 +1,7 @@
-Macro: "Arrangement - Pop (Cue Markers)"
-Description: "Generate Cue Markers for a Pop Track"
+Macro: "Arrangement - Rock (Cue Markers)"
+Description: "Generate Cue Markers for a Rock Track"
 Author: "Centomila"
-Bpm (120)
+Bpm (140)
 Time Signature ("4/4")
 
 DeleteAllCueMarkers
@@ -36,7 +36,7 @@ CueMarkerName (7, Chorus 2)
 
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (8, Bridge)
+CueMarkerName (8, Guitar Solo)
 
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position

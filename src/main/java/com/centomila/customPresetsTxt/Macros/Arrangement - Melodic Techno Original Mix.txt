@@ -1,0 +1,80 @@
+Macro: "Arrangement - Melodic Techno Original Mix"
+Description: "Generate Cue Markers for a detailed Melodic Techno extended mix"
+Author: "Centomila"
+Bpm (124)
+Time Signature ("4/4")
+
+DeleteAllCueMarkers
+
+jump_to_beginning_of_arranger_window
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (1, Intro - Pads & Atmos)
+
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (2, Percussion Layer Introduced)
+
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (3, Bassline Introduction)
+
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (4, Kick Drum Enters)
+
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (5, Hi-Hats & Groove Develops)
+
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (6, Synth Arps Introduced)
+
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (7, First Break - Pads & FX)
+
+jump_forward_8_bars
+jump_to_beginning_of_next_bar
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (8, Subtle Build-Up - Filtering Elements)
+
+jump_forward_8_bars
+jump_to_beginning_of_next_bar
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (9, Drop 1 - Full Groove) // Slight anticipation for impact
+
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (10, Melody Layer Progression)
+
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (11, Breakdown - Pads & Reverb Tails)
+
+jump_forward_8_bars
+jump_to_beginning_of_next_bar
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (12, Tension Build - Snare Rolls & Riser FX)
+
+jump_forward_8_bars
+jump_to_beginning_of_next_bar
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (13, Drop 2 - Peak Energy) // Pre-drop tension build
+
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (14, Sub Bass Groove Variation)
+
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (15, Outro Part 1 - Elements Fade Out)
+
+jump_forward_8_bars
+jump_to_beginning_of_next_bar
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (16, Outro Part 2 - Pads & FX Only)
+
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (17, Track End - Silence)

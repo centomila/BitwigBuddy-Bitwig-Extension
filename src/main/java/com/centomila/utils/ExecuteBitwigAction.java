@@ -179,7 +179,7 @@ public class ExecuteBitwigAction {
     }
 
     private static void handleDeleteAllCueMarkers(BitwigBuddyExtension extension) {
-        for (int pass = 0; pass < 4; pass++) {
+        for (int pass = 0; pass < 16; pass++) {
             for (int i = 0; i < 128; i++) {
                 CueMarker cueMarker = extension.cueMarkerBank.getItemAt(i);
                 if (cueMarker.exists().get()) {
