@@ -88,6 +88,9 @@ public class MacroActionSettings {
         }
     }
 
+    // Add with other static fields at top of class
+    public static Setting openMacroSignal;
+
     /**
      * Initializes the macro action settings for the extension.
      * Sets up the necessary settings UI elements and observers.
@@ -141,6 +144,10 @@ public class MacroActionSettings {
         macroStopBtnSignalSetting = (Setting) createSignalSetting("Stop Execution",
                 "Macro", "Stop the current macro execution");
 
+        // Add after other settings initialization but before allSettings array
+        openMacroSignal = (Setting) createSignalSetting("Open Macro File", 
+            "Macro", "Open the selected macro file in default editor");
+
         // macroPrintAllActionsBtnSignalSetting = (Setting) createSignalSetting("Print
         // All Actions in Console",
         // "Macro", "Signal to print all available actions");
@@ -169,6 +176,7 @@ public class MacroActionSettings {
                 macroDescriptionSetting,
                 macroAuthorSetting, // Add this line
                 macroSpacerSetting,
+                openMacroSignal, // Add this line
                 instantMacroLines[0],
                 instantMacroLines[1],
                 instantMacroLines[2],
@@ -271,6 +279,83 @@ public class MacroActionSettings {
                 ((SettableStringValue) lineSetting).set("");
             }
             host.showPopupNotification("Cleared all instant macro lines");
+        });
+
+        // Add with other observers
+        ((Signal) openMacroSignal).addSignalObserver(() -> {
+            Macro macro = getSelectedMacro();
+            if (macro != null) {
+                try {
+                    File macrosDir = new File(preferences.getPresetsPath(), "Macros");
+                    File macroFile = new File(macrosDir, macro.getFileName());
+                    
+                    if (macroFile.exists()) {
+                        boolean opened = false;
+                        
+                        // Try Desktop API first
+                        if (java.awt.Desktop.isDesktopSupported()) {
+                            java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
+                            if (desktop.isSupported(java.awt.Desktop.Action.OPEN)) {
+                                try {
+                                    desktop.open(macroFile);
+                                    opened = true;
+                                    host.println("Opening macro file: " + macroFile.getAbsolutePath());
+                                } catch (Exception e) {
+                                    host.errorln("Desktop API failed: " + e.getMessage());
+                                }
+                            }
+                        }
+                        
+                        // Fallback to system commands if Desktop API failed
+                        if (!opened) {
+                            ProcessBuilder pb;
+                            
+                            if (host.platformIsWindows()) {
+                                // Use Windows default file association
+                                pb = new ProcessBuilder("cmd", "/c", "start", "", macroFile.getAbsolutePath());
+                            } else if (host.platformIsMac()) {
+                                pb = new ProcessBuilder("open", "-t", macroFile.getAbsolutePath());
+                            } else if (host.platformIsLinux()) {
+                                // Linux - try common text editors in order
+                                String[] editors = {"gedit", "kate", "nano", "vim"};
+                                String editor = null;
+                                
+                                for (String e : editors) {
+                                    try {
+                                        Process p = new ProcessBuilder("which", e).start();
+                                        if (p.waitFor() == 0) {
+                                            editor = e;
+                                            break;
+                                        }
+                                    } catch (Exception ex) {
+                                        // Continue to next editor
+                                    }
+                                }
+                                
+                                if (editor != null) {
+                                    pb = new ProcessBuilder(editor, macroFile.getAbsolutePath());
+                                } else {
+                                    throw new IOException("No suitable text editor found");
+                                }
+                            } else {
+                                throw new IOException("Unsupported platform");
+                            }
+                            
+                            pb.start();
+                            host.println("Opening macro file using system command: " + macroFile.getAbsolutePath());
+                        }
+                    } else {
+                        host.errorln("Macro file not found: " + macroFile.getAbsolutePath());
+                        host.showPopupNotification("Macro file not found");
+                    }
+                } catch (Exception e) {
+                    host.errorln("Error opening macro file: " + e.getMessage());
+                    host.showPopupNotification("Error opening macro file");
+                    e.printStackTrace();
+                }
+            } else {
+                host.showPopupNotification("No macro selected");
+            }
         });
     }
 
