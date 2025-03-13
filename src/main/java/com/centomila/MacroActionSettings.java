@@ -206,7 +206,7 @@ public class MacroActionSettings {
             if (currentTime - lastExecutionTime > DEBOUNCE_MS) {
                 lastExecutionTime = currentTime;
 
-                Macro macro = getSelectedMacro();
+                MacroBB macro = getSelectedMacro();
                 if (macro != null) {
                     executeMacro(macro, extension);
                 }
@@ -217,7 +217,7 @@ public class MacroActionSettings {
 
         // Add observer for macro selection changes
         ((SettableEnumValue) macroSelectorSetting).addValueObserver(newValue -> {
-            Macro macro = getSelectedMacro();
+            MacroBB macro = getSelectedMacro();
             if (macro != null) {
                 ((SettableStringValue) macroDescriptionSetting).set(macro.getDescription());
                 ((SettableStringValue) macroAuthorSetting).set(macro.getAuthor()); // Add this line
@@ -251,7 +251,7 @@ public class MacroActionSettings {
 
                 if (!commands.isEmpty()) {
                     // Create temporary macro
-                    Macro instantMacro = new Macro(
+                    MacroBB instantMacro = new MacroBB(
                             "instant_macro",
                             "Instant Macro",
                             commands.toArray(new String[0]),
@@ -283,7 +283,7 @@ public class MacroActionSettings {
 
         // Add with other observers
         ((Signal) openMacroSignal).addSignalObserver(() -> {
-            Macro macro = getSelectedMacro();
+            MacroBB macro = getSelectedMacro();
             if (macro != null) {
                 try {
                     File macrosDir = new File(preferences.getPresetsPath(), "Macros");
@@ -366,7 +366,7 @@ public class MacroActionSettings {
      * @param macro     The macro to execute
      * @param extension The BitwigBuddy extension instance
      */
-    private static void executeMacro(Macro macro, BitwigBuddyExtension extension) {
+    private static void executeMacro(MacroBB macro, BitwigBuddyExtension extension) {
         synchronized(executionLock) {
             if (isExecuting) {
                 host.println("Another execution is in progress from: " + currentExecutionSource);
@@ -407,7 +407,7 @@ public class MacroActionSettings {
      * @param macro     The macro to execute
      * @param extension The BitwigBuddy extension instance
      */
-    public static void executeMacroFromAction(Macro macro, BitwigBuddyExtension extension) {
+    public static void executeMacroFromAction(MacroBB macro, BitwigBuddyExtension extension) {
         synchronized(EXECUTION_LOCK) {
             // Check for recursive execution
             if (isExecutingMacro) {
@@ -518,22 +518,22 @@ public class MacroActionSettings {
      *
      * @return Array of Macro objects, empty array if no macros are found
      */
-    public static Macro[] getMacros() {
+    public static MacroBB[] getMacros() {
         File macrosDir = new File(preferences.getPresetsPath());
         String subdir = "Macros";
         macrosDir = new File(macrosDir, subdir);
-        List<Macro> macroList = new ArrayList<>();
+        List<MacroBB> macroList = new ArrayList<>();
 
         // Early return with empty array if directory doesn't exist or isn't accessible
         if (!macrosDir.exists() || !macrosDir.isDirectory()) {
             host.errorln("Macro directory does not exist or is not accessible: " + macrosDir);
-            return new Macro[0];
+            return new MacroBB[0];
         }
 
         File[] files = macrosDir.listFiles();
         if (files == null) {
             host.errorln("Failed to list files in macro directory: " + macrosDir);
-            return new Macro[0];
+            return new MacroBB[0];
         }
 
         // Sort files by name
@@ -542,14 +542,14 @@ public class MacroActionSettings {
         // Check if directory is empty
         if (files.length == 0) {
             host.errorln("Macro directory is empty");
-            return new Macro[0];
+            return new MacroBB[0];
         }
 
         // Process each file
         for (File file : files) {
             if (file.isFile()) {
                 try {
-                    Macro macro = readMacroFile(file);
+                    MacroBB macro = readMacroFile(file);
                     if (macro != null) {
                         macroList.add(macro);
                     }
@@ -559,7 +559,7 @@ public class MacroActionSettings {
             }
         }
 
-        return macroList.toArray(new Macro[0]);
+        return macroList.toArray(new MacroBB[0]);
     }
 
     /**
@@ -567,12 +567,12 @@ public class MacroActionSettings {
      *
      * @return The selected Macro or null if none is selected or available
      */
-    public static Macro getSelectedMacro() {
+    public static MacroBB getSelectedMacro() {
 
         String selectedTitle = ((SettableEnumValue) macroSelectorSetting).get();
-        Macro[] macros = getMacros();
+        MacroBB[] macros = getMacros();
 
-        for (Macro macro : macros) {
+        for (MacroBB macro : macros) {
             if (macro.getTitle().equals(selectedTitle)) {
                 return macro;
             }
@@ -585,7 +585,7 @@ public class MacroActionSettings {
      * Gets only the titles of available macros for the selector.
      */
     private static String[] getMacroTitles() {
-        Macro[] macros = getMacros();
+        MacroBB[] macros = getMacros();
         String[] titles = new String[macros.length];
         for (int i = 0; i < macros.length; i++) {
             titles[i] = macros[i].getTitle();
@@ -600,7 +600,7 @@ public class MacroActionSettings {
      * @return Macro object if successful, null if parsing failed
      * @throws IOException if file reading fails
      */
-    private static Macro readMacroFile(File file) throws IOException {
+    private static MacroBB readMacroFile(File file) throws IOException {
         List<String> lines = java.nio.file.Files.readAllLines(file.toPath());
         String title = "";
         String description = "No description";
@@ -662,7 +662,7 @@ public class MacroActionSettings {
             return null;
         }
 
-        return new Macro(file.getName(), title, commands.toArray(new String[0]), description, author);
+        return new MacroBB(file.getName(), title, commands.toArray(new String[0]), description, author);
     }
 
     private static void printAllAvailableActions(BitwigBuddyExtension extension) {
@@ -716,14 +716,14 @@ public class MacroActionSettings {
     /**
      * Immutable class representing a macro for the BitwigBuddy extension.
      */
-    public static final class Macro {
+    public static final class MacroBB {
         private final String fileName;
         private final String title;
         private final String[] commands;
         private final String description;
         private final String author;
 
-        public Macro(String fileName, String title, String[] commands, String description, String author) {
+        public MacroBB(String fileName, String title, String[] commands, String description, String author) {
             this.fileName = Objects.requireNonNull(fileName, "fileName cannot be null");
             this.title = Objects.requireNonNull(title, "title cannot be null");
             this.commands = Arrays.copyOf(Objects.requireNonNull(commands, "commands cannot be null"), commands.length);
@@ -753,7 +753,7 @@ public class MacroActionSettings {
         }
     }
 
-    private static List<String> flattenMacroCommands(Macro macro, BitwigBuddyExtension extension, Set<String> visitedMacros) {
+    private static List<String> flattenMacroCommands(MacroBB macro, BitwigBuddyExtension extension, Set<String> visitedMacros) {
         List<String> flattenedCommands = new ArrayList<>();
         
         // Prevent infinite recursion
@@ -779,9 +779,9 @@ public class MacroActionSettings {
                     String macroName = matcher.group(1);
                     
                     // Find referenced macro
-                    Macro[] macros = getMacros();
+                    MacroBB[] macros = getMacros();
                     boolean macroFound = false;
-                    for (Macro referencedMacro : macros) {
+                    for (MacroBB referencedMacro : macros) {
                         if (referencedMacro.getTitle().equals(macroName)) {
                             // Recursively flatten nested macro
                             flattenedCommands.addAll(flattenMacroCommands(referencedMacro, extension, visitedMacros));

@@ -609,9 +609,9 @@ public class ExecuteBitwigAction {
         }
 
         String macroTitle = params[0];
-        MacroActionSettings.Macro[] macros = MacroActionSettings.getMacros();
+        MacroActionSettings.MacroBB[] macros = MacroActionSettings.getMacros();
         
-        for (MacroActionSettings.Macro macro : macros) {
+        for (MacroActionSettings.MacroBB macro : macros) {
             if (macro.getTitle().equals(macroTitle)) {
                 // Execute in a synchronized block
                 synchronized(MacroActionSettings.getExecutionLock()) {
