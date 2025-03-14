@@ -38,14 +38,15 @@ import java.util.Set;
  * </p>
  */
 public class MacroActionSettings {
-
-    public static Setting macroLaunchBtnSignalSetting;
-    public static Setting macroSelectorSetting;
-    public static Setting macroDescriptionSetting;
-    public static Setting macroAuthorSetting; // Add this line
-    // public static Setting macroPrintAllActionsBtnSignalSetting;
+    // Replace single macro settings with arrays
+    public static Setting[] macroLaunchBtnSignalSettings = new Setting[4];
+    public static Setting[] macroSelectorSettings = new Setting[4];
+    public static Setting[] macroDescriptionSettings = new Setting[4];
+    public static Setting[] macroAuthorSettings = new Setting[4];
+    public static Setting[] macroOpenSignals = new Setting[4];
     public static Setting macroSpacerSetting;
     public static Setting[] allSettings;
+
     private static ControllerHost host;
     private static GlobalPreferences preferences;
     private static final String MACRO_PREFIX = "Macro:";
@@ -61,7 +62,7 @@ public class MacroActionSettings {
     // Add this near the other static fields at the top of the class
     public static Setting macroStopBtnSignalSetting;
     public static volatile boolean stopExecution = false;
-    
+
     private static final int MAX_NESTING_LEVEL = Integer.MAX_VALUE;
     private static boolean isExecutingMacro = false;
     private static int nestingLevel = 0;
@@ -81,15 +82,12 @@ public class MacroActionSettings {
     }
 
     public static void resetExecutionState() {
-        synchronized(EXECUTION_LOCK) {
+        synchronized (EXECUTION_LOCK) {
             isExecuting = false;
             currentExecutionSource = null;
             stopExecution = false;
         }
     }
-
-    // Add with other static fields at top of class
-    public static Setting openMacroSignal;
 
     /**
      * Initializes the macro action settings for the extension.
@@ -117,77 +115,91 @@ public class MacroActionSettings {
      * </ul>
      */
     private static void initMacroActionSettings() {
-
-        macroSpacerSetting = (Setting) createStringSetting(titleWithLine("MACRO"), "Macro", 0,
-                "---------------------------------------------------");
-        disableSetting(macroSpacerSetting);
-
         // Get macro titles for the selector
         String[] macroTitles = getMacroTitles();
         if (macroTitles.length == 0) {
             macroTitles = new String[] { "No Macros Found" };
         }
 
-        macroSelectorSetting = (Setting) createEnumSetting("Select a Macro", "Macro", macroTitles,
-                macroTitles[0]);
+        // Create settings for each macro slot
+        for (int i = 0; i < 4; i++) {
+            String slotNum = String.valueOf(i + 1);
+            String category = "Macro " + slotNum;
 
-        macroDescriptionSetting = (Setting) createStringSetting("Macro Description", "Macro", 0,
-                "Select a macro to execute");
+            // 0. Spacer Header
+            macroSpacerSetting = (Setting) createStringSetting(titleWithLine("MACRO " + slotNum),
+                    category, 0, "---------------------------------------------------");
+            disableSetting(macroSpacerSetting);
 
-        macroAuthorSetting = (Setting) createStringSetting("Macro Author", "Macro", 0,
-                "Unknown");
+            // 1. Preset List
+            macroSelectorSettings[i] = (Setting) createEnumSetting("Select Macro " + slotNum,
+                    category, macroTitles, macroTitles[0]);
 
-        macroLaunchBtnSignalSetting = (Setting) createSignalSetting("Execute Macro",
-                "Macro", "Execute the selected macro");
+            // 2. Open Button
+            macroOpenSignals[i] = (Setting) createSignalSetting("Open Macro " + slotNum + " File",
+                    category, "Open the selected macro file in default editor");
 
-        // Add this after the macroLaunchBtnSignalSetting initialization
-        macroStopBtnSignalSetting = (Setting) createSignalSetting("Stop Execution",
-                "Macro", "Stop the current macro execution");
+            // 3. Description
+            macroDescriptionSettings[i] = (Setting) createStringSetting("Macro " + slotNum + " Description",
+                    category, 0, "Select a macro to execute");
 
-        // Add after other settings initialization but before allSettings array
-        openMacroSignal = (Setting) createSignalSetting("Open Macro File", 
-            "Macro", "Open the selected macro file in default editor");
+            // 4. Author
+            macroAuthorSettings[i] = (Setting) createStringSetting("Macro " + slotNum + " Author",
+                    category, 0, "Unknown");
 
-        // macroPrintAllActionsBtnSignalSetting = (Setting) createSignalSetting("Print
-        // All Actions in Console",
-        // "Macro", "Signal to print all available actions");
-
-        // INSTANT MACRO SETTINGS
-        instantMacroSpacer = (Setting) createStringSetting(titleWithLine("INSTANT MACRO"), "Macro", 0,
-                "---------------------------------------------------");
-        disableSetting(instantMacroSpacer);
-        // Initialize instant macro line settings
-        for (int i = 0; i < 8; i++) {
-            instantMacroLines[i] = (Setting) createStringSetting("Macro Line " + (i + 1), "Instant Macro",
-                    256, "");
+            // 5. Run Button
+            macroLaunchBtnSignalSettings[i] = (Setting) createSignalSetting("Execute Macro " + slotNum,
+                    category, "Execute Macro " + slotNum);
         }
 
+        // Update allSettings array with the new order
+        List<Setting> settingsList = new ArrayList<>();
+
+        // Add macro groups with headers followed by their controls
+        for (int i = 0; i < 4; i++) {
+            // Add header separator first as section header
+
+            // Add macro controls after their header
+            settingsList.add(macroSelectorSettings[i]); // Preset List
+            settingsList.add(macroSelectorSettings[i]); // Preset List
+            settingsList.add(macroOpenSignals[i]); // Open Button
+            settingsList.add(macroDescriptionSettings[i]); // Description
+            settingsList.add(macroAuthorSettings[i]); // Author
+            settingsList.add(macroLaunchBtnSignalSettings[i]); // Run Button
+        }
+
+        // Add instant macro section
+        instantMacroSpacer = (Setting) createStringSetting(titleWithLine("INSTANT MACRO"),
+                "Instant Macro", 0, "---------------------------------------------------");
+        instantMacroSpacer.disable();
+
+        // Initialize instant macro line settings
+        for (int i = 0; i < 8; i++) {
+            instantMacroLines[i] = (Setting) createStringSetting("Instant Line " + (i + 1),
+                    "Instant Macro", 256, "");
+            settingsList.add(instantMacroLines[i]);
+        }
+
+        // Add instant macro control buttons
         executeInstantMacroSignal = (Setting) createSignalSetting("Execute Instant Macro",
                 "Instant Macro", "Execute this commands sequence");
+        settingsList.add(executeInstantMacroSignal);
 
         clearAllInstantMacroLines = (Setting) createSignalSetting("Clear All Lines",
                 "Instant Macro", "Clear all instant macro lines");
+        settingsList.add(clearAllInstantMacroLines);
 
-        // Update allSettings array to include new settings
-        allSettings = new Setting[] {
-                macroLaunchBtnSignalSetting,
-                macroStopBtnSignalSetting, // Add this line
-                macroSelectorSetting,
-                macroDescriptionSetting,
-                macroAuthorSetting, // Add this line
-                macroSpacerSetting,
-                openMacroSignal, // Add this line
-                instantMacroLines[0],
-                instantMacroLines[1],
-                instantMacroLines[2],
-                instantMacroLines[3],
-                instantMacroLines[4],
-                instantMacroLines[5],
-                instantMacroLines[6],
-                instantMacroLines[7],
-                executeInstantMacroSignal,
-                clearAllInstantMacroLines  // Add this new setting
-        };
+        // Add spacer title STOP
+        macroSpacerSetting = (Setting) createStringSetting(titleWithLine("STOP MACRO"),
+                "Macro Control", 0, "---------------------------------------------------");
+        disableSetting(macroSpacerSetting);
+
+        // Add stop button as the very last setting
+        macroStopBtnSignalSetting = (Setting) createSignalSetting("Stop All Macros",
+                "Macro Control", "Stop all currently executing macros");
+        settingsList.add(macroStopBtnSignalSetting);
+
+        allSettings = settingsList.toArray(new Setting[0]);
     }
 
     /**
@@ -199,40 +211,49 @@ public class MacroActionSettings {
      * @param extension The BitwigBuddy extension instance
      */
     private static void initMacroActionObservers(BitwigBuddyExtension extension) {
-        ((Signal) macroLaunchBtnSignalSetting).addSignalObserver(() -> {
-            host.println("Signal triggered at " + 
-                new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new java.util.Date()));
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - lastExecutionTime > DEBOUNCE_MS) {
-                lastExecutionTime = currentTime;
+        // Create observers for each macro slot
+        for (int i = 0; i < 4; i++) {
+            final int slotIndex = i;
 
-                MacroBB macro = getSelectedMacro();
-                if (macro != null) {
-                    executeMacro(macro, extension);
+            // Launch button observer
+            ((Signal) macroLaunchBtnSignalSettings[i]).addSignalObserver(() -> {
+                host.println("Signal triggered for Macro " + (slotIndex + 1) + " at " +
+                        new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new java.util.Date()));
+
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - lastExecutionTime > DEBOUNCE_MS) {
+                    lastExecutionTime = currentTime;
+
+                    MacroBB macro = getSelectedMacro(slotIndex);
+                    if (macro != null) {
+                        executeMacro(macro, extension);
+                    }
+                } else {
+                    host.println("Ignoring rapid signal trigger, wait " + DEBOUNCE_MS + "ms between triggers");
                 }
-            } else {
-                host.println("Ignoring rapid signal trigger, wait " + DEBOUNCE_MS + "ms between triggers");
-            }
-        });
+            });
 
-        // Add observer for macro selection changes
-        ((SettableEnumValue) macroSelectorSetting).addValueObserver(newValue -> {
-            MacroBB macro = getSelectedMacro();
-            if (macro != null) {
-                ((SettableStringValue) macroDescriptionSetting).set(macro.getDescription());
-                ((SettableStringValue) macroAuthorSetting).set(macro.getAuthor()); // Add this line
-            } else {
-                ((SettableStringValue) macroDescriptionSetting).set("No description");
-                ((SettableStringValue) macroAuthorSetting).set("Unknown"); // Add this line
-            }
-        });
+            // Macro selection observer
+            ((SettableEnumValue) macroSelectorSettings[i]).addValueObserver(newValue -> {
+                MacroBB macro = getSelectedMacro(slotIndex);
+                if (macro != null) {
+                    ((SettableStringValue) macroDescriptionSettings[slotIndex]).set(macro.getDescription());
+                    ((SettableStringValue) macroAuthorSettings[slotIndex]).set(macro.getAuthor());
+                } else {
+                    ((SettableStringValue) macroDescriptionSettings[slotIndex]).set("No description");
+                    ((SettableStringValue) macroAuthorSettings[slotIndex]).set("Unknown");
+                }
+            });
 
-        // ((Signal) macroPrintAllActionsBtnSignalSetting).addSignalObserver(() -> {
-        // printAllAvailableActions(extension);
-        // });
+            // Open macro file observer
+            ((Signal) macroOpenSignals[i]).addSignalObserver(() -> {
+                MacroBB macro = getSelectedMacro(slotIndex);
+                openMacroFile(macro, extension);
+            });
+        }
 
         ((Signal) executeInstantMacroSignal).addSignalObserver(() -> {
-            synchronized(executionLock) {
+            synchronized (executionLock) {
                 if (isExecuting) {
                     host.println("Cannot start instant macro - execution in progress from: " + currentExecutionSource);
                     host.showPopupNotification("Cannot start - execution in progress");
@@ -256,8 +277,7 @@ public class MacroActionSettings {
                             "Instant Macro",
                             commands.toArray(new String[0]),
                             "Instant macro execution",
-                            "Unknown"
-                    );
+                            "Unknown");
 
                     // Execute the macro
                     executeMacro(instantMacro, extension);
@@ -280,83 +300,6 @@ public class MacroActionSettings {
             }
             host.showPopupNotification("Cleared all instant macro lines");
         });
-
-        // Add with other observers
-        ((Signal) openMacroSignal).addSignalObserver(() -> {
-            MacroBB macro = getSelectedMacro();
-            if (macro != null) {
-                try {
-                    File macrosDir = new File(preferences.getPresetsPath(), "Macros");
-                    File macroFile = new File(macrosDir, macro.getFileName());
-                    
-                    if (macroFile.exists()) {
-                        boolean opened = false;
-                        
-                        // Try Desktop API first
-                        if (java.awt.Desktop.isDesktopSupported()) {
-                            java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
-                            if (desktop.isSupported(java.awt.Desktop.Action.OPEN)) {
-                                try {
-                                    desktop.open(macroFile);
-                                    opened = true;
-                                    host.println("Opening macro file: " + macroFile.getAbsolutePath());
-                                } catch (Exception e) {
-                                    host.errorln("Desktop API failed: " + e.getMessage());
-                                }
-                            }
-                        }
-                        
-                        // Fallback to system commands if Desktop API failed
-                        if (!opened) {
-                            ProcessBuilder pb;
-                            
-                            if (host.platformIsWindows()) {
-                                // Use Windows default file association
-                                pb = new ProcessBuilder("cmd", "/c", "start", "", macroFile.getAbsolutePath());
-                            } else if (host.platformIsMac()) {
-                                pb = new ProcessBuilder("open", "-t", macroFile.getAbsolutePath());
-                            } else if (host.platformIsLinux()) {
-                                // Linux - try common text editors in order
-                                String[] editors = {"gedit", "kate", "nano", "vim"};
-                                String editor = null;
-                                
-                                for (String e : editors) {
-                                    try {
-                                        Process p = new ProcessBuilder("which", e).start();
-                                        if (p.waitFor() == 0) {
-                                            editor = e;
-                                            break;
-                                        }
-                                    } catch (Exception ex) {
-                                        // Continue to next editor
-                                    }
-                                }
-                                
-                                if (editor != null) {
-                                    pb = new ProcessBuilder(editor, macroFile.getAbsolutePath());
-                                } else {
-                                    throw new IOException("No suitable text editor found");
-                                }
-                            } else {
-                                throw new IOException("Unsupported platform");
-                            }
-                            
-                            pb.start();
-                            host.println("Opening macro file using system command: " + macroFile.getAbsolutePath());
-                        }
-                    } else {
-                        host.errorln("Macro file not found: " + macroFile.getAbsolutePath());
-                        host.showPopupNotification("Macro file not found");
-                    }
-                } catch (Exception e) {
-                    host.errorln("Error opening macro file: " + e.getMessage());
-                    host.showPopupNotification("Error opening macro file");
-                    e.printStackTrace();
-                }
-            } else {
-                host.showPopupNotification("No macro selected");
-            }
-        });
     }
 
     /**
@@ -367,26 +310,26 @@ public class MacroActionSettings {
      * @param extension The BitwigBuddy extension instance
      */
     private static void executeMacro(MacroBB macro, BitwigBuddyExtension extension) {
-        synchronized(executionLock) {
+        synchronized (executionLock) {
             if (isExecuting) {
                 host.println("Another execution is in progress from: " + currentExecutionSource);
                 host.showPopupNotification("Cannot start macro - execution in progress");
                 return;
             }
-            
+
             try {
                 isExecuting = true;
                 currentExecutionSource = macro.getTitle();
                 executionStartTime = System.currentTimeMillis();
                 stopExecution = false;
-                
+
                 host.println("=== MACRO EXECUTION START: "
                         + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
                 host.println("Processing macro: " + macro.getTitle());
 
                 // Flatten macro commands
                 List<String> flattenedCommands = flattenMacroCommands(macro, extension, new HashSet<>());
-                
+
                 host.println("Commands sequence (total " + flattenedCommands.size() + "):");
                 for (int i = 0; i < flattenedCommands.size(); i++) {
                     host.println((i + 1) + ": " + flattenedCommands.get(i));
@@ -395,7 +338,8 @@ public class MacroActionSettings {
                 scheduleCommands(flattenedCommands.toArray(new String[0]), 0, extension);
 
             } finally {
-                // Note: Don't reset isExecuting here - it should be reset when all commands complete
+                // Note: Don't reset isExecuting here - it should be reset when all commands
+                // complete
             }
         }
     }
@@ -408,12 +352,13 @@ public class MacroActionSettings {
      * @param extension The BitwigBuddy extension instance
      */
     public static void executeMacroFromAction(MacroBB macro, BitwigBuddyExtension extension) {
-        synchronized(EXECUTION_LOCK) {
+        synchronized (EXECUTION_LOCK) {
             // Check for recursive execution
             if (isExecutingMacro) {
                 extension.getHost().println("Already executing a macro - nesting level: " + nestingLevel);
                 if (nestingLevel >= MAX_NESTING_LEVEL) {
-                    extension.getHost().errorln("Maximum macro nesting level reached (" + MAX_NESTING_LEVEL + "). Stopping execution.");
+                    extension.getHost().errorln(
+                            "Maximum macro nesting level reached (" + MAX_NESTING_LEVEL + "). Stopping execution.");
                     return;
                 }
                 nestingLevel++;
@@ -444,7 +389,7 @@ public class MacroActionSettings {
      */
     private static void scheduleCommands(String[] commands, int index, BitwigBuddyExtension extension) {
         if (index >= commands.length || stopExecution) {
-            synchronized(executionLock) {
+            synchronized (executionLock) {
                 if (stopExecution) {
                     host.println("=== MACRO EXECUTION STOPPED BY USER ===");
                     host.showPopupNotification("Macro execution stopped");
@@ -453,7 +398,7 @@ public class MacroActionSettings {
                     host.println("=== MACRO EXECUTION END: "
                             + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
                 }
-                
+
                 // Reset execution state
                 isExecuting = false;
                 currentExecutionSource = null;
@@ -470,7 +415,7 @@ public class MacroActionSettings {
         try {
             // Try executing via ExecuteBitwigAction first
             boolean handled = ExecuteBitwigAction.executeBitwigAction(command, extension);
-            
+
             // If not handled, try default Bitwig action
             if (!handled) {
                 Action action = extension.getApplication().getAction(command);
@@ -563,13 +508,14 @@ public class MacroActionSettings {
     }
 
     /**
-     * Returns the currently selected macro based on the selector setting.
+     * Returns the currently selected macro based on the selector setting for a
+     * specific slot.
      *
+     * @param slotIndex The index of the macro slot
      * @return The selected Macro or null if none is selected or available
      */
-    public static MacroBB getSelectedMacro() {
-
-        String selectedTitle = ((SettableEnumValue) macroSelectorSetting).get();
+    public static MacroBB getSelectedMacro(int slotIndex) {
+        String selectedTitle = ((SettableEnumValue) macroSelectorSettings[slotIndex]).get();
         MacroBB[] macros = getMacros();
 
         for (MacroBB macro : macros) {
@@ -714,6 +660,87 @@ public class MacroActionSettings {
     }
 
     /**
+     * Opens a macro file in the default text editor.
+     * 
+     * @param macro     The macro whose file should be opened
+     * @param extension The BitwigBuddy extension instance
+     */
+    private static void openMacroFile(MacroBB macro, BitwigBuddyExtension extension) {
+        if (macro != null) {
+            try {
+                File macrosDir = new File(preferences.getPresetsPath(), "Macros");
+                File macroFile = new File(macrosDir, macro.getFileName());
+
+                if (macroFile.exists()) {
+                    boolean opened = false;
+
+                    // Try Desktop API first
+                    if (java.awt.Desktop.isDesktopSupported()) {
+                        java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
+                        if (desktop.isSupported(java.awt.Desktop.Action.OPEN)) {
+                            try {
+                                desktop.open(macroFile);
+                                opened = true;
+                                host.println("Opening macro file: " + macroFile.getAbsolutePath());
+                            } catch (Exception e) {
+                                host.errorln("Desktop API failed: " + e.getMessage());
+                            }
+                        }
+                    }
+
+                    // Fallback to system commands if Desktop API failed
+                    if (!opened) {
+                        ProcessBuilder pb;
+
+                        if (host.platformIsWindows()) {
+                            // Use Windows default file association
+                            pb = new ProcessBuilder("cmd", "/c", "start", "", macroFile.getAbsolutePath());
+                        } else if (host.platformIsMac()) {
+                            pb = new ProcessBuilder("open", "-t", macroFile.getAbsolutePath());
+                        } else if (host.platformIsLinux()) {
+                            // Linux - try common text editors in order
+                            String[] editors = { "gedit", "kate", "nano", "vim" };
+                            String editor = null;
+
+                            for (String e : editors) {
+                                try {
+                                    Process p = new ProcessBuilder("which", e).start();
+                                    if (p.waitFor() == 0) {
+                                        editor = e;
+                                        break;
+                                    }
+                                } catch (Exception ex) {
+                                    // Continue to next editor
+                                }
+                            }
+
+                            if (editor != null) {
+                                pb = new ProcessBuilder(editor, macroFile.getAbsolutePath());
+                            } else {
+                                throw new IOException("No suitable text editor found");
+                            }
+                        } else {
+                            throw new IOException("Unsupported platform");
+                        }
+
+                        pb.start();
+                        host.println("Opening macro file using system command: " + macroFile.getAbsolutePath());
+                    }
+                } else {
+                    host.errorln("Macro file not found: " + macroFile.getAbsolutePath());
+                    host.showPopupNotification("Macro file not found");
+                }
+            } catch (Exception e) {
+                host.errorln("Error opening macro file: " + e.getMessage());
+                host.showPopupNotification("Error opening macro file");
+                e.printStackTrace();
+            }
+        } else {
+            host.showPopupNotification("No macro selected");
+        }
+    }
+
+    /**
      * Immutable class representing a macro for the BitwigBuddy extension.
      */
     public static final class MacroBB {
@@ -753,31 +780,33 @@ public class MacroActionSettings {
         }
     }
 
-    private static List<String> flattenMacroCommands(MacroBB macro, BitwigBuddyExtension extension, Set<String> visitedMacros) {
+    private static List<String> flattenMacroCommands(MacroBB macro, BitwigBuddyExtension extension,
+            Set<String> visitedMacros) {
         List<String> flattenedCommands = new ArrayList<>();
-        
+
         // Prevent infinite recursion
         if (visitedMacros.contains(macro.getTitle())) {
             extension.getHost().errorln("Circular macro reference detected: " + macro.getTitle());
             return flattenedCommands;
         }
-        
+
         visitedMacros.add(macro.getTitle());
-        
+
         // Process commands through LoopProcessor first
         LoopProcessor loopProcessor = new LoopProcessor();
         List<String> processedCommands = loopProcessor.processLoop(Arrays.asList(macro.getCommands()));
-        
+
         for (String command : processedCommands) {
             // Check if this command is a macro reference
             if (command.trim().matches("(?i)Macro\\s*\\(.*")) {
                 // Extract macro name using regex to handle whitespace variations
-                java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("(?i)Macro\\s*\\(\\s*\"([^\"]+)\"\\s*\\)");
+                java.util.regex.Pattern pattern = java.util.regex.Pattern
+                        .compile("(?i)Macro\\s*\\(\\s*\"([^\"]+)\"\\s*\\)");
                 java.util.regex.Matcher matcher = pattern.matcher(command);
-                
+
                 if (matcher.find()) {
                     String macroName = matcher.group(1);
-                    
+
                     // Find referenced macro
                     MacroBB[] macros = getMacros();
                     boolean macroFound = false;
@@ -789,7 +818,7 @@ public class MacroActionSettings {
                             break;
                         }
                     }
-                    
+
                     if (!macroFound) {
                         extension.getHost().errorln("Referenced macro not found: " + macroName);
                     }
@@ -800,7 +829,7 @@ public class MacroActionSettings {
                 flattenedCommands.add(command);
             }
         }
-        
+
         return flattenedCommands;
     }
 }
