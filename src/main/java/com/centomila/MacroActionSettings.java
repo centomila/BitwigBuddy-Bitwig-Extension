@@ -46,6 +46,7 @@ public class MacroActionSettings {
     public static Setting[] macroOpenSignals = new Setting[4];
     public static Setting macroSpacerSetting;
     public static Setting[] allSettings;
+    public static Setting[] macroSpacerSettings = new Setting[4];
 
     private static ControllerHost host;
     private static GlobalPreferences preferences;
@@ -89,6 +90,19 @@ public class MacroActionSettings {
         }
     }
 
+    // Add this to the top of MacroActionSettings class with other static fields
+    public static Setting macroViewSelectorSetting;
+    public static final String VIEW_ALL = "All";
+    public static final String VIEW_SLOT1 = "1";
+    public static final String VIEW_SLOT2 = "2"; 
+    public static final String VIEW_SLOT3 = "3";
+    public static final String VIEW_SLOT4 = "4";
+    public static final String VIEW_IM = "Instant Macro";  // Changed from "IM"
+    public static final String VIEW_ALL_IM = "All + Instant Macro";  // Changed from "All+IM"
+
+    // Add new field for the header
+    public static Setting macroHeaderSetting;
+
     /**
      * Initializes the macro action settings for the extension.
      * Sets up the necessary settings UI elements and observers.
@@ -115,6 +129,15 @@ public class MacroActionSettings {
      * </ul>
      */
     private static void initMacroActionSettings() {
+        // Create header first
+        macroHeaderSetting = (Setting) createStringSetting(titleWithLine("MACRO"),
+                "Macro", 0, "---------------------------------------------------");
+        disableSetting(macroHeaderSetting);
+
+        // Create view selector
+        String[] viewOptions = new String[] { VIEW_IM, VIEW_SLOT1, VIEW_SLOT2, VIEW_SLOT3, VIEW_SLOT4, VIEW_ALL, VIEW_ALL_IM };
+        macroViewSelectorSetting = (Setting) createEnumSetting("Show Slots", "Macro", viewOptions, VIEW_SLOT1);
+
         // Get macro titles for the selector
         String[] macroTitles = getMacroTitles();
         if (macroTitles.length == 0) {
@@ -127,9 +150,9 @@ public class MacroActionSettings {
             String category = "Macro " + slotNum;
 
             // 0. Spacer Header
-            macroSpacerSetting = (Setting) createStringSetting(titleWithLine("MACRO " + slotNum),
+            macroSpacerSettings[i] = (Setting) createStringSetting(titleWithLine("MACRO " + slotNum),
                     category, 0, "---------------------------------------------------");
-            disableSetting(macroSpacerSetting);
+            disableSetting(macroSpacerSettings[i]);
 
             // 1. Preset List
             macroSelectorSettings[i] = (Setting) createEnumSetting("Select Macro " + slotNum,
@@ -154,13 +177,14 @@ public class MacroActionSettings {
 
         // Update allSettings array with the new order
         List<Setting> settingsList = new ArrayList<>();
+        
+        // Add header and view selector at the top
+        settingsList.add(macroHeaderSetting);
+        settingsList.add(macroViewSelectorSetting);
 
         // Add macro groups with headers followed by their controls
         for (int i = 0; i < 4; i++) {
-            // Add header separator first as section header
-
-            // Add macro controls after their header
-            settingsList.add(macroSelectorSettings[i]); // Preset List
+            settingsList.add(macroSpacerSettings[i]); // Add header separator first
             settingsList.add(macroSelectorSettings[i]); // Preset List
             settingsList.add(macroOpenSignals[i]); // Open Button
             settingsList.add(macroDescriptionSettings[i]); // Description
@@ -193,13 +217,16 @@ public class MacroActionSettings {
         macroSpacerSetting = (Setting) createStringSetting(titleWithLine("STOP MACRO"),
                 "Macro Control", 0, "---------------------------------------------------");
         disableSetting(macroSpacerSetting);
+        settingsList.add(macroSpacerSetting);
+        
 
         // Add stop button as the very last setting
         macroStopBtnSignalSetting = (Setting) createSignalSetting("Stop All Macros",
-                "Macro Control", "Stop all currently executing macros");
+        "Macro Control", "Stop all currently executing macros");
         settingsList.add(macroStopBtnSignalSetting);
-
+        
         allSettings = settingsList.toArray(new Setting[0]);
+        
     }
 
     /**
@@ -299,6 +326,40 @@ public class MacroActionSettings {
                 ((SettableStringValue) lineSetting).set("");
             }
             host.showPopupNotification("Cleared all instant macro lines");
+        });
+
+        // Add observer in initMacroActionObservers()
+        ((SettableEnumValue) macroViewSelectorSetting).addValueObserver(newValue -> {
+            switch (newValue) {
+                case VIEW_ALL:
+                    showMacroSlots(true, true, true, true);
+                    hideInstantMacro();
+                    break;
+                case VIEW_SLOT1:
+                    showMacroSlots(true, false, false, false);
+                    hideInstantMacro();
+                    break;
+                case VIEW_SLOT2:
+                    showMacroSlots(false, true, false, false);
+                    hideInstantMacro();
+                    break;
+                case VIEW_SLOT3:
+                    showMacroSlots(false, false, true, false);
+                    hideInstantMacro();
+                    break;
+                case VIEW_SLOT4:
+                    showMacroSlots(false, false, false, true);
+                    hideInstantMacro();
+                    break;
+                case VIEW_IM:
+                    showMacroSlots(false, false, false, false);
+                    showInstantMacro();
+                    break;
+                case VIEW_ALL_IM:
+                    showMacroSlots(true, true, true, true);
+                    showInstantMacro();
+                    break;
+            }
         });
     }
 
@@ -831,5 +892,54 @@ public class MacroActionSettings {
         }
 
         return flattenedCommands;
+    }
+
+    // Change these methods from private to public
+    public static void showMacroSlots(boolean slot1, boolean slot2, boolean slot3, boolean slot4) {
+        // Slot 1
+        setSettingsVisibility(0, slot1, macroSpacerSettings, macroSelectorSettings, macroOpenSignals, 
+            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+        
+        // Slot 2
+        setSettingsVisibility(1, slot2, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
+            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+        
+        // Slot 3
+        setSettingsVisibility(2, slot3, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
+            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+        
+        // Slot 4 
+        setSettingsVisibility(3, slot4, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
+            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+    }
+
+    public static void showInstantMacro() {
+        instantMacroSpacer.show();
+        for (Setting line : instantMacroLines) {
+            line.show();
+        }
+        executeInstantMacroSignal.show();
+        clearAllInstantMacroLines.show();
+    }
+
+    public static void hideInstantMacro() {
+        instantMacroSpacer.hide();
+        for (Setting line : instantMacroLines) {
+            line.hide();
+        }
+        executeInstantMacroSignal.hide();
+        clearAllInstantMacroLines.hide();
+    }
+
+    private static void setSettingsVisibility(int index, boolean show, Setting[]... settingsArrays) {
+        for (Setting[] settings : settingsArrays) {
+            if (settings[index] != null) {
+                if (show) {
+                    settings[index].show();
+                } else {
+                    settings[index].hide();
+                }
+            }
+        }
     }
 }
