@@ -60,6 +60,7 @@ public class ModeSelectSettings {
         MacroActionSettings.hideInstantMacro();
         MacroActionSettings.macroHeaderSetting.hide();
         MacroActionSettings.macroViewSelectorSetting.hide();
+        hideSetting(MacroActionSettings.allSettings);
     }
 
     private static void initToggleModeObservers() {
@@ -134,12 +135,7 @@ public class ModeSelectSettings {
 
     // GENERATE MODE
     public static void gotoGenerateMode() {
-        // First, hide all macro-related settings before showing generate settings
-        MacroActionSettings.hideMacroSettings();
-        MacroActionSettings.showMacroSlots(false, false, false, false);
-        MacroActionSettings.hideInstantMacro();
-        MacroActionSettings.macroHeaderSetting.hide();
-        MacroActionSettings.macroViewSelectorSetting.hide();
+
 
         // Show generate settings
         for (Setting setting : MoveStepsHandler.allSettings) {
@@ -171,12 +167,12 @@ public class ModeSelectSettings {
         PostActionSettings.showPostActionsSettings();
 
         // Hide all macro-related settings
+        // First, hide all macro-related settings before showing generate settings
         MacroActionSettings.hideMacroSettings();
         MacroActionSettings.showMacroSlots(false, false, false, false);
         MacroActionSettings.hideInstantMacro();
         MacroActionSettings.macroHeaderSetting.hide();
         MacroActionSettings.macroViewSelectorSetting.hide();
-        hideSetting(MacroActionSettings.allSettings);
 
         EditClipSettings.hideEditClipSettings();
     }
@@ -254,6 +250,10 @@ public class ModeSelectSettings {
                 MacroActionSettings.showInstantMacro();
                 break;
         }
+    }
+
+    public static String getCurrentMode() {
+        return ((EnumValue) modeGenerateEditToggleSetting).get();
     }
 
 }

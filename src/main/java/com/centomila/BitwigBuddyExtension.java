@@ -92,6 +92,21 @@ public class BitwigBuddyExtension extends ControllerExtension {
       
 
       this.cueMarkerBank = arranger.createCueMarkerBank(128);
+      this.transport.playStartPosition().markInterested();
+      this.transport.playStartPositionInSeconds().markInterested();
+      this.transport.playPosition().markInterested();
+      this.transport.playPositionInSeconds().markInterested();
+      this.transport.getPosition().markInterested();
+      this.transport.isPlaying().markInterested();
+      this.transport.isPunchInEnabled().markInterested();
+      this.transport.isPunchOutEnabled().markInterested();
+
+      this.transport.isArrangerLoopEnabled().markInterested();
+      this.transport.isClipLauncherOverdubEnabled().markInterested();
+      this.transport.isMetronomeEnabled().markInterested();
+      this.transport.tempo().markInterested();
+      this.transport.timeSignature().markInterested();
+      
 
       this.trackBank.cursorIndex().markInterested();
       this.trackBank.channelCount().markInterested();
@@ -161,17 +176,21 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.clipLauncherSlot.sceneIndex().markInterested();
       this.clipLauncherSlot.sceneIndex().markInterested();
 
+
+      // Initialize settings
       SettingsHelper.init(this);
 
       // Initialize settings in correct order for GUI layout
       ModeSelectSettings.init(this);
+      MacroActionSettings.init(this);
+      MacroActionSettings.hideMacroSettings();
       EditClipSettings.init(this);
       PatternSettings.init(this);
       ProgramPattern.init(this);
       NoteDestinationSettings.init(this);
       StepSizeSettings.init(this);
       PostActionSettings.init(this);
-      MacroActionSettings.init(this);
+      ModeSelectSettings.hideMacroSettings();
       ClipUtils.init(this);
       
       moveStepsHandler = new MoveStepsHandler(this);
@@ -179,8 +198,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
       
       DeviceMatcherDrumMachine.initializeDeviceMatcherDM(this, host);
       
-      ModeSelectSettings.gotoGenerateMode();
-      ModeSelectSettings.gotoMacroMode();
       ModeSelectSettings.gotoGenerateMode();
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BitwigBuddy Initialized! Have fun!");

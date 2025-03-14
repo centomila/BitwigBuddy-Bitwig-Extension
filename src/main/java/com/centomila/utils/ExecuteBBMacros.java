@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ExecuteBitwigAction {
+public class ExecuteBBMacros {
 
     public static boolean executeBitwigAction(String actionId, BitwigBuddyExtension extension) {
         ControllerHost host = extension.getHost();
@@ -256,6 +256,9 @@ public class ExecuteBitwigAction {
                 break;
             case "BB Toggle Launcher Arranger Mode":
                 handleToggleLauncherArrangerMode(extension);
+                break;
+            case "Transport Position":
+                handleTransportPosition(params, extension);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown action: " + actionId);
@@ -687,6 +690,13 @@ public class ExecuteBitwigAction {
         String currentMode = ((EnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).get();
         String newMode = currentMode.equals("Launcher") ? "Arranger" : "Launcher";
         ((SettableEnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).set(newMode);
+    }
+
+    private static void handleTransportPosition(String[] params, BitwigBuddyExtension extension) {
+        if (params.length == 1) {
+            double position = Double.parseDouble(params[0].trim());
+            extension.transport.setPosition(position);
+        }
     }
 
     private static int getCurrentTrackIndex(BitwigBuddyExtension extension) {

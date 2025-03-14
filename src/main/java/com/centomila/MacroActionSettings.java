@@ -1,7 +1,7 @@
 package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
-import com.centomila.utils.ExecuteBitwigAction;
+import com.centomila.utils.ExecuteBBMacros;
 import com.centomila.utils.LoopProcessor;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
@@ -30,7 +30,7 @@ public class MacroActionSettings {
     private static final String MACRO_PREFIX = "Macro:";
     private static final long DEBOUNCE_MS = 500;
     private static final int MAX_NESTING_LEVEL = Integer.MAX_VALUE;
-    
+
     // View constants
     public static final String VIEW_ALL = "All";
     public static final String VIEW_SLOT1 = "1";
@@ -93,7 +93,7 @@ public class MacroActionSettings {
 
         // Initialize settings first
         initMacroActionSettings();
-        
+
         // Then set up observers
         initMacroActionObservers(extension);
     }
@@ -115,15 +115,15 @@ public class MacroActionSettings {
         disableSetting(macroHeaderSetting);
 
         // Create view selector
-        String[] viewOptions = new String[] { 
-            VIEW_IM, 
-            VIEW_SLOT1, 
-            VIEW_SLOT2, 
-            VIEW_SLOT3, 
-            VIEW_SLOT4, 
-            VIEW_ALL, 
-            VIEW_ALL_IM,
-            VIEW_COMPACT  // Add new option
+        String[] viewOptions = new String[] {
+                VIEW_IM,
+                VIEW_SLOT1,
+                VIEW_SLOT2,
+                VIEW_SLOT3,
+                VIEW_SLOT4,
+                VIEW_ALL,
+                VIEW_ALL_IM,
+                VIEW_COMPACT // Add new option
         };
         macroViewSelectorSetting = (Setting) createEnumSetting("Show Slots", "Macro", viewOptions, VIEW_SLOT1);
 
@@ -166,7 +166,7 @@ public class MacroActionSettings {
 
         // Update allSettings array with the new order
         List<Setting> settingsList = new ArrayList<>();
-        
+
         // Add header and view selector at the top
         settingsList.add(macroHeaderSetting);
         settingsList.add(macroViewSelectorSetting);
@@ -214,10 +214,10 @@ public class MacroActionSettings {
         // Add stop button as the very last setting
         macroStopBtnSignalSetting = (Setting) createSignalSetting("Stop All Macros",
                 "Macro Control", "Stop all currently executing macros");
-        settingsList.add(macroStopBtnSignalSetting);  // Add this line
-        
+        settingsList.add(macroStopBtnSignalSetting); // Add this line
+
         allSettings = settingsList.toArray(new Setting[0]);
-        
+
     }
 
     /**
@@ -322,38 +322,44 @@ public class MacroActionSettings {
 
         // Add observer in initMacroActionObservers()
         ((SettableEnumValue) macroViewSelectorSetting).addValueObserver(newValue -> {
-            switch (newValue) {
-                case VIEW_ALL:
-                    showMacroSlots(true, true, true, true);
-                    hideInstantMacro();
-                    break;
-                case VIEW_SLOT1:
-                    showMacroSlots(true, false, false, false);
-                    hideInstantMacro();
-                    break;
-                case VIEW_SLOT2:
-                    showMacroSlots(false, true, false, false);
-                    hideInstantMacro();
-                    break;
-                case VIEW_SLOT3:
-                    showMacroSlots(false, false, true, false);
-                    hideInstantMacro();
-                    break;
-                case VIEW_SLOT4:
-                    showMacroSlots(false, false, false, true);
-                    hideInstantMacro();
-                    break;
-                case VIEW_IM:
-                    showMacroSlots(false, false, false, false);
-                    showInstantMacro();
-                    break;
-                case VIEW_ALL_IM:
-                    showMacroSlots(true, true, true, true);
-                    showInstantMacro();
-                    break;
-                case VIEW_COMPACT:
-                    showCompactView();
-                    break;
+            // if bb is in generate or edit mode, hide all, else go to the switch case
+            if (ModeSelectSettings.getCurrentMode().equals(ModeSelectSettings.MODE_MACRO)) {
+                switch (newValue) {
+                    case VIEW_ALL:
+                        showMacroSlots(true, true, true, true);
+                        hideInstantMacro();
+                        break;
+                    case VIEW_SLOT1:
+                        showMacroSlots(true, false, false, false);
+                        hideInstantMacro();
+                        break;
+                    case VIEW_SLOT2:
+                        showMacroSlots(false, true, false, false);
+                        hideInstantMacro();
+                        break;
+                    case VIEW_SLOT3:
+                        showMacroSlots(false, false, true, false);
+                        hideInstantMacro();
+                        break;
+                    case VIEW_SLOT4:
+                        showMacroSlots(false, false, false, true);
+                        hideInstantMacro();
+                        break;
+                    case VIEW_IM:
+                        showMacroSlots(false, false, false, false);
+                        showInstantMacro();
+                        break;
+                    case VIEW_ALL_IM:
+                        showMacroSlots(true, true, true, true);
+                        showInstantMacro();
+                        break;
+                    case VIEW_COMPACT:
+                        showCompactView();
+                        break;
+                }
+            } else {
+                hideMacroSettings();
+                hideInstantMacro();
             }
         });
     }
@@ -470,7 +476,7 @@ public class MacroActionSettings {
 
         try {
             // Try executing via ExecuteBitwigAction first
-            boolean handled = ExecuteBitwigAction.executeBitwigAction(command, extension);
+            boolean handled = ExecuteBBMacros.executeBitwigAction(command, extension);
 
             // If not handled, try default Bitwig action
             if (!handled) {
@@ -526,7 +532,8 @@ public class MacroActionSettings {
 
     private static void scanDirectory(File baseDir, File currentDir, List<MacroBB> macroList) {
         File[] files = currentDir.listFiles();
-        if (files == null) return;
+        if (files == null)
+            return;
 
         for (File file : files) {
             if (file.isFile() && file.getName().toLowerCase().endsWith(".txt")) {
@@ -537,7 +544,7 @@ public class MacroActionSettings {
                         String basePath = baseDir.getCanonicalPath();
                         String currentPath = currentDir.getCanonicalPath();
                         relativePath = currentPath.substring(basePath.length() + 1)
-                            .replace(File.separatorChar, '/') + "/";
+                                .replace(File.separatorChar, '/') + "/";
                     }
 
                     MacroBB macro = readMacroFile(file, relativePath);
@@ -657,8 +664,8 @@ public class MacroActionSettings {
         // Display title with relative path for selector
         String displayTitle = relativePath.isEmpty() ? title : relativePath + title;
 
-        return new MacroBB(file.getName(), displayTitle, commands.toArray(new String[0]), 
-                          description, author, relativePath);
+        return new MacroBB(file.getName(), displayTitle, commands.toArray(new String[0]),
+                description, author, relativePath);
     }
 
     private static void printAllAvailableActions(BitwigBuddyExtension extension) {
@@ -720,7 +727,7 @@ public class MacroActionSettings {
             try {
                 File macrosDir = new File(preferences.getPresetsPath(), "Macros");
                 File macroFile;
-                
+
                 if (!macro.getRelativePath().isEmpty()) {
                     // Convert relative path slashes to system-specific separator
                     String systemPath = macro.getRelativePath().replace('/', File.separatorChar);
@@ -808,7 +815,7 @@ public class MacroActionSettings {
         }
         // Be sure to hide everything related to macro settings
         hideInstantMacro();
-        
+
     }
 
     /**
@@ -823,17 +830,17 @@ public class MacroActionSettings {
     // Change these methods from private to public
     public static void showMacroSlots(boolean slot1, boolean slot2, boolean slot3, boolean slot4) {
         // Slot 1-4 visibility
-        setSettingsVisibility(0, slot1, macroSpacerSettings, macroSelectorSettings, macroOpenSignals, 
-            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
-        
+        setSettingsVisibility(0, slot1, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
+                macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+
         setSettingsVisibility(1, slot2, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
-            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
-        
+                macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+
         setSettingsVisibility(2, slot3, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
-            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
-        
+                macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+
         setSettingsVisibility(3, slot4, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
-            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+                macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
 
         // Always show stop controls when any macro slot is visible
         if (slot1 || slot2 || slot3 || slot4) {
@@ -879,20 +886,20 @@ public class MacroActionSettings {
         // Show only selectors, execute buttons, and separators for all slots
         for (int i = 0; i < 4; i++) {
             // Show separator and essential controls
-            macroSpacerSettings[i].show();     // Keep separator visible
-            macroSelectorSettings[i].show();    // Show selector
+            macroSpacerSettings[i].show(); // Keep separator visible
+            macroSelectorSettings[i].show(); // Show selector
             macroLaunchBtnSignalSettings[i].show(); // Show execute button
-            
+
             // Hide other controls
             macroOpenSignals[i].hide();
             macroDescriptionSettings[i].hide();
             macroAuthorSettings[i].hide();
         }
-        
+
         // Show stop button
         macroSpacerSetting.show();
         macroStopBtnSignalSetting.show();
-        
+
         // Hide instant macro section
         hideInstantMacro();
     }
@@ -908,7 +915,8 @@ public class MacroActionSettings {
         private final String author;
         private final String relativePath; // New field for relative path
 
-        public MacroBB(String fileName, String title, String[] commands, String description, String author, String relativePath) {
+        public MacroBB(String fileName, String title, String[] commands, String description, String author,
+                String relativePath) {
             this.fileName = Objects.requireNonNull(fileName, "fileName cannot be null");
             this.title = Objects.requireNonNull(title, "title cannot be null");
             this.commands = Arrays.copyOf(Objects.requireNonNull(commands, "commands cannot be null"), commands.length);
@@ -998,7 +1006,7 @@ public class MacroActionSettings {
     }
 
     // -------------------- Getter Methods --------------------
-    
+
     public static Object getExecutionLock() {
         return EXECUTION_LOCK;
     }
