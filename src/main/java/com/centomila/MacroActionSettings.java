@@ -2,7 +2,7 @@ package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
 import com.centomila.utils.ExecuteBitwigAction;
-
+import com.centomila.utils.LoopProcessor;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.bitwig.extension.controller.api.ControllerHost;
@@ -15,8 +15,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Manages macro action settings and execution for the BitwigBuddy extension.
@@ -36,24 +38,70 @@ import java.util.Objects;
  * </p>
  */
 public class MacroActionSettings {
-
-    public static Setting macroLaunchBtnSignalSetting;
-    public static Setting macroSelectorSetting;
-    public static Setting macroDescriptionSetting;
-    public static Setting macroAuthorSetting; // Add this line
-    // public static Setting macroPrintAllActionsBtnSignalSetting;
+    // Replace single macro settings with arrays
+    public static Setting[] macroLaunchBtnSignalSettings = new Setting[4];
+    public static Setting[] macroSelectorSettings = new Setting[4];
+    public static Setting[] macroDescriptionSettings = new Setting[4];
+    public static Setting[] macroAuthorSettings = new Setting[4];
+    public static Setting[] macroOpenSignals = new Setting[4];
     public static Setting macroSpacerSetting;
     public static Setting[] allSettings;
+    public static Setting[] macroSpacerSettings = new Setting[4];
+
     private static ControllerHost host;
     private static GlobalPreferences preferences;
     private static final String MACRO_PREFIX = "Macro:";
     private static long lastExecutionTime = 0;
     private static final long DEBOUNCE_MS = 500; // Adjust as needed
-    // TODO: 8 FIELDS FOR INSTA MACRO + SELECTOR: MACO FOLDER/INSTANT
+    
 
     public static Setting instantMacroSpacer;
     public static Setting[] instantMacroLines = new Setting[8];
     public static Setting executeInstantMacroSignal;
+    public static Setting clearAllInstantMacroLines; // Add this new field
+
+    // Add this near the other static fields at the top of the class
+    public static Setting macroStopBtnSignalSetting;
+    public static volatile boolean stopExecution = false;
+
+    private static final int MAX_NESTING_LEVEL = Integer.MAX_VALUE;
+    private static boolean isExecutingMacro = false;
+    private static int nestingLevel = 0;
+
+    // Add these near other static fields at top of class
+    private static volatile boolean isExecuting = false;
+    private static final Object executionLock = new Object();
+    private static volatile String currentExecutionSource = null;
+    private static volatile long executionStartTime = 0;
+
+    // Add near the top with other static fields
+    private static final Object EXECUTION_LOCK = new Object();
+
+    // Add these public static methods
+    public static Object getExecutionLock() {
+        return EXECUTION_LOCK;
+    }
+
+    public static void resetExecutionState() {
+        synchronized (EXECUTION_LOCK) {
+            isExecuting = false;
+            currentExecutionSource = null;
+            stopExecution = false;
+        }
+    }
+
+    // Add this to the top of MacroActionSettings class with other static fields
+    public static Setting macroViewSelectorSetting;
+    public static final String VIEW_ALL = "All";
+    public static final String VIEW_SLOT1 = "1";
+    public static final String VIEW_SLOT2 = "2"; 
+    public static final String VIEW_SLOT3 = "3";
+    public static final String VIEW_SLOT4 = "4";
+    public static final String VIEW_IM = "Instant Macro";  // Changed from "IM"
+    public static final String VIEW_ALL_IM = "All + Instant Macro";  // Changed from "All+IM"
+
+    // Add new field for the header
+    public static Setting macroHeaderSetting;
 
     /**
      * Initializes the macro action settings for the extension.
@@ -62,11 +110,13 @@ public class MacroActionSettings {
      * @param extension The BitwigBuddy extension instance
      */
     public static void init(BitwigBuddyExtension extension) {
-
         host = extension.getHost();
         preferences = extension.preferences;
 
+        // Initialize settings first
         initMacroActionSettings();
+        
+        // Then set up observers
         initMacroActionObservers(extension);
     }
 
@@ -81,10 +131,14 @@ public class MacroActionSettings {
      * </ul>
      */
     private static void initMacroActionSettings() {
+        // Create header first
+        macroHeaderSetting = (Setting) createStringSetting(titleWithLine("MACRO"),
+                "Macro", 0, "---------------------------------------------------");
+        disableSetting(macroHeaderSetting);
 
-        macroSpacerSetting = (Setting) createStringSetting(titleWithLine("MACRO"), "Macro", 0,
-                "---------------------------------------------------");
-        disableSetting(macroSpacerSetting);
+        // Create view selector
+        String[] viewOptions = new String[] { VIEW_IM, VIEW_SLOT1, VIEW_SLOT2, VIEW_SLOT3, VIEW_SLOT4, VIEW_ALL, VIEW_ALL_IM };
+        macroViewSelectorSetting = (Setting) createEnumSetting("Show Slots", "Macro", viewOptions, VIEW_SLOT1);
 
         // Get macro titles for the selector
         String[] macroTitles = getMacroTitles();
@@ -92,52 +146,88 @@ public class MacroActionSettings {
             macroTitles = new String[] { "No Macros Found" };
         }
 
-        macroSelectorSetting = (Setting) createEnumSetting("Select a Macro", "Macro", macroTitles,
-                macroTitles[0]);
+        // Create settings for each macro slot
+        for (int i = 0; i < 4; i++) {
+            String slotNum = String.valueOf(i + 1);
+            String category = "Macro " + slotNum;
 
-        macroDescriptionSetting = (Setting) createStringSetting("Macro Description", "Macro", 0,
-                "Select a macro to execute");
+            // 0. Spacer Header
+            macroSpacerSettings[i] = (Setting) createStringSetting(titleWithLine("MACRO " + slotNum),
+                    category, 0, "---------------------------------------------------");
+            disableSetting(macroSpacerSettings[i]);
 
-        macroAuthorSetting = (Setting) createStringSetting("Macro Author", "Macro", 0,
-                "Unknown");
+            // 1. Preset List
+            macroSelectorSettings[i] = (Setting) createEnumSetting("Select Macro " + slotNum,
+                    category, macroTitles, macroTitles[0]);
 
-        macroLaunchBtnSignalSetting = (Setting) createSignalSetting("Execute Macro",
-                "Macro", "Execute the selected macro");
+            // 2. Open Button
+            macroOpenSignals[i] = (Setting) createSignalSetting("Open Macro " + slotNum + " File",
+                    category, "Open the selected macro file in default editor");
 
-        // macroPrintAllActionsBtnSignalSetting = (Setting) createSignalSetting("Print
-        // All Actions in Console",
-        // "Macro", "Signal to print all available actions");
+            // 3. Description
+            macroDescriptionSettings[i] = (Setting) createStringSetting("Macro " + slotNum + " Description",
+                    category, 0, "Select a macro to execute");
 
-        // INSTANT MACRO SETTINGS
-        instantMacroSpacer = (Setting) createStringSetting(titleWithLine("INSTANT MACRO"), "Macro", 0,
-                "---------------------------------------------------");
-        disableSetting(instantMacroSpacer);
-        // Initialize instant macro line settings
-        for (int i = 0; i < 8; i++) {
-            instantMacroLines[i] = (Setting) createStringSetting("Macro Line " + (i + 1), "Instant Macro",
-                    256, "");
+            // 4. Author
+            macroAuthorSettings[i] = (Setting) createStringSetting("Macro " + slotNum + " Author",
+                    category, 0, "Unknown");
+
+            // 5. Run Button
+            macroLaunchBtnSignalSettings[i] = (Setting) createSignalSetting("Execute Macro " + slotNum,
+                    category, "Execute Macro " + slotNum);
         }
 
+        // Update allSettings array with the new order
+        List<Setting> settingsList = new ArrayList<>();
+        
+        // Add header and view selector at the top
+        settingsList.add(macroHeaderSetting);
+        settingsList.add(macroViewSelectorSetting);
+
+        // Add macro groups with headers followed by their controls
+        for (int i = 0; i < 4; i++) {
+            settingsList.add(macroSpacerSettings[i]); // Add header separator first
+            settingsList.add(macroSelectorSettings[i]); // Preset List
+            settingsList.add(macroOpenSignals[i]); // Open Button
+            settingsList.add(macroDescriptionSettings[i]); // Description
+            settingsList.add(macroAuthorSettings[i]); // Author
+            settingsList.add(macroLaunchBtnSignalSettings[i]); // Run Button
+        }
+
+        // Add instant macro section
+        instantMacroSpacer = (Setting) createStringSetting(titleWithLine("INSTANT MACRO"),
+                "Instant Macro", 0, "---------------------------------------------------");
+        instantMacroSpacer.disable();
+
+        // Initialize instant macro line settings
+        for (int i = 0; i < 8; i++) {
+            instantMacroLines[i] = (Setting) createStringSetting("Instant Line " + (i + 1),
+                    "Instant Macro", 256, "");
+            settingsList.add(instantMacroLines[i]);
+        }
+
+        // Add instant macro control buttons
         executeInstantMacroSignal = (Setting) createSignalSetting("Execute Instant Macro",
                 "Instant Macro", "Execute this commands sequence");
+        settingsList.add(executeInstantMacroSignal);
 
-        // Update allSettings array to include new settings
-        allSettings = new Setting[] {
-                macroLaunchBtnSignalSetting,
-                macroSelectorSetting,
-                macroDescriptionSetting,
-                macroAuthorSetting, // Add this line
-                macroSpacerSetting,
-                instantMacroLines[0],
-                instantMacroLines[1],
-                instantMacroLines[2],
-                instantMacroLines[3],
-                instantMacroLines[4],
-                instantMacroLines[5],
-                instantMacroLines[6],
-                instantMacroLines[7],
-                executeInstantMacroSignal
-        };
+        clearAllInstantMacroLines = (Setting) createSignalSetting("Clear All Lines",
+                "Instant Macro", "Clear all instant macro lines");
+        settingsList.add(clearAllInstantMacroLines);
+
+        // Add spacer title STOP
+        macroSpacerSetting = (Setting) createStringSetting(titleWithLine("STOP MACRO"),
+                "Macro Control", 0, "---------------------------------------------------");
+        disableSetting(macroSpacerSetting);
+        settingsList.add(macroSpacerSetting);
+
+        // Add stop button as the very last setting
+        macroStopBtnSignalSetting = (Setting) createSignalSetting("Stop All Macros",
+                "Macro Control", "Stop all currently executing macros");
+        settingsList.add(macroStopBtnSignalSetting);  // Add this line
+        
+        allSettings = settingsList.toArray(new Setting[0]);
+        
     }
 
     /**
@@ -149,60 +239,127 @@ public class MacroActionSettings {
      * @param extension The BitwigBuddy extension instance
      */
     private static void initMacroActionObservers(BitwigBuddyExtension extension) {
-        ((Signal) macroLaunchBtnSignalSetting).addSignalObserver(() -> {
-            host.println("Signal triggered at " + System.currentTimeMillis());
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - lastExecutionTime > DEBOUNCE_MS) {
-                lastExecutionTime = currentTime;
+        // Create observers for each macro slot
+        for (int i = 0; i < 4; i++) {
+            final int slotIndex = i;
 
-                Macro macro = getSelectedMacro();
-                if (macro != null) {
-                    executeMacro(macro, extension);
+            // Launch button observer
+            ((Signal) macroLaunchBtnSignalSettings[i]).addSignalObserver(() -> {
+                host.println("Signal triggered for Macro " + (slotIndex + 1) + " at " +
+                        new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new java.util.Date()));
+
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - lastExecutionTime > DEBOUNCE_MS) {
+                    lastExecutionTime = currentTime;
+
+                    MacroBB macro = getSelectedMacro(slotIndex);
+                    if (macro != null) {
+                        executeMacro(macro, extension);
+                    }
+                } else {
+                    host.println("Ignoring rapid signal trigger, wait " + DEBOUNCE_MS + "ms between triggers");
                 }
-            } else {
-                host.println("Ignoring rapid signal trigger, wait " + DEBOUNCE_MS + "ms between triggers");
-            }
-        });
+            });
 
-        // Add observer for macro selection changes
-        ((SettableEnumValue) macroSelectorSetting).addValueObserver(newValue -> {
-            Macro macro = getSelectedMacro();
-            if (macro != null) {
-                ((SettableStringValue) macroDescriptionSetting).set(macro.getDescription());
-                ((SettableStringValue) macroAuthorSetting).set(macro.getAuthor()); // Add this line
-            } else {
-                ((SettableStringValue) macroDescriptionSetting).set("No description");
-                ((SettableStringValue) macroAuthorSetting).set("Unknown"); // Add this line
-            }
-        });
+            // Macro selection observer
+            ((SettableEnumValue) macroSelectorSettings[i]).addValueObserver(newValue -> {
+                MacroBB macro = getSelectedMacro(slotIndex);
+                if (macro != null) {
+                    ((SettableStringValue) macroDescriptionSettings[slotIndex]).set(macro.getDescription());
+                    ((SettableStringValue) macroAuthorSettings[slotIndex]).set(macro.getAuthor());
+                } else {
+                    ((SettableStringValue) macroDescriptionSettings[slotIndex]).set("No description");
+                    ((SettableStringValue) macroAuthorSettings[slotIndex]).set("Unknown");
+                }
+            });
 
-        // ((Signal) macroPrintAllActionsBtnSignalSetting).addSignalObserver(() -> {
-        // printAllAvailableActions(extension);
-        // });
+            // Open macro file observer
+            ((Signal) macroOpenSignals[i]).addSignalObserver(() -> {
+                MacroBB macro = getSelectedMacro(slotIndex);
+                openMacroFile(macro, extension);
+            });
+        }
 
         ((Signal) executeInstantMacroSignal).addSignalObserver(() -> {
-            List<String> commands = new ArrayList<>();
+            synchronized (executionLock) {
+                if (isExecuting) {
+                    host.println("Cannot start instant macro - execution in progress from: " + currentExecutionSource);
+                    host.showPopupNotification("Cannot start - execution in progress");
+                    return;
+                }
 
-            // Collect non-empty commands from instant macro lines
-            for (Setting lineSetting : instantMacroLines) {
-                String command = ((SettableStringValue) lineSetting).get().trim();
-                if (!command.isEmpty()) {
-                    commands.add(command);
+                List<String> commands = new ArrayList<>();
+
+                // Collect non-empty commands from instant macro lines
+                for (Setting lineSetting : instantMacroLines) {
+                    String command = ((SettableStringValue) lineSetting).get().trim();
+                    if (!command.isEmpty()) {
+                        commands.add(command);
+                    }
+                }
+
+                if (!commands.isEmpty()) {
+                    // Create temporary macro
+                    MacroBB instantMacro = new MacroBB(
+                            "instant_macro",
+                            "Instant Macro",
+                            commands.toArray(new String[0]),
+                            "Instant macro execution",
+                            "Unknown");
+
+                    // Execute the macro
+                    executeMacro(instantMacro, extension);
                 }
             }
+        });
 
-            if (!commands.isEmpty()) {
-                // Create temporary macro
-                Macro instantMacro = new Macro(
-                        "instant_macro",
-                        "Instant Macro",
-                        commands.toArray(new String[0]),
-                        "Instant macro execution",
-                        "Unknown" // Default author for instant macros
-                );
+        // Add this in initMacroActionObservers after other signal observers
+        ((Signal) macroStopBtnSignalSetting).addSignalObserver(() -> {
+            stopExecution = true;
+            host.println("Macro execution stop requested");
+            host.showPopupNotification("Stopping macro execution...");
+        });
 
-                // Execute the macro
-                executeMacro(instantMacro, extension);
+        // Add this with other signal observers
+        ((Signal) clearAllInstantMacroLines).addSignalObserver(() -> {
+            // Clear all instant macro lines
+            for (Setting lineSetting : instantMacroLines) {
+                ((SettableStringValue) lineSetting).set("");
+            }
+            host.showPopupNotification("Cleared all instant macro lines");
+        });
+
+        // Add observer in initMacroActionObservers()
+        ((SettableEnumValue) macroViewSelectorSetting).addValueObserver(newValue -> {
+            switch (newValue) {
+                case VIEW_ALL:
+                    showMacroSlots(true, true, true, true);
+                    hideInstantMacro();
+                    break;
+                case VIEW_SLOT1:
+                    showMacroSlots(true, false, false, false);
+                    hideInstantMacro();
+                    break;
+                case VIEW_SLOT2:
+                    showMacroSlots(false, true, false, false);
+                    hideInstantMacro();
+                    break;
+                case VIEW_SLOT3:
+                    showMacroSlots(false, false, true, false);
+                    hideInstantMacro();
+                    break;
+                case VIEW_SLOT4:
+                    showMacroSlots(false, false, false, true);
+                    hideInstantMacro();
+                    break;
+                case VIEW_IM:
+                    showMacroSlots(false, false, false, false);
+                    showInstantMacro();
+                    break;
+                case VIEW_ALL_IM:
+                    showMacroSlots(true, true, true, true);
+                    showInstantMacro();
+                    break;
             }
         });
     }
@@ -214,19 +371,75 @@ public class MacroActionSettings {
      * @param macro     The macro to execute
      * @param extension The BitwigBuddy extension instance
      */
-    private static void executeMacro(Macro macro, BitwigBuddyExtension extension) {
-        // Add timestamp to track when execution starts
-        host.println("=== MACRO EXECUTION START: "
-                + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
-        host.println("Executing macro: " + macro.getTitle());
-        String[] commands = macro.getCommands();
-        host.println("Commands sequence (total " + commands.length + "):");
-        for (int i = 0; i < commands.length; i++) {
-            host.println((i + 1) + ": " + commands[i]);
-        }
+    private static void executeMacro(MacroBB macro, BitwigBuddyExtension extension) {
+        synchronized (executionLock) {
+            if (isExecuting) {
+                host.println("Another execution is in progress from: " + currentExecutionSource);
+                host.showPopupNotification("Cannot start macro - execution in progress");
+                return;
+            }
 
-        // Schedule sequential execution of commands with proper delays
-        scheduleCommands(commands, 0, extension);
+            try {
+                isExecuting = true;
+                currentExecutionSource = macro.getTitle();
+                executionStartTime = System.currentTimeMillis();
+                stopExecution = false;
+
+                host.println("=== MACRO EXECUTION START: "
+                        + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
+                host.println("Processing macro: " + macro.getTitle());
+
+                // Flatten macro commands
+                List<String> flattenedCommands = flattenMacroCommands(macro, extension, new HashSet<>());
+
+                host.println("Commands sequence (total " + flattenedCommands.size() + "):");
+                for (int i = 0; i < flattenedCommands.size(); i++) {
+                    host.println((i + 1) + ": " + flattenedCommands.get(i));
+                }
+
+                scheduleCommands(flattenedCommands.toArray(new String[0]), 0, extension);
+
+            } finally {
+                // Note: Don't reset isExecuting here - it should be reset when all commands
+                // complete
+            }
+        }
+    }
+
+    /**
+     * Executes a macro when called from another macro's action.
+     * This is a public static method to allow execution from ExecuteBitwigAction.
+     *
+     * @param macro     The macro to execute
+     * @param extension The BitwigBuddy extension instance
+     */
+    public static void executeMacroFromAction(MacroBB macro, BitwigBuddyExtension extension) {
+        synchronized (EXECUTION_LOCK) {
+            // Check for recursive execution
+            if (isExecutingMacro) {
+                extension.getHost().println("Already executing a macro - nesting level: " + nestingLevel);
+                if (nestingLevel >= MAX_NESTING_LEVEL) {
+                    extension.getHost().errorln(
+                            "Maximum macro nesting level reached (" + MAX_NESTING_LEVEL + "). Stopping execution.");
+                    return;
+                }
+                nestingLevel++;
+            } else {
+                isExecutingMacro = true;
+                nestingLevel = 1;
+            }
+
+            try {
+                // Reset execution state before starting nested macro
+                resetExecutionState();
+                executeMacro(macro, extension);
+            } finally {
+                nestingLevel--;
+                if (nestingLevel == 0) {
+                    isExecutingMacro = false;
+                }
+            }
+        }
     }
 
     /**
@@ -237,21 +450,34 @@ public class MacroActionSettings {
      * @param extension The Bitwig extension
      */
     private static void scheduleCommands(String[] commands, int index, BitwigBuddyExtension extension) {
-        if (index >= commands.length) {
-            host.println("=== MACRO EXECUTION END: "
-                    + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
+        if (index >= commands.length || stopExecution) {
+            synchronized (executionLock) {
+                if (stopExecution) {
+                    host.println("=== MACRO EXECUTION STOPPED BY USER ===");
+                    host.showPopupNotification("Macro execution stopped");
+                    stopExecution = false;
+                } else {
+                    host.println("=== MACRO EXECUTION END: "
+                            + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
+                }
+
+                // Reset execution state
+                isExecuting = false;
+                currentExecutionSource = null;
+                long duration = System.currentTimeMillis() - executionStartTime;
+                host.println("Total execution time: " + duration + "ms");
+            }
             return;
         }
 
         String command = commands[index];
         final long startTime = System.currentTimeMillis();
-        host.println("Executing command " + (index + 1) + "/" + commands.length + ": " + command + " at " + startTime);
+        host.println("Executing command " + (index + 1) + "/" + commands.length + ": " + command);
 
-        // Execute the current command
         try {
             // Try executing via ExecuteBitwigAction first
             boolean handled = ExecuteBitwigAction.executeBitwigAction(command, extension);
-            
+
             // If not handled, try default Bitwig action
             if (!handled) {
                 Action action = extension.getApplication().getAction(command);
@@ -268,10 +494,10 @@ public class MacroActionSettings {
         host.println("Completed command " + (index + 1) + "/" + commands.length + ": " + command +
                 " after " + (System.currentTimeMillis() - startTime) + "ms");
 
-        // Schedule the next command with a delay
+        // Schedule next command with delay
         extension.getHost().scheduleTask(() -> {
             scheduleCommands(commands, index + 1, extension);
-        }, 10); // 50ms delay between commands
+        }, 50); // Increased delay to 50ms for better reliability
     }
 
     /**
@@ -299,22 +525,22 @@ public class MacroActionSettings {
      *
      * @return Array of Macro objects, empty array if no macros are found
      */
-    public static Macro[] getMacros() {
+    public static MacroBB[] getMacros() {
         File macrosDir = new File(preferences.getPresetsPath());
         String subdir = "Macros";
         macrosDir = new File(macrosDir, subdir);
-        List<Macro> macroList = new ArrayList<>();
+        List<MacroBB> macroList = new ArrayList<>();
 
         // Early return with empty array if directory doesn't exist or isn't accessible
         if (!macrosDir.exists() || !macrosDir.isDirectory()) {
             host.errorln("Macro directory does not exist or is not accessible: " + macrosDir);
-            return new Macro[0];
+            return new MacroBB[0];
         }
 
         File[] files = macrosDir.listFiles();
         if (files == null) {
             host.errorln("Failed to list files in macro directory: " + macrosDir);
-            return new Macro[0];
+            return new MacroBB[0];
         }
 
         // Sort files by name
@@ -323,14 +549,14 @@ public class MacroActionSettings {
         // Check if directory is empty
         if (files.length == 0) {
             host.errorln("Macro directory is empty");
-            return new Macro[0];
+            return new MacroBB[0];
         }
 
         // Process each file
         for (File file : files) {
             if (file.isFile()) {
                 try {
-                    Macro macro = readMacroFile(file);
+                    MacroBB macro = readMacroFile(file);
                     if (macro != null) {
                         macroList.add(macro);
                     }
@@ -340,20 +566,21 @@ public class MacroActionSettings {
             }
         }
 
-        return macroList.toArray(new Macro[0]);
+        return macroList.toArray(new MacroBB[0]);
     }
 
     /**
-     * Returns the currently selected macro based on the selector setting.
+     * Returns the currently selected macro based on the selector setting for a
+     * specific slot.
      *
+     * @param slotIndex The index of the macro slot
      * @return The selected Macro or null if none is selected or available
      */
-    public static Macro getSelectedMacro() {
+    public static MacroBB getSelectedMacro(int slotIndex) {
+        String selectedTitle = ((SettableEnumValue) macroSelectorSettings[slotIndex]).get();
+        MacroBB[] macros = getMacros();
 
-        String selectedTitle = ((SettableEnumValue) macroSelectorSetting).get();
-        Macro[] macros = getMacros();
-
-        for (Macro macro : macros) {
+        for (MacroBB macro : macros) {
             if (macro.getTitle().equals(selectedTitle)) {
                 return macro;
             }
@@ -366,7 +593,7 @@ public class MacroActionSettings {
      * Gets only the titles of available macros for the selector.
      */
     private static String[] getMacroTitles() {
-        Macro[] macros = getMacros();
+        MacroBB[] macros = getMacros();
         String[] titles = new String[macros.length];
         for (int i = 0; i < macros.length; i++) {
             titles[i] = macros[i].getTitle();
@@ -381,7 +608,7 @@ public class MacroActionSettings {
      * @return Macro object if successful, null if parsing failed
      * @throws IOException if file reading fails
      */
-    private static Macro readMacroFile(File file) throws IOException {
+    private static MacroBB readMacroFile(File file) throws IOException {
         List<String> lines = java.nio.file.Files.readAllLines(file.toPath());
         String title = "";
         String description = "No description";
@@ -443,7 +670,7 @@ public class MacroActionSettings {
             return null;
         }
 
-        return new Macro(file.getName(), title, commands.toArray(new String[0]), description, author);
+        return new MacroBB(file.getName(), title, commands.toArray(new String[0]), description, author);
     }
 
     private static void printAllAvailableActions(BitwigBuddyExtension extension) {
@@ -495,16 +722,97 @@ public class MacroActionSettings {
     }
 
     /**
+     * Opens a macro file in the default text editor.
+     * 
+     * @param macro     The macro whose file should be opened
+     * @param extension The BitwigBuddy extension instance
+     */
+    private static void openMacroFile(MacroBB macro, BitwigBuddyExtension extension) {
+        if (macro != null) {
+            try {
+                File macrosDir = new File(preferences.getPresetsPath(), "Macros");
+                File macroFile = new File(macrosDir, macro.getFileName());
+
+                if (macroFile.exists()) {
+                    boolean opened = false;
+
+                    // Try Desktop API first
+                    if (java.awt.Desktop.isDesktopSupported()) {
+                        java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
+                        if (desktop.isSupported(java.awt.Desktop.Action.OPEN)) {
+                            try {
+                                desktop.open(macroFile);
+                                opened = true;
+                                host.println("Opening macro file: " + macroFile.getAbsolutePath());
+                            } catch (Exception e) {
+                                host.errorln("Desktop API failed: " + e.getMessage());
+                            }
+                        }
+                    }
+
+                    // Fallback to system commands if Desktop API failed
+                    if (!opened) {
+                        ProcessBuilder pb;
+
+                        if (host.platformIsWindows()) {
+                            // Use Windows default file association
+                            pb = new ProcessBuilder("cmd", "/c", "start", "", macroFile.getAbsolutePath());
+                        } else if (host.platformIsMac()) {
+                            pb = new ProcessBuilder("open", "-t", macroFile.getAbsolutePath());
+                        } else if (host.platformIsLinux()) {
+                            // Linux - try common text editors in order
+                            String[] editors = { "gedit", "kate", "nano", "vim" };
+                            String editor = null;
+
+                            for (String e : editors) {
+                                try {
+                                    Process p = new ProcessBuilder("which", e).start();
+                                    if (p.waitFor() == 0) {
+                                        editor = e;
+                                        break;
+                                    }
+                                } catch (Exception ex) {
+                                    // Continue to next editor
+                                }
+                            }
+
+                            if (editor != null) {
+                                pb = new ProcessBuilder(editor, macroFile.getAbsolutePath());
+                            } else {
+                                throw new IOException("No suitable text editor found");
+                            }
+                        } else {
+                            throw new IOException("Unsupported platform");
+                        }
+
+                        pb.start();
+                        host.println("Opening macro file using system command: " + macroFile.getAbsolutePath());
+                    }
+                } else {
+                    host.errorln("Macro file not found: " + macroFile.getAbsolutePath());
+                    host.showPopupNotification("Macro file not found");
+                }
+            } catch (Exception e) {
+                host.errorln("Error opening macro file: " + e.getMessage());
+                host.showPopupNotification("Error opening macro file");
+                e.printStackTrace();
+            }
+        } else {
+            host.showPopupNotification("No macro selected");
+        }
+    }
+
+    /**
      * Immutable class representing a macro for the BitwigBuddy extension.
      */
-    public static final class Macro {
+    public static final class MacroBB {
         private final String fileName;
         private final String title;
         private final String[] commands;
         private final String description;
         private final String author;
 
-        public Macro(String fileName, String title, String[] commands, String description, String author) {
+        public MacroBB(String fileName, String title, String[] commands, String description, String author) {
             this.fileName = Objects.requireNonNull(fileName, "fileName cannot be null");
             this.title = Objects.requireNonNull(title, "title cannot be null");
             this.commands = Arrays.copyOf(Objects.requireNonNull(commands, "commands cannot be null"), commands.length);
@@ -531,6 +839,114 @@ public class MacroActionSettings {
 
         public String getDescription() {
             return description;
+        }
+    }
+
+    private static List<String> flattenMacroCommands(MacroBB macro, BitwigBuddyExtension extension,
+            Set<String> visitedMacros) {
+        List<String> flattenedCommands = new ArrayList<>();
+
+        // Prevent infinite recursion
+        if (visitedMacros.contains(macro.getTitle())) {
+            extension.getHost().errorln("Circular macro reference detected: " + macro.getTitle());
+            return flattenedCommands;
+        }
+
+        visitedMacros.add(macro.getTitle());
+
+        // Process commands through LoopProcessor first
+        LoopProcessor loopProcessor = new LoopProcessor();
+        List<String> processedCommands = loopProcessor.processLoop(Arrays.asList(macro.getCommands()));
+
+        for (String command : processedCommands) {
+            // Check if this command is a macro reference
+            if (command.trim().matches("(?i)Macro\\s*\\(.*")) {
+                // Extract macro name using regex to handle whitespace variations
+                java.util.regex.Pattern pattern = java.util.regex.Pattern
+                        .compile("(?i)Macro\\s*\\(\\s*\"([^\"]+)\"\\s*\\)");
+                java.util.regex.Matcher matcher = pattern.matcher(command);
+
+                if (matcher.find()) {
+                    String macroName = matcher.group(1);
+
+                    // Find referenced macro
+                    MacroBB[] macros = getMacros();
+                    boolean macroFound = false;
+                    for (MacroBB referencedMacro : macros) {
+                        if (referencedMacro.getTitle().equals(macroName)) {
+                            // Recursively flatten nested macro
+                            flattenedCommands.addAll(flattenMacroCommands(referencedMacro, extension, visitedMacros));
+                            macroFound = true;
+                            break;
+                        }
+                    }
+
+                    if (!macroFound) {
+                        extension.getHost().errorln("Referenced macro not found: " + macroName);
+                    }
+                } else {
+                    extension.getHost().errorln("Invalid macro reference format: " + command);
+                }
+            } else {
+                flattenedCommands.add(command);
+            }
+        }
+
+        return flattenedCommands;
+    }
+
+    // Change these methods from private to public
+    public static void showMacroSlots(boolean slot1, boolean slot2, boolean slot3, boolean slot4) {
+        // Slot 1-4 visibility
+        setSettingsVisibility(0, slot1, macroSpacerSettings, macroSelectorSettings, macroOpenSignals, 
+            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+        
+        setSettingsVisibility(1, slot2, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
+            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+        
+        setSettingsVisibility(2, slot3, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
+            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+        
+        setSettingsVisibility(3, slot4, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
+            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+
+        // Always show stop controls when any macro slot is visible
+        if (slot1 || slot2 || slot3 || slot4) {
+            macroSpacerSetting.show();
+            macroStopBtnSignalSetting.show();
+        } else {
+            macroSpacerSetting.hide();
+            macroStopBtnSignalSetting.hide();
+        }
+    }
+
+    public static void showInstantMacro() {
+        instantMacroSpacer.show();
+        for (Setting line : instantMacroLines) {
+            line.show();
+        }
+        executeInstantMacroSignal.show();
+        clearAllInstantMacroLines.show();
+    }
+
+    public static void hideInstantMacro() {
+        instantMacroSpacer.hide();
+        for (Setting line : instantMacroLines) {
+            line.hide();
+        }
+        executeInstantMacroSignal.hide();
+        clearAllInstantMacroLines.hide();
+    }
+
+    private static void setSettingsVisibility(int index, boolean show, Setting[]... settingsArrays) {
+        for (Setting[] settings : settingsArrays) {
+            if (settings[index] != null) {
+                if (show) {
+                    settings[index].show();
+                } else {
+                    settings[index].hide();
+                }
+            }
         }
     }
 }

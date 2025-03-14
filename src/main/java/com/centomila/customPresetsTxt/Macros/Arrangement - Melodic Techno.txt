@@ -1,49 +1,50 @@
-Macro: "Arrangement - Pop (Cue Markers)"
-Description: "Generate Cue Markers for a Pop Track"
+Macro: "Arrangement - Melodic Techno (Cue Markers)"
+Description: "Generate Cue Markers for a Melodic Techno Track"
 Author: "Centomila"
-Bpm (120)
+Bpm (124)
 Time Signature ("4/4")
 
 DeleteAllCueMarkers
 
 jump_to_beginning_of_arranger_window
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (1, Intro)
+CueMarkerName (1, Intro - Pads & Atmos)
 
 jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (2, Verse 1)
-
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (3, Pre-Chorus)
+CueMarkerName (2, Kick & Bass Intro)
 
 jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (4, Chorus 1)
-
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (5, Verse 2)
+CueMarkerName (3, Main Groove Begins)
 
 jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (6, Pre-Chorus)
-
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (7, Chorus 2)
+CueMarkerName (4, Build-Up)
 
 jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (8, Bridge)
-
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (9, Chorus 3)
+CueMarkerName (5, Drop 1)
 
 jump_forward_8_bars
+jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (10, Outro)
+CueMarkerName (6, Break - Atmospheric Pads)
+
+jump_forward_8_bars
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (7, Drop 2 - Peak Energy)
+
+jump_forward_8_bars
+jump_forward_8_bars
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (8, Outro - Fade & FX)
 
 jump_to_beginning_of_next_bar
+
+Message ("Macro Finished")

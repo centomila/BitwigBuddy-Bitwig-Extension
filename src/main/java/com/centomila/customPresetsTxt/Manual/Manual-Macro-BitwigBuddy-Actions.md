@@ -36,3 +36,9 @@
 | **Wait**                                     | Waits for the specified number of ms before proceeding        |                                            |
 | **Message**                                  | Shows a message box with the specified text                   |_Message (Hello World!)_                    |
 | **Insert File**                              | Insert a file (Eg .mid) in the desired launcher slot          |_Insert File (3,"C:\midi\file.mid")_        |
+
+| **Bitwig Buddy Panel**                       | Description                                                   | Example                                    |
+|----------------------------------------------|---------------------------------------------------------------|--------------------------------------------|
+| **BB Arranger Mode**                         | Switches Bitwig Buddy to Arranger                             |                                            |
+| **BB Launcher Mode**                         | Switches Bitwig Buddy to Launcher                             |                                            |
+| **BB Toggle Launcher Arranger Mode**         | Toggles Bitwig Buddy between Launcher and Arranger Mode       |                                            |

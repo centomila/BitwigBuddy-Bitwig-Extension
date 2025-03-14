@@ -124,20 +124,54 @@ The **Edit Mode** in BitwigBuddy allows users to modify existing note patterns b
 The **Macro Mode** in BitwigBuddy allows users to execute pre-defined sequences of actions using macros. These macros are stored as text files and can include both native Bitwig actions and additional custom actions provided by BitwigBuddy.
 
 ### 🛠️ Options
+- 🔄 **Refresh Custom Files:** Reloads the available macro files.
 - 📂 **Select a Macro:** Loads a macro from the available macro files.
 - 📝 **Macro Description:** Displays details about the selected macro.
+- 👤 **Macro Author:** Displays macro author's name.
 - ▶️ **Execute Macro:** Runs the selected macro sequence.
-- 🔄 **Refresh Custom Files:** Reloads the available macro files.
+- ⏹️ **Stop Execution:** Stops the execution of the current macro.
 
+Example Macro Actions:
+```
+Macro: "Test"
+Description: "This is just for testing"
+Author: "Centomila"
+
+// This is a comment line
+Bpm (120)
+CueMarkerName (2, Verse 1)
+Message ("Completed")
+
+```
 ### 📜 Available Actions
 BitwigBuddy macros support two types of actions:
-1. **Bitwig Native Actions** (Predefined DAW commands) - See [Bitwig Embedded Actions](Macro-Bitwig-Actions.md)
+1. **Bitwig Native Actions** (Predefined DAW commands without params) - See [Bitwig Embedded Actions](Macro-Bitwig-Actions.md)
 2. **BitwigBuddy Custom Actions** (Additional programmable commands) - See [BitwigBuddy Actions](Macro-BitwigBuddy-Actions.md)
+
+Some actions related to Steps, requires to select before the _destination_ (Launcher or Arranger). You can do this by clicking on the respective button before launching the macro or programmatically in the macro file with the following command:
+
+```yourmacro.txt
+BB Arranger Mode
+BB Launcher Mode
+BB Toggle Launcher Arranger Mode
+```
+
+### Instant Macro
+Instant Macro is a sequence of 1 to 8 actions that can be executed instantly. They are stored with the project.
+- 📃 **Macro Line 1|2|3|4|5|6|7|8** Each line represents an action in the sequence.
+- 🚀 **Execute Instant Macro** Runs the instant macro sequence.
+- 🔃 **Refresh Custom Files:** Restart the extension and refresh the lists of Macros and Custom Presets.
+- 📝 **Open Macro File:** Opens the selected macro file in your default text editor for viewing or editing. No need for refresh the list after editing a macro already available in the list, just save the file.
+- 🧹 **Clear All Lines** Clears all instant macro lines.
+
+
 
 ### 🎼 Usage Tips
 - ⚡ **Use macros to automate repetitive tasks** like track renaming or cue marker adjustments.
 - 🔄 **Refresh the list** when adding new macro files to ensure they appear in the selection.
 - 📜 **Combine multiple actions** into a single macro for complex workflows.
+- 🔗 **Launch a Macro from another Macro** (In any position! The new Macro will pause the previous Macro!).
+- ⚠️ Keep in consideration that native windows actions are not supported (e.g., file dialogs like Save As).
 
 ---
 

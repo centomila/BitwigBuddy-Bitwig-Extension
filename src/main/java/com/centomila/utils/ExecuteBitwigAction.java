@@ -5,8 +5,10 @@ import static com.centomila.utils.PopupUtils.showPopup;
 
 import com.centomila.BitwigBuddyExtension;
 import com.centomila.ClipUtils;
+import com.centomila.ModeSelectSettings;
 import com.bitwig.extension.controller.api.*;
 import com.bitwig.extension.api.Color;
+import com.centomila.MacroActionSettings;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -150,8 +152,12 @@ public class ExecuteBitwigAction {
             case "Arranger Loop Start": handleArrangerLoopStart(params, extension); break;
             case "Arranger Loop End": handleArrangerLoopEnd(params, extension); break;
             case "Time Signature": handleTimeSignature(params, extension); break;
-            case "Wait": handleWait(params); break;
+            case "Wait": handleWait(params, extension); break;
             case "Message": handleMessage(params); break;
+            case "Macro": handleMacro(params, extension); break;
+            case "BB Arranger Mode": handleArrangerMode(extension); break;
+            case "BB Launcher Mode": handleLauncherMode(extension); break;
+            case "BB Toggle Launcher Arranger Mode": handleToggleLauncherArrangerMode(extension); break;
             default: throw new IllegalArgumentException("Unknown action: " + actionId);
         }
     }
@@ -173,7 +179,7 @@ public class ExecuteBitwigAction {
     }
 
     private static void handleDeleteAllCueMarkers(BitwigBuddyExtension extension) {
-        for (int pass = 0; pass < 4; pass++) {
+        for (int pass = 0; pass < 16; pass++) {
             for (int i = 0; i < 128; i++) {
                 CueMarker cueMarker = extension.cueMarkerBank.getItemAt(i);
                 if (cueMarker.exists().get()) {
@@ -580,10 +586,11 @@ public class ExecuteBitwigAction {
         extension.transport.timeSignature().set(params[0].trim());
     }
 
-    private static void handleWait(String[] params) {
-        int waitTime = params.length > 0 ? Integer.parseInt(params[0]) : 250;
+    private static void handleWait(String[] params, BitwigBuddyExtension extension) {
+        int waitTime = params.length > 0 ? Integer.parseInt(params[0]) : 50;
         try {
             Thread.sleep(waitTime);
+            
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -593,6 +600,45 @@ public class ExecuteBitwigAction {
         if (params.length > 0) {
             showPopup(params[0]);
         }
+    }
+
+    private static void handleMacro(String[] params, BitwigBuddyExtension extension) {
+        if (params.length != 1) {
+            extension.getHost().errorln("Macro command requires exactly one parameter (macro name)");
+            return;
+        }
+
+        String macroTitle = params[0];
+        MacroActionSettings.MacroBB[] macros = MacroActionSettings.getMacros();
+        
+        for (MacroActionSettings.MacroBB macro : macros) {
+            if (macro.getTitle().equals(macroTitle)) {
+                // Execute in a synchronized block
+                synchronized(MacroActionSettings.getExecutionLock()) {
+                    // Reset execution state before nested execution
+                    MacroActionSettings.resetExecutionState();
+                    // Execute the nested macro
+                    MacroActionSettings.executeMacroFromAction(macro, extension);
+                    return;
+                }
+            }
+        }
+        
+        extension.getHost().errorln("Macro not found: " + macroTitle);
+    }
+
+    private static void handleArrangerMode(BitwigBuddyExtension extension) {
+        ((SettableEnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).set("Arranger");
+    }
+
+    private static void handleLauncherMode(BitwigBuddyExtension extension) {
+        ((SettableEnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).set("Launcher");
+    }
+
+    private static void handleToggleLauncherArrangerMode(BitwigBuddyExtension extension) {
+        String currentMode = ((EnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).get();
+        String newMode = currentMode.equals("Launcher") ? "Arranger" : "Launcher";
+        ((SettableEnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).set(newMode);
     }
 
     private static int getCurrentTrackIndex(BitwigBuddyExtension extension) {

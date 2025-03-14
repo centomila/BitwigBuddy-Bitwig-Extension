@@ -69,3 +69,5 @@ Track Rename ("Vocals")
 Wait
 
 Track Select (1)
+
+Message ("Macro Finished")

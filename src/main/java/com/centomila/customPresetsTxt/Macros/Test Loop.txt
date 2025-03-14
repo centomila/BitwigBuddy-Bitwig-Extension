@@ -1,5 +1,5 @@
-Macro: "Test"
-Description: "This is just for testing"
+Macro: "Test Loop"
+Description: "This is just for testing looping"
 Author: "Centomila"
 
 // show_controller_script_console
@@ -13,15 +13,26 @@ Author: "Centomila"
 // Insert File (2, "c:\Users\Bach\AppData\Local\Bitwig Studio\installed-packages\5.0\Bitwig\Bitwig Drum Machines\Dub Techno Beat 2 126bpm.bwclip")
 // Insert VST3 ("Reason Rack Plugin")
 
-Message ("Colors in 3")
+// [Loop i=1 to 8]
+// Delete
+// Right
+// Right
+// [End Loop]
 
-Message ("2")
+// Go to the first track
+select_track1
 
-Message ("1")
-Wait
+
 
 Macro ("Rainbow Clip")
+[Loop i=1 to 2]
+Select Next Track
+Clip Create
+Macro ("Rainbow Clip")
+[End Loop]
 
-Message ("Provona")
-
-Macro ("Create 8 Tracks")
+// Loop to rename for 8 tracks
+// [Loop i=1 to 8]
+// Track Rename ("Pippo ${i}")
+// Select next track
+// [End Loop]
