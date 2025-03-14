@@ -99,6 +99,7 @@ public class MacroActionSettings {
     public static final String VIEW_SLOT4 = "4";
     public static final String VIEW_IM = "Instant Macro";  // Changed from "IM"
     public static final String VIEW_ALL_IM = "All + Instant Macro";  // Changed from "All+IM"
+    public static final String VIEW_COMPACT = "Compact";  // New view option
 
     // Add new field for the header
     public static Setting macroHeaderSetting;
@@ -137,7 +138,16 @@ public class MacroActionSettings {
         disableSetting(macroHeaderSetting);
 
         // Create view selector
-        String[] viewOptions = new String[] { VIEW_IM, VIEW_SLOT1, VIEW_SLOT2, VIEW_SLOT3, VIEW_SLOT4, VIEW_ALL, VIEW_ALL_IM };
+        String[] viewOptions = new String[] { 
+            VIEW_IM, 
+            VIEW_SLOT1, 
+            VIEW_SLOT2, 
+            VIEW_SLOT3, 
+            VIEW_SLOT4, 
+            VIEW_ALL, 
+            VIEW_ALL_IM,
+            VIEW_COMPACT  // Add new option
+        };
         macroViewSelectorSetting = (Setting) createEnumSetting("Show Slots", "Macro", viewOptions, VIEW_SLOT1);
 
         // Get macro titles for the selector
@@ -194,6 +204,8 @@ public class MacroActionSettings {
             settingsList.add(macroLaunchBtnSignalSettings[i]); // Run Button
         }
 
+        // Instant Macro section
+
         // Add instant macro section
         instantMacroSpacer = (Setting) createStringSetting(titleWithLine("INSTANT MACRO"),
                 "Instant Macro", 0, "---------------------------------------------------");
@@ -215,6 +227,7 @@ public class MacroActionSettings {
                 "Instant Macro", "Clear all instant macro lines");
         settingsList.add(clearAllInstantMacroLines);
 
+        // STOP Section
         // Add spacer title STOP
         macroSpacerSetting = (Setting) createStringSetting(titleWithLine("STOP MACRO"),
                 "Macro Control", 0, "---------------------------------------------------");
@@ -359,6 +372,9 @@ public class MacroActionSettings {
                 case VIEW_ALL_IM:
                     showMacroSlots(true, true, true, true);
                     showInstantMacro();
+                    break;
+                case VIEW_COMPACT:
+                    showCompactView();
                     break;
             }
         });
@@ -507,6 +523,9 @@ public class MacroActionSettings {
         for (Setting setting : allSettings) {
             setting.hide();
         }
+        // Be sure to hide everything related to macro settings
+        hideInstantMacro();
+        
     }
 
     /**
@@ -948,5 +967,27 @@ public class MacroActionSettings {
                 }
             }
         }
+    }
+
+    public static void showCompactView() {
+        // Show only selectors, execute buttons, and separators for all slots
+        for (int i = 0; i < 4; i++) {
+            // Show separator and essential controls
+            macroSpacerSettings[i].show();     // Keep separator visible
+            macroSelectorSettings[i].show();    // Show selector
+            macroLaunchBtnSignalSettings[i].show(); // Show execute button
+            
+            // Hide other controls
+            macroOpenSignals[i].hide();
+            macroDescriptionSettings[i].hide();
+            macroAuthorSettings[i].hide();
+        }
+        
+        // Show stop button but hide its spacer
+        macroSpacerSetting.hide();
+        macroStopBtnSignalSetting.show();
+        
+        // Hide instant macro section
+        hideInstantMacro();
     }
 }

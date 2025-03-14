@@ -55,8 +55,7 @@ public class ModeSelectSettings {
                 TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
     }
 
-    private static void hideMacroSettings() {
-        MacroActionSettings.hideMacroSettings();
+    public static void hideMacroSettings() {
         MacroActionSettings.showMacroSlots(false, false, false, false);
         MacroActionSettings.hideInstantMacro();
         MacroActionSettings.macroHeaderSetting.hide();
@@ -128,6 +127,8 @@ public class ModeSelectSettings {
         ProgramPattern.programDensitySetting.hide();
 
         MacroActionSettings.hideMacroSettings();
+        MacroActionSettings.showMacroSlots(false, false, false, false);
+        MacroActionSettings.hideInstantMacro();
 
     }
 
