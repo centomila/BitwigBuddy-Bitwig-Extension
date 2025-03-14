@@ -89,76 +89,176 @@ public class ExecuteBitwigAction {
         int currentTrack = getCurrentTrackIndex(extension);
 
         switch (actionId) {
-            case "Bpm": handleBpm(params, extension); break;
-            case "CueMarkerName": handleCueMarkerName(params, extension); break;
-            case "DeleteAllCueMarkers": handleDeleteAllCueMarkers(extension); break;
-            case "Left": handleLeft(extension); break;
-            case "Right": handleRight(extension); break;
-            case "Up": handleUp(extension); break;
-            case "Down": handleDown(extension); break;
-            case "Enter": handleEnter(extension); break;
-            case "Escape": handleEscape(extension); break;
-            case "Copy": handleCopy(extension); break;
-            case "Paste": handlePaste(extension); break;
-            case "Cut": handleCut(extension); break;
-            case "Undo": handleUndo(extension); break;
-            case "Redo": handleRedo(extension); break;
-            // case "Duplicate": handleDuplicate(extension); break;
-            case "Select All": handleSelectAll(extension); break;
-            case "Select None": handleSelectNone(extension); break;
-            case "Select First": handleSelectFirst(extension); break;
-            case "Select Last": handleSelectLast(extension); break;
-            case "Select Next": handleSelectNext(extension); break;
-            case "Select Previous": handleSelectPrevious(extension); break;
-            case "Clip Select": handleClipSelect(extension); break;
-            case "Clip Duplicate": handleClipDuplicate(extension); break;
-            case "Clip Loop Off": handleClipLoopOff(extension); break;
-            case "Clip Loop On": handleClipLoopOn(extension); break;
-            case "Clip Accent": handleClipAccent(params, extension); break;
-            case "Project Name": handleProjectName(extension); break;
-            case "Rename": handleRename(extension); break;
-            case "Clip Delete": handleClipDelete(extension); break;
-            case "Clip Rename": handleClipRename(params, extension); break;
-            case "Clip Color": handleClipColor(params, extension); break;
-            case "Clip Create": handleClipCreate(params, extension, currentTrack); break;
-            case "Step Selected Length": handleStepSelectedLength(params, extension); break;
-            case "Step Selected Velocity": handleStepSelectedVelocity(params, extension); break;
-            case "Step Selected Chance": handleStepSelectedChance(params, extension); break;
-            case "Step Selected Transpose": handleStepSelectedTranspose(params, extension); break;
-            case "Step Selected Gain": handleStepSelectedGain(params, extension); break;
-            case "Step Selected Pressure": handleStepSelectedPressure(params, extension); break;
-            case "Step Selected Timbre": handleStepSelectedTimbre(params, extension); break;
-            case "Step Selected Pan": handleStepSelectedPan(params, extension); break;
-            case "Step Selected Duration": handleStepSelectedDuration(params, extension); break;
-            case "Step Selected Velocity Spread": handleStepSelectedVelocitySpread(params, extension); break;
-            case "Step Selected Release Velocity": handleStepSelectedReleaseVelocity(params, extension); break;
-            case "Step Selected Is Chance Enabled": handleStepSelectedIsChanceEnabled(params, extension); break;
-            case "Step Selected Is Muted": handleStepSelectedIsMuted(params, extension); break;
-            case "Step Selected Is Occurrence Enabled": handleStepSelectedIsOccurrenceEnabled(params, extension); break;
-            case "Step Selected Is Recurrence Enabled": handleStepSelectedIsRecurrenceEnabled(params, extension); break;
-            case "Step Selected Is Repeat Enabled": handleStepSelectedIsRepeatEnabled(params, extension); break;
-            case "Step Selected Occurrence": handleStepSelectedOccurrence(params, extension); break;
-            case "Step Selected Recurrence": handleStepSelectedRecurrence(params, extension); break;
-            case "Step Selected Repeat Count": handleStepSelectedRepeatCount(params, extension); break;
-            case "Step Selected Repeat Curve": handleStepSelectedRepeatCurve(params, extension); break;
-            case "Step Selected Repeat Velocity Curve": handleStepSelectedRepeatVelocityCurve(params, extension); break;
-            case "Step Selected Repeat Velocity End": handleStepSelectedRepeatVelocityEnd(params, extension); break;
-            case "Track Color": handleTrackColor(params, extension, currentTrack); break;
-            case "Track Rename": handleTrackRename(params, extension, currentTrack); break;
-            case "Track Select": handleTrackSelect(params, extension); break;
-            case "Insert Device": handleInsertDevice(params, extension, currentTrack); break;
-            case "Insert VST3": handleInsertVST3(params, extension, currentTrack); break;
-            case "Insert File": handleInsertFile(params, extension, currentTrack); break;
-            case "Arranger Loop Start": handleArrangerLoopStart(params, extension); break;
-            case "Arranger Loop End": handleArrangerLoopEnd(params, extension); break;
-            case "Time Signature": handleTimeSignature(params, extension); break;
-            case "Wait": handleWait(params, extension); break;
-            case "Message": handleMessage(params); break;
-            case "Macro": handleMacro(params, extension); break;
-            case "BB Arranger Mode": handleArrangerMode(extension); break;
-            case "BB Launcher Mode": handleLauncherMode(extension); break;
-            case "BB Toggle Launcher Arranger Mode": handleToggleLauncherArrangerMode(extension); break;
-            default: throw new IllegalArgumentException("Unknown action: " + actionId);
+            case "Bpm":
+                handleBpm(params, extension);
+                break;
+            case "CueMarkerName":
+                handleCueMarkerName(params, extension);
+                break;
+            case "DeleteAllCueMarkers":
+                handleDeleteAllCueMarkers(extension);
+                break;
+            case "Left":
+                handleLeft(extension);
+                break;
+            case "Right":
+                handleRight(extension);
+                break;
+            case "Up":
+                handleUp(extension);
+                break;
+            case "Down":
+                handleDown(extension);
+                break;
+            case "Enter":
+                handleEnter(extension);
+                break;
+            case "Escape":
+                handleEscape(extension);
+                break;
+            case "Clip Select":
+                handleClipSelect(extension);
+                break;
+            case "Clip Duplicate":
+                handleClipDuplicate(extension);
+                break;
+            case "Clip Loop Off":
+                handleClipLoopOff(extension);
+                break;
+            case "Clip Loop On":
+                handleClipLoopOn(extension);
+                break;
+            case "Clip Accent":
+                handleClipAccent(params, extension);
+                break;
+            case "Project Name":
+                handleProjectName(extension);
+                break;
+            case "Clip Delete":
+                handleClipDelete(extension);
+                break;
+            case "Clip Rename":
+                handleClipRename(params, extension);
+                break;
+            case "Clip Color":
+                handleClipColor(params, extension);
+                break;
+            case "Clip Create":
+                handleClipCreate(params, extension, currentTrack);
+                break;
+            case "Step Selected Length":
+                handleStepSelectedLength(params, extension);
+                break;
+            case "Step Selected Velocity":
+                handleStepSelectedVelocity(params, extension);
+                break;
+            case "Step Selected Chance":
+                handleStepSelectedChance(params, extension);
+                break;
+            case "Step Selected Transpose":
+                handleStepSelectedTranspose(params, extension);
+                break;
+            case "Step Selected Gain":
+                handleStepSelectedGain(params, extension);
+                break;
+            case "Step Selected Pressure":
+                handleStepSelectedPressure(params, extension);
+                break;
+            case "Step Selected Timbre":
+                handleStepSelectedTimbre(params, extension);
+                break;
+            case "Step Selected Pan":
+                handleStepSelectedPan(params, extension);
+                break;
+            case "Step Selected Duration":
+                handleStepSelectedDuration(params, extension);
+                break;
+            case "Step Selected Velocity Spread":
+                handleStepSelectedVelocitySpread(params, extension);
+                break;
+            case "Step Selected Release Velocity":
+                handleStepSelectedReleaseVelocity(params, extension);
+                break;
+            case "Step Selected Is Chance Enabled":
+                handleStepSelectedIsChanceEnabled(params, extension);
+                break;
+            case "Step Selected Is Muted":
+                handleStepSelectedIsMuted(params, extension);
+                break;
+            case "Step Selected Is Occurrence Enabled":
+                handleStepSelectedIsOccurrenceEnabled(params, extension);
+                break;
+            case "Step Selected Is Recurrence Enabled":
+                handleStepSelectedIsRecurrenceEnabled(params, extension);
+                break;
+            case "Step Selected Is Repeat Enabled":
+                handleStepSelectedIsRepeatEnabled(params, extension);
+                break;
+            case "Step Selected Occurrence":
+                handleStepSelectedOccurrence(params, extension);
+                break;
+            case "Step Selected Recurrence":
+                handleStepSelectedRecurrence(params, extension);
+                break;
+            case "Step Selected Repeat Count":
+                handleStepSelectedRepeatCount(params, extension);
+                break;
+            case "Step Selected Repeat Curve":
+                handleStepSelectedRepeatCurve(params, extension);
+                break;
+            case "Step Selected Repeat Velocity Curve":
+                handleStepSelectedRepeatVelocityCurve(params, extension);
+                break;
+            case "Step Selected Repeat Velocity End":
+                handleStepSelectedRepeatVelocityEnd(params, extension);
+                break;
+            case "Track Color":
+                handleTrackColor(params, extension, currentTrack);
+                break;
+            case "Track Rename":
+                handleTrackRename(params, extension, currentTrack);
+                break;
+            case "Track Select":
+                handleTrackSelect(params, extension);
+                break;
+            case "Insert Device":
+                handleInsertDevice(params, extension, currentTrack);
+                break;
+            case "Insert VST3":
+                handleInsertVST3(params, extension, currentTrack);
+                break;
+            case "Insert File":
+                handleInsertFile(params, extension, currentTrack);
+                break;
+            case "Arranger Loop Start":
+                handleArrangerLoopStart(params, extension);
+                break;
+            case "Arranger Loop End":
+                handleArrangerLoopEnd(params, extension);
+                break;
+            case "Time Signature":
+                handleTimeSignature(params, extension);
+                break;
+            case "Wait":
+                handleWait(params, extension);
+                break;
+            case "Message":
+                handleMessage(params);
+                break;
+            case "Macro":
+                handleMacro(params, extension);
+                break;
+            case "BB Arranger Mode":
+                handleArrangerMode(extension);
+                break;
+            case "BB Launcher Mode":
+                handleLauncherMode(extension);
+                break;
+            case "BB Toggle Launcher Arranger Mode":
+                handleToggleLauncherArrangerMode(extension);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown action: " + actionId);
         }
     }
 
@@ -213,54 +313,6 @@ public class ExecuteBitwigAction {
         extension.getApplication().escape();
     }
 
-    private static void handleCopy(BitwigBuddyExtension extension) {
-        extension.getApplication().copy();
-    }
-
-    private static void handlePaste(BitwigBuddyExtension extension) {
-        extension.getApplication().paste();
-    }
-
-    private static void handleCut(BitwigBuddyExtension extension) {
-        extension.getApplication().cut();
-    }
-
-    private static void handleUndo(BitwigBuddyExtension extension) {
-        extension.getApplication().undo();
-    }
-
-    private static void handleRedo(BitwigBuddyExtension extension) {
-        extension.getApplication().redo();
-    }
-
-    private static void handleDuplicate(BitwigBuddyExtension extension) {
-        extension.getApplication().duplicate();
-    }
-
-    private static void handleSelectAll(BitwigBuddyExtension extension) {
-        extension.getApplication().selectAll();
-    }
-
-    private static void handleSelectNone(BitwigBuddyExtension extension) {
-        extension.getApplication().selectNone();
-    }
-
-    private static void handleSelectFirst(BitwigBuddyExtension extension) {
-        extension.getApplication().selectFirst();
-    }
-
-    private static void handleSelectLast(BitwigBuddyExtension extension) {
-        extension.getApplication().selectLast();
-    }
-
-    private static void handleSelectNext(BitwigBuddyExtension extension) {
-        extension.getApplication().selectNext();
-    }
-
-    private static void handleSelectPrevious(BitwigBuddyExtension extension) {
-        extension.getApplication().selectPrevious();
-    }
-
     private static void handleClipSelect(BitwigBuddyExtension extension) {
         extension.getLauncherOrArrangerAsClip().clipLauncherSlot().select();
     }
@@ -286,10 +338,6 @@ public class ExecuteBitwigAction {
         showPopup(extension.getApplication().projectName().toString());
     }
 
-    private static void handleRename(BitwigBuddyExtension extension) {
-        extension.getApplication().rename();
-    }
-
     private static void handleClipDelete(BitwigBuddyExtension extension) {
         extension.getLauncherOrArrangerAsClip().clipLauncherSlot().deleteObject();
     }
@@ -305,7 +353,7 @@ public class ExecuteBitwigAction {
     }
 
     private static void handleClipCreate(String[] params, BitwigBuddyExtension extension, int currentTrack) {
-        
+
         int clipLength = 4;
         if (params.length > 1) {
             try {
@@ -590,7 +638,7 @@ public class ExecuteBitwigAction {
         int waitTime = params.length > 0 ? Integer.parseInt(params[0]) : 50;
         try {
             Thread.sleep(waitTime);
-            
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -610,11 +658,11 @@ public class ExecuteBitwigAction {
 
         String macroTitle = params[0];
         MacroActionSettings.MacroBB[] macros = MacroActionSettings.getMacros();
-        
+
         for (MacroActionSettings.MacroBB macro : macros) {
             if (macro.getTitle().equals(macroTitle)) {
                 // Execute in a synchronized block
-                synchronized(MacroActionSettings.getExecutionLock()) {
+                synchronized (MacroActionSettings.getExecutionLock()) {
                     // Reset execution state before nested execution
                     MacroActionSettings.resetExecutionState();
                     // Execute the nested macro
@@ -623,7 +671,7 @@ public class ExecuteBitwigAction {
                 }
             }
         }
-        
+
         extension.getHost().errorln("Macro not found: " + macroTitle);
     }
 

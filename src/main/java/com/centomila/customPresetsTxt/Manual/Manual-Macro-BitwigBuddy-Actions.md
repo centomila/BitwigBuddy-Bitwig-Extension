@@ -8,16 +8,9 @@
 | **Left / Right / Up / Down**                 | Navigates within the Bitwig UI using arrow-key commands       |                                            |
 | **Enter**                                    | Triggers the Enter key action in Bitwig                       |                                            |
 | **Escape**                                   | Triggers the Escape key action in Bitwig                      |                                            |
-| **Copy / Paste / Cut**                       | Performs clipboard operations (copy, paste, cut)              |                                            |
-| **Undo / Redo**                              | Performs undo or redo in Bitwig                               |                                            |
-| **Duplicate**                                | Duplicates the currently selected item                        |                                            |
-| **Select All / Select None**                 | Select Actions                                                |                                            |
-| **Select First / Select Last**               | Select Actions                                                |                                            |
-| **Select Next / Select Previous**            | Select Actions                                                |                                            |
 | **Clip Select**                              | Selects the currently focused clip slot                       |                                            |
 | **Clip Duplicate**                           | Duplicates the currently focused clip                         |                                            |
 | **Project Name**                             | Shows the current project name                                |                                            |
-| **Rename**                                   | Renames the currently selected item                           |                                            |
 | **Clip Delete**                              | Deletes the currently focused clip                            |                                            |
 | **Clip Rename**                              | Renames the currently focused clip                            |_Clip Rename (Verse 1)_                     |
 | **Clip Color**                               | Sets the color of the currently focused clip                  |_Clip Color (FF0000)_                       |
@@ -36,6 +29,28 @@
 | **Wait**                                     | Waits for the specified number of ms before proceeding        |                                            |
 | **Message**                                  | Shows a message box with the specified text                   |_Message (Hello World!)_                    |
 | **Insert File**                              | Insert a file (Eg .mid) in the desired launcher slot          |_Insert File (3,"C:\midi\file.mid")_        |
+| **Step Selected Length**                     | Sets the length of selected notes                              | _Step Selected Length (0.5)_               |
+| **Step Selected Velocity**                   | Sets the velocity of selected notes                            | _Step Selected Velocity (0.75)_            |
+| **Step Selected Chance**                     | Sets the chance value of selected notes                        | _Step Selected Chance (0.5)_               |
+| **Step Selected Transpose**                  | Sets the transpose value of selected notes                     | _Step Selected Transpose (12)_              |
+| **Step Selected Gain**                       | Sets the gain of selected notes                               | _Step Selected Gain (0.8)_                 |
+| **Step Selected Pressure**                   | Sets the pressure (aftertouch) of selected notes              | _Step Selected Pressure (0.6)_             |
+| **Step Selected Timbre**                     | Sets the timbre of selected notes                             | _Step Selected Timbre (0.7)_               |
+| **Step Selected Pan**                        | Sets the pan value of selected notes                          | _Step Selected Pan (0.5)_                  |
+| **Step Selected Duration**                   | Sets the duration of selected notes                           | _Step Selected Duration (0.25)_            |
+| **Step Selected Velocity Spread**            | Sets the velocity spread of selected notes                    | _Step Selected Velocity Spread (0.2)_      |
+| **Step Selected Release Velocity**           | Sets the release velocity of selected notes                   | _Step Selected Release Velocity (0.5)_     |
+| **Step Selected Is Chance Enabled**          | Enables/disables chance for selected notes                    | _Step Selected Is Chance Enabled (true)_   |
+| **Step Selected Is Muted**                   | Mutes/unmutes selected notes                                  | _Step Selected Is Muted (true)_            |
+| **Step Selected Is Occurrence Enabled**      | Enables/disables occurrence for selected notes                | _Step Selected Is Occurrence Enabled (true)_ |
+| **Step Selected Is Recurrence Enabled**      | Enables/disables recurrence for selected notes                | _Step Selected Is Recurrence Enabled (true)_ |
+| **Step Selected Is Repeat Enabled**          | Enables/disables repeat for selected notes                    | _Step Selected Is Repeat Enabled (true)_   |
+| **Step Selected Occurrence**                 | Sets the occurrence condition for selected notes              | _Step Selected Occurrence (FIRST)_         |
+| **Step Selected Recurrence**                 | Sets recurrence pattern for selected notes                    | _Step Selected Recurrence (4,15)_          |
+| **Step Selected Repeat Count**               | Sets the repeat count for selected notes                      | _Step Selected Repeat Count (4)_           |
+| **Step Selected Repeat Curve**               | Sets the repeat timing curve for selected notes               | _Step Selected Repeat Curve (0.5)_         |
+| **Step Selected Repeat Velocity Curve**      | Sets the repeat velocity curve for selected notes            | _Step Selected Repeat Velocity Curve (0.3)_ |
+| **Step Selected Repeat Velocity End**        | Sets the end velocity for note repeats                       | _Step Selected Repeat Velocity End (0.4)_  |
 
 | **Bitwig Buddy Panel**                       | Description                                                   | Example                                    |
 |----------------------------------------------|---------------------------------------------------------------|--------------------------------------------|
