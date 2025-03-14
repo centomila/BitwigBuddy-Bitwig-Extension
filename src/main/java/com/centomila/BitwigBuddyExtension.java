@@ -180,6 +180,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
       DeviceMatcherDrumMachine.initializeDeviceMatcherDM(this, host);
       
       ModeSelectSettings.gotoGenerateMode();
+      ModeSelectSettings.gotoMacroMode();
+      ModeSelectSettings.gotoGenerateMode();
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BitwigBuddy Initialized! Have fun!");
    }

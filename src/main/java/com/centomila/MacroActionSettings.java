@@ -983,8 +983,8 @@ public class MacroActionSettings {
             macroAuthorSettings[i].hide();
         }
         
-        // Show stop button but hide its spacer
-        macroSpacerSetting.hide();
+        // Show stop button
+        macroSpacerSetting.show();
         macroStopBtnSignalSetting.show();
         
         // Hide instant macro section
