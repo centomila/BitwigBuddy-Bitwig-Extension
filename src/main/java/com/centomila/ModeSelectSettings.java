@@ -24,6 +24,16 @@ public class ModeSelectSettings {
         // Mode select setting
         final String[] MODE_SELECT_OPTIONS = new String[] { MODE_GENERATE, MODE_EDIT, MODE_MACRO };
 
+        // Initialize mode select settings
+        initModeSelectSettings(MODE_SELECT_OPTIONS);
+        
+        // Set up observers
+        initToggleModeObservers();
+        
+        // Remove the hideMacroSettings() call from here
+    }
+
+    private static void initModeSelectSettings(String[] MODE_SELECT_OPTIONS) {
         spacerSelectModSetting = (Setting) createStringSetting(titleWithLine("MODE SELECT"),
                 CATEGORY_MODE_SELECT, 0,
                 "---------------------------------------------------");
@@ -43,8 +53,14 @@ public class ModeSelectSettings {
                 CATEGORY_MODE_SELECT,
                 TOGGLE_LAUNCHER_ARRANGER_OPTIONS,
                 TOGGLE_LAUNCHER_ARRANGER_OPTIONS[0]);
+    }
 
-        initToggleModeObservers();
+    private static void hideMacroSettings() {
+        MacroActionSettings.hideMacroSettings();
+        MacroActionSettings.showMacroSlots(false, false, false, false);
+        MacroActionSettings.hideInstantMacro();
+        MacroActionSettings.macroHeaderSetting.hide();
+        MacroActionSettings.macroViewSelectorSetting.hide();
     }
 
     private static void initToggleModeObservers() {
@@ -117,11 +133,14 @@ public class ModeSelectSettings {
 
     // GENERATE MODE
     public static void gotoGenerateMode() {
-        // Show generate settings
-        // RandomPattern.showSettings();
-        // for each Setting in RandomPattern.allSettings, showSetting(setting);
-        // if presetPatternType is random
+        // First, hide all macro-related settings before showing generate settings
+        MacroActionSettings.hideMacroSettings();
+        MacroActionSettings.showMacroSlots(false, false, false, false);
+        MacroActionSettings.hideInstantMacro();
+        MacroActionSettings.macroHeaderSetting.hide();
+        MacroActionSettings.macroViewSelectorSetting.hide();
 
+        // Show generate settings
         for (Setting setting : MoveStepsHandler.allSettings) {
             setting.show();
         }
@@ -156,6 +175,7 @@ public class ModeSelectSettings {
         MacroActionSettings.hideInstantMacro();
         MacroActionSettings.macroHeaderSetting.hide();
         MacroActionSettings.macroViewSelectorSetting.hide();
+        hideSetting(MacroActionSettings.allSettings);
 
         EditClipSettings.hideEditClipSettings();
     }

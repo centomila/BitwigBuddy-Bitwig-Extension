@@ -53,7 +53,7 @@ public class MacroActionSettings {
     private static final String MACRO_PREFIX = "Macro:";
     private static long lastExecutionTime = 0;
     private static final long DEBOUNCE_MS = 500; // Adjust as needed
-    // TODO: 8 FIELDS FOR INSTA MACRO + SELECTOR: MACO FOLDER/INSTANT
+    
 
     public static Setting instantMacroSpacer;
     public static Setting[] instantMacroLines = new Setting[8];
@@ -110,11 +110,13 @@ public class MacroActionSettings {
      * @param extension The BitwigBuddy extension instance
      */
     public static void init(BitwigBuddyExtension extension) {
-
         host = extension.getHost();
         preferences = extension.preferences;
 
+        // Initialize settings first
         initMacroActionSettings();
+        
+        // Then set up observers
         initMacroActionObservers(extension);
     }
 
@@ -218,12 +220,11 @@ public class MacroActionSettings {
                 "Macro Control", 0, "---------------------------------------------------");
         disableSetting(macroSpacerSetting);
         settingsList.add(macroSpacerSetting);
-        
 
         // Add stop button as the very last setting
         macroStopBtnSignalSetting = (Setting) createSignalSetting("Stop All Macros",
-        "Macro Control", "Stop all currently executing macros");
-        settingsList.add(macroStopBtnSignalSetting);
+                "Macro Control", "Stop all currently executing macros");
+        settingsList.add(macroStopBtnSignalSetting);  // Add this line
         
         allSettings = settingsList.toArray(new Setting[0]);
         
@@ -896,21 +897,27 @@ public class MacroActionSettings {
 
     // Change these methods from private to public
     public static void showMacroSlots(boolean slot1, boolean slot2, boolean slot3, boolean slot4) {
-        // Slot 1
+        // Slot 1-4 visibility
         setSettingsVisibility(0, slot1, macroSpacerSettings, macroSelectorSettings, macroOpenSignals, 
             macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
         
-        // Slot 2
         setSettingsVisibility(1, slot2, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
             macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
         
-        // Slot 3
         setSettingsVisibility(2, slot3, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
             macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
         
-        // Slot 4 
         setSettingsVisibility(3, slot4, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
             macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+
+        // Always show stop controls when any macro slot is visible
+        if (slot1 || slot2 || slot3 || slot4) {
+            macroSpacerSetting.show();
+            macroStopBtnSignalSetting.show();
+        } else {
+            macroSpacerSetting.hide();
+            macroStopBtnSignalSetting.hide();
+        }
     }
 
     public static void showInstantMacro() {

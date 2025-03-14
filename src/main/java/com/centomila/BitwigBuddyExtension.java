@@ -163,27 +163,23 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
       SettingsHelper.init(this);
 
-      // Initialize launcher/arranger toggle
-
+      // Initialize settings in correct order for GUI layout
       ModeSelectSettings.init(this);
-
-      moveStepsHandler = new MoveStepsHandler(this);
-      moveStepsHandler.init(documentState);
-
       EditClipSettings.init(this);
-
       PatternSettings.init(this);
       ProgramPattern.init(this);
       NoteDestinationSettings.init(this);
       StepSizeSettings.init(this);
       PostActionSettings.init(this);
-      ClipUtils.init(this);
       MacroActionSettings.init(this);
-
-      ModeSelectSettings.gotoGenerateMode();
-
+      ClipUtils.init(this);
+      
+      moveStepsHandler = new MoveStepsHandler(this);
+      moveStepsHandler.init(documentState);
+      
       DeviceMatcherDrumMachine.initializeDeviceMatcherDM(this, host);
-
+      
+      ModeSelectSettings.gotoGenerateMode();
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BitwigBuddy Initialized! Have fun!");
    }
