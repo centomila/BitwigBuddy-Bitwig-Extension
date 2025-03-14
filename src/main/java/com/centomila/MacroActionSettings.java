@@ -23,86 +23,63 @@ import java.util.Set;
 /**
  * Manages macro action settings and execution for the BitwigBuddy extension.
  * This class handles the initialization, configuration, and execution of
- * user-defined macros
- * that can automate sequences of Bitwig Studio actions.
- * 
- * <p>
- * A macro consists of a title, description, and a sequence of commands that can
- * be
- * executed in order with configurable delays between each command.
- * </p>
- * 
- * <p>
- * Macros are stored as text files in the Macros subdirectory of the extension's
- * presets directory.
- * </p>
+ * user-defined macros that can automate sequences of Bitwig Studio actions.
  */
 public class MacroActionSettings {
-    // Replace single macro settings with arrays
+    // -------------------- Constants --------------------
+    private static final String MACRO_PREFIX = "Macro:";
+    private static final long DEBOUNCE_MS = 500;
+    private static final int MAX_NESTING_LEVEL = Integer.MAX_VALUE;
+    
+    // View constants
+    public static final String VIEW_ALL = "All";
+    public static final String VIEW_SLOT1 = "1";
+    public static final String VIEW_SLOT2 = "2";
+    public static final String VIEW_SLOT3 = "3";
+    public static final String VIEW_SLOT4 = "4";
+    public static final String VIEW_IM = "Instant Macro";
+    public static final String VIEW_ALL_IM = "All + Instant Macro";
+    public static final String VIEW_COMPACT = "Compact";
+
+    // -------------------- Static Fields --------------------
+    // Core components
+    private static ControllerHost host;
+    private static GlobalPreferences preferences;
+
+    // Execution state
+    private static volatile boolean isExecuting = false;
+    private static volatile boolean stopExecution = false;
+    private static volatile String currentExecutionSource = null;
+    private static volatile long executionStartTime = 0;
+    private static long lastExecutionTime = 0;
+    private static boolean isExecutingMacro = false;
+    private static int nestingLevel = 0;
+
+    // Synchronization objects
+    private static final Object EXECUTION_LOCK = new Object();
+    private static final Object executionLock = new Object();
+
+    // -------------------- UI Settings --------------------
+    // Macro slot settings
     public static Setting[] macroLaunchBtnSignalSettings = new Setting[4];
     public static Setting[] macroSelectorSettings = new Setting[4];
     public static Setting[] macroDescriptionSettings = new Setting[4];
     public static Setting[] macroAuthorSettings = new Setting[4];
     public static Setting[] macroOpenSignals = new Setting[4];
-    public static Setting macroSpacerSetting;
-    public static Setting[] allSettings;
     public static Setting[] macroSpacerSettings = new Setting[4];
 
-    private static ControllerHost host;
-    private static GlobalPreferences preferences;
-    private static final String MACRO_PREFIX = "Macro:";
-    private static long lastExecutionTime = 0;
-    private static final long DEBOUNCE_MS = 500; // Adjust as needed
-    
+    // Global macro settings
+    public static Setting macroSpacerSetting;
+    public static Setting macroViewSelectorSetting;
+    public static Setting macroHeaderSetting;
+    public static Setting macroStopBtnSignalSetting;
+    public static Setting[] allSettings;
 
+    // Instant macro settings
     public static Setting instantMacroSpacer;
     public static Setting[] instantMacroLines = new Setting[8];
     public static Setting executeInstantMacroSignal;
-    public static Setting clearAllInstantMacroLines; // Add this new field
-
-    // Add this near the other static fields at the top of the class
-    public static Setting macroStopBtnSignalSetting;
-    public static volatile boolean stopExecution = false;
-
-    private static final int MAX_NESTING_LEVEL = Integer.MAX_VALUE;
-    private static boolean isExecutingMacro = false;
-    private static int nestingLevel = 0;
-
-    // Add these near other static fields at top of class
-    private static volatile boolean isExecuting = false;
-    private static final Object executionLock = new Object();
-    private static volatile String currentExecutionSource = null;
-    private static volatile long executionStartTime = 0;
-
-    // Add near the top with other static fields
-    private static final Object EXECUTION_LOCK = new Object();
-
-    // Add these public static methods
-    public static Object getExecutionLock() {
-        return EXECUTION_LOCK;
-    }
-
-    public static void resetExecutionState() {
-        synchronized (EXECUTION_LOCK) {
-            isExecuting = false;
-            currentExecutionSource = null;
-            stopExecution = false;
-        }
-    }
-
-    // Add this to the top of MacroActionSettings class with other static fields
-    public static Setting macroViewSelectorSetting;
-    public static final String VIEW_ALL = "All";
-    public static final String VIEW_SLOT1 = "1";
-    public static final String VIEW_SLOT2 = "2"; 
-    public static final String VIEW_SLOT3 = "3";
-    public static final String VIEW_SLOT4 = "4";
-    public static final String VIEW_IM = "Instant Macro";  // Changed from "IM"
-    public static final String VIEW_ALL_IM = "All + Instant Macro";  // Changed from "All+IM"
-    public static final String VIEW_COMPACT = "Compact";  // New view option
-
-    // Add new field for the header
-    public static Setting macroHeaderSetting;
+    public static Setting clearAllInstantMacroLines;
 
     /**
      * Initializes the macro action settings for the extension.
@@ -517,27 +494,6 @@ public class MacroActionSettings {
     }
 
     /**
-     * Hides all macro-related settings in the UI.
-     */
-    public static void hideMacroSettings() {
-        for (Setting setting : allSettings) {
-            setting.hide();
-        }
-        // Be sure to hide everything related to macro settings
-        hideInstantMacro();
-        
-    }
-
-    /**
-     * Shows all macro-related settings in the UI.
-     */
-    public static void showMacroSettings() {
-        for (Setting setting : allSettings) {
-            setting.show();
-        }
-    }
-
-    /**
      * Returns an array of all available macros.
      * Reads macro files from the configured macros directory and sorts them by
      * name.
@@ -822,6 +778,104 @@ public class MacroActionSettings {
     }
 
     /**
+     * Hides all macro-related settings in the UI.
+     */
+    public static void hideMacroSettings() {
+        for (Setting setting : allSettings) {
+            setting.hide();
+        }
+        // Be sure to hide everything related to macro settings
+        hideInstantMacro();
+        
+    }
+
+    /**
+     * Shows all macro-related settings in the UI.
+     */
+    public static void showMacroSettings() {
+        for (Setting setting : allSettings) {
+            setting.show();
+        }
+    }
+
+    // Change these methods from private to public
+    public static void showMacroSlots(boolean slot1, boolean slot2, boolean slot3, boolean slot4) {
+        // Slot 1-4 visibility
+        setSettingsVisibility(0, slot1, macroSpacerSettings, macroSelectorSettings, macroOpenSignals, 
+            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+        
+        setSettingsVisibility(1, slot2, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
+            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+        
+        setSettingsVisibility(2, slot3, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
+            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+        
+        setSettingsVisibility(3, slot4, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
+            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
+
+        // Always show stop controls when any macro slot is visible
+        if (slot1 || slot2 || slot3 || slot4) {
+            macroSpacerSetting.show();
+            macroStopBtnSignalSetting.show();
+        } else {
+            macroSpacerSetting.hide();
+            macroStopBtnSignalSetting.hide();
+        }
+    }
+
+    public static void showInstantMacro() {
+        instantMacroSpacer.show();
+        for (Setting line : instantMacroLines) {
+            line.show();
+        }
+        executeInstantMacroSignal.show();
+        clearAllInstantMacroLines.show();
+    }
+
+    public static void hideInstantMacro() {
+        instantMacroSpacer.hide();
+        for (Setting line : instantMacroLines) {
+            line.hide();
+        }
+        executeInstantMacroSignal.hide();
+        clearAllInstantMacroLines.hide();
+    }
+
+    private static void setSettingsVisibility(int index, boolean show, Setting[]... settingsArrays) {
+        for (Setting[] settings : settingsArrays) {
+            if (settings[index] != null) {
+                if (show) {
+                    settings[index].show();
+                } else {
+                    settings[index].hide();
+                }
+            }
+        }
+    }
+
+    public static void showCompactView() {
+        // Show only selectors, execute buttons, and separators for all slots
+        for (int i = 0; i < 4; i++) {
+            // Show separator and essential controls
+            macroSpacerSettings[i].show();     // Keep separator visible
+            macroSelectorSettings[i].show();    // Show selector
+            macroLaunchBtnSignalSettings[i].show(); // Show execute button
+            
+            // Hide other controls
+            macroOpenSignals[i].hide();
+            macroDescriptionSettings[i].hide();
+            macroAuthorSettings[i].hide();
+        }
+        
+        // Show stop button
+        macroSpacerSetting.show();
+        macroStopBtnSignalSetting.show();
+        
+        // Hide instant macro section
+        hideInstantMacro();
+    }
+
+    /**
      * Immutable class representing a macro for the BitwigBuddy extension.
      */
     public static final class MacroBB {
@@ -914,80 +968,17 @@ public class MacroActionSettings {
         return flattenedCommands;
     }
 
-    // Change these methods from private to public
-    public static void showMacroSlots(boolean slot1, boolean slot2, boolean slot3, boolean slot4) {
-        // Slot 1-4 visibility
-        setSettingsVisibility(0, slot1, macroSpacerSettings, macroSelectorSettings, macroOpenSignals, 
-            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
-        
-        setSettingsVisibility(1, slot2, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
-            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
-        
-        setSettingsVisibility(2, slot3, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
-            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
-        
-        setSettingsVisibility(3, slot4, macroSpacerSettings, macroSelectorSettings, macroOpenSignals,
-            macroDescriptionSettings, macroAuthorSettings, macroLaunchBtnSignalSettings);
-
-        // Always show stop controls when any macro slot is visible
-        if (slot1 || slot2 || slot3 || slot4) {
-            macroSpacerSetting.show();
-            macroStopBtnSignalSetting.show();
-        } else {
-            macroSpacerSetting.hide();
-            macroStopBtnSignalSetting.hide();
-        }
+    // -------------------- Getter Methods --------------------
+    
+    public static Object getExecutionLock() {
+        return EXECUTION_LOCK;
     }
 
-    public static void showInstantMacro() {
-        instantMacroSpacer.show();
-        for (Setting line : instantMacroLines) {
-            line.show();
+    public static void resetExecutionState() {
+        synchronized (EXECUTION_LOCK) {
+            isExecuting = false;
+            currentExecutionSource = null;
+            stopExecution = false;
         }
-        executeInstantMacroSignal.show();
-        clearAllInstantMacroLines.show();
-    }
-
-    public static void hideInstantMacro() {
-        instantMacroSpacer.hide();
-        for (Setting line : instantMacroLines) {
-            line.hide();
-        }
-        executeInstantMacroSignal.hide();
-        clearAllInstantMacroLines.hide();
-    }
-
-    private static void setSettingsVisibility(int index, boolean show, Setting[]... settingsArrays) {
-        for (Setting[] settings : settingsArrays) {
-            if (settings[index] != null) {
-                if (show) {
-                    settings[index].show();
-                } else {
-                    settings[index].hide();
-                }
-            }
-        }
-    }
-
-    public static void showCompactView() {
-        // Show only selectors, execute buttons, and separators for all slots
-        for (int i = 0; i < 4; i++) {
-            // Show separator and essential controls
-            macroSpacerSettings[i].show();     // Keep separator visible
-            macroSelectorSettings[i].show();    // Show selector
-            macroLaunchBtnSignalSettings[i].show(); // Show execute button
-            
-            // Hide other controls
-            macroOpenSignals[i].hide();
-            macroDescriptionSettings[i].hide();
-            macroAuthorSettings[i].hide();
-        }
-        
-        // Show stop button
-        macroSpacerSetting.show();
-        macroStopBtnSignalSetting.show();
-        
-        // Hide instant macro section
-        hideInstantMacro();
     }
 }
