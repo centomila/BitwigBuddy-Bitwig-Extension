@@ -1,4 +1,4 @@
-Macro: "Test Loop"
+Macro: "Rename Loop Incremental"
 Description: "This is just for testing looping"
 Author: "Centomila"
 
@@ -22,17 +22,8 @@ Author: "Centomila"
 // Go to the first track
 select_track1
 
-
-
-Macro ("Rainbow Clip")
-[Loop i=1 to 2]
-Select Next Track
-Clip Create
-Macro ("Rainbow Clip")
+Loop to rename for 8 tracks
+[Loop i=1 to 8]
+Track Rename ("My Track n. ${i}")
+Select next track
 [End Loop]
-
-// Loop to rename for 8 tracks
-// [Loop i=1 to 8]
-// Track Rename ("Pippo ${i}")
-// Select next track
-// [End Loop]

@@ -295,7 +295,8 @@ public class MacroActionSettings {
                             "Instant Macro",
                             commands.toArray(new String[0]),
                             "Instant macro execution",
-                            "Unknown");
+                            "Unknown",
+                            ""); // Add relative path
 
                     // Execute the macro
                     executeMacro(instantMacro, extension);
@@ -501,9 +502,7 @@ public class MacroActionSettings {
      * @return Array of Macro objects, empty array if no macros are found
      */
     public static MacroBB[] getMacros() {
-        File macrosDir = new File(preferences.getPresetsPath());
-        String subdir = "Macros";
-        macrosDir = new File(macrosDir, subdir);
+        File macrosDir = new File(preferences.getPresetsPath(), "Macros");
         List<MacroBB> macroList = new ArrayList<>();
 
         // Early return with empty array if directory doesn't exist or isn't accessible
@@ -512,36 +511,46 @@ public class MacroActionSettings {
             return new MacroBB[0];
         }
 
-        File[] files = macrosDir.listFiles();
-        if (files == null) {
-            host.errorln("Failed to list files in macro directory: " + macrosDir);
-            return new MacroBB[0];
-        }
+        // Recursively scan directory
+        scanDirectory(macrosDir, macrosDir, macroList);
 
-        // Sort files by name
-        Arrays.sort(files);
+        // Sort macros by their display name (relative path + title)
+        macroList.sort((m1, m2) -> {
+            String display1 = m1.getRelativePath() + m1.getTitle();
+            String display2 = m2.getRelativePath() + m2.getTitle();
+            return display1.compareToIgnoreCase(display2);
+        });
 
-        // Check if directory is empty
-        if (files.length == 0) {
-            host.errorln("Macro directory is empty");
-            return new MacroBB[0];
-        }
+        return macroList.toArray(new MacroBB[0]);
+    }
 
-        // Process each file
+    private static void scanDirectory(File baseDir, File currentDir, List<MacroBB> macroList) {
+        File[] files = currentDir.listFiles();
+        if (files == null) return;
+
         for (File file : files) {
-            if (file.isFile()) {
+            if (file.isFile() && file.getName().toLowerCase().endsWith(".txt")) {
                 try {
-                    MacroBB macro = readMacroFile(file);
+                    // Calculate relative path from base directory
+                    String relativePath = "";
+                    if (!currentDir.equals(baseDir)) {
+                        String basePath = baseDir.getCanonicalPath();
+                        String currentPath = currentDir.getCanonicalPath();
+                        relativePath = currentPath.substring(basePath.length() + 1)
+                            .replace(File.separatorChar, '/') + "/";
+                    }
+
+                    MacroBB macro = readMacroFile(file, relativePath);
                     if (macro != null) {
                         macroList.add(macro);
                     }
                 } catch (IOException e) {
                     host.errorln("Failed to read macro file " + file.getName() + ": " + e.getMessage());
                 }
+            } else if (file.isDirectory()) {
+                scanDirectory(baseDir, file, macroList);
             }
         }
-
-        return macroList.toArray(new MacroBB[0]);
     }
 
     /**
@@ -583,7 +592,7 @@ public class MacroActionSettings {
      * @return Macro object if successful, null if parsing failed
      * @throws IOException if file reading fails
      */
-    private static MacroBB readMacroFile(File file) throws IOException {
+    private static MacroBB readMacroFile(File file, String relativePath) throws IOException {
         List<String> lines = java.nio.file.Files.readAllLines(file.toPath());
         String title = "";
         String description = "No description";
@@ -645,7 +654,11 @@ public class MacroActionSettings {
             return null;
         }
 
-        return new MacroBB(file.getName(), title, commands.toArray(new String[0]), description, author);
+        // Display title with relative path for selector
+        String displayTitle = relativePath.isEmpty() ? title : relativePath + title;
+
+        return new MacroBB(file.getName(), displayTitle, commands.toArray(new String[0]), 
+                          description, author, relativePath);
     }
 
     private static void printAllAvailableActions(BitwigBuddyExtension extension) {
@@ -706,7 +719,16 @@ public class MacroActionSettings {
         if (macro != null) {
             try {
                 File macrosDir = new File(preferences.getPresetsPath(), "Macros");
-                File macroFile = new File(macrosDir, macro.getFileName());
+                File macroFile;
+                
+                if (!macro.getRelativePath().isEmpty()) {
+                    // Convert relative path slashes to system-specific separator
+                    String systemPath = macro.getRelativePath().replace('/', File.separatorChar);
+                    File subDir = new File(macrosDir, systemPath);
+                    macroFile = new File(subDir, macro.getFileName());
+                } else {
+                    macroFile = new File(macrosDir, macro.getFileName());
+                }
 
                 if (macroFile.exists()) {
                     boolean opened = false;
@@ -884,16 +906,23 @@ public class MacroActionSettings {
         private final String[] commands;
         private final String description;
         private final String author;
+        private final String relativePath; // New field for relative path
 
-        public MacroBB(String fileName, String title, String[] commands, String description, String author) {
+        public MacroBB(String fileName, String title, String[] commands, String description, String author, String relativePath) {
             this.fileName = Objects.requireNonNull(fileName, "fileName cannot be null");
             this.title = Objects.requireNonNull(title, "title cannot be null");
             this.commands = Arrays.copyOf(Objects.requireNonNull(commands, "commands cannot be null"), commands.length);
             this.description = description != null ? description : "No description";
             this.author = author != null ? author : "Unknown";
+            this.relativePath = relativePath != null ? relativePath : "";
         }
 
-        // Add getter for author
+        // Add new getter
+        public String getRelativePath() {
+            return relativePath;
+        }
+
+        // Existing getters...
         public String getAuthor() {
             return author;
         }
