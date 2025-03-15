@@ -25,20 +25,21 @@ public class PatternSettings {
     public static Setting patternSelectorSetting; // List of default patterns
     public static Setting customPresetSetting; // List of custom patterns
     public static Setting customRefreshPresetsSetting; // Refresh custom presets
-    public static Setting customPresetDefaultNoteSetting;
-    public static Setting customPresetNoteDestinationSelectorSetting;
-    public static Setting customPresetSaveBtnSignal;
-    public static Setting customPresetSaveNamSetting;
-    public static Setting customPresetStepSizeSetting;
-    public static Setting customPresetSubdivisionsSetting;
-    public static Setting customPresetNoteLengthSetting;
-    public static Setting customPresetStepSizeToggleSetting;
-    public static Setting customPresetSubdivisionsToggleSetting;
-    public static Setting customPresetNoteLengthToggleSetting;
+    
+    public static Setting customPresetDefaultNoteSetting; // Default note for custom presets
+    public static Setting customPresetNoteDestinationSelectorSetting; // Note destination selector for custom presets
+    public static Setting customPresetSaveBtnSignal; // Save custom preset button
+    public static Setting customPresetSaveNamSetting; // Save custom preset name
+    public static Setting customPresetStepSizeSetting; // Step size for custom presets
+    public static Setting customPresetSubdivisionsSetting; // Subdivisions for custom presets
+    public static Setting customPresetNoteLengthSetting; // Note length for custom presets
+    public static Setting customPresetStepSizeToggleSetting; // Toggle step size for custom presets
+    public static Setting customPresetSubdivisionsToggleSetting; // Toggle subdivisions for custom presets
+    public static Setting customPresetNoteLengthToggleSetting; // Toggle note length for custom presets
 
     public static Setting presetPatternStringSetting; // Custom pattern string
-    public static Setting reversePatternSetting;
-    public static Setting spacerGenerate;
+    public static Setting reversePatternSetting; // Reverse pattern setting
+    public static Setting spacerGenerate; // Spacer setting
     public static Setting[] allSettings;
     private final BitwigBuddyExtension extension;
     private static String CATEGORY_GENERATE_PATTERN = "3 Generate Pattern";
@@ -81,12 +82,12 @@ public class PatternSettings {
         initPatternTypeSetting(documentState);
         initPatternSelectorSetting(documentState);
         initCustomSavePresetSetting(documentState);
-        
+
         initCustomPresetParams(documentState);
         initCustomPresetPatternStringSetting(documentState);
         initRefreshCustomPresetsSetting(documentState);
         initReversePatternSetting(documentState);
-        
+
         initCustomPresetDefaultNoteSetting(documentState);
         initCustomPresetStepSizeToggleSetting(documentState);
         initCustomPresetSubdivisionsToggleSetting(documentState);
@@ -156,8 +157,11 @@ public class PatternSettings {
                         ProgramPattern.programStepQtySetting,
                         ProgramPattern.programVelocitySettingShape,
                         customRefreshPresetsSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting,
-                        customPresetStepSizeSetting, customPresetSubdivisionsSetting, customPresetNoteLengthSetting };
+                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal,
+                        customPresetSaveNamSetting,
+                        customPresetStepSizeSetting, customPresetSubdivisionsSetting, customPresetNoteLengthSetting,
+                        customPresetNoteDestinationSelectorSetting, customPresetStepSizeToggleSetting,
+                        customPresetSubdivisionsToggleSetting, customPresetNoteLengthToggleSetting };
                 showAndEnableSetting(settingsToShow);
                 hideAndDisableSetting(settingsToHide);
 
@@ -169,8 +173,11 @@ public class PatternSettings {
                         customPresetSetting,
                         customRefreshPresetsSetting,
                         reversePatternSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting,
-                        customPresetStepSizeSetting, customPresetSubdivisionsSetting, customPresetNoteLengthSetting };
+                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal,
+                        customPresetSaveNamSetting,
+                        customPresetStepSizeSetting, customPresetSubdivisionsSetting, customPresetNoteLengthSetting,
+                        customPresetNoteDestinationSelectorSetting, customPresetStepSizeToggleSetting,
+                        customPresetSubdivisionsToggleSetting, customPresetNoteLengthToggleSetting };
                 Setting[] settingsToHideCustom = {
                         patternSelectorSetting,
                         ProgramPattern.programDensitySetting,
@@ -204,8 +211,12 @@ public class PatternSettings {
                         customPresetSetting,
                         reversePatternSetting,
                         customRefreshPresetsSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting,
-                        customPresetStepSizeSetting, customPresetSubdivisionsSetting, customPresetNoteLengthSetting };
+                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal,
+                        customPresetSaveNamSetting,
+                        customPresetStepSizeSetting, customPresetSubdivisionsSetting, customPresetNoteLengthSetting,
+                        customPresetNoteDestinationSelectorSetting,
+                        customPresetStepSizeToggleSetting, customPresetSubdivisionsToggleSetting,
+                        customPresetNoteLengthToggleSetting };
                 showAndEnableSetting(settingsToShowRandom);
                 hideAndDisableSetting(settingsToHideRandom);
                 break;
@@ -283,7 +294,7 @@ public class PatternSettings {
             if (!((EnumValue) patternTypeSetting).get().equals("Custom") || newValue == null) {
                 return;
             }
-            
+
             lastCustomPresetUsed = newValue.toString();
             if (lastCustomPresetUsed.equals("NO CUSTOM PRESETS")) {
                 setPatternString("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0");
@@ -305,26 +316,24 @@ public class PatternSettings {
             }
 
             String stepSize = getCustomPresetStepSize(newValue.toString());
-            
+
             setStepSizeString(stepSize.isEmpty() ? "1/16" : stepSize);
-            if (((EnumValue) customPresetStepSizeToggleSetting).get().equals("Enable") && 
-                stepSize != null && !stepSize.trim().isEmpty()) {
+            if (((EnumValue) customPresetStepSizeToggleSetting).get().equals("Enable") &&
+                    stepSize != null && !stepSize.trim().isEmpty()) {
                 ((SettableEnumValue) StepSizeSettings.stepSizSetting).set(stepSize);
             }
 
-
             String subdivisions = getCustomPresetSubdivisions(newValue.toString());
             setSubdivisionsString(subdivisions.isEmpty() ? "Straight" : subdivisions);
-            if (((EnumValue) customPresetSubdivisionsToggleSetting).get().equals("Enable") && 
-                subdivisions != null && !subdivisions.trim().isEmpty()) {
+            if (((EnumValue) customPresetSubdivisionsToggleSetting).get().equals("Enable") &&
+                    subdivisions != null && !subdivisions.trim().isEmpty()) {
                 ((SettableEnumValue) StepSizeSettings.stepSizSubdivisionSetting).set(subdivisions);
             }
 
-
             String noteLength = getCustomPresetNoteLength(newValue.toString());
             setNoteLengthString(noteLength.isEmpty() ? "1/16" : noteLength);
-            if (((EnumValue) customPresetNoteLengthToggleSetting).get().equals("Enable") && 
-                noteLength != null && !noteLength.trim().isEmpty()) {
+            if (((EnumValue) customPresetNoteLengthToggleSetting).get().equals("Enable") &&
+                    noteLength != null && !noteLength.trim().isEmpty()) {
                 ((SettableEnumValue) StepSizeSettings.noteLengthSetting).set(noteLength);
             }
         });
@@ -367,7 +376,7 @@ public class PatternSettings {
 
         ((Signal) customPresetSaveBtnSignal).addSignalObserver(() -> {
             String presetName = ((EnumValue) customPresetSetting).get();
-            String patternString = ((SettableStringValue)presetPatternStringSetting).get().trim();
+            String patternString = ((SettableStringValue) presetPatternStringSetting).get().trim();
             int[] patternIntArray = Arrays.stream(patternString.split(","))
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
@@ -377,7 +386,8 @@ public class PatternSettings {
             String stepSize = ((SettableEnumValue) StepSizeSettings.stepSizSetting).get();
             String subdivisions = ((SettableEnumValue) StepSizeSettings.stepSizSubdivisionSetting).get();
             String noteLength = ((SettableEnumValue) StepSizeSettings.noteLengthSetting).get();
-            CustomPreset preset = new CustomPreset(presetName, presetName, defaultNote, patternIntArray, stepSize, subdivisions, noteLength);
+            CustomPreset preset = new CustomPreset(presetName, presetName, defaultNote, patternIntArray, stepSize,
+                    subdivisions, noteLength);
             CustomPresetsHandler.saveCustomPreset(preset, extension.preferences, extension.getHost());
             showPopup("Custom Preset saved: " + presetName);
             extension.restart();
@@ -390,15 +400,14 @@ public class PatternSettings {
 
     private void initRefreshCustomPresetsSetting(DocumentState documentState) {
         customRefreshPresetsSetting = (Setting) documentState.getSignalSetting("Refresh Custom Files",
-        CATEGORY_GENERATE_PATTERN, "Refresh Custom Files");
+                CATEGORY_GENERATE_PATTERN, "Refresh Custom Files");
         ((Signal) customRefreshPresetsSetting).addSignalObserver(() -> {
-                
 
-                extension.restart();
-            });
-        }
-        
-        private void initCustomPresetDefaultNoteSetting(DocumentState documentState) {
+            extension.restart();
+        });
+    }
+
+    private void initCustomPresetDefaultNoteSetting(DocumentState documentState) {
         customPresetDefaultNoteSetting = (Setting) createStringSetting(
                 "Default Note from Preset",
                 CATEGORY_GENERATE_PATTERN, 0,
@@ -435,7 +444,6 @@ public class PatternSettings {
             enableSetting(NoteDestinationSettings.noteOctaveSetting);
             hideAndDisableSetting(customPresetDefaultNoteSetting);
         }
-        
 
     }
 
@@ -472,10 +480,10 @@ public class PatternSettings {
      */
     private String[] getCustomPresetsContentNameStrings() {
         String[] presets = Arrays.stream(extension.preferences.getCustomPresets())
-            .map(CustomPreset::getName)
-            .sorted((a, b) -> Utils.naturalCompare(a, b))
-            .toArray(String[]::new);
-        return presets.length == 0 ? new String[]{"NO CUSTOM PRESETS"} : presets;
+                .map(CustomPreset::getName)
+                .sorted((a, b) -> Utils.naturalCompare(a, b))
+                .toArray(String[]::new);
+        return presets.length == 0 ? new String[] { "NO CUSTOM PRESETS" } : presets;
     }
 
     private String[] getCustomPresetsContentPatternStrings(String presetName) {
@@ -484,7 +492,7 @@ public class PatternSettings {
         if (pattern == null) {
             // Return a default empty pattern if the preset is not found
             showPopup("Preset not found: " + presetName + ". Using default pattern.");
-            return new String[]{"0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"};
+            return new String[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0" };
         }
         return Arrays.stream(pattern).mapToObj(String::valueOf).toArray(String[]::new);
     }

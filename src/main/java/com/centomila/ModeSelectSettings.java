@@ -161,6 +161,7 @@ public class ModeSelectSettings {
             hideSetting(NoteDestinationSettings.noteChannelSetting);
         }
 
+
         PatternSettings.generatorTypeSelector(((EnumValue) PatternSettings.patternTypeSetting).get());
 
         showSetting(PostActionSettings.allSettings);
