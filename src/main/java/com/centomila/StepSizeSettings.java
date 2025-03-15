@@ -10,8 +10,13 @@ public class StepSizeSettings {
       public static Setting noteLengthSetting; // How long each note should be
       public static Setting stepSizSetting;
       public static Setting stepSizSubdivisionSetting;
+      // Custom Preset settings
+      public static Setting customPresetStepSizeSetting;
+      public static Setting customPresetSubdivisionsSetting;
+      public static Setting customPresetNoteLengthSetting;
+      // Other settings
       public static Setting[] allSettings;
-      private static String CATEGORY_CLIP = "5 Clip";
+      public static String CATEGORY_CLIP = "5 Clip";
 
       public static void init(BitwigBuddyExtension extension) {
             Setting spacerStepSize = (Setting) createStringSetting(
@@ -37,8 +42,25 @@ public class StepSizeSettings {
                         Utils.STEPSIZE_OPTIONS,
                         "1/16");
 
+            customPresetStepSizeSetting = (Setting) createStringSetting(
+                        "Preset Step Size",
+                        StepSizeSettings.CATEGORY_CLIP + " 2", 0,
+                        "1/16");
+
+            customPresetSubdivisionsSetting = (Setting) createStringSetting(
+                        "Preset Subdivisions",
+                        StepSizeSettings.CATEGORY_CLIP + " 2", 0,
+                        "Straight");
+
+            customPresetNoteLengthSetting = (Setting) createStringSetting(
+                        "Preset Note Length",
+                        StepSizeSettings.CATEGORY_CLIP + " 2", 0,
+                        "1/16");
+
             setupStepSizeObservers(extension);
-            allSettings = new Setting[] { spacerStepSize, stepSizSetting, stepSizSubdivisionSetting, noteLengthSetting };
+            allSettings = new Setting[] { spacerStepSize, stepSizSetting, stepSizSubdivisionSetting,
+                        noteLengthSetting, customPresetStepSizeSetting, customPresetSubdivisionsSetting,
+                        customPresetNoteLengthSetting };
 
       }
 
@@ -52,6 +74,5 @@ public class StepSizeSettings {
                   ((SettableEnumValue) noteLengthSetting).set(newValue);
             });
       }
-
 
 }

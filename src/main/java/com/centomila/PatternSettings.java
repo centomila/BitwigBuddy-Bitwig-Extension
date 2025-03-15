@@ -19,38 +19,49 @@ import com.centomila.CustomPresetsHandler.CustomPreset;
  * random, and custom patterns.
  */
 public class PatternSettings {
-    // Pattern settings
-    public static Setting generateBtnSignalSetting; // Pattern Type "Preset", "Program", "Custom"
-    public static Setting patternTypeSetting; // Pattern Type "Preset", "Program", "Custom"
-    public static Setting patternSelectorSetting; // List of default patterns
-    public static Setting customPresetSetting; // List of custom patterns
-    public static Setting customRefreshPresetsSetting; // Refresh custom presets
+    // Static constants
+    private static final String CATEGORY_GENERATE_PATTERN = "3 Generate Pattern";
+    private static final String CATEGORY_CUSTOM_PATTERN_STRINGS = "Custom Pattern Strings";
+    private static final String CATEGORY_CUSTOM_PATTERN_TOGGLE = "Custom Pattern Toggle";
+    private static final String CATEGORY_CUSTOM_PATTERN_SAVE = "Custom Pattern Save";
 
-    public static Setting customPresetDefaultNoteSetting; // Default note for custom presets
-    public static Setting customPresetNoteDestinationSelectorSetting; // Note destination selector for custom presets
-    public static Setting customPresetSaveHeaderSetting; // Save custom preset header spacer
-    public static Setting customPresetSaveBtnSignal; // Save custom preset button
-    public static Setting customPresetSaveNamSetting; // Save custom preset name
-    public static Setting customPresetStepSizeSetting; // Step size for custom presets
-    public static Setting customPresetSubdivisionsSetting; // Subdivisions for custom presets
-    public static Setting customPresetNoteLengthSetting; // Note length for custom presets
-    public static Setting customPresetStepSizeToggleSetting; // Toggle step size for custom presets
-    public static Setting customPresetSubdivisionsToggleSetting; // Toggle subdivisions for custom presets
-    public static Setting customPresetNoteLengthToggleSetting; // Toggle note length for custom presets
-
-    public static Setting presetPatternStringSetting; // Custom pattern string
-    public static Setting reversePatternSetting; // Reverse pattern setting
-    public static Setting spacerGenerate; // Spacer setting
-    public static Setting[] allSettings;
-    private final BitwigBuddyExtension extension;
-    private static String CATEGORY_GENERATE_PATTERN = "3 Generate Pattern";
-    private static String CATEGORY_CUSTOM_PATTERN_STRINGS = "Custom Pattern Strings";
-    private static String CATEGORY_CUSTOM_PATTERN_TOGGLE = "Custom Pattern Toggle";
-    private static String CATEGORY_CUSTOM_PATTERN_SAVE = "Custom Pattern Save";
+    // Static state variables
     private static String lastDefaultPresetUsed = "Kick: Four on the Floor";
     private static String lastCustomPresetUsed = null;
+
+    // UI Settings - Pattern Generation
+    public static Setting spacerGenerate;
+    public static Setting generateBtnSignalSetting;
+    public static Setting patternTypeSetting;
+    public static Setting patternSelectorSetting;
+    public static Setting reversePatternSetting;
+    public static Setting presetPatternStringSetting;
+
+    // UI Settings - Custom Presets
+    public static Setting customPresetSetting;
+    public static Setting customRefreshPresetsSetting;
+    
+    public static Setting customPresetNoteDestinationSelectorSetting;
+
+
+    // UI Settings - Custom Preset Toggles
+    public static Setting customPresetStepSizeToggleSetting;
+    public static Setting customPresetSubdivisionsToggleSetting;
+    public static Setting customPresetNoteLengthToggleSetting;
+
+    // UI Settings - Save Presets
+    public static Setting customPresetSaveHeaderSetting;
+    public static Setting customPresetSaveBtnSignal;
+    public static Setting customPresetSaveNamSetting;
+
+    // All settings collection
+    public static Setting[] allSettings;
+
+    // Instance variables
+    private final BitwigBuddyExtension extension;
     private String lastStringPatternUsed = "100,0,0,0,100,0,0,0,100,0,0,0,100,0,0,0";
 
+    // Constructor and main initialization methods
     /**
      * Constructs a new instance of PatternSettings.
      *
@@ -62,23 +73,13 @@ public class PatternSettings {
 
     /**
      * Creates and initializes pattern-related settings for the extension.
-     * Sets up UI controls including:
-     * - Generate button
-     * - Pattern type selector (Presets/Random/Custom)
-     * - Pattern preset selector
-     * - Custom preset selector
-     * - Pattern reversal option
-     * 
-     * @param extension The BitwigBuddyExtension instance to configure settings for
      */
     public static void init(BitwigBuddyExtension extension) {
         PatternSettings settings = new PatternSettings(extension);
         settings.initPatternSetting();
     }
 
-    /**
-     * Initializes all pattern-related settings.
-     */
+    // Main initialization method
     private void initPatternSetting() {
         DocumentState documentState = extension.getDocumentState();
         initSpacer(documentState);
@@ -101,31 +102,31 @@ public class PatternSettings {
                 spacerGenerate,
                 generateBtnSignalSetting,
                 patternTypeSetting,
-                // patternSelectorSetting,
+                
                 customPresetSetting,
                 presetPatternStringSetting,
                 customRefreshPresetsSetting,
                 reversePatternSetting,
-                customPresetDefaultNoteSetting,
-                customPresetNoteDestinationSelectorSetting,
-                customPresetStepSizeSetting,
-                customPresetSubdivisionsSetting,
-                customPresetNoteLengthSetting,
+                
                 customPresetStepSizeToggleSetting,
                 customPresetSubdivisionsToggleSetting,
                 customPresetNoteLengthToggleSetting,
+
                 customPresetSaveBtnSignal,
                 customPresetSaveNamSetting,
                 customPresetSaveHeaderSetting
         };
     }
 
-    /**
-     * Initializes the generate button setting and binds it to the drum pattern
-     * generation.
-     *
-     * @param documentState The current document state.
-     */
+    // Base UI element initialization methods
+    private void initSpacer(DocumentState documentState) {
+        spacerGenerate = (Setting) createStringSetting(
+                titleWithLine("GENERATE PATTERN"),
+                CATEGORY_GENERATE_PATTERN, 0,
+                "---------------------------------------------------");
+        disableSetting(spacerGenerate); // Spacers are always disabled
+    }
+
     private void initGenerateButton(DocumentState documentState) {
         generateBtnSignalSetting = (Setting) documentState.getSignalSetting("Generate!", CATEGORY_GENERATE_PATTERN,
                 "Generate!");
@@ -133,14 +134,8 @@ public class PatternSettings {
         ((Signal) generateBtnSignalSetting).addSignalObserver(extension::generateDrumPattern);
     }
 
-    /**
-     * Initializes the pattern type setting and sets up observers to show/hide
-     * related settings.
-     *
-     * @param documentState The current document state.
-     */
     public void initPatternTypeSetting(DocumentState documentState) {
-        String[] options = { "Presets", "Program", "Custom" };
+        String[] options = { "Custom", "Program" };
         patternTypeSetting = (Setting) documentState.getEnumSetting("Pattern Type", CATEGORY_GENERATE_PATTERN,
                 options, "Custom");
 
@@ -149,135 +144,22 @@ public class PatternSettings {
         });
     }
 
-    public static void generatorTypeSelector(String newValue) {
-        switch (newValue) {
-            case "Custom":
-                Setting[] settingsToShowCustom = {
-                        customPresetSetting,
-                        customRefreshPresetsSetting,
-                        reversePatternSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal,
-                        customPresetSaveNamSetting,
-                        customPresetStepSizeSetting, customPresetSubdivisionsSetting, customPresetNoteLengthSetting,
-                        customPresetNoteDestinationSelectorSetting, customPresetStepSizeToggleSetting,
-                        customPresetSubdivisionsToggleSetting, customPresetNoteLengthToggleSetting };
-                Setting[] settingsToHideCustom = {
-                        // patternSelectorSetting,
-                        ProgramPattern.programDensitySetting,
-                        ProgramPattern.programMinVelocityVariationSetting,
-                        ProgramPattern.programMaxVelocityVariationSetting,
-                        ProgramPattern.programStepQtySetting,
-                        ProgramPattern.programVelocitySettingShape };
-                showAndEnableSetting(settingsToShowCustom);
-                hideAndDisableSetting(settingsToHideCustom);
-
-                if (lastCustomPresetUsed != null) {
-                    try {
-                        ((SettableEnumValue) customPresetSetting).set(lastCustomPresetUsed);
-                    } catch (Exception e) {
-                        showPopup("Custom Preset not found: " + lastCustomPresetUsed);
-                        lastCustomPresetUsed = "NO CUSTOM PRESETS";
-                        ((SettableEnumValue) customPresetSetting).set(lastCustomPresetUsed);
-                    }
-                }
-
-                break;
-            case "Program":
-                Setting[] settingsToShowRandom = {
-                        ProgramPattern.programDensitySetting,
-                        ProgramPattern.programMinVelocityVariationSetting,
-                        ProgramPattern.programMaxVelocityVariationSetting,
-                        ProgramPattern.programStepQtySetting,
-                        ProgramPattern.programVelocitySettingShape };
-                Setting[] settingsToHideRandom = {
-                        // patternSelectorSetting,
-                        customPresetSetting,
-                        reversePatternSetting,
-                        customRefreshPresetsSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal,
-                        customPresetSaveNamSetting,
-                        customPresetStepSizeSetting, customPresetSubdivisionsSetting, customPresetNoteLengthSetting,
-                        customPresetNoteDestinationSelectorSetting,
-                        customPresetStepSizeToggleSetting, customPresetSubdivisionsToggleSetting,
-                        customPresetNoteLengthToggleSetting };
-                showAndEnableSetting(settingsToShowRandom);
-                hideAndDisableSetting(settingsToHideRandom);
-                break;
-        }
-        // Reset the note destination setting for custom presets
-        toggleCustomPresetNoteDestinationSelectorSetting();
+    private void initReversePatternSetting(DocumentState documentState) {
+        reversePatternSetting = (Setting) createEnumSetting(
+                "Reverse Pattern",
+                CATEGORY_GENERATE_PATTERN,
+                new String[] { "Normal", "Reverse" },
+                "Normal");
     }
 
-    /**
-     * Initializes the pattern selector setting.
-     *
-     * @param documentState The current document state.
-     */
-    private void initPatternSelectorSetting(DocumentState documentState) {
-        final String[] LIST_OF_DEFAULT_PATTERNS = Arrays.stream(DefaultPatterns.patterns)
-                .map(Pattern::getName)
-                .toArray(String[]::new);
-
-        patternSelectorSetting = (Setting) documentState.getEnumSetting("Pattern", CATEGORY_GENERATE_PATTERN,
-                LIST_OF_DEFAULT_PATTERNS,
-                "Kick: Four on the Floor");
-
-        ((EnumValue) patternSelectorSetting).addValueObserver(newValue -> {
-            if (!((EnumValue) patternTypeSetting).get().equals("Presets")) {
-                return;
-            }
-            lastDefaultPresetUsed = newValue.toString();
-            showPopup(newValue.toString());
-            String patternByName = getDefaultPresetsContentPatternStrings(newValue);
-            setPatternString(patternByName);
-        });
-    }
-
-    private static String getDefaultPresetsContentPatternStrings(String newValue) {
-        String patternByName = Arrays.stream(DefaultPatterns.getPatternByName(newValue.toString()))
-                .mapToObj(String::valueOf)
-                .collect(Collectors.joining(","));
-        return patternByName;
-    }
-
-    /**
-     * Initializes the custom preset setting and adds an observer for selection
-     * events.
-     *
-     * @param documentState The current document state.
-     */
+    // Custom preset initialization methods
     private void initCustomPresetParams(DocumentState documentState) {
         String[] presets = getCustomPresetsContentNameStrings();
         customPresetSetting = (Setting) documentState.getEnumSetting("Custom Presets",
                 CATEGORY_GENERATE_PATTERN, presets,
                 presets[0]);
 
-        hideAndDisableSetting(customPresetSetting);
-
-        customPresetDefaultNoteSetting = (Setting) createStringSetting(
-                "Default Note from Preset",
-                CATEGORY_CUSTOM_PATTERN_STRINGS, 0,
-                "C1");
-
-        customPresetStepSizeSetting = (Setting) createStringSetting(
-                "Step Size from Preset",
-                CATEGORY_GENERATE_PATTERN, 0,
-                "1/16");
-
-        customPresetSubdivisionsSetting = (Setting) createStringSetting(
-                "Subdivisions from Preset",
-                CATEGORY_GENERATE_PATTERN, 0,
-                "Straight");
-
-        customPresetNoteLengthSetting = (Setting) createStringSetting(
-                "Note Length from Preset",
-                CATEGORY_GENERATE_PATTERN, 0,
-                "1/16");
-
-        hideAndDisableSetting(customPresetDefaultNoteSetting);
-        hideAndDisableSetting(customPresetStepSizeSetting);
-        hideAndDisableSetting(customPresetSubdivisionsSetting);
-        hideAndDisableSetting(customPresetNoteLengthSetting);
+        hideSetting(customPresetSetting);
 
         ((EnumValue) customPresetSetting).addValueObserver(newValue -> {
             if (!((EnumValue) patternTypeSetting).get().equals("Custom") || newValue == null) {
@@ -327,35 +209,19 @@ public class PatternSettings {
         });
     }
 
-    private static void setPatternString(String patternByName) {
-        String patternType = ((EnumValue) patternTypeSetting).get();
-        if (patternType.equals("Program")) {
-            patternByName = new int[16].toString();
-        } else {
-            ((SettableStringValue) presetPatternStringSetting).set(patternByName);
-        }
-    }
-
-    private static void setDefaultNoteString(String note) {
-        ((SettableStringValue) customPresetDefaultNoteSetting).set(note);
-    }
-
-    private static void setStepSizeString(String stepSize) {
-        ((SettableStringValue) customPresetStepSizeSetting).set(stepSize);
-    }
-
-    private static void setSubdivisionsString(String subdivisions) {
-        ((SettableStringValue) customPresetSubdivisionsSetting).set(subdivisions);
-    }
-
-    private static void setNoteLengthString(String noteLength) {
-        ((SettableStringValue) customPresetNoteLengthSetting).set(noteLength);
-    }
-
     private void initCustomPresetPatternStringSetting(DocumentState documentState) {
         presetPatternStringSetting = (Setting) documentState.getStringSetting("Steps",
                 CATEGORY_GENERATE_PATTERN, 0,
                 lastStringPatternUsed);
+    }
+
+    private void initRefreshCustomPresetsSetting(DocumentState documentState) {
+        customRefreshPresetsSetting = (Setting) documentState.getSignalSetting("Refresh Custom Files",
+                CATEGORY_GENERATE_PATTERN, "Refresh Custom Files");
+        ((Signal) customRefreshPresetsSetting).addSignalObserver(() -> {
+
+            extension.restart();
+        });
     }
 
     private void initCustomSavePresetSetting(DocumentState documentState) {
@@ -376,7 +242,7 @@ public class PatternSettings {
                     .filter(s -> !s.isEmpty())
                     .mapToInt(Integer::parseInt)
                     .toArray();
-            String defaultNote = ((SettableStringValue) customPresetDefaultNoteSetting).get();
+            String defaultNote = ((SettableStringValue) NoteDestinationSettings.customPresetDefaultNoteSetting).get();
             String stepSize = ((SettableEnumValue) StepSizeSettings.stepSizSetting).get();
             String subdivisions = ((SettableEnumValue) StepSizeSettings.stepSizSubdivisionSetting).get();
             String noteLength = ((SettableEnumValue) StepSizeSettings.noteLengthSetting).get();
@@ -392,80 +258,195 @@ public class PatternSettings {
                 "New Custom Preset");
     }
 
-    private void initRefreshCustomPresetsSetting(DocumentState documentState) {
-        customRefreshPresetsSetting = (Setting) documentState.getSignalSetting("Refresh Custom Files",
-                CATEGORY_GENERATE_PATTERN, "Refresh Custom Files");
-        ((Signal) customRefreshPresetsSetting).addSignalObserver(() -> {
-
-            extension.restart();
-        });
-    }
-
+    // Toggle initialization methods
     private void initCustomPresetDefaultNoteToggleSetting(DocumentState documentState) {
-
         customPresetNoteDestinationSelectorSetting = (Setting) createEnumSetting(
-                "Note Destination",
+                "Note Preset/Custom",
                 CATEGORY_CUSTOM_PATTERN_TOGGLE,
-                new String[] { "Preset Default Note", "Note Destination" },
-                "Note Destination");
+                new String[] { "Preset Default Note", "Custom" },
+                "Preset Default Note");
 
         ((EnumValue) customPresetNoteDestinationSelectorSetting).addValueObserver(newValue -> {
             toggleCustomPresetNoteDestinationSelectorSetting();
         });
     }
 
+    private void initCustomPresetStepSizeToggleSetting(DocumentState documentState) {
+        customPresetStepSizeToggleSetting = (Setting) createEnumSetting(
+                "Step Size Preset/Custom",
+                CATEGORY_CUSTOM_PATTERN_TOGGLE,
+                new String[] { "From Preset", "Custom" },
+                "From Preset");
+
+        ((EnumValue) customPresetStepSizeToggleSetting).addValueObserver(newValue -> {
+            toggleCustomPresetStepSizeSetting();
+        });
+    }
+
+    private void initCustomPresetSubdivisionsToggleSetting(DocumentState documentState) {
+        customPresetSubdivisionsToggleSetting = (Setting) createEnumSetting(
+                "Subdivisions Preset/Custom",
+                CATEGORY_CUSTOM_PATTERN_TOGGLE,
+                new String[] { "From Preset", "Custom" },
+                "From Preset");
+
+        ((EnumValue) customPresetSubdivisionsToggleSetting).addValueObserver(newValue -> {
+            toggleCustomPresetSubdivisionsSetting();
+        });
+    }
+
+    private void initCustomPresetNoteLengthToggleSetting(DocumentState documentState) {
+        customPresetNoteLengthToggleSetting = (Setting) createEnumSetting(
+                "Note Length Preset/Custom",
+                CATEGORY_CUSTOM_PATTERN_TOGGLE,
+                new String[] { "From Preset", "Custom" },
+                "From Preset");
+
+        ((EnumValue) customPresetNoteLengthToggleSetting).addValueObserver(newValue -> {
+            toggleCustomPresetNoteLengthSetting();
+        });
+    }
+
+    // Static utility methods for UI state management
+    public static void generatorTypeSelector(String newValue) {
+        switch (newValue) {
+            case "Custom":
+                Setting[] settingsToShowCustom = {
+                        customPresetSetting,
+                        customRefreshPresetsSetting,
+                        reversePatternSetting,
+                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal,
+                        customPresetSaveNamSetting,
+                        customPresetNoteDestinationSelectorSetting, customPresetStepSizeToggleSetting,
+                        customPresetSubdivisionsToggleSetting, customPresetNoteLengthToggleSetting };
+                Setting[] settingsToHideCustom = {
+                        // patternSelectorSetting,
+                        ProgramPattern.programDensitySetting,
+                        ProgramPattern.programMinVelocityVariationSetting,
+                        ProgramPattern.programMaxVelocityVariationSetting,
+                        ProgramPattern.programStepQtySetting,
+                        ProgramPattern.programVelocitySettingShape };
+                showSetting(settingsToShowCustom);
+                hideSetting(settingsToHideCustom);
+
+                if (lastCustomPresetUsed != null) {
+                    try {
+                        ((SettableEnumValue) customPresetSetting).set(lastCustomPresetUsed);
+                    } catch (Exception e) {
+                        showPopup("Custom Preset not found: " + lastCustomPresetUsed);
+                        lastCustomPresetUsed = "NO CUSTOM PRESETS";
+                        ((SettableEnumValue) customPresetSetting).set(lastCustomPresetUsed);
+                    }
+                }
+
+                break;
+            case "Program":
+                Setting[] settingsToShowRandom = {
+                        ProgramPattern.programDensitySetting,
+                        ProgramPattern.programMinVelocityVariationSetting,
+                        ProgramPattern.programMaxVelocityVariationSetting,
+                        ProgramPattern.programStepQtySetting,
+                        ProgramPattern.programVelocitySettingShape };
+                Setting[] settingsToHideRandom = {
+                        // patternSelectorSetting,
+                        customPresetSetting,
+                        reversePatternSetting,
+                        customRefreshPresetsSetting, NoteDestinationSettings.customPresetDefaultNoteSetting,
+                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal,
+                        customPresetSaveNamSetting,
+                        StepSizeSettings.customPresetStepSizeSetting, StepSizeSettings.customPresetSubdivisionsSetting, StepSizeSettings.customPresetNoteLengthSetting,
+                        customPresetNoteDestinationSelectorSetting,
+                        customPresetStepSizeToggleSetting, customPresetSubdivisionsToggleSetting,
+                        customPresetNoteLengthToggleSetting };
+                showSetting(settingsToShowRandom);
+                hideSetting(settingsToHideRandom);
+                break;
+        }
+        // Reset the note destination setting for custom presets
+        toggleCustomPresetNoteDestinationSelectorSetting();
+    }
+
     public static void toggleCustomPresetNoteDestinationSelectorSetting() {
         String value = ((EnumValue) customPresetNoteDestinationSelectorSetting).get();
         String patternType = ((EnumValue) patternTypeSetting).get();
         // if (!patternType.equals("Custom")) {
-        //     enableSetting(NoteDestinationSettings.noteDestinationSetting);
-        //     enableSetting(NoteDestinationSettings.noteOctaveSetting);
-        //     hideAndDisableSetting(customPresetDefaultNoteSetting);
-        //     return;
+        // enableSetting(NoteDestinationSettings.noteDestinationSetting);
+        // enableSetting(NoteDestinationSettings.noteOctaveSetting);
+        // hideSetting(customPresetDefaultNoteSetting);
+        // return;
         // }
         if (value.equals("Preset Default Note")) {
-            disableSetting(NoteDestinationSettings.noteDestinationSetting);
-            disableSetting(NoteDestinationSettings.noteOctaveSetting);
-            showAndEnableSetting(customPresetDefaultNoteSetting);
+            hideSetting(NoteDestinationSettings.noteDestinationSetting);
+            hideSetting(NoteDestinationSettings.noteOctaveSetting);
+            showSetting(NoteDestinationSettings.customPresetDefaultNoteSetting);
+
+            hideSetting(NoteDestinationSettings.noteChannelSetting);
+
         } else {
-            enableSetting(NoteDestinationSettings.noteDestinationSetting);
-            enableSetting(NoteDestinationSettings.noteOctaveSetting);
-            hideAndDisableSetting(customPresetDefaultNoteSetting);
+            showSetting(NoteDestinationSettings.noteDestinationSetting);
+            showSetting(NoteDestinationSettings.noteOctaveSetting);
+            hideSetting(NoteDestinationSettings.customPresetDefaultNoteSetting);
+            if (GlobalPreferences.showChannelDestinationPref.get()) {
+                showSetting(NoteDestinationSettings.noteChannelSetting);
+            }
         }
 
     }
 
-    /**
-     * Initializes the reverse pattern setting.
-     *
-     * @param documentState The current document state.
-     */
-    private void initReversePatternSetting(DocumentState documentState) {
-        reversePatternSetting = (Setting) createEnumSetting(
-                "Reverse Pattern",
-                CATEGORY_GENERATE_PATTERN,
-                new String[] { "Normal", "Reverse" },
-                "Normal");
+    public static void toggleCustomPresetStepSizeSetting() {
+        String value = ((EnumValue) customPresetStepSizeToggleSetting).get();
+        if (value.equals("From Preset")) {
+            showSetting(StepSizeSettings.customPresetStepSizeSetting);
+        } else {
+            hideSetting(StepSizeSettings.customPresetStepSizeSetting);
+        }
     }
 
-    /**
-     * Initializes the spacer setting to visually separate groups of controls.
-     *
-     * @param documentState The current document state.
-     */
-    private void initSpacer(DocumentState documentState) {
-        spacerGenerate = (Setting) createStringSetting(
-                titleWithLine("GENERATE PATTERN"),
-                CATEGORY_GENERATE_PATTERN, 0,
-                "---------------------------------------------------");
-        disableSetting(spacerGenerate); // Spacers are always disabled
+    public static void toggleCustomPresetSubdivisionsSetting() {
+        String value = ((EnumValue) customPresetSubdivisionsToggleSetting).get();
+        if (value.equals("From Preset")) {
+            showSetting(StepSizeSettings.customPresetSubdivisionsSetting);
+        } else {
+            hideSetting(StepSizeSettings.customPresetSubdivisionsSetting);
+        }
     }
 
-    /**
-     * Retrieves an array of custom preset names.
-     *
-     * @return An array containing the names of the custom presets.
-     */
+    public static void toggleCustomPresetNoteLengthSetting() {
+        String value = ((EnumValue) customPresetNoteLengthToggleSetting).get();
+        if (value.equals("From Preset")) {
+            showSetting(StepSizeSettings.customPresetNoteLengthSetting);
+        } else {
+            hideSetting(StepSizeSettings.customPresetNoteLengthSetting);
+        }
+    }
+
+    // Data setter utility methods
+    private static void setPatternString(String patternByName) {
+        String patternType = ((EnumValue) patternTypeSetting).get();
+        if (patternType.equals("Program")) {
+            patternByName = new int[16].toString();
+        } else {
+            ((SettableStringValue) presetPatternStringSetting).set(patternByName);
+        }
+    }
+
+    private static void setDefaultNoteString(String note) {
+        ((SettableStringValue) NoteDestinationSettings.customPresetDefaultNoteSetting).set(note);
+    }
+
+    private static void setStepSizeString(String stepSize) {
+        ((SettableStringValue) StepSizeSettings.customPresetStepSizeSetting).set(stepSize);
+    }
+
+    private static void setSubdivisionsString(String subdivisions) {
+        ((SettableStringValue) StepSizeSettings.customPresetSubdivisionsSetting).set(subdivisions);
+    }
+
+    private static void setNoteLengthString(String noteLength) {
+        ((SettableStringValue) StepSizeSettings.customPresetNoteLengthSetting).set(noteLength);
+    }
+
+    // Custom preset data retrieval methods
     private String[] getCustomPresetsContentNameStrings() {
         String[] presets = Arrays.stream(extension.preferences.getCustomPresets())
                 .map(CustomPreset::getName)
@@ -483,6 +464,13 @@ public class PatternSettings {
             return new String[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0" };
         }
         return Arrays.stream(pattern).mapToObj(String::valueOf).toArray(String[]::new);
+    }
+
+    private static String getDefaultPresetsContentPatternStrings(String newValue) {
+        String patternByName = Arrays.stream(DefaultPatterns.getPatternByName(newValue.toString()))
+                .mapToObj(String::valueOf)
+                .collect(Collectors.joining(","));
+        return patternByName;
     }
 
     private String getCustomPresetDefaultNote(String presetName) {
@@ -523,68 +511,4 @@ public class PatternSettings {
         }
         return "";
     }
-
-    private void initCustomPresetStepSizeToggleSetting(DocumentState documentState) {
-        customPresetStepSizeToggleSetting = (Setting) createEnumSetting(
-                "Step Size Toggle",
-                CATEGORY_CUSTOM_PATTERN_TOGGLE,
-                new String[] { "Enable", "Disable" },
-                "Disable");
-
-        ((EnumValue) customPresetStepSizeToggleSetting).addValueObserver(newValue -> {
-            toggleCustomPresetStepSizeSetting();
-        });
-    }
-
-    private void initCustomPresetSubdivisionsToggleSetting(DocumentState documentState) {
-        customPresetSubdivisionsToggleSetting = (Setting) createEnumSetting(
-                "Subdivisions Toggle",
-                CATEGORY_CUSTOM_PATTERN_TOGGLE,
-                new String[] { "Enable", "Disable" },
-                "Disable");
-
-        ((EnumValue) customPresetSubdivisionsToggleSetting).addValueObserver(newValue -> {
-            toggleCustomPresetSubdivisionsSetting();
-        });
-    }
-
-    private void initCustomPresetNoteLengthToggleSetting(DocumentState documentState) {
-        customPresetNoteLengthToggleSetting = (Setting) createEnumSetting(
-                "Note Length Toggle",
-                CATEGORY_CUSTOM_PATTERN_TOGGLE,
-                new String[] { "Enable", "Disable" },
-                "Disable");
-
-        ((EnumValue) customPresetNoteLengthToggleSetting).addValueObserver(newValue -> {
-            toggleCustomPresetNoteLengthSetting();
-        });
-    }
-
-    public static void toggleCustomPresetStepSizeSetting() {
-        String value = ((EnumValue) customPresetStepSizeToggleSetting).get();
-        if (value.equals("Enable")) {
-            showAndEnableSetting(customPresetStepSizeSetting);
-        } else {
-            hideAndDisableSetting(customPresetStepSizeSetting);
-        }
-    }
-
-    public static void toggleCustomPresetSubdivisionsSetting() {
-        String value = ((EnumValue) customPresetSubdivisionsToggleSetting).get();
-        if (value.equals("Enable")) {
-            showAndEnableSetting(customPresetSubdivisionsSetting);
-        } else {
-            hideAndDisableSetting(customPresetSubdivisionsSetting);
-        }
-    }
-
-    public static void toggleCustomPresetNoteLengthSetting() {
-        String value = ((EnumValue) customPresetNoteLengthToggleSetting).get();
-        if (value.equals("Enable")) {
-            showAndEnableSetting(customPresetNoteLengthSetting);
-        } else {
-            hideAndDisableSetting(customPresetNoteLengthSetting);
-        }
-    }
-
 }

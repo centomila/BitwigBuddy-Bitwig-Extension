@@ -26,6 +26,7 @@ public class NoteDestinationSettings {
                                                  // "A", "A#", "B"
    public static Setting noteOctaveSetting; // Note Octave -2 to 8
    public static Setting noteChannelSetting; // Note Channel 1 to 16
+   public static Setting customPresetDefaultNoteSetting;
    public static Setting[] allSettings;
 
    public static int currentNoteAsInt;
@@ -39,7 +40,7 @@ public class NoteDestinationSettings {
       noteDestSettings = settings;
    }
 
-   private static String CATEGORY_NOTE_DESTINATION = "4 Note Destination";
+   public static String CATEGORY_NOTE_DESTINATION = "4 Note Destination";
    public static String[] LEARN_NOTE_OPTIONS = new String[] { "Manual", "Learn", "DM" };
 
    /**
@@ -93,6 +94,13 @@ public class NoteDestinationSettings {
             "MIDI Channel",
             1);
 
+      customPresetDefaultNoteSetting = (Setting) createStringSetting(
+            "Preset Default Note",
+            NoteDestinationSettings.CATEGORY_NOTE_DESTINATION, 0,
+            "C1");
+
+      hideSetting(customPresetDefaultNoteSetting);
+
       String initialNote = ((EnumValue) noteDestinationSetting).get();
       int initialOctave = Integer.parseInt(((EnumValue) noteOctaveSetting).get());
 
@@ -108,10 +116,10 @@ public class NoteDestinationSettings {
       if (GlobalPreferences.showChannelDestinationPref.get()) {
          allSettings = new Setting[] { spacerNoteDestination, noteDestinationSetting, noteOctaveSetting,
                noteChannelSetting,
-               learnNoteSetting };
+               learnNoteSetting, customPresetDefaultNoteSetting };
       } else {
          allSettings = new Setting[] { spacerNoteDestination, noteDestinationSetting, noteOctaveSetting,
-               learnNoteSetting };
+               learnNoteSetting, customPresetDefaultNoteSetting };
       }
 
    }
