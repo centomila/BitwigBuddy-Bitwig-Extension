@@ -1,8 +1,8 @@
 package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
+import static com.centomila.utils.VelocityShape.*;
 import static com.centomila.utils.PopupUtils.*;
-import static com.centomila.VelocityShape.*;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -11,6 +11,7 @@ import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Setting;
+import com.centomila.utils.VelocityShape;
 
 public class ProgramPattern {
         public static Setting programMinVelocityVariationSetting;

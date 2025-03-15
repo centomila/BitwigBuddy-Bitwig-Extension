@@ -1,4 +1,4 @@
-package com.centomila;
+package com.centomila.utils;
 
 import java.util.Random;
 

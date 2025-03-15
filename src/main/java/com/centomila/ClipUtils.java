@@ -14,6 +14,7 @@ import com.bitwig.extension.controller.api.NoteStep;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
+import com.centomila.utils.VelocityShape;
 
 public class ClipUtils {
     private static String CATEGORY_OTHER = "99 Other";
