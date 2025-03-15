@@ -29,6 +29,9 @@ public class PatternSettings {
     public static Setting customPresetNoteDestinationSelectorSetting;
     public static Setting customPresetSaveBtnSignal;
     public static Setting customPresetSaveNamSetting;
+    public static Setting customPresetStepSizeSetting;
+    public static Setting customPresetSubdivisionsSetting;
+    public static Setting customPresetNoteLengthSetting;
 
     public static Setting presetPatternStringSetting; // Custom pattern string
     public static Setting reversePatternSetting;
@@ -92,7 +95,10 @@ public class PatternSettings {
                 customPresetDefaultNoteSetting,
                 customPresetNoteDestinationSelectorSetting,
                 customPresetSaveBtnSignal,
-                customPresetSaveNamSetting};
+                customPresetSaveNamSetting,
+                customPresetStepSizeSetting,
+                customPresetSubdivisionsSetting,
+                customPresetNoteLengthSetting};
     }
 
     /**
@@ -138,7 +144,8 @@ public class PatternSettings {
                         ProgramPattern.programStepQtySetting,
                         ProgramPattern.programVelocitySettingShape,
                         customRefreshPresetsSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting };
+                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting,
+                        customPresetStepSizeSetting, customPresetSubdivisionsSetting, customPresetNoteLengthSetting };
                 showAndEnableSetting(settingsToShow);
                 hideAndDisableSetting(settingsToHide);
 
@@ -150,7 +157,8 @@ public class PatternSettings {
                         customPresetSetting,
                         customRefreshPresetsSetting,
                         reversePatternSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting };
+                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting,
+                        customPresetStepSizeSetting, customPresetSubdivisionsSetting, customPresetNoteLengthSetting };
                 Setting[] settingsToHideCustom = {
                         patternSelectorSetting,
                         ProgramPattern.programDensitySetting,
@@ -184,7 +192,8 @@ public class PatternSettings {
                         customPresetSetting,
                         reversePatternSetting,
                         customRefreshPresetsSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting };
+                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal, customPresetSaveNamSetting,
+                        customPresetStepSizeSetting, customPresetSubdivisionsSetting, customPresetNoteLengthSetting };
                 showAndEnableSetting(settingsToShowRandom);
                 hideAndDisableSetting(settingsToHideRandom);
                 break;
@@ -239,6 +248,25 @@ public class PatternSettings {
 
         hideAndDisableSetting(customPresetSetting);
 
+        customPresetStepSizeSetting = (Setting) createStringSetting(
+                "Step Size from Preset",
+                CATEGORY_GENERATE_PATTERN, 0,
+                "1/16");
+
+        customPresetSubdivisionsSetting = (Setting) createStringSetting(
+                "Subdivisions from Preset",
+                CATEGORY_GENERATE_PATTERN, 0,
+                "4");
+
+        customPresetNoteLengthSetting = (Setting) createStringSetting(
+                "Note Length from Preset",
+                CATEGORY_GENERATE_PATTERN, 0,
+                "1/16");
+
+        disableSetting(customPresetStepSizeSetting);
+        disableSetting(customPresetSubdivisionsSetting);
+        disableSetting(customPresetNoteLengthSetting);
+
         ((EnumValue) customPresetSetting).addValueObserver(newValue -> {
             if (!((EnumValue) patternTypeSetting).get().equals("Custom") || newValue == null) {
                 return;
@@ -248,6 +276,9 @@ public class PatternSettings {
             if (lastCustomPresetUsed.equals("NO CUSTOM PRESETS")) {
                 setPatternString("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0");
                 setDefaultNoteString("C1");
+                setStepSizeString("1/16");
+                setSubdivisionsString("Straight");
+                setNoteLengthString("1/16");
                 return;
             }
 
@@ -260,6 +291,15 @@ public class PatternSettings {
             if (((EnumValue) customPresetNoteDestinationSelectorSetting).get().equals("Preset Default Note")) {
                 NoteDestinationSettings.setNoteAndOctaveFromString(defaultNote.isEmpty() ? "C1" : defaultNote);
             }
+
+            String stepSize = getCustomPresetStepSize(newValue.toString());
+            setStepSizeString(stepSize.isEmpty() ? "1/16" : stepSize);
+
+            String subdivisions = getCustomPresetSubdivisions(newValue.toString());
+            setSubdivisionsString(subdivisions.isEmpty() ? "4" : subdivisions);
+
+            String noteLength = getCustomPresetNoteLength(newValue.toString());
+            setNoteLengthString(noteLength.isEmpty() ? "1/16" : noteLength);
         });
     }
 
@@ -274,6 +314,18 @@ public class PatternSettings {
 
     private static void setDefaultNoteString(String note) {
         ((SettableStringValue) customPresetDefaultNoteSetting).set(note);
+    }
+
+    private static void setStepSizeString(String stepSize) {
+        ((SettableStringValue) customPresetStepSizeSetting).set(stepSize);
+    }
+
+    private static void setSubdivisionsString(String subdivisions) {
+        ((SettableStringValue) customPresetSubdivisionsSetting).set(subdivisions);
+    }
+
+    private static void setNoteLengthString(String noteLength) {
+        ((SettableStringValue) customPresetNoteLengthSetting).set(noteLength);
     }
 
     private void initCustomPresetPatternSetting(DocumentState documentState) {
@@ -418,6 +470,33 @@ public class PatternSettings {
             }
         }
 
+        return "";
+    }
+
+    private String getCustomPresetStepSize(String presetName) {
+        for (CustomPreset preset : extension.preferences.getCustomPresets()) {
+            if (preset.getName().equals(presetName)) {
+                return preset.getStepSize();
+            }
+        }
+        return "";
+    }
+
+    private String getCustomPresetSubdivisions(String presetName) {
+        for (CustomPreset preset : extension.preferences.getCustomPresets()) {
+            if (preset.getName().equals(presetName)) {
+                return preset.getSubdivisions();
+            }
+        }
+        return "";
+    }
+
+    private String getCustomPresetNoteLength(String presetName) {
+        for (CustomPreset preset : extension.preferences.getCustomPresets()) {
+            if (preset.getName().equals(presetName)) {
+                return preset.getNoteLength();
+            }
+        }
         return "";
     }
 
