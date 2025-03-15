@@ -466,18 +466,12 @@ public class PatternSettings {
         return Arrays.stream(pattern).mapToObj(String::valueOf).toArray(String[]::new);
     }
 
-    private static String getDefaultPresetsContentPatternStrings(String newValue) {
-        String patternByName = Arrays.stream(DefaultPatterns.getPatternByName(newValue.toString()))
-                .mapToObj(String::valueOf)
-                .collect(Collectors.joining(","));
-        return patternByName;
-    }
 
     private String getCustomPresetDefaultNote(String presetName) {
         for (CustomPreset preset : extension.preferences.getCustomPresets()) {
             if (preset.getName().equals(presetName)) {
                 extension.getHost()
-                        .println("Found preset: " + presetName + " with default note: " + preset.getDefaultNote());
+                        .println("Found preset: " + presetName + " with default note: " + preset.getDefaultNote()) ;
                 return preset.getDefaultNote();
             }
         }
@@ -488,6 +482,8 @@ public class PatternSettings {
     private String getCustomPresetStepSize(String presetName) {
         for (CustomPreset preset : extension.preferences.getCustomPresets()) {
             if (preset.getName().equals(presetName)) {
+                extension.getHost()
+                        .println("Found preset: " + presetName + " with step size: " + preset.getStepSize()) ;
                 return preset.getStepSize();
             }
         }
