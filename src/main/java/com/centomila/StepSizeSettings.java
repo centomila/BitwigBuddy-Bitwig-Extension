@@ -75,4 +75,78 @@ public class StepSizeSettings {
             });
       }
 
+      // Getters
+
+      public static String getStepSize() {
+            return ((EnumValue) stepSizSetting).get();
+      }
+
+      public static String getSubdivisions() {
+            return ((EnumValue) stepSizSubdivisionSetting).get();
+      }
+
+      public static String getNoteLength() {
+            return ((EnumValue) noteLengthSetting).get();
+      }
+
+      // Setters
+
+      public static void setStepSize(String stepSize) {
+            ((SettableEnumValue) stepSizSetting).set(stepSize);
+      }
+
+      public static void setSubdivisions(String subdivisions) {
+            ((SettableEnumValue) stepSizSubdivisionSetting).set(subdivisions);
+      }
+
+      public static void setNoteLength(String noteLength) {
+            ((SettableEnumValue) noteLengthSetting).set(noteLength);
+      }
+
+      // Hide and show settings
+
+      public static void hideAllStepSizeSettings() {
+            hideSetting(allSettings);
+      }
+
+      public static void showAllStepSizeSettings() {
+            showSetting(allSettings);
+      }
+
+      public static void hideCustomPresetStepSizeSettings() {
+            hideSetting(customPresetStepSizeSetting);
+      }
+
+      public static void showCustomPresetStepSizeSettings() {
+            showSetting(customPresetStepSizeSetting);
+      }
+
+      public static void hideCustomPresetSubdivisionsSetting() {
+            hideSetting(customPresetSubdivisionsSetting);
+      }
+
+      public static void showCustomPresetSubdivisionsSetting() {
+            showSetting(customPresetSubdivisionsSetting);
+      }
+
+      public static void hideCustomPresetNoteLengthSetting() {
+            hideSetting(customPresetNoteLengthSetting);
+      }
+
+      public static void showCustomPresetNoteLengthSetting() {
+            showSetting(customPresetNoteLengthSetting);
+      }
+
+      public static void showCustomPresetSettings() {
+            showSetting(customPresetStepSizeSetting);
+            showSetting(customPresetSubdivisionsSetting);
+            showSetting(customPresetNoteLengthSetting);
+      }
+
+      public static void hideCustomPresetSettings() {
+            hideSetting(customPresetStepSizeSetting);
+            hideSetting(customPresetSubdivisionsSetting);
+            hideSetting(customPresetNoteLengthSetting);
+      }
+
 }

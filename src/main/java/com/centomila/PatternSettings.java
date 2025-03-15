@@ -40,9 +40,8 @@ public class PatternSettings {
     // UI Settings - Custom Presets
     public static Setting customPresetSetting;
     public static Setting customRefreshPresetsSetting;
-    
-    public static Setting customPresetNoteDestinationSelectorSetting;
 
+    public static Setting customPresetNoteDestinationSelectorSetting;
 
     // UI Settings - Custom Preset Toggles
     public static Setting customPresetStepSizeToggleSetting;
@@ -102,12 +101,12 @@ public class PatternSettings {
                 spacerGenerate,
                 generateBtnSignalSetting,
                 patternTypeSetting,
-                
+
                 customPresetSetting,
                 presetPatternStringSetting,
                 customRefreshPresetsSetting,
                 reversePatternSetting,
-                
+
                 customPresetStepSizeToggleSetting,
                 customPresetSubdivisionsToggleSetting,
                 customPresetNoteLengthToggleSetting,
@@ -315,10 +314,15 @@ public class PatternSettings {
                         customPresetSetting,
                         customRefreshPresetsSetting,
                         reversePatternSetting,
-                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal,
+                        customPresetNoteDestinationSelectorSetting,
+                        customPresetSaveBtnSignal,
+                        customPresetSaveBtnSignal,
+                        customPresetSaveHeaderSetting,
                         customPresetSaveNamSetting,
-                        customPresetNoteDestinationSelectorSetting, customPresetStepSizeToggleSetting,
-                        customPresetSubdivisionsToggleSetting, customPresetNoteLengthToggleSetting };
+                        customPresetNoteDestinationSelectorSetting,
+                        customPresetStepSizeToggleSetting,
+                        customPresetSubdivisionsToggleSetting,
+                        customPresetNoteLengthToggleSetting };
                 Setting[] settingsToHideCustom = {
                         // patternSelectorSetting,
                         ProgramPattern.programDensitySetting,
@@ -341,29 +345,39 @@ public class PatternSettings {
 
                 break;
             case "Program":
-                Setting[] settingsToShowRandom = {
+                Setting[] settingsToShowInProgramMode = {
                         ProgramPattern.programDensitySetting,
                         ProgramPattern.programMinVelocityVariationSetting,
                         ProgramPattern.programMaxVelocityVariationSetting,
                         ProgramPattern.programStepQtySetting,
-                        ProgramPattern.programVelocitySettingShape };
-                Setting[] settingsToHideRandom = {
-                        // patternSelectorSetting,
+                        ProgramPattern.programVelocitySettingShape,
+                        customPresetSaveBtnSignal,
+                        customPresetSaveHeaderSetting,
+                        customPresetSaveNamSetting };
+                Setting[] settingsToHideInProgramMode = {
                         customPresetSetting,
                         reversePatternSetting,
-                        customRefreshPresetsSetting, NoteDestinationSettings.customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal,
-                        customPresetSaveNamSetting,
-                        StepSizeSettings.customPresetStepSizeSetting, StepSizeSettings.customPresetSubdivisionsSetting, StepSizeSettings.customPresetNoteLengthSetting,
+                        customRefreshPresetsSetting,
                         customPresetNoteDestinationSelectorSetting,
-                        customPresetStepSizeToggleSetting, customPresetSubdivisionsToggleSetting,
-                        customPresetNoteLengthToggleSetting };
-                showSetting(settingsToShowRandom);
-                hideSetting(settingsToHideRandom);
+                        customPresetSaveNamSetting,
+                        NoteDestinationSettings.customPresetDefaultNoteSetting,
+                        StepSizeSettings.customPresetStepSizeSetting,
+                        StepSizeSettings.customPresetSubdivisionsSetting,
+                        StepSizeSettings.customPresetNoteLengthSetting,
+                        customPresetNoteDestinationSelectorSetting,
+                        customPresetStepSizeToggleSetting,
+                        customPresetSubdivisionsToggleSetting,
+                        customPresetNoteLengthToggleSetting
+                };
+                showSetting(settingsToShowInProgramMode);
+                hideSetting(settingsToHideInProgramMode);
                 break;
         }
         // Reset the note destination setting for custom presets
         toggleCustomPresetNoteDestinationSelectorSetting();
+        toggleCustomPresetNoteLengthSetting();
+        toggleCustomPresetSubdivisionsSetting();
+        toggleCustomPresetStepSizeSetting();
     }
 
     public static void toggleCustomPresetNoteDestinationSelectorSetting() {
@@ -466,12 +480,11 @@ public class PatternSettings {
         return Arrays.stream(pattern).mapToObj(String::valueOf).toArray(String[]::new);
     }
 
-
     private String getCustomPresetDefaultNote(String presetName) {
         for (CustomPreset preset : extension.preferences.getCustomPresets()) {
             if (preset.getName().equals(presetName)) {
                 extension.getHost()
-                        .println("Found preset: " + presetName + " with default note: " + preset.getDefaultNote()) ;
+                        .println("Found preset: " + presetName + " with default note: " + preset.getDefaultNote());
                 return preset.getDefaultNote();
             }
         }
@@ -483,7 +496,7 @@ public class PatternSettings {
         for (CustomPreset preset : extension.preferences.getCustomPresets()) {
             if (preset.getName().equals(presetName)) {
                 extension.getHost()
-                        .println("Found preset: " + presetName + " with step size: " + preset.getStepSize()) ;
+                        .println("Found preset: " + presetName + " with step size: " + preset.getStepSize());
                 return preset.getStepSize();
             }
         }

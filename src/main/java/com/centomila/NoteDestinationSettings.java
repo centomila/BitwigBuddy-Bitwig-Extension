@@ -11,6 +11,7 @@ import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.PlayingNote;
 import com.bitwig.extension.controller.api.PlayingNoteArrayValue;
+import com.bitwig.extension.controller.api.RangedValue;
 
 import java.util.Arrays;
 
@@ -21,27 +22,38 @@ import java.util.Arrays;
  * value constraints.
  */
 public class NoteDestinationSettings {
+   // Constants
+   public static final String CATEGORY_NOTE_DESTINATION = "4 Note Destination";
+   public static final String[] LEARN_NOTE_OPTIONS = new String[] { "Manual", "Learn", "DM" };
+
+   // Settings
    public static Setting learnNoteSetting; // On or Off
-   public static Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#",
-                                                 // "A", "A#", "B"
+   public static Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
    public static Setting noteOctaveSetting; // Note Octave -2 to 8
    public static Setting noteChannelSetting; // Note Channel 1 to 16
    public static Setting customPresetDefaultNoteSetting;
    public static Setting[] allSettings;
 
+   // State variables
    public static int currentNoteAsInt;
-
    public static String currentNoteAsString;
    public static int currentOctaveAsInt;
 
+   // Instance management
    private static NoteDestinationSettings noteDestSettings;
 
    private static void setNoteDestSettings(NoteDestinationSettings settings) {
       noteDestSettings = settings;
    }
 
-   public static String CATEGORY_NOTE_DESTINATION = "4 Note Destination";
-   public static String[] LEARN_NOTE_OPTIONS = new String[] { "Manual", "Learn", "DM" };
+   /**
+    * Constructor for NoteDestinationSettings
+    */
+   public NoteDestinationSettings(Setting channelSetting, String note, int octave) {
+      currentNoteAsString = note;
+      currentOctaveAsInt = octave;
+      noteChannelSetting = channelSetting;
+   }
 
    /**
     * Initializes all note destination settings and observers.
@@ -63,7 +75,6 @@ public class NoteDestinationSettings {
       disableSetting(spacerNoteDestination);
 
       // Setup learn note setting
-
       learnNoteSetting = (Setting) createEnumSetting(
             "Learn Note", CATEGORY_NOTE_DESTINATION, LEARN_NOTE_OPTIONS, "DM");
 
@@ -121,7 +132,77 @@ public class NoteDestinationSettings {
          allSettings = new Setting[] { spacerNoteDestination, noteDestinationSetting, noteOctaveSetting,
                learnNoteSetting, customPresetDefaultNoteSetting };
       }
+   }
 
+   /**
+    * Configures value observers for note and octave destination changes.
+    * Updates the current note/octave values and enforces the G8 maximum note
+    * constraint.
+    * 
+    * @param extension The BitwigBuddy extension instance
+    */
+   private static void setupNoteDestinationObservers(BitwigBuddyExtension extension) {
+      // Register observer for note changes
+      ((EnumValue) noteDestinationSetting).addValueObserver(newValue -> {
+         NoteDestinationSettings.setCurrentNote(newValue);
+         forceNoteRangeMaxToG8(extension);
+      });
+
+      // Register observer for octave changes
+      ((EnumValue) noteOctaveSetting).addValueObserver(newValue -> {
+         NoteDestinationSettings.setCurrentOctave(Integer.parseInt(newValue));
+         forceNoteRangeMaxToG8(extension);
+      });
+   }
+
+   /**
+    * Sets up note learning functionality by observing played notes.
+    * When enabled, automatically updates note destination settings based on played
+    * notes.
+    * 
+    * @param extension The BitwigBuddy extension instance
+    * @param host      The Bitwig Studio controller host
+    */
+   private static void setupPlayingNotesObserver(BitwigBuddyExtension extension, ControllerHost host) {
+      PlayingNoteArrayValue playingNotes = extension.cursorTrack.playingNotes();
+      playingNotes.markInterested();
+
+      playingNotes.addValueObserver(notes -> {
+         if (((EnumValue) learnNoteSetting).get().equals("Learn")) {
+            for (PlayingNote note : notes) {
+               String noteName = getNoteNameFromKey(note.pitch());
+               String[] keyAndOctave = getKeyAndOctaveFromNoteName(noteName);
+               ((SettableEnumValue) noteDestinationSetting).set(keyAndOctave[0]);
+               ((SettableEnumValue) noteOctaveSetting).set(keyAndOctave[1]);
+            }
+         }
+      });
+
+      ((EnumValue) learnNoteSetting).addValueObserver(value -> {
+         if (value.equals("Learn")) {
+            playingNotes.subscribe();
+         } else {
+            if (playingNotes.isSubscribed()) {
+               playingNotes.unsubscribe();
+            }
+         }
+      });
+   }
+
+   /**
+    * Enforces the maximum playable note constraint of G8.
+    * If the current note is above G8, forces the note value back to G.
+    * 
+    * @param extension The BitwigBuddy extension instance
+    */
+   private static void forceNoteRangeMaxToG8(BitwigBuddyExtension extension) {
+      String currentNote = ((EnumValue) noteDestinationSetting).get();
+      int currentOctave = Integer.parseInt(((EnumValue) noteOctaveSetting).get());
+      if (currentOctave == 8 &&
+            (currentNote.equals("G#") || currentNote.equals("A") ||
+                  currentNote.equals("A#") || currentNote.equals("B"))) {
+         ((SettableEnumValue) noteDestinationSetting).set("G");
+      }
    }
 
    /**
@@ -165,78 +246,31 @@ public class NoteDestinationSettings {
       return new String[] { note, String.valueOf(octave) };
    }
 
-   /**
-    * Configures value observers for note and octave destination changes.
-    * Updates the current note/octave values and enforces the G8 maximum note
-    * constraint.
-    * 
-    * @param extension The BitwigBuddy extension instance
-    */
-   private static void setupNoteDestinationObservers(BitwigBuddyExtension extension) {
-      // Register observer for note changes
-      ((EnumValue) noteDestinationSetting).addValueObserver(newValue -> {
-         NoteDestinationSettings.setCurrentNote(newValue);
-         forceNoteRangeMaxToG8(extension);
-      });
+   public static void setNoteAndOctaveFromString(String noteAndOctave) {
+      String[] noteAndOctaveArray = getKeyAndOctaveFromNoteName(noteAndOctave);
+      ((SettableEnumValue) noteDestinationSetting).set(noteAndOctaveArray[0]);
+      ((SettableEnumValue) noteOctaveSetting).set(noteAndOctaveArray[1]);
 
-      // Register observer for octave changes
-      ((EnumValue) noteOctaveSetting).addValueObserver(newValue -> {
-         NoteDestinationSettings.setCurrentOctave(Integer.parseInt(newValue));
-         forceNoteRangeMaxToG8(extension);
-      });
+      // print in console
+      showPopup(noteAndOctaveArray[0] + " | " + noteAndOctaveArray[1]);
    }
 
-   /**
-    * Sets up note learning functionality by observing played notes.
-    * When enabled, automatically updates note destination settings based on played
-    * notes.
-    * 
-    * @param extension The BitwigBuddy extension instance
-    * @param host      The Bitwig Studio controller host
-    */
-   private static void setupPlayingNotesObserver(BitwigBuddyExtension extension, ControllerHost host) {
+   // Getters and setters
 
-      PlayingNoteArrayValue playingNotes = extension.cursorTrack.playingNotes();
-      playingNotes.markInterested();
-
-      playingNotes.addValueObserver(notes -> {
-         if (((EnumValue) learnNoteSetting).get().equals("Learn")) {
-            for (PlayingNote note : notes) {
-               String noteName = getNoteNameFromKey(note.pitch());
-               String[] keyAndOctave = getKeyAndOctaveFromNoteName(noteName);
-               ((SettableEnumValue) noteDestinationSetting).set(keyAndOctave[0]);
-               ((SettableEnumValue) noteOctaveSetting).set(keyAndOctave[1]);
-            }
-         }
-      });
-
-      ((EnumValue) learnNoteSetting).addValueObserver(value -> {
-         if (value.equals("Learn")) {
-            playingNotes.subscribe();
-         } else {
-            if (playingNotes.isSubscribed()) {
-               playingNotes.unsubscribe();
-            }
-         }
-      });
+   public static String getCurrentNoteAsString() {
+      return currentNoteAsString;
    }
 
-   /**
-    * Enforces the maximum playable note constraint of G8.
-    * If the current note is above G8, forces the note value back to G.
-    * 
-    * @param extension The BitwigBuddy extension instance
-    */
-   private static void forceNoteRangeMaxToG8(BitwigBuddyExtension extension) {
-      String currentNote = ((EnumValue) noteDestinationSetting).get();
-      int currentOctave = Integer.parseInt(((EnumValue) noteOctaveSetting).get());
-      if (currentOctave == 8 &&
-            (currentNote.equals("G#") || currentNote.equals("A") ||
-                  currentNote.equals("A#") || currentNote.equals("B"))) {
-         ((SettableEnumValue) noteDestinationSetting).set("G");
-      }
+   public static int getCurrentOctaveAsInt() {
+      return currentOctaveAsInt;
    }
 
+   public static String getLearnNoteSelectorAsString() {
+      return ((EnumValue) learnNoteSetting).get();
+   }
+
+
+   
    /**
     * Calculates and returns the current MIDI note number.
     * Combines the current note and octave settings to determine the MIDI note
@@ -248,22 +282,14 @@ public class NoteDestinationSettings {
       currentNoteAsInt = Utils.getMIDINoteNumberFromStringAndOctave(currentNoteAsString, currentOctaveAsInt);
       return currentNoteAsInt;
    }
-
-   /**
-    * Displays a popup notification showing the current note destination.
-    * The popup shows the note name concatenated with the octave number.
-    */
-   public static void popupNoteDestination() {
-      showPopup("Note Destination: " + currentNoteAsString + currentOctaveAsInt);
-   }
-
+   
    /**
     * Retrieves the current MIDI channel number from settings.
     * 
     * @return The MIDI channel number (0-15, zero-indexed)
     */
    public static int getCurrentChannelAsInt() {
-      int channel = (int) Math.round(((SettableRangedValue) noteChannelSetting).getRaw());
+      int channel = (int) Math.round(((RangedValue) noteChannelSetting).getRaw());
       return channel - 1;
    }
 
@@ -289,21 +315,70 @@ public class NoteDestinationSettings {
       popupNoteDestination();
    }
 
-   public NoteDestinationSettings(Setting channelSetting, String note, int octave) {
-      currentNoteAsString = note;
-      currentOctaveAsInt = octave;
-      noteChannelSetting = channelSetting;
+   /**
+    * @param note The new note value (e.g., "C", "F#")
+    * @param octave The new octave value (-2 to 8)
+    */
+   public static void setCurrentNoteAndOctave(String note, int octave) {
+      setCurrentNote(note);
+      setCurrentOctave(octave);
    }
 
-   public static void setNoteAndOctaveFromString(String noteAndOctave) {
-      String[] noteAndOctaveArray = getKeyAndOctaveFromNoteName(noteAndOctave);
-      // setCurrentNote(noteAndOctaveArray[0]);
-      // setCurrentOctave(Integer.parseInt(noteAndOctaveArray[1]));
-      ((SettableEnumValue) noteDestinationSetting).set(noteAndOctaveArray[0]);
-      ((SettableEnumValue) noteOctaveSetting).set(noteAndOctaveArray[1]);
+   /**
+    * Displays a popup notification showing the current note destination.
+    * The popup shows the note name concatenated with the octave number.
+    */
+   public static void popupNoteDestination() {
+      showPopup("Note Destination: " + currentNoteAsString + currentOctaveAsInt);
+   }
 
-      // print in console
-      showPopup(noteAndOctaveArray[0] + " | " + noteAndOctaveArray[1]);
+   // Hide and show settings
 
+   public static void hideNoteDestinationSettings() {
+      hideSetting(allSettings);
+   }
+
+   public static void showNoteDestinationSettings() {
+      showSetting(allSettings);
+   }
+
+   public static void hideCustomPresetDefaultNoteSetting() {
+      hideSetting(customPresetDefaultNoteSetting);
+   }
+
+   public static void showCustomPresetDefaultNoteSetting() {
+      showSetting(customPresetDefaultNoteSetting);
+   }
+
+   public static void hideNoteChannelSetting() {
+      hideSetting(noteChannelSetting);
+   }
+
+   public static void showNoteChannelSetting() {
+      showSetting(noteChannelSetting);
+   }
+
+   public static void hideLearnNoteSetting() {
+      hideSetting(learnNoteSetting);
+   }
+
+   public static void showLearnNoteSetting() {
+      showSetting(learnNoteSetting);
+   }
+
+   public static void hideNoteDestinationSetting() {
+      hideSetting(noteDestinationSetting);
+   }
+
+   public static void showNoteDestinationSetting() {
+      showSetting(noteDestinationSetting);
+   }
+
+   public static void hideNoteOctaveSetting() {
+      hideSetting(noteOctaveSetting);
+   }
+
+   public static void showNoteOctaveSetting() {
+      showSetting(noteOctaveSetting);
    }
 }
