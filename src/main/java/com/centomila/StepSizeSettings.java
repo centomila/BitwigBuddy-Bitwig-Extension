@@ -31,27 +31,26 @@ public class StepSizeSettings {
                         CATEGORY_CLIP,
                         Utils.STEPSIZE_OPTIONS,
                         "1/16");
-            stepSizSubdivisionSetting = (Setting) createEnumSetting(
-                        "Subdivisions",
-                        CATEGORY_CLIP,
-                        Utils.STEPSIZE_CATEGORY_OPTIONS,
-                        "Straight");
-            noteLengthSetting = (Setting) createEnumSetting(
-                        "Note Length",
-                        CATEGORY_CLIP,
-                        Utils.STEPSIZE_OPTIONS,
-                        "1/16");
-
             customPresetStepSizeSetting = (Setting) createStringSetting(
                         "Preset Step Size",
                         StepSizeSettings.CATEGORY_CLIP + " 2", 0,
                         "1/16");
 
+            stepSizSubdivisionSetting = (Setting) createEnumSetting(
+                        "Subdivisions",
+                        CATEGORY_CLIP,
+                        Utils.STEPSIZE_CATEGORY_OPTIONS,
+                        "Straight");
             customPresetSubdivisionsSetting = (Setting) createStringSetting(
                         "Preset Subdivisions",
                         StepSizeSettings.CATEGORY_CLIP + " 2", 0,
                         "Straight");
 
+            noteLengthSetting = (Setting) createEnumSetting(
+                        "Note Length",
+                        CATEGORY_CLIP,
+                        Utils.STEPSIZE_OPTIONS,
+                        "1/16");
             customPresetNoteLengthSetting = (Setting) createStringSetting(
                         "Preset Note Length",
                         StepSizeSettings.CATEGORY_CLIP + " 2", 0,
