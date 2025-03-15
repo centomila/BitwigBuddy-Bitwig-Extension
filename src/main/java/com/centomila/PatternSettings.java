@@ -28,6 +28,7 @@ public class PatternSettings {
     
     public static Setting customPresetDefaultNoteSetting; // Default note for custom presets
     public static Setting customPresetNoteDestinationSelectorSetting; // Note destination selector for custom presets
+    public static Setting customPresetSaveHeaderSetting; // Save custom preset header spacer
     public static Setting customPresetSaveBtnSignal; // Save custom preset button
     public static Setting customPresetSaveNamSetting; // Save custom preset name
     public static Setting customPresetStepSizeSetting; // Step size for custom presets
@@ -80,37 +81,39 @@ public class PatternSettings {
         initSpacer(documentState);
         initGenerateButton(documentState);
         initPatternTypeSetting(documentState);
-        initPatternSelectorSetting(documentState);
-        initCustomSavePresetSetting(documentState);
-
+        // initPatternSelectorSetting(documentState);
+        
         initCustomPresetParams(documentState);
         initCustomPresetPatternStringSetting(documentState);
         initRefreshCustomPresetsSetting(documentState);
         initReversePatternSetting(documentState);
-
+        
         initCustomPresetDefaultNoteSetting(documentState);
         initCustomPresetStepSizeToggleSetting(documentState);
         initCustomPresetSubdivisionsToggleSetting(documentState);
         initCustomPresetNoteLengthToggleSetting(documentState);
+        
+        initCustomSavePresetSetting(documentState);
         allSettings = new Setting[] {
                 spacerGenerate,
                 generateBtnSignalSetting,
                 patternTypeSetting,
-                patternSelectorSetting,
+                // patternSelectorSetting,
                 customPresetSetting,
                 presetPatternStringSetting,
                 customRefreshPresetsSetting,
                 reversePatternSetting,
                 customPresetDefaultNoteSetting,
                 customPresetNoteDestinationSelectorSetting,
-                customPresetSaveBtnSignal,
-                customPresetSaveNamSetting,
                 customPresetStepSizeSetting,
                 customPresetSubdivisionsSetting,
                 customPresetNoteLengthSetting,
                 customPresetStepSizeToggleSetting,
                 customPresetSubdivisionsToggleSetting,
-                customPresetNoteLengthToggleSetting
+                customPresetNoteLengthToggleSetting,
+                customPresetSaveBtnSignal,
+                customPresetSaveNamSetting,
+                customPresetSaveHeaderSetting
         };
     }
 
@@ -136,7 +139,7 @@ public class PatternSettings {
     public void initPatternTypeSetting(DocumentState documentState) {
         String[] options = { "Presets", "Program", "Custom" };
         patternTypeSetting = (Setting) documentState.getEnumSetting("Pattern Type", CATEGORY_GENERATE_PATTERN,
-                options, "Presets");
+                options, "Custom");
 
         ((EnumValue) patternTypeSetting).addValueObserver(newValue -> {
             generatorTypeSelector(newValue);
@@ -145,29 +148,6 @@ public class PatternSettings {
 
     public static void generatorTypeSelector(String newValue) {
         switch (newValue) {
-            case "Presets":
-                Setting[] settingsToShow = {
-                        patternSelectorSetting,
-                        reversePatternSetting };
-                Setting[] settingsToHide = {
-                        customPresetSetting,
-                        ProgramPattern.programDensitySetting,
-                        ProgramPattern.programMinVelocityVariationSetting,
-                        ProgramPattern.programMaxVelocityVariationSetting,
-                        ProgramPattern.programStepQtySetting,
-                        ProgramPattern.programVelocitySettingShape,
-                        customRefreshPresetsSetting, customPresetDefaultNoteSetting,
-                        customPresetNoteDestinationSelectorSetting, customPresetSaveBtnSignal,
-                        customPresetSaveNamSetting,
-                        customPresetStepSizeSetting, customPresetSubdivisionsSetting, customPresetNoteLengthSetting,
-                        customPresetNoteDestinationSelectorSetting, customPresetStepSizeToggleSetting,
-                        customPresetSubdivisionsToggleSetting, customPresetNoteLengthToggleSetting };
-                showAndEnableSetting(settingsToShow);
-                hideAndDisableSetting(settingsToHide);
-
-                ((SettableEnumValue) patternSelectorSetting).set(lastDefaultPresetUsed);
-                setPatternString(getDefaultPresetsContentPatternStrings(lastDefaultPresetUsed));
-                break;
             case "Custom":
                 Setting[] settingsToShowCustom = {
                         customPresetSetting,
@@ -179,7 +159,7 @@ public class PatternSettings {
                         customPresetNoteDestinationSelectorSetting, customPresetStepSizeToggleSetting,
                         customPresetSubdivisionsToggleSetting, customPresetNoteLengthToggleSetting };
                 Setting[] settingsToHideCustom = {
-                        patternSelectorSetting,
+                        // patternSelectorSetting,
                         ProgramPattern.programDensitySetting,
                         ProgramPattern.programMinVelocityVariationSetting,
                         ProgramPattern.programMaxVelocityVariationSetting,
@@ -371,6 +351,11 @@ public class PatternSettings {
     }
 
     private void initCustomSavePresetSetting(DocumentState documentState) {
+        customPresetSaveHeaderSetting = (Setting) documentState.getStringSetting("SAVE THIS PRESET",
+                CATEGORY_GENERATE_PATTERN, 0,
+                "---------------------------------------------------");
+        disableSetting(customPresetSaveHeaderSetting);
+
         customPresetSaveBtnSignal = (Setting) documentState.getSignalSetting("Save Custom Preset",
                 CATEGORY_GENERATE_PATTERN, "Save Custom Preset");
 
