@@ -20,6 +20,9 @@ public class CustomPresetsHandler {
     private static final String NAME_PREFIX = "Name:";
     private static final String DEFAULT_NOTE_PREFIX = "DefaultNote:";
     private static final String PATTERN_PREFIX = "Pattern:";
+    private static final String STEP_SIZE_PREFIX = "StepSize:";
+    private static final String SUBDIVISIONS_PREFIX = "Subdivisions:";
+    private static final String NOTE_LENGTH_PREFIX = "NoteLength:";
 
     private final ControllerHost host;
     private final GlobalPreferences preferences;
@@ -100,7 +103,10 @@ public class CustomPresetsHandler {
                 "default.txt",
                 "NO CUSTOM PATTERN",
                 "C1",
-                defaultPattern);
+                defaultPattern,
+                "1/16",
+                "Straight",
+                "1/16");
     }
 
     /**
@@ -136,6 +142,10 @@ public class CustomPresetsHandler {
         List<String> lines = java.nio.file.Files.readAllLines(file.toPath());
         String name = "";
         String defaultNote = "";
+        String stepSize = "";
+        String subdivisions = "";
+        String noteLength = "";
+
         int[] pattern = new int[0];
 
         for (String line : lines) {
@@ -150,6 +160,13 @@ public class CustomPresetsHandler {
                     defaultNote = extractQuotedValue(line);
                 } else if (line.startsWith(PATTERN_PREFIX)) {
                     pattern = parsePatternArray(line);
+                } else if (line
+                        .startsWith(STEP_SIZE_PREFIX)) {
+                    stepSize = extractQuotedValue(line);
+                } else if (line.startsWith(SUBDIVISIONS_PREFIX)) {
+                    subdivisions = extractQuotedValue(line);
+                } else if (line.startsWith(NOTE_LENGTH_PREFIX)) {
+                    noteLength = extractQuotedValue(line);
                 }
             } catch (IllegalArgumentException e) {
                 host.errorln("Error parsing line in " + file.getName() + ": " + e.getMessage());
@@ -162,7 +179,7 @@ public class CustomPresetsHandler {
             return null;
         }
 
-        return new CustomPreset(file.getName(), name, defaultNote, pattern);
+        return new CustomPreset(file.getName(), name, defaultNote, pattern, stepSize, subdivisions, noteLength);
     }
 
     /**
@@ -213,17 +230,24 @@ public class CustomPresetsHandler {
         private final String name;
         private final String defaultNote;
         private final int[] pattern;
+        private final String stepSize;
+        private final String subdivisions;
+        private final String noteLength;
 
         /**
          * Creates a new CustomPreset instance.
          * 
          * @throws NullPointerException if any parameter is null
          */
-        public CustomPreset(String fileName, String name, String defaultNote, int[] pattern) {
+        public CustomPreset(String fileName, String name, String defaultNote, int[] pattern, String stepSize,
+                String subdivisions, String noteLength) {
             this.fileName = Objects.requireNonNull(fileName, "fileName cannot be null");
             this.name = Objects.requireNonNull(name, "name cannot be null");
             this.defaultNote = Objects.requireNonNull(defaultNote, "defaultNote cannot be null");
             this.pattern = Arrays.copyOf(Objects.requireNonNull(pattern, "pattern cannot be null"), pattern.length);
+            this.stepSize = Objects.requireNonNull(stepSize, "stepSize cannot be null");
+            this.subdivisions = Objects.requireNonNull(subdivisions, "subdivisions cannot be null");
+            this.noteLength = Objects.requireNonNull(noteLength, "noteLength cannot be null");
         }
 
         public String getFileName() {
@@ -241,6 +265,18 @@ public class CustomPresetsHandler {
         public int[] getPattern() {
             return Arrays.copyOf(pattern, pattern.length);
         }
+
+        public String getStepSize() {
+            return stepSize;
+        }
+
+        public String getSubdivisions() {
+            return subdivisions;
+        }
+
+        public String getNoteLength() {
+            return noteLength;
+        }
     }
 
     /**
@@ -254,16 +290,16 @@ public class CustomPresetsHandler {
         File presetsDir = new File(preferences.getPresetsPath());
         String subdir = "Custom Presets";
         presetsDir = new File(presetsDir, subdir);
-        
+
         // Ensure filename has .txt extension
-        String presetName =  ((StringValue) PatternSettings.customPresetSaveNamSetting).get();
+        String presetName = ((StringValue) PatternSettings.customPresetSaveNamSetting).get();
         String fileName = presetName;
         if (!fileName.toLowerCase().endsWith(".txt")) {
             fileName = fileName + ".txt";
         }
 
         String defaultNote = NoteDestinationSettings.currentNoteAsString + NoteDestinationSettings.currentOctaveAsInt;
-        
+
         File presetFile = new File(presetsDir, fileName);
 
         try {
@@ -276,6 +312,9 @@ public class CustomPresetsHandler {
             lines.add(NAME_PREFIX + " \"" + presetName + "\"");
             lines.add(DEFAULT_NOTE_PREFIX + " \"" + defaultNote + "\"");
             lines.add(PATTERN_PREFIX + " [" + Arrays.toString(preset.getPattern()).replaceAll("[\\[\\]]", "") + "]");
+            lines.add("StepSize: \"" + preset.getStepSize() + "\"");
+            lines.add("Subdivisions: \"" + preset.getSubdivisions() + "\"");
+            lines.add("NoteLength: \"" + preset.getNoteLength() + "\"");
 
             java.nio.file.Files.write(presetFile.toPath(), lines);
         } catch (IOException e) {

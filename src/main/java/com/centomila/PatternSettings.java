@@ -102,8 +102,6 @@ public class PatternSettings {
      * @param documentState The current document state.
      */
     private void initGenerateButton(DocumentState documentState) {
-        // Signal generateButton = documentState.getSignalSetting("Generate!",
-        // CATEGORY_GENERATE_PATTERN, "Generate!");
         generateBtnSignalSetting = (Setting) documentState.getSignalSetting("Generate!", CATEGORY_GENERATE_PATTERN,
                 "Generate!");
 
@@ -202,7 +200,7 @@ public class PatternSettings {
      */
     private void initPatternSelectorSetting(DocumentState documentState) {
         final String[] LIST_OF_DEFAULT_PATTERNS = Arrays.stream(DefaultPatterns.patterns)
-                .map(pattern -> pattern[0].toString())
+                .map(Pattern::getName)
                 .toArray(String[]::new);
 
         patternSelectorSetting = (Setting) documentState.getEnumSetting("Pattern", CATEGORY_GENERATE_PATTERN,
@@ -297,7 +295,10 @@ public class PatternSettings {
                     .mapToInt(Integer::parseInt)
                     .toArray();
             String defaultNote = ((SettableStringValue) customPresetDefaultNoteSetting).get();
-            CustomPreset preset = new CustomPreset(presetName, presetName, defaultNote, patternIntArray);
+            String stepSize = ((SettableEnumValue) StepSizeSettings.stepSizSetting).get();
+            String subdivisions = ((SettableEnumValue) StepSizeSettings.stepSizSubdivisionSetting).get();
+            String noteLength = ((SettableEnumValue) StepSizeSettings.noteLengthSetting).get();
+            CustomPreset preset = new CustomPreset(presetName, presetName, defaultNote, patternIntArray, stepSize, subdivisions, noteLength);
             CustomPresetsHandler.saveCustomPreset(preset, extension.preferences, extension.getHost());
             showPopup("Custom Preset saved: " + presetName);
             extension.restart();
