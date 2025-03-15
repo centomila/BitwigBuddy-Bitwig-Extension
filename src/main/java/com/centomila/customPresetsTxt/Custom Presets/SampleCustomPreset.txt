@@ -1,6 +1,6 @@
 Name: "Sample Custom Preset"
 DefaultNote: "C1"
 Pattern: [100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0]
-StepSize: "1/16"
-Subdivisions: "Straight"
+StepSize: "1/8"
+Subdivisions: "3t"
 NoteLength: "1/16"
