@@ -25,7 +25,7 @@ public class PatternSettings {
     public static Setting patternSelectorSetting; // List of default patterns
     public static Setting customPresetSetting; // List of custom patterns
     public static Setting customRefreshPresetsSetting; // Refresh custom presets
-    
+
     public static Setting customPresetDefaultNoteSetting; // Default note for custom presets
     public static Setting customPresetNoteDestinationSelectorSetting; // Note destination selector for custom presets
     public static Setting customPresetSaveHeaderSetting; // Save custom preset header spacer
@@ -44,6 +44,9 @@ public class PatternSettings {
     public static Setting[] allSettings;
     private final BitwigBuddyExtension extension;
     private static String CATEGORY_GENERATE_PATTERN = "3 Generate Pattern";
+    private static String CATEGORY_CUSTOM_PATTERN_STRINGS = "Custom Pattern Strings";
+    private static String CATEGORY_CUSTOM_PATTERN_TOGGLE = "Custom Pattern Toggle";
+    private static String CATEGORY_CUSTOM_PATTERN_SAVE = "Custom Pattern Save";
     private static String lastDefaultPresetUsed = "Kick: Four on the Floor";
     private static String lastCustomPresetUsed = null;
     private String lastStringPatternUsed = "100,0,0,0,100,0,0,0,100,0,0,0,100,0,0,0";
@@ -82,17 +85,17 @@ public class PatternSettings {
         initGenerateButton(documentState);
         initPatternTypeSetting(documentState);
         // initPatternSelectorSetting(documentState);
-        
+
         initCustomPresetParams(documentState);
         initCustomPresetPatternStringSetting(documentState);
         initRefreshCustomPresetsSetting(documentState);
         initReversePatternSetting(documentState);
-        
-        initCustomPresetDefaultNoteSetting(documentState);
+
+        initCustomPresetDefaultNoteToggleSetting(documentState);
         initCustomPresetStepSizeToggleSetting(documentState);
         initCustomPresetSubdivisionsToggleSetting(documentState);
         initCustomPresetNoteLengthToggleSetting(documentState);
-        
+
         initCustomSavePresetSetting(documentState);
         allSettings = new Setting[] {
                 spacerGenerate,
@@ -187,7 +190,7 @@ public class PatternSettings {
                         ProgramPattern.programStepQtySetting,
                         ProgramPattern.programVelocitySettingShape };
                 Setting[] settingsToHideRandom = {
-                        patternSelectorSetting,
+                        // patternSelectorSetting,
                         customPresetSetting,
                         reversePatternSetting,
                         customRefreshPresetsSetting, customPresetDefaultNoteSetting,
@@ -251,6 +254,11 @@ public class PatternSettings {
 
         hideAndDisableSetting(customPresetSetting);
 
+        customPresetDefaultNoteSetting = (Setting) createStringSetting(
+                "Default Note from Preset",
+                CATEGORY_CUSTOM_PATTERN_STRINGS, 0,
+                "C1");
+
         customPresetStepSizeSetting = (Setting) createStringSetting(
                 "Step Size from Preset",
                 CATEGORY_GENERATE_PATTERN, 0,
@@ -266,6 +274,7 @@ public class PatternSettings {
                 CATEGORY_GENERATE_PATTERN, 0,
                 "1/16");
 
+        hideAndDisableSetting(customPresetDefaultNoteSetting);
         hideAndDisableSetting(customPresetStepSizeSetting);
         hideAndDisableSetting(customPresetSubdivisionsSetting);
         hideAndDisableSetting(customPresetNoteLengthSetting);
@@ -296,7 +305,6 @@ public class PatternSettings {
             }
 
             String stepSize = getCustomPresetStepSize(newValue.toString());
-
             setStepSizeString(stepSize.isEmpty() ? "1/16" : stepSize);
             if (((EnumValue) customPresetStepSizeToggleSetting).get().equals("Enable") &&
                     stepSize != null && !stepSize.trim().isEmpty()) {
@@ -351,13 +359,14 @@ public class PatternSettings {
     }
 
     private void initCustomSavePresetSetting(DocumentState documentState) {
-        customPresetSaveHeaderSetting = (Setting) documentState.getStringSetting("SAVE THIS PRESET",
-                CATEGORY_GENERATE_PATTERN, 0,
+        customPresetSaveHeaderSetting = (Setting) documentState.getStringSetting(
+                titleWithLine("SAVE THIS PRESET"),
+                CATEGORY_CUSTOM_PATTERN_SAVE, 0,
                 "---------------------------------------------------");
         disableSetting(customPresetSaveHeaderSetting);
 
         customPresetSaveBtnSignal = (Setting) documentState.getSignalSetting("Save Custom Preset",
-                CATEGORY_GENERATE_PATTERN, "Save Custom Preset");
+                CATEGORY_CUSTOM_PATTERN_SAVE, "Save Custom Preset");
 
         ((Signal) customPresetSaveBtnSignal).addSignalObserver(() -> {
             String presetName = ((EnumValue) customPresetSetting).get();
@@ -379,7 +388,7 @@ public class PatternSettings {
         });
 
         customPresetSaveNamSetting = (Setting) documentState.getStringSetting("Preset Name",
-                CATEGORY_GENERATE_PATTERN, 0,
+                CATEGORY_CUSTOM_PATTERN_SAVE, 0,
                 "New Custom Preset");
     }
 
@@ -392,17 +401,11 @@ public class PatternSettings {
         });
     }
 
-    private void initCustomPresetDefaultNoteSetting(DocumentState documentState) {
-        customPresetDefaultNoteSetting = (Setting) createStringSetting(
-                "Default Note from Preset",
-                CATEGORY_GENERATE_PATTERN, 0,
-                "C1");
-
-        disableSetting(customPresetDefaultNoteSetting);
+    private void initCustomPresetDefaultNoteToggleSetting(DocumentState documentState) {
 
         customPresetNoteDestinationSelectorSetting = (Setting) createEnumSetting(
                 "Note Destination",
-                CATEGORY_GENERATE_PATTERN,
+                CATEGORY_CUSTOM_PATTERN_TOGGLE,
                 new String[] { "Preset Default Note", "Note Destination" },
                 "Note Destination");
 
@@ -414,12 +417,12 @@ public class PatternSettings {
     public static void toggleCustomPresetNoteDestinationSelectorSetting() {
         String value = ((EnumValue) customPresetNoteDestinationSelectorSetting).get();
         String patternType = ((EnumValue) patternTypeSetting).get();
-        if (!patternType.equals("Custom")) {
-            enableSetting(NoteDestinationSettings.noteDestinationSetting);
-            enableSetting(NoteDestinationSettings.noteOctaveSetting);
-            hideAndDisableSetting(customPresetDefaultNoteSetting);
-            return;
-        }
+        // if (!patternType.equals("Custom")) {
+        //     enableSetting(NoteDestinationSettings.noteDestinationSetting);
+        //     enableSetting(NoteDestinationSettings.noteOctaveSetting);
+        //     hideAndDisableSetting(customPresetDefaultNoteSetting);
+        //     return;
+        // }
         if (value.equals("Preset Default Note")) {
             disableSetting(NoteDestinationSettings.noteDestinationSetting);
             disableSetting(NoteDestinationSettings.noteOctaveSetting);
@@ -524,7 +527,7 @@ public class PatternSettings {
     private void initCustomPresetStepSizeToggleSetting(DocumentState documentState) {
         customPresetStepSizeToggleSetting = (Setting) createEnumSetting(
                 "Step Size Toggle",
-                CATEGORY_GENERATE_PATTERN,
+                CATEGORY_CUSTOM_PATTERN_TOGGLE,
                 new String[] { "Enable", "Disable" },
                 "Disable");
 
@@ -536,7 +539,7 @@ public class PatternSettings {
     private void initCustomPresetSubdivisionsToggleSetting(DocumentState documentState) {
         customPresetSubdivisionsToggleSetting = (Setting) createEnumSetting(
                 "Subdivisions Toggle",
-                CATEGORY_GENERATE_PATTERN,
+                CATEGORY_CUSTOM_PATTERN_TOGGLE,
                 new String[] { "Enable", "Disable" },
                 "Disable");
 
@@ -548,7 +551,7 @@ public class PatternSettings {
     private void initCustomPresetNoteLengthToggleSetting(DocumentState documentState) {
         customPresetNoteLengthToggleSetting = (Setting) createEnumSetting(
                 "Note Length Toggle",
-                CATEGORY_GENERATE_PATTERN,
+                CATEGORY_CUSTOM_PATTERN_TOGGLE,
                 new String[] { "Enable", "Disable" },
                 "Disable");
 
