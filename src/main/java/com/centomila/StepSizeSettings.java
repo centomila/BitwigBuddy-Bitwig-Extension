@@ -2,10 +2,8 @@ package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
 import com.bitwig.extension.controller.api.Setting;
-import com.bitwig.extension.controller.api.StringValue;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
-import com.bitwig.extension.controller.api.SettableStringValue;
 
 public class StepSizeSettings {
       // Step Size / Note Length settings

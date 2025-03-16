@@ -2,8 +2,6 @@ package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
 
-import java.util.List;
-
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.Setting;
 
@@ -157,7 +155,6 @@ public class ModeSelectSettings {
 
             hideSetting(NoteDestinationSettings.noteChannelSetting);
         }
-        
 
         PatternSettings.generatorTypeSelector(((EnumValue) PatternSettings.patternTypeSetting).get());
 

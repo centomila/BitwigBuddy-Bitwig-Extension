@@ -8,7 +8,6 @@ import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
-import com.bitwig.extension.controller.api.EnumValue;
 import com.centomila.CustomPresetsHandler.CustomPreset;
 import com.centomila.utils.SettingsHelper;
 
@@ -28,6 +27,7 @@ public class CustomPresetSaver {
     public static Setting[] allSettings;
 
     // Constructor and main initialization methods
+    @SuppressWarnings("unused")
     private final BitwigBuddyExtension extension;
 
     /**

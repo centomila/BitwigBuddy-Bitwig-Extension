@@ -4,17 +4,12 @@ import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.utils.SettingsHelper.*;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.Setting;
-import com.bitwig.extension.controller.api.TrackBank;
-import com.bitwig.extension.controller.api.Channel;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.PlayingNote;
 import com.bitwig.extension.controller.api.PlayingNoteArrayValue;
 import com.bitwig.extension.controller.api.RangedValue;
-import com.bitwig.extension.controller.api.SettableStringValue;
-import com.bitwig.extension.controller.api.SettableEnumValue;
-import com.bitwig.extension.controller.api.StringValue;
 
 import java.util.Arrays;
 
@@ -46,6 +41,7 @@ public class NoteDestinationSettings {
    public static int currentOctaveAsInt;
 
    // Instance management
+   @SuppressWarnings("unused")
    private static NoteDestinationSettings noteDestSettings;
 
    private static void setNoteDestSettings(NoteDestinationSettings settings) {

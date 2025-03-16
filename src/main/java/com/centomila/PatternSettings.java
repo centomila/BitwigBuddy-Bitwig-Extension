@@ -4,16 +4,13 @@ import static com.centomila.utils.PopupUtils.showPopup;
 import static com.centomila.utils.SettingsHelper.*;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
-import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
 import com.centomila.CustomPresetsHandler.CustomPreset;
-import com.centomila.utils.SettingsHelper;
 
 /**
  * Manages the pattern settings for the BitwigBuddy extension including presets,

@@ -668,6 +668,7 @@ public class MacroActionSettings {
                 description, author, relativePath);
     }
 
+    @SuppressWarnings("unused")
     private static void printAllAvailableActions(BitwigBuddyExtension extension) {
         host.println("Collecting available actions...");
 
