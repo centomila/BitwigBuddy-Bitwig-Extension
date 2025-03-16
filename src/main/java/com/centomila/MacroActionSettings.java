@@ -810,9 +810,7 @@ public class MacroActionSettings {
      * Hides all macro-related settings in the UI.
      */
     public static void hideMacroSettings() {
-        for (Setting setting : allSettings) {
-            setting.hide();
-        }
+         hideSetting(allSettings);
         // Be sure to hide everything related to macro settings
         hideInstantMacro();
 

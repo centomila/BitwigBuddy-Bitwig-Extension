@@ -114,7 +114,7 @@ public class PatternSettings {
     // Initialize the toggle for hiding/showing custom preset toggles
     private void initCustomTogglesToggle(DocumentState documentState) {
         customPresetHeaderToggles = (Setting) createStringSetting(
-                titleWithLine("Settings from Preset/Custom"),
+                titleWithLine("FROM PRESET / CUSTOM OPTIONS"),
                 CATEGORY_CUSTOM_PATTERN_TOGGLE, 0,
                 "---------------------------------------------------");
         disableSetting(customPresetHeaderToggles);
@@ -365,7 +365,15 @@ public class PatternSettings {
                         ProgramPattern.programVelocitySettingShape,
                         CustomPresetSaver.getCustomPresetSaveBtnSignal(),
                         CustomPresetSaver.getCustomPresetSaveHeaderSetting(),
-                        CustomPresetSaver.getCustomPresetSaveNameSetting() };
+                        CustomPresetSaver.getCustomPresetSaveNameSetting(),
+                        NoteDestinationSettings.noteDestinationSetting,
+                        NoteDestinationSettings.noteOctaveSetting,
+                        NoteDestinationSettings.noteChannelSetting,
+                        StepSizeSettings.stepSizSetting,
+                        StepSizeSettings.stepSizSubdivisionSetting,
+                        StepSizeSettings.noteLengthSetting
+
+                                };
                 Setting[] settingsToHideInProgramMode = {
                         customPresetSetting,
                         reversePatternSetting,
@@ -378,7 +386,7 @@ public class PatternSettings {
                         customPresetNoteLengthToggleSetting,
                         customPresetHeaderToggles
                 };
-                showSetting(settingsToShowInProgramMode);
+                showAndEnableSetting(settingsToShowInProgramMode);
                 hideSetting(settingsToHideInProgramMode);
                 break;
         }
@@ -391,7 +399,7 @@ public class PatternSettings {
     }
 
     public static void toggleCustomPresetNoteDestinationSelectorSetting(String newValue) {
-        if (newValue.equals("From Preset")) {
+        if (newValue.equals("From Preset") && getPatternType().equals("Custom")) {
             disableSetting(NoteDestinationSettings.noteDestinationSetting);
             disableSetting(NoteDestinationSettings.noteOctaveSetting);
             disableSetting(NoteDestinationSettings.noteChannelSetting);
@@ -411,7 +419,7 @@ public class PatternSettings {
     }
 
     public static void toggleCustomPresetStepSizeSetting() {
-        if (getCustomPresetStepSizeToggle().equals("From Preset")) {
+        if (getCustomPresetStepSizeToggle().equals("From Preset") && getPatternType().equals("Custom")) {
             disableSetting(StepSizeSettings.stepSizSetting);
 
             // Apply the stored preset step size if available
@@ -425,7 +433,7 @@ public class PatternSettings {
     }
 
     public static void toggleCustomPresetSubdivisionsSetting() {
-        if (getCustomPresetSubdivisionsToggle().equals("From Preset")) {
+        if (getCustomPresetSubdivisionsToggle().equals("From Preset") && getPatternType().equals("Custom")) {
             disableSetting(StepSizeSettings.stepSizSubdivisionSetting);
 
             // Apply the stored preset subdivisions if available
@@ -439,7 +447,7 @@ public class PatternSettings {
     }
 
     public static void toggleCustomPresetNoteLengthSetting(String newValue) {
-        if (newValue.equals("From Preset")) {
+        if (newValue.equals("From Preset") && getPatternType().equals("Custom")) {
             disableSetting(StepSizeSettings.noteLengthSetting);
 
             // Apply the stored preset note length if available

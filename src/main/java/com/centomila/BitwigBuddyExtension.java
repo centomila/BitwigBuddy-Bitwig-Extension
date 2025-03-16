@@ -186,8 +186,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
       MacroActionSettings.hideMacroSettings();
       EditClipSettings.init(this);
       PatternSettings.init(this);
-      NoteDestinationSettings.init(this);
       ProgramPattern.init(this);
+      NoteDestinationSettings.init(this);
       StepSizeSettings.init(this);
       PostActionSettings.init(this);
       ModeSelectSettings.hideMacroSettings();

@@ -58,8 +58,6 @@ public class ModeSelectSettings {
     public static void hideMacroSettings() {
         MacroActionSettings.showMacroSlots(false, false, false, false);
         MacroActionSettings.hideInstantMacro();
-        MacroActionSettings.macroHeaderSetting.hide();
-        MacroActionSettings.macroViewSelectorSetting.hide();
         hideSetting(MacroActionSettings.allSettings);
     }
 
