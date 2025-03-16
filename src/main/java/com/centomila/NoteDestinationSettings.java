@@ -25,14 +25,16 @@ public class NoteDestinationSettings {
    public static final String[] LEARN_NOTE_OPTIONS = new String[] { "Manual", "Learn", "DM" };
 
    // Settings
+   public static Setting spacerNoteDestination;
    public static Setting learnNoteSetting; // On or Off
-   public static Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
+   public static Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#",
+                                                 // "A", "A#", "B"
    public static Setting noteOctaveSetting; // Note Octave -2 to 8
    public static Setting noteChannelSetting; // Note Channel 1 to 16
-   
+
    // Class variable to store preset default note value (instead of UI setting)
    private static String customPresetDefaultNote = "";
-   
+
    public static Setting[] allSettings;
 
    // State variables
@@ -68,7 +70,7 @@ public class NoteDestinationSettings {
       ControllerHost host = extension.getHost();
 
       // Setup spacer
-      Setting spacerNoteDestination = (Setting) createStringSetting(
+      spacerNoteDestination = (Setting) createStringSetting(
             titleWithLine("NOTE DESTINATION ----------------------"),
             CATEGORY_NOTE_DESTINATION,
             0,
@@ -262,7 +264,7 @@ public class NoteDestinationSettings {
    public static String getCurrentNoteDestinationAsString() {
       return currentNoteAsString + currentOctaveAsInt;
    }
-   
+
    public static String getLearnNoteSelectorAsString() {
       return ((EnumValue) learnNoteSetting).get();
    }
@@ -306,7 +308,7 @@ public class NoteDestinationSettings {
       currentNoteAsInt = Utils.getMIDINoteNumberFromStringAndOctave(currentNoteAsString, currentOctaveAsInt);
       return currentNoteAsInt;
    }
-   
+
    /**
     * Retrieves the current MIDI channel number from settings.
     * 
@@ -340,7 +342,7 @@ public class NoteDestinationSettings {
    }
 
    /**
-    * @param note The new note value (e.g., "C", "F#")
+    * @param note   The new note value (e.g., "C", "F#")
     * @param octave The new octave value (-2 to 8)
     */
    public static void setCurrentNoteAndOctave(String note, int octave) {
@@ -361,18 +363,20 @@ public class NoteDestinationSettings {
    public static void hideAllSettings() {
       hideSetting(allSettings);
    }
+
    public static void hideAndDisableAllSettings() {
-       hideAndDisableSetting(allSettings);
+      hideAndDisableSetting(allSettings);
    }
 
    public static void showAllSettings() {
       showSetting(allSettings);
+      disableSetting(spacerNoteDestination);
    }
 
    public static void showAndEnableAllSettings() {
-       showAndEnableSetting(allSettings);
+      showAndEnableSetting(allSettings);
+      disableSetting(spacerNoteDestination);
    }
-
 
    public static void hideCustomPresetDefaultNoteSetting() {
       // No longer needed as customPresetDefaultNote is now a class variable

@@ -6,27 +6,29 @@ import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
 
 public class StepSizeSettings {
+      // Spacer - Header
+      public static Setting spacerHeaderStepSize;
       // Step Size / Note Length settings
       public static Setting noteLengthSetting; // How long each note should be
       public static Setting stepSizSetting;
       public static Setting stepSizSubdivisionSetting;
-      
+
       // Class variables to store preset values (instead of UI settings)
       private static String customPresetStepSize = "";
       private static String customPresetSubdivisions = "";
       private static String customPresetNoteLength = "";
-      
+
       // Other settings
       public static Setting[] allSettings;
       public static String CATEGORY_CLIP = "5 Clip";
 
       public static void init(BitwigBuddyExtension extension) {
-            Setting spacerStepSize = (Setting) createStringSetting(
+            spacerHeaderStepSize = (Setting) createStringSetting(
                         titleWithLine("STEP SIZE - NOTE LENGTH --------------"),
                         CATEGORY_CLIP, 0,
                         "---------------------------------------------------");
 
-            disableSetting(spacerStepSize); // Spacers are always disabled
+            disableSetting(spacerHeaderStepSize); // Spacers are always disabled
 
             // Step Size
             stepSizSetting = (Setting) createEnumSetting(
@@ -51,7 +53,7 @@ public class StepSizeSettings {
 
             setupStepSizeObservers(extension);
             allSettings = new Setting[] {
-                        spacerStepSize,
+                        spacerHeaderStepSize,
                         stepSizSetting,
                         stepSizSubdivisionSetting,
                         noteLengthSetting
@@ -126,17 +128,19 @@ public class StepSizeSettings {
       public static void hideAllSettings() {
             hideSetting(allSettings);
       }
+
       public static void hideAndDisableAllSettings() {
             hideAndDisableSetting(allSettings);
       }
 
       public static void showAllSettings() {
             showSetting(allSettings);
+            disableSetting(spacerHeaderStepSize);
       }
 
       public static void showAndEnableAllSettings() {
             showAndEnableSetting(allSettings);
+            disableSetting(spacerHeaderStepSize);
       }
-
 
 }
