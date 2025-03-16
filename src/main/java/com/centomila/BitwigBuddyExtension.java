@@ -193,6 +193,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       ModeSelectSettings.hideMacroSettings();
       ClipUtils.init(this);
       
+      
       moveStepsHandler = new MoveStepsHandler(this);
       moveStepsHandler.init(documentState);
       

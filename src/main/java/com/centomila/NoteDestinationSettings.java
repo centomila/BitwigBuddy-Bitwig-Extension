@@ -12,6 +12,9 @@ import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.PlayingNote;
 import com.bitwig.extension.controller.api.PlayingNoteArrayValue;
 import com.bitwig.extension.controller.api.RangedValue;
+import com.bitwig.extension.controller.api.SettableStringValue;
+import com.bitwig.extension.controller.api.SettableEnumValue;
+import com.bitwig.extension.controller.api.StringValue;
 
 import java.util.Arrays;
 
@@ -267,6 +270,39 @@ public class NoteDestinationSettings {
 
    public static String getLearnNoteSelectorAsString() {
       return ((EnumValue) learnNoteSetting).get();
+   }
+
+   public static String getCustomPresetDefaultNoteString() {
+      return ((StringValue) customPresetDefaultNoteSetting).get();
+   }
+
+   public static String getCurrentNoteDestinationAsString() {
+      return currentNoteAsString + currentOctaveAsInt;
+   }
+
+   public static void setCustomPresetDefaultNoteString(String note) {
+      ((SettableStringValue) customPresetDefaultNoteSetting).set(note);
+   }
+
+   public static void setLearnNoteSelector(String learnNote) {
+      ((SettableEnumValue) learnNoteSetting).set(learnNote);
+   }
+
+   public static void setNoteDestination(String note) {
+      ((SettableEnumValue) noteDestinationSetting).set(note);
+   }
+
+   public static void setNoteOctave(String octave) {
+      ((SettableEnumValue) noteOctaveSetting).set(octave);
+   }
+
+   public static void setNoteChannel(int channel) {
+      ((SettableRangedValue) noteChannelSetting).set(channel);
+   }
+
+   public static void setCustomPresetDefaultNoteAndOctave(String noteAndOctave) {
+      setCustomPresetDefaultNoteString(noteAndOctave);
+      setNoteAndOctaveFromString(noteAndOctave);
    }
 
 

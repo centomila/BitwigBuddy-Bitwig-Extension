@@ -2,8 +2,10 @@ package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
 import com.bitwig.extension.controller.api.Setting;
+import com.bitwig.extension.controller.api.StringValue;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
+import com.bitwig.extension.controller.api.SettableStringValue;
 
 public class StepSizeSettings {
       // Step Size / Note Length settings
@@ -88,6 +90,18 @@ public class StepSizeSettings {
             return ((EnumValue) noteLengthSetting).get();
       }
 
+      public static String getCustomStepSize() {
+            return ((StringValue) customPresetStepSizeSetting).get();
+      }
+
+      public static String getCustomSubdivisions() {
+            return ((StringValue) customPresetSubdivisionsSetting).get();
+      }
+
+      public static String getCustomNoteLength() {
+            return ((StringValue) customPresetNoteLengthSetting).get();
+      }
+
       // Setters
 
       public static void setStepSize(String stepSize) {
@@ -100,6 +114,18 @@ public class StepSizeSettings {
 
       public static void setNoteLength(String noteLength) {
             ((SettableEnumValue) noteLengthSetting).set(noteLength);
+      }
+
+      public static void setCustomStepSize(String stepSize) {
+            ((SettableStringValue) customPresetStepSizeSetting).set(stepSize);
+      }
+
+      public static void setCustomSubdivisions(String subdivisions) {
+            ((SettableStringValue) customPresetSubdivisionsSetting).set(subdivisions);
+      }
+
+      public static void setCustomNoteLength(String noteLength) {
+            ((SettableStringValue) customPresetNoteLengthSetting).set(noteLength);
       }
 
       // Hide and show settings
