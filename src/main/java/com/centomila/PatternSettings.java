@@ -24,6 +24,14 @@ public class PatternSettings {
     private static final String CATEGORY_GENERATE_PATTERN = "3 Generate Pattern";
     private static final String CATEGORY_CUSTOM_PATTERN_TOGGLE = "Custom Pattern Toggle";
     // Remove CATEGORY_CUSTOM_PATTERN_SAVE constant as it's now in CustomPresetSaver
+    
+    // Pattern type constants
+    private static final String PATTERN_TYPE_PRESET = "Preset";
+    private static final String PATTERN_TYPE_PROGRAM = "Program";
+    
+    // Toggle option constants
+    private static final String TOGGLE_FROM_PRESET = "From Preset";
+    private static final String TOGGLE_CUSTOM = "Custom";
 
     // UI Settings - Pattern Generation
     public static Setting headerGenerate;
@@ -165,9 +173,9 @@ public class PatternSettings {
     }
 
     public void initPatternTypeSetting(DocumentState documentState) {
-        String[] options = { "Custom", "Program" };
+        String[] options = { PATTERN_TYPE_PRESET, PATTERN_TYPE_PROGRAM };
         patternTypeSetting = (Setting) documentState.getEnumSetting("Pattern Type", CATEGORY_GENERATE_PATTERN,
-                options, "Custom");
+                options, PATTERN_TYPE_PRESET);
 
         ((EnumValue) patternTypeSetting).addValueObserver(newValue -> {
             generatorTypeSelector(newValue);
@@ -192,7 +200,7 @@ public class PatternSettings {
         hideSetting(customPresetSetting);
 
         ((EnumValue) customPresetSetting).addValueObserver(newValue -> {
-            if (!getPatternType().equals("Custom") || newValue == null) {
+            if (!getPatternType().equals(PATTERN_TYPE_PRESET) || newValue == null) {
                 return;
             }
 
@@ -221,25 +229,25 @@ public class PatternSettings {
     private void applySettingsBasedOnToggles(String defaultNote, String stepSize, String subdivisions,
             String noteLength) {
         // Apply note destination if toggle is set to "From Preset"
-        if (getCustomPresetDefaultNoteToggle().equals("From Preset") &&
+        if (getCustomPresetDefaultNoteToggle().equals(TOGGLE_FROM_PRESET) &&
                 defaultNote != null && !defaultNote.isEmpty()) {
             NoteDestinationSettings.setNoteAndOctaveFromString(defaultNote);
         }
 
         // Apply step size if toggle is set to "From Preset"
-        if (getCustomPresetStepSizeToggle().equals("From Preset") &&
+        if (getCustomPresetStepSizeToggle().equals(TOGGLE_FROM_PRESET) &&
                 stepSize != null && !stepSize.isEmpty()) {
             StepSizeSettings.setStepSize(stepSize);
         }
 
         // Apply subdivisions if toggle is set to "From Preset"
-        if (getCustomPresetSubdivisionsToggle().equals("From Preset") &&
+        if (getCustomPresetSubdivisionsToggle().equals(TOGGLE_FROM_PRESET) &&
                 subdivisions != null && !subdivisions.isEmpty()) {
             StepSizeSettings.setSubdivisions(subdivisions);
         }
 
         // Apply note length if toggle is set to "From Preset"
-        if (getCustomPresetNoteLengthToggle().equals("From Preset") &&
+        if (getCustomPresetNoteLengthToggle().equals(TOGGLE_FROM_PRESET) &&
                 noteLength != null && !noteLength.isEmpty()) {
             StepSizeSettings.setNoteLength(noteLength);
         }
@@ -266,8 +274,8 @@ public class PatternSettings {
         customPresetDefaultNoteToggleSetting = (Setting) createEnumSetting(
                 "Note Destination Preset/Custom",
                 CATEGORY_CUSTOM_PATTERN_TOGGLE,
-                new String[] { "From Preset", "Custom" },
-                "From Preset");
+                new String[] { TOGGLE_FROM_PRESET, TOGGLE_CUSTOM },
+                TOGGLE_FROM_PRESET);
 
         ((EnumValue) customPresetDefaultNoteToggleSetting).addValueObserver(newValue -> {
             toggleCustomPresetNoteDestinationSelectorSetting(newValue);
@@ -283,8 +291,8 @@ public class PatternSettings {
         customPresetStepSizeToggleSetting = (Setting) createEnumSetting(
                 "Step Size Preset/Custom",
                 CATEGORY_CUSTOM_PATTERN_TOGGLE,
-                new String[] { "From Preset", "Custom" },
-                "From Preset");
+                new String[] { TOGGLE_FROM_PRESET, TOGGLE_CUSTOM },
+                TOGGLE_FROM_PRESET);
 
         ((EnumValue) customPresetStepSizeToggleSetting).addValueObserver(newValue -> {
             toggleCustomPresetStepSizeSetting();
@@ -300,8 +308,8 @@ public class PatternSettings {
         customPresetSubdivisionsToggleSetting = (Setting) createEnumSetting(
                 "Subdivisions Preset/Custom",
                 CATEGORY_CUSTOM_PATTERN_TOGGLE,
-                new String[] { "From Preset", "Custom" },
-                "From Preset");
+                new String[] { TOGGLE_FROM_PRESET, TOGGLE_CUSTOM },
+                TOGGLE_FROM_PRESET);
 
         ((EnumValue) customPresetSubdivisionsToggleSetting).addValueObserver(newValue -> {
             toggleCustomPresetSubdivisionsSetting();
@@ -317,8 +325,8 @@ public class PatternSettings {
         customPresetNoteLengthToggleSetting = (Setting) createEnumSetting(
                 "Note Length Preset/Custom",
                 CATEGORY_CUSTOM_PATTERN_TOGGLE,
-                new String[] { "From Preset", "Custom" },
-                "From Preset");
+                new String[] { TOGGLE_FROM_PRESET, TOGGLE_CUSTOM },
+                TOGGLE_FROM_PRESET);
 
         ((EnumValue) customPresetNoteLengthToggleSetting).addValueObserver(newValue -> {
             toggleCustomPresetNoteLengthSetting(newValue);
@@ -333,7 +341,7 @@ public class PatternSettings {
     // Static utility methods for UI state management
     public static void generatorTypeSelector(String newValue) {
         switch (newValue) {
-            case "Custom":
+            case PATTERN_TYPE_PRESET:
                 Setting[] settingsToShowCustom = {
                         customPresetSetting,
                         customRefreshPresetsSetting,
@@ -356,7 +364,7 @@ public class PatternSettings {
                 updateCustomTogglesVisibility();
                 break;
 
-            case "Program":
+            case PATTERN_TYPE_PROGRAM:
                 Setting[] settingsToShowInProgramMode = {
                         ProgramPattern.programDensitySetting,
                         ProgramPattern.programMinVelocityVariationSetting,
@@ -399,7 +407,7 @@ public class PatternSettings {
     }
 
     public static void toggleCustomPresetNoteDestinationSelectorSetting(String newValue) {
-        if (newValue.equals("From Preset") && getPatternType().equals("Custom")) {
+        if (newValue.equals(TOGGLE_FROM_PRESET) && getPatternType().equals(PATTERN_TYPE_PRESET)) {
             disableSetting(NoteDestinationSettings.noteDestinationSetting);
             disableSetting(NoteDestinationSettings.noteOctaveSetting);
             disableSetting(NoteDestinationSettings.noteChannelSetting);
@@ -419,7 +427,7 @@ public class PatternSettings {
     }
 
     public static void toggleCustomPresetStepSizeSetting() {
-        if (getCustomPresetStepSizeToggle().equals("From Preset") && getPatternType().equals("Custom")) {
+        if (getCustomPresetStepSizeToggle().equals(TOGGLE_FROM_PRESET) && getPatternType().equals(PATTERN_TYPE_PRESET)) {
             disableSetting(StepSizeSettings.stepSizSetting);
 
             // Apply the stored preset step size if available
@@ -433,7 +441,7 @@ public class PatternSettings {
     }
 
     public static void toggleCustomPresetSubdivisionsSetting() {
-        if (getCustomPresetSubdivisionsToggle().equals("From Preset") && getPatternType().equals("Custom")) {
+        if (getCustomPresetSubdivisionsToggle().equals(TOGGLE_FROM_PRESET) && getPatternType().equals(PATTERN_TYPE_PRESET)) {
             disableSetting(StepSizeSettings.stepSizSubdivisionSetting);
 
             // Apply the stored preset subdivisions if available
@@ -447,7 +455,7 @@ public class PatternSettings {
     }
 
     public static void toggleCustomPresetNoteLengthSetting(String newValue) {
-        if (newValue.equals("From Preset") && getPatternType().equals("Custom")) {
+        if (newValue.equals(TOGGLE_FROM_PRESET) && getPatternType().equals(PATTERN_TYPE_PRESET)) {
             disableSetting(StepSizeSettings.noteLengthSetting);
 
             // Apply the stored preset note length if available
@@ -463,7 +471,7 @@ public class PatternSettings {
     // Data setter utility methods
     private static void setPatternString(String patternByName) {
         String patternType = getPatternType();
-        if (patternType.equals("Program")) {
+        if (patternType.equals(PATTERN_TYPE_PROGRAM)) {
             patternByName = new int[16].toString();
         } else {
             ((SettableStringValue) presetPatternStringSetting).set(patternByName);
