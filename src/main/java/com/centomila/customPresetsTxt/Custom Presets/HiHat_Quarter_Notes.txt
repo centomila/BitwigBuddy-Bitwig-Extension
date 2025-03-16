@@ -1,0 +1,6 @@
+Name: "HiHat: Quarter Notes"
+DefaultNote: "D1"
+Pattern: [80, 0, 0, 0, 80, 0, 0, 0, 80, 0, 0, 0, 80, 0, 0, 0]
+StepSize: "1/16"
+Subdivisions: "Straight"
+NoteLength: "1/16"

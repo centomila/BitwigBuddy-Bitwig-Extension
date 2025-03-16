@@ -1,0 +1,6 @@
+Name: "Snare: 16th Machine Gun"
+DefaultNote: "C#1"
+Pattern: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
+StepSize: "1/16"
+Subdivisions: "Straight"
+NoteLength: "1/16"

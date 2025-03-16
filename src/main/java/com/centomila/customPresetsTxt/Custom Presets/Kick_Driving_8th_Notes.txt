@@ -1,0 +1,6 @@
+Name: "Kick: Driving 8th Notes"
+DefaultNote: "C1"
+Pattern: [100, 0, 100, 0, 100, 0, 100, 0, 100, 0, 100, 0, 100, 0, 100, 0]
+StepSize: "1/16"
+Subdivisions: "Straight"
+NoteLength: "1/16"

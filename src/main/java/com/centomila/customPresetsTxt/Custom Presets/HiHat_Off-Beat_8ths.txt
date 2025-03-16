@@ -1,0 +1,6 @@
+Name: "HiHat: Off-Beat 8ths"
+DefaultNote: "D1"
+Pattern: [0, 80, 0, 80, 0, 80, 0, 80, 0, 80, 0, 80, 0, 80, 0, 80]
+StepSize: "1/16"
+Subdivisions: "Straight"
+NoteLength: "1/16"

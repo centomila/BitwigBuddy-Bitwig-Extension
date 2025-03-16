@@ -1,0 +1,6 @@
+Name: "Various: 8th Increasing Velocity"
+DefaultNote: "C1"
+Pattern: [3, 0, 17, 0, 33, 0, 49, 0, 65, 0, 81, 0, 97, 0, 115, 0]
+StepSize: "1/16"
+Subdivisions: "Straight"
+NoteLength: "1/16"

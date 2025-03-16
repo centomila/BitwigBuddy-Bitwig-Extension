@@ -1,0 +1,6 @@
+Name: "HiHat: 16th Notes"
+DefaultNote: "D1"
+Pattern: [80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80]
+StepSize: "1/16"
+Subdivisions: "Straight"
+NoteLength: "1/16"

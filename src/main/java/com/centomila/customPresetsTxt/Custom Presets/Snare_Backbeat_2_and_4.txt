@@ -1,0 +1,6 @@
+Name: "Snare: Backbeat 2 and 4"
+DefaultNote: "C#1"
+Pattern: [0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0]
+StepSize: "1/16"
+Subdivisions: "Straight"
+NoteLength: "1/16"

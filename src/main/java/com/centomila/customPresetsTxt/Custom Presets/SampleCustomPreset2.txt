@@ -1,3 +1,6 @@
 Name: "Sample Custom with 4 Steps"
 DefaultNote: "C#1"
 Pattern: [100, 50, 100, 50]
+StepSize: "1/8"
+Subdivisions: "Straight"
+NoteLength: "1/8"
