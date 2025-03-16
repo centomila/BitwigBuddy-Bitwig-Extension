@@ -26,10 +26,10 @@ public class ModeSelectSettings {
 
         // Initialize mode select settings
         initModeSelectSettings(MODE_SELECT_OPTIONS);
-        
+
         // Set up observers
         initToggleModeObservers();
-        
+
         // Remove the hideMacroSettings() call from here
     }
 
@@ -136,7 +136,6 @@ public class ModeSelectSettings {
     // GENERATE MODE
     public static void gotoGenerateMode() {
 
-
         // Show generate settings
         for (Setting setting : MoveStepsHandler.allSettings) {
             setting.show();
@@ -160,7 +159,7 @@ public class ModeSelectSettings {
 
             hideSetting(NoteDestinationSettings.noteChannelSetting);
         }
-
+        
 
         PatternSettings.generatorTypeSelector(((EnumValue) PatternSettings.patternTypeSetting).get());
 
@@ -176,51 +175,37 @@ public class ModeSelectSettings {
         MacroActionSettings.macroViewSelectorSetting.hide();
 
         EditClipSettings.hideEditClipSettings();
+
     }
 
     public static void gotoMacroMode() {
         // Hide all other settings first
-        for (Setting setting : ProgramPattern.allSettings) {
-            hideSetting(setting);
-        }
 
-        for (Setting setting : MoveStepsHandler.allSettings) {
-            hideSetting(setting);
-        }
+        hideSetting(ProgramPattern.allSettings);
 
-        for (Setting setting : PatternSettings.allSettings) {
-            if (setting == PatternSettings.customRefreshPresetsSetting) {
-                showAndEnableSetting(setting);
-            } else {
-                hideSetting(setting);
-            }
-        }
+        hideSetting(MoveStepsHandler.allSettings);
 
-        for (Setting setting : PostActionSettings.allSettings) {
-            hideSetting(setting);
-        }
+        hideSetting(PatternSettings.allSettings);
 
-        for (Setting setting : NoteDestinationSettings.allSettings) {
-            hideSetting(setting);
-        }
+        hideSetting(PostActionSettings.allSettings);
 
-        for (Setting setting : StepSizeSettings.allSettings) {
-            hideSetting(setting);
-        }
+        hideSetting(NoteDestinationSettings.allSettings);
 
-        for (Setting setting : ClipUtils.allSettings) {
-            hideSetting(setting);
-        }
+        hideSetting(StepSizeSettings.allSettings);
+
+        hideSetting(ClipUtils.allSettings);
+
+        hideSetting(CustomPresetSaver.allSettings);
 
         ProgramPattern.hideProgramPatternSettings();
         EditClipSettings.hideEditClipSettings();
-        
+
         // Show macro header and view selector
         MacroActionSettings.macroHeaderSetting.show();
         MacroActionSettings.macroViewSelectorSetting.show();
-        
+
         // Let the view selector's observer handle which macro slots to show
-        String currentView = ((EnumValue)MacroActionSettings.macroViewSelectorSetting).get();
+        String currentView = ((EnumValue) MacroActionSettings.macroViewSelectorSetting).get();
         switch (currentView) {
             case MacroActionSettings.VIEW_ALL:
                 MacroActionSettings.showMacroSlots(true, true, true, true);

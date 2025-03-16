@@ -25,15 +25,10 @@ public class PatternSettings {
     private static final String CATEGORY_CUSTOM_PATTERN_TOGGLE = "Custom Pattern Toggle";
     // Remove CATEGORY_CUSTOM_PATTERN_SAVE constant as it's now in CustomPresetSaver
 
-    // // Static state variables
-    // private static String lastDefaultPresetUsed = "Kick: Four on the Floor";
-    // private static String lastCustomPresetUsed = null;
-
     // UI Settings - Pattern Generation
     public static Setting headerGenerate;
     public static Setting generateBtnSignalSetting;
     public static Setting patternTypeSetting;
-    // public static Setting patternSelectorSetting;
     public static Setting reversePatternSetting;
     public static Setting presetPatternStringSetting;
 
@@ -43,6 +38,7 @@ public class PatternSettings {
 
     // UI Settings - Custom Preset Toggles
     public static Setting customPresetHeaderToggles;
+    public static Setting customTogglesToggle; // New setting to toggle visibility
     public static Setting customPresetDefaultNoteToggleSetting;
     public static Setting customPresetStepSizeToggleSetting;
     public static Setting customPresetSubdivisionsToggleSetting;
@@ -79,20 +75,20 @@ public class PatternSettings {
         initSpacer(documentState);
         initGenerateButton(documentState);
         initPatternTypeSetting(documentState);
-        // initPatternSelectorSetting(documentState);
 
         initCustomPresetParams(documentState);
         initCustomPresetPatternStringSetting(documentState);
         initRefreshCustomPresetsSetting(documentState);
         initReversePatternSetting(documentState);
 
+        // Initialize toggle for showing/hiding custom preset toggles
+        initCustomTogglesToggle(documentState);
+
         initCustomPresetDefaultNoteToggleSetting(documentState);
         initCustomPresetStepSizeToggleSetting(documentState);
         initCustomPresetSubdivisionsToggleSetting(documentState);
         initCustomPresetNoteLengthToggleSetting(documentState);
 
-        // Remove the initialization of save settings here - will be done in BitwigBuddyExtension
-        
         allSettings = new Setting[] {
                 headerGenerate,
                 generateBtnSignalSetting,
@@ -104,12 +100,52 @@ public class PatternSettings {
                 reversePatternSetting,
 
                 customPresetHeaderToggles,
+                customTogglesToggle,
                 customPresetDefaultNoteToggleSetting,
                 customPresetStepSizeToggleSetting,
                 customPresetSubdivisionsToggleSetting,
                 customPresetNoteLengthToggleSetting
-                // Remove save settings from here
         };
+
+        // Initial hide/show state based on default toggle value
+        updateCustomTogglesVisibility();
+    }
+
+    // Initialize the toggle for hiding/showing custom preset toggles
+    private void initCustomTogglesToggle(DocumentState documentState) {
+        customPresetHeaderToggles = (Setting) createStringSetting(
+                titleWithLine("Settings from Preset/Custom"),
+                CATEGORY_CUSTOM_PATTERN_TOGGLE, 0,
+                "---------------------------------------------------");
+        disableSetting(customPresetHeaderToggles);
+
+        customTogglesToggle = (Setting) createEnumSetting(
+                "From Preset / Custom Options",
+                CATEGORY_CUSTOM_PATTERN_TOGGLE,
+                new String[] { "Show", "Hide" },
+                "Hide");
+
+        ((EnumValue) customTogglesToggle).addValueObserver(newValue -> {
+            updateCustomTogglesVisibility();
+        });
+    }
+
+    // Method to update visibility of custom toggle settings
+    private static void updateCustomTogglesVisibility() {
+        String showCustomToggles = ((EnumValue) customTogglesToggle).get();
+
+        Setting[] toggleSettings = {
+                customPresetDefaultNoteToggleSetting,
+                customPresetStepSizeToggleSetting,
+                customPresetSubdivisionsToggleSetting,
+                customPresetNoteLengthToggleSetting
+        };
+
+        if (showCustomToggles.equals("Hide")) {
+            hideSetting(toggleSettings);
+        } else {
+            showSetting(toggleSettings);
+        }
     }
 
     // Base UI element initialization methods
@@ -226,11 +262,6 @@ public class PatternSettings {
 
     // Toggle initialization methods
     private void initCustomPresetDefaultNoteToggleSetting(DocumentState documentState) {
-        customPresetHeaderToggles = (Setting) createStringSetting(
-                titleWithLine("Settings from Preset/Custom"),
-                CATEGORY_CUSTOM_PATTERN_TOGGLE, 0,
-                "---------------------------------------------------");
-        disableSetting(customPresetHeaderToggles);
 
         customPresetDefaultNoteToggleSetting = (Setting) createEnumSetting(
                 "Note Destination Preset/Custom",
@@ -241,6 +272,11 @@ public class PatternSettings {
         ((EnumValue) customPresetDefaultNoteToggleSetting).addValueObserver(newValue -> {
             toggleCustomPresetNoteDestinationSelectorSetting(newValue);
         });
+
+        // Initially hide based on toggle setting
+        if (((EnumValue) customTogglesToggle).get().equals("Hide")) {
+            hideSetting(customPresetDefaultNoteToggleSetting);
+        }
     }
 
     private void initCustomPresetStepSizeToggleSetting(DocumentState documentState) {
@@ -253,6 +289,11 @@ public class PatternSettings {
         ((EnumValue) customPresetStepSizeToggleSetting).addValueObserver(newValue -> {
             toggleCustomPresetStepSizeSetting();
         });
+
+        // Initially hide based on toggle setting
+        if (((EnumValue) customTogglesToggle).get().equals("Hide")) {
+            hideSetting(customPresetStepSizeToggleSetting);
+        }
     }
 
     private void initCustomPresetSubdivisionsToggleSetting(DocumentState documentState) {
@@ -265,6 +306,11 @@ public class PatternSettings {
         ((EnumValue) customPresetSubdivisionsToggleSetting).addValueObserver(newValue -> {
             toggleCustomPresetSubdivisionsSetting();
         });
+
+        // Initially hide based on toggle setting
+        if (((EnumValue) customTogglesToggle).get().equals("Hide")) {
+            hideSetting(customPresetSubdivisionsToggleSetting);
+        }
     }
 
     private void initCustomPresetNoteLengthToggleSetting(DocumentState documentState) {
@@ -277,6 +323,11 @@ public class PatternSettings {
         ((EnumValue) customPresetNoteLengthToggleSetting).addValueObserver(newValue -> {
             toggleCustomPresetNoteLengthSetting(newValue);
         });
+
+        // Initially hide based on toggle setting
+        if (((EnumValue) customTogglesToggle).get().equals("Hide")) {
+            hideSetting(customPresetNoteLengthToggleSetting);
+        }
     }
 
     // Static utility methods for UI state management
@@ -287,14 +338,10 @@ public class PatternSettings {
                         customPresetSetting,
                         customRefreshPresetsSetting,
                         reversePatternSetting,
-                        customPresetDefaultNoteToggleSetting,
+                        customTogglesToggle,
                         CustomPresetSaver.getCustomPresetSaveBtnSignal(),
                         CustomPresetSaver.getCustomPresetSaveHeaderSetting(),
                         CustomPresetSaver.getCustomPresetSaveNameSetting(),
-                        customPresetDefaultNoteToggleSetting,
-                        customPresetStepSizeToggleSetting,
-                        customPresetSubdivisionsToggleSetting,
-                        customPresetNoteLengthToggleSetting,
                         customPresetHeaderToggles };
                 Setting[] settingsToHideCustom = {
                         ProgramPattern.programDensitySetting,
@@ -304,6 +351,9 @@ public class PatternSettings {
                         ProgramPattern.programVelocitySettingShape };
                 showSetting(settingsToShowCustom);
                 hideSetting(settingsToHideCustom);
+
+                // Update visibility of toggle settings based on the current toggle state
+                updateCustomTogglesVisibility();
                 break;
 
             case "Program":
@@ -320,14 +370,13 @@ public class PatternSettings {
                         customPresetSetting,
                         reversePatternSetting,
                         customRefreshPresetsSetting,
-                        customPresetDefaultNoteToggleSetting,
+                        customTogglesToggle,
                         CustomPresetSaver.getCustomPresetSaveNameSetting(),
                         customPresetDefaultNoteToggleSetting,
                         customPresetStepSizeToggleSetting,
                         customPresetSubdivisionsToggleSetting,
                         customPresetNoteLengthToggleSetting,
                         customPresetHeaderToggles
-                        
                 };
                 showSetting(settingsToShowInProgramMode);
                 hideSetting(settingsToHideInProgramMode);

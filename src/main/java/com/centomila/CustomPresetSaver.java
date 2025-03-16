@@ -24,6 +24,7 @@ public class CustomPresetSaver {
     public static Setting customPresetSaveHeaderSetting;
     public static Setting customPresetSaveBtnSignal;
     public static Setting customPresetSaveNameSetting;
+    public static Setting[] allSettings;
 
     // Constructor and main initialization methods
     private final BitwigBuddyExtension extension;
@@ -81,6 +82,15 @@ public class CustomPresetSaver {
             CustomPreset preset = new CustomPreset(presetName, presetName, defaultNote, patternIntArray, stepSize,
                     subdivisions, noteLength);
             CustomPresetsHandler.saveCustomPreset(preset, extension.preferences, extension.getHost());
+            
+            // wait half second to allow the preset to be saved
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
             showPopup("Custom Preset saved: " + presetName);
             extension.restart();
         });
@@ -106,6 +116,12 @@ public class CustomPresetSaver {
                 });
             }
         }
+
+        allSettings = new Setting[] {
+            customPresetSaveHeaderSetting,
+            customPresetSaveBtnSignal,
+            customPresetSaveNameSetting
+        };
                 
         return new Setting[] {
             customPresetSaveHeaderSetting,
