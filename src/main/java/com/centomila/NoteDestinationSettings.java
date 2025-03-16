@@ -268,6 +268,10 @@ public class NoteDestinationSettings {
       return currentOctaveAsInt;
    }
 
+   public static String getCurrentNoteDestinationAsString() {
+      return currentNoteAsString + currentOctaveAsInt;
+   }
+   
    public static String getLearnNoteSelectorAsString() {
       return ((EnumValue) learnNoteSetting).get();
    }
@@ -276,9 +280,6 @@ public class NoteDestinationSettings {
       return ((StringValue) customPresetDefaultNoteSetting).get();
    }
 
-   public static String getCurrentNoteDestinationAsString() {
-      return currentNoteAsString + currentOctaveAsInt;
-   }
 
    public static void setCustomPresetDefaultNoteString(String note) {
       ((SettableStringValue) customPresetDefaultNoteSetting).set(note);

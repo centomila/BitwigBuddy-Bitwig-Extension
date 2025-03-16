@@ -28,6 +28,7 @@ public class StepSizeSettings {
 
             disableSetting(spacerStepSize); // Spacers are always disabled
 
+            // Step Size
             stepSizSetting = (Setting) createEnumSetting(
                         "Step Size",
                         CATEGORY_CLIP,
@@ -38,6 +39,7 @@ public class StepSizeSettings {
                         StepSizeSettings.CATEGORY_CLIP + " 2", 0,
                         "1/16");
 
+            // Subdivisions
             stepSizSubdivisionSetting = (Setting) createEnumSetting(
                         "Subdivisions",
                         CATEGORY_CLIP,
@@ -48,6 +50,7 @@ public class StepSizeSettings {
                         StepSizeSettings.CATEGORY_CLIP + " 2", 0,
                         "Straight");
 
+            // Note Length
             noteLengthSetting = (Setting) createEnumSetting(
                         "Note Length",
                         CATEGORY_CLIP,
@@ -59,9 +62,15 @@ public class StepSizeSettings {
                         "1/16");
 
             setupStepSizeObservers(extension);
-            allSettings = new Setting[] { spacerStepSize, stepSizSetting, stepSizSubdivisionSetting,
-                        noteLengthSetting, customPresetStepSizeSetting, customPresetSubdivisionsSetting,
-                        customPresetNoteLengthSetting };
+            allSettings = new Setting[] {
+                        spacerStepSize,
+                        stepSizSetting,
+                        customPresetStepSizeSetting,
+                        stepSizSubdivisionSetting,
+                        customPresetSubdivisionsSetting,
+                        noteLengthSetting,
+                        customPresetNoteLengthSetting
+            };
 
       }
 
