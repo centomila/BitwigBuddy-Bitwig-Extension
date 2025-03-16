@@ -1,0 +1,6 @@
+Name: "HiHat Closed Eighth Accented [16 | 1/8 | Straight | 1/8]"
+DefaultNote: "D1"
+Pattern: [100, 60, 100, 60, 100, 60, 100, 60, 100, 60, 100, 60, 100, 60, 100, 60]
+StepSize: "1/8"
+Subdivisions: "Straight"
+NoteLength: "1/8"

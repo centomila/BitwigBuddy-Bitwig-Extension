@@ -1,4 +1,4 @@
-Name: "Various: 16th Decreasing Velocity"
+Name: "Various 16th Decreasing Velocity [16 | 1/16 | Straight | 1/16]"
 DefaultNote: "C1"
 Pattern: [127, 115, 105, 97, 89, 81, 73, 65, 57, 49, 41, 33, 25, 17, 9, 3]
 StepSize: "1/16"

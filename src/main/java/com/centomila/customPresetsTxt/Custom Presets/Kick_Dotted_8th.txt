@@ -1,0 +1,6 @@
+Name: "Kick Dotted 8th Pattern [16 | 1/16 | . | 1/16]"
+DefaultNote: "C1"
+Pattern: [100, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 100, 0, 0, 0]
+StepSize: "1/16"
+Subdivisions: "."
+NoteLength: "1/16"

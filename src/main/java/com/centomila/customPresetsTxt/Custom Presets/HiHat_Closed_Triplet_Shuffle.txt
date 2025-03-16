@@ -1,0 +1,6 @@
+Name: "HiHat Closed Triplet Shuffle [18 | 1/8 | 3t | 1/8]"
+DefaultNote: "D1"
+Pattern: [90, 0, 40, 0, 90, 0, 40, 0, 90, 0, 40, 0, 90, 0, 40, 0, 90, 0]
+StepSize: "1/8"
+Subdivisions: "3t"
+NoteLength: "1/8"

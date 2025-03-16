@@ -1,0 +1,7 @@
+Name: "HiHat Open Two and Four [16 | 1/16 | Straight | 1/16]"
+DefaultNote: "D#1"
+Pattern: [0, 0, 0, 0, 80, 0, 0, 0, 0, 0, 0, 0, 80, 0, 0, 0]
+StepSize: "1/16"
+Subdivisions: "Straight"
+NoteLength: "1/16"
+Notes: "Use with HiHat Closed Quarter Notes pattern"

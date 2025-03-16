@@ -1,4 +1,4 @@
-Name: "Snare: Only on Beat 2"
+Name: "Snare Only on Beat 2 [16 | 1/16 | Straight | 1/16]"
 DefaultNote: "C#1"
 Pattern: [0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 StepSize: "1/16"

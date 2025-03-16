@@ -1,6 +1,6 @@
-Name: "HiHat Closed 16th Notes [16 | 1/16 | Straight | 1/16]"
+Name: "HiHat Closed Eighth Notes [16 | 1/8 | Straight | 1/8]"
 DefaultNote: "D1"
 Pattern: [80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80]
-StepSize: "1/16"
+StepSize: "1/8"
 Subdivisions: "Straight"
-NoteLength: "1/16"
+NoteLength: "1/8"

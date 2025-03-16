@@ -1,4 +1,4 @@
-Name: "Kick: Off-Beats (2 and 4)"
+Name: "Kick Off-Beats (2 and 4) [16 | 1/16 | Straight | 1/16]"
 DefaultNote: "C1"
 Pattern: [0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0]
 StepSize: "1/16"

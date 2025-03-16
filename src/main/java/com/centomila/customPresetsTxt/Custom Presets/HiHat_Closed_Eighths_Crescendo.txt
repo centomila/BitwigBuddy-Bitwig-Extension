@@ -1,0 +1,6 @@
+Name: "HiHat Closed Eighth Crescendo [16 | 1/8 | Straight | 1/8]"
+DefaultNote: "D1"
+Pattern: [40, 50, 60, 70, 80, 90, 100, 110, 40, 50, 60, 70, 80, 90, 100, 110]
+StepSize: "1/8"
+Subdivisions: "Straight"
+NoteLength: "1/8"

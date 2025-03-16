@@ -193,7 +193,7 @@ public class PatternSettings {
     // Custom preset initialization methods
     private void initCustomPresetParams(DocumentState documentState) {
         String[] presets = getCustomPresetsContentNameStrings();
-        customPresetSetting = (Setting) documentState.getEnumSetting("Custom Presets",
+        customPresetSetting = (Setting) documentState.getEnumSetting("Presets",
                 CATEGORY_GENERATE_PATTERN, presets,
                 presets[0]);
 

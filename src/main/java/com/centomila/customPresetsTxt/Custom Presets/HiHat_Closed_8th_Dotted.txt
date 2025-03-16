@@ -1,0 +1,6 @@
+Name: "HiHat Closed Dotted Eighth [16 | 1/8 | . | 1/8]"
+DefaultNote: "D1"
+Pattern: [80, 0, 0, 80, 0, 0, 80, 0, 0, 80, 0, 0, 80, 0, 0, 80]
+StepSize: "1/8"
+Subdivisions: "."
+NoteLength: "1/8"
