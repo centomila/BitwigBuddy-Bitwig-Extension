@@ -5,12 +5,21 @@
   - The manual is available in the repository and in the zip file
 - [X] 🥁 Learn Note from selected drum pad
   - Select _DM_ from the _Learn Note_ selection and click on a drum pad to set the note destination.
-  - Works on any Bitwig Drum Machine device.
-- [X] 💾 Save Custom Presets
+  - Works on any Bitwig Drum Machine device in tracks from 1 to 128.
+- [X] **Presets and Custom are a single thing now**.
+  - All default presets are txt files like the Custom Presets folder.
+- [X] **Replace/Add Toggle**
+  - Instead of erasing the current pattern, the new pattern is added to the existing pattern.
+  - Try with program on low density + Post Action Duplicate Clip for interesting results.
+- [X] 💾 **Save Custom Presets**
   - Save the current pattern as a custom preset.
   - The custom presets are stored in the Custom Presets folder inside the BitwigBuddy folder as .txt files. 📃
   - The custom presets can be selected from the Custom Preset dropdown.
-- [X] 🤖 Macros! Yes. Macros. 🤖
+- [X] New Default Patterns
+  - 35 new patterns fully customizable from txt files.
+- [X] **Save Custom Pattern from Program Mode**
+  - Now it's easy to save the current pattern as a custom preset when in Program mode.
+- [X] 🤖 **Macros!** Yes. Macros. 🤖
   - Now you can execute pre-defined sequences of actions using macros. These macros are stored as text files and can include both native Bitwig actions and additional custom actions provided by BitwigBuddy.
   - Automate multiple sequence of actions like: Insert a Drum Machine, Insert a Midi File, Insert a Sample, Add Cue Markers, Rename Clips, Change Colors, Duplicate, Cursor Keys...
     - See the complete list of available actions in the manual folder 📂.

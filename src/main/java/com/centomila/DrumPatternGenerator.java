@@ -56,7 +56,11 @@ public class DrumPatternGenerator {
         // Get channel and note destination values
         int channel = NoteDestinationSettings.getCurrentChannelAsInt();
         int noteDestination = NoteDestinationSettings.getCurrentNoteDestinationAsInt();
-        clip.clearStepsAtY(channel, noteDestination);
+        
+        // Only clear steps if in "Replace" mode
+        if (PatternSettings.getPatternReplaceAddMode().equals("Replace")) {
+            clip.clearStepsAtY(channel, noteDestination);
+        }
 
         // Determine the type of pattern to generate
         int[] pattern = new int[16];

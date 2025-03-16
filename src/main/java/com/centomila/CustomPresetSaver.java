@@ -1,6 +1,7 @@
 package com.centomila;
 
 import static com.centomila.utils.PopupUtils.showPopup;
+import static com.centomila.utils.SettingsHelper.disableSetting;
 
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.Setting;
@@ -50,7 +51,8 @@ public class CustomPresetSaver {
                 SettingsHelper.titleWithLine("SAVE THIS PRESET"),
                 CATEGORY_CUSTOM_PATTERN_SAVE, 0,
                 "---------------------------------------------------");
-        SettingsHelper.disableSetting(customPresetSaveHeaderSetting);
+
+        disableSetting(customPresetSaveHeaderSetting);
 
         customPresetSaveBtnSignal = (Setting) documentState.getSignalSetting("Save Custom Preset",
                 CATEGORY_CUSTOM_PATTERN_SAVE, "Save Custom Preset");

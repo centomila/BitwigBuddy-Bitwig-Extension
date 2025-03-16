@@ -24,11 +24,11 @@ public class PatternSettings {
     private static final String CATEGORY_GENERATE_PATTERN = "3 Generate Pattern";
     private static final String CATEGORY_CUSTOM_PATTERN_TOGGLE = "Custom Pattern Toggle";
     // Remove CATEGORY_CUSTOM_PATTERN_SAVE constant as it's now in CustomPresetSaver
-    
+
     // Pattern type constants
     private static final String PATTERN_TYPE_PRESET = "Preset";
     private static final String PATTERN_TYPE_PROGRAM = "Program";
-    
+
     // Toggle option constants
     private static final String TOGGLE_FROM_PRESET = "From Preset";
     private static final String TOGGLE_CUSTOM = "Custom";
@@ -38,6 +38,7 @@ public class PatternSettings {
     public static Setting generateBtnSignalSetting;
     public static Setting patternTypeSetting;
     public static Setting reversePatternSetting;
+    public static Setting patternReplaceAddToggle; // New setting for replace/add toggle
     public static Setting presetPatternStringSetting;
 
     // UI Settings - Custom Presets
@@ -80,9 +81,10 @@ public class PatternSettings {
     // Main initialization method
     private void initPatternSetting() {
         DocumentState documentState = extension.getDocumentState();
+        initPatternTypeSetting(documentState);
         initSpacer(documentState);
         initGenerateButton(documentState);
-        initPatternTypeSetting(documentState);
+        initPatternReplaceAddToggle(documentState); // Initialize new toggle
 
         initCustomPresetParams(documentState);
         initCustomPresetPatternStringSetting(documentState);
@@ -101,6 +103,7 @@ public class PatternSettings {
                 headerGenerate,
                 generateBtnSignalSetting,
                 patternTypeSetting,
+                patternReplaceAddToggle, // Add to settings array
 
                 customPresetSetting,
                 presetPatternStringSetting,
@@ -117,6 +120,15 @@ public class PatternSettings {
 
         // Initial hide/show state based on default toggle value
         updateCustomTogglesVisibility();
+    }
+
+    // Initialize the Replace/Add toggle
+    private void initPatternReplaceAddToggle(DocumentState documentState) {
+        patternReplaceAddToggle = (Setting) createEnumSetting(
+                "Replace/Add Pattern",
+                CATEGORY_GENERATE_PATTERN,
+                new String[] { "Replace", "Add" },
+                "Replace");
     }
 
     // Initialize the toggle for hiding/showing custom preset toggles
@@ -341,6 +353,8 @@ public class PatternSettings {
     // Static utility methods for UI state management
     public static void generatorTypeSelector(String newValue) {
         switch (newValue) {
+            
+            // Preset mode
             case PATTERN_TYPE_PRESET:
                 Setting[] settingsToShowCustom = {
                         customPresetSetting,
@@ -364,6 +378,7 @@ public class PatternSettings {
                 updateCustomTogglesVisibility();
                 break;
 
+            // Program mode
             case PATTERN_TYPE_PROGRAM:
                 Setting[] settingsToShowInProgramMode = {
                         ProgramPattern.programDensitySetting,
@@ -381,13 +396,12 @@ public class PatternSettings {
                         StepSizeSettings.stepSizSubdivisionSetting,
                         StepSizeSettings.noteLengthSetting
 
-                                };
+                };
                 Setting[] settingsToHideInProgramMode = {
                         customPresetSetting,
                         reversePatternSetting,
                         customRefreshPresetsSetting,
                         customTogglesToggle,
-                        CustomPresetSaver.getCustomPresetSaveNameSetting(),
                         customPresetDefaultNoteToggleSetting,
                         customPresetStepSizeToggleSetting,
                         customPresetSubdivisionsToggleSetting,
@@ -395,6 +409,7 @@ public class PatternSettings {
                         customPresetHeaderToggles
                 };
                 showAndEnableSetting(settingsToShowInProgramMode);
+                disableSetting(CustomPresetSaver.customPresetSaveHeaderSetting);
                 hideSetting(settingsToHideInProgramMode);
                 break;
         }
@@ -427,7 +442,8 @@ public class PatternSettings {
     }
 
     public static void toggleCustomPresetStepSizeSetting() {
-        if (getCustomPresetStepSizeToggle().equals(TOGGLE_FROM_PRESET) && getPatternType().equals(PATTERN_TYPE_PRESET)) {
+        if (getCustomPresetStepSizeToggle().equals(TOGGLE_FROM_PRESET)
+                && getPatternType().equals(PATTERN_TYPE_PRESET)) {
             disableSetting(StepSizeSettings.stepSizSetting);
 
             // Apply the stored preset step size if available
@@ -441,7 +457,8 @@ public class PatternSettings {
     }
 
     public static void toggleCustomPresetSubdivisionsSetting() {
-        if (getCustomPresetSubdivisionsToggle().equals(TOGGLE_FROM_PRESET) && getPatternType().equals(PATTERN_TYPE_PRESET)) {
+        if (getCustomPresetSubdivisionsToggle().equals(TOGGLE_FROM_PRESET)
+                && getPatternType().equals(PATTERN_TYPE_PRESET)) {
             disableSetting(StepSizeSettings.stepSizSubdivisionSetting);
 
             // Apply the stored preset subdivisions if available
@@ -558,5 +575,10 @@ public class PatternSettings {
 
     public static String getPatternType() {
         return ((EnumValue) patternTypeSetting).get();
+    }
+
+    // Getter for pattern replace/add toggle
+    public static String getPatternReplaceAddMode() {
+        return ((EnumValue) patternReplaceAddToggle).get();
     }
 }
