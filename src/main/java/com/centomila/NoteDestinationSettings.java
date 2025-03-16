@@ -34,7 +34,10 @@ public class NoteDestinationSettings {
    public static Setting noteDestinationSetting; // Note Destination "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
    public static Setting noteOctaveSetting; // Note Octave -2 to 8
    public static Setting noteChannelSetting; // Note Channel 1 to 16
-   public static Setting customPresetDefaultNoteSetting;
+   
+   // Class variable to store preset default note value (instead of UI setting)
+   private static String customPresetDefaultNote = "";
+   
    public static Setting[] allSettings;
 
    // State variables
@@ -108,13 +111,6 @@ public class NoteDestinationSettings {
             "MIDI Channel",
             1);
 
-      customPresetDefaultNoteSetting = (Setting) createStringSetting(
-            "Preset Default Note",
-            NoteDestinationSettings.CATEGORY_NOTE_DESTINATION, 0,
-            "C1");
-
-      hideSetting(customPresetDefaultNoteSetting);
-
       String initialNote = ((EnumValue) noteDestinationSetting).get();
       int initialOctave = Integer.parseInt(((EnumValue) noteOctaveSetting).get());
 
@@ -129,11 +125,10 @@ public class NoteDestinationSettings {
       // get the value from GlobalPreferences of showChannelDestination
       if (GlobalPreferences.showChannelDestinationPref.get()) {
          allSettings = new Setting[] { spacerNoteDestination, noteDestinationSetting, noteOctaveSetting,
-               noteChannelSetting,
-               learnNoteSetting, customPresetDefaultNoteSetting };
+               noteChannelSetting, learnNoteSetting };
       } else {
          allSettings = new Setting[] { spacerNoteDestination, noteDestinationSetting, noteOctaveSetting,
-               learnNoteSetting, customPresetDefaultNoteSetting };
+               learnNoteSetting };
       }
    }
 
@@ -277,12 +272,11 @@ public class NoteDestinationSettings {
    }
 
    public static String getCustomPresetDefaultNoteString() {
-      return ((StringValue) customPresetDefaultNoteSetting).get();
+      return customPresetDefaultNote;
    }
 
-
    public static void setCustomPresetDefaultNoteString(String note) {
-      ((SettableStringValue) customPresetDefaultNoteSetting).set(note);
+      customPresetDefaultNote = note;
    }
 
    public static void setLearnNoteSelector(String learnNote) {
@@ -303,11 +297,8 @@ public class NoteDestinationSettings {
 
    public static void setCustomPresetDefaultNoteAndOctave(String noteAndOctave) {
       setCustomPresetDefaultNoteString(noteAndOctave);
-      setNoteAndOctaveFromString(noteAndOctave);
    }
 
-
-   
    /**
     * Calculates and returns the current MIDI note number.
     * Combines the current note and octave settings to determine the MIDI note
@@ -380,11 +371,11 @@ public class NoteDestinationSettings {
    }
 
    public static void hideCustomPresetDefaultNoteSetting() {
-      hideSetting(customPresetDefaultNoteSetting);
+      // No longer needed as customPresetDefaultNote is now a class variable
    }
 
    public static void showCustomPresetDefaultNoteSetting() {
-      showSetting(customPresetDefaultNoteSetting);
+      // No longer needed as customPresetDefaultNote is now a class variable
    }
 
    public static void hideNoteChannelSetting() {

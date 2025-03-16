@@ -12,10 +12,12 @@ public class StepSizeSettings {
       public static Setting noteLengthSetting; // How long each note should be
       public static Setting stepSizSetting;
       public static Setting stepSizSubdivisionSetting;
-      // Custom Preset settings
-      public static Setting customPresetStepSizeSetting;
-      public static Setting customPresetSubdivisionsSetting;
-      public static Setting customPresetNoteLengthSetting;
+      
+      // Class variables to store preset values (instead of UI settings)
+      private static String customPresetStepSize = "";
+      private static String customPresetSubdivisions = "";
+      private static String customPresetNoteLength = "";
+      
       // Other settings
       public static Setting[] allSettings;
       public static String CATEGORY_CLIP = "5 Clip";
@@ -34,20 +36,12 @@ public class StepSizeSettings {
                         CATEGORY_CLIP,
                         Utils.STEPSIZE_OPTIONS,
                         "1/16");
-            customPresetStepSizeSetting = (Setting) createStringSetting(
-                        "Preset Step Size",
-                        StepSizeSettings.CATEGORY_CLIP + " 2", 0,
-                        "1/16");
 
             // Subdivisions
             stepSizSubdivisionSetting = (Setting) createEnumSetting(
                         "Subdivisions",
                         CATEGORY_CLIP,
                         Utils.STEPSIZE_CATEGORY_OPTIONS,
-                        "Straight");
-            customPresetSubdivisionsSetting = (Setting) createStringSetting(
-                        "Preset Subdivisions",
-                        StepSizeSettings.CATEGORY_CLIP + " 2", 0,
                         "Straight");
 
             // Note Length
@@ -56,22 +50,14 @@ public class StepSizeSettings {
                         CATEGORY_CLIP,
                         Utils.STEPSIZE_OPTIONS,
                         "1/16");
-            customPresetNoteLengthSetting = (Setting) createStringSetting(
-                        "Preset Note Length",
-                        StepSizeSettings.CATEGORY_CLIP + " 2", 0,
-                        "1/16");
 
             setupStepSizeObservers(extension);
             allSettings = new Setting[] {
                         spacerStepSize,
                         stepSizSetting,
-                        customPresetStepSizeSetting,
                         stepSizSubdivisionSetting,
-                        customPresetSubdivisionsSetting,
-                        noteLengthSetting,
-                        customPresetNoteLengthSetting
+                        noteLengthSetting
             };
-
       }
 
       private static void setupStepSizeObservers(BitwigBuddyExtension extension) {
@@ -100,15 +86,15 @@ public class StepSizeSettings {
       }
 
       public static String getCustomStepSize() {
-            return ((StringValue) customPresetStepSizeSetting).get();
+            return customPresetStepSize;
       }
 
       public static String getCustomSubdivisions() {
-            return ((StringValue) customPresetSubdivisionsSetting).get();
+            return customPresetSubdivisions;
       }
 
       public static String getCustomNoteLength() {
-            return ((StringValue) customPresetNoteLengthSetting).get();
+            return customPresetNoteLength;
       }
 
       // Setters
@@ -126,15 +112,15 @@ public class StepSizeSettings {
       }
 
       public static void setCustomStepSize(String stepSize) {
-            ((SettableStringValue) customPresetStepSizeSetting).set(stepSize);
+            customPresetStepSize = stepSize;
       }
 
       public static void setCustomSubdivisions(String subdivisions) {
-            ((SettableStringValue) customPresetSubdivisionsSetting).set(subdivisions);
+            customPresetSubdivisions = subdivisions;
       }
 
       public static void setCustomNoteLength(String noteLength) {
-            ((SettableStringValue) customPresetNoteLengthSetting).set(noteLength);
+            customPresetNoteLength = noteLength;
       }
 
       // Hide and show settings
@@ -146,41 +132,4 @@ public class StepSizeSettings {
       public static void showAllStepSizeSettings() {
             showSetting(allSettings);
       }
-
-      public static void hideCustomPresetStepSizeSettings() {
-            hideSetting(customPresetStepSizeSetting);
-      }
-
-      public static void showCustomPresetStepSizeSettings() {
-            showSetting(customPresetStepSizeSetting);
-      }
-
-      public static void hideCustomPresetSubdivisionsSetting() {
-            hideSetting(customPresetSubdivisionsSetting);
-      }
-
-      public static void showCustomPresetSubdivisionsSetting() {
-            showSetting(customPresetSubdivisionsSetting);
-      }
-
-      public static void hideCustomPresetNoteLengthSetting() {
-            hideSetting(customPresetNoteLengthSetting);
-      }
-
-      public static void showCustomPresetNoteLengthSetting() {
-            showSetting(customPresetNoteLengthSetting);
-      }
-
-      public static void showCustomPresetSettings() {
-            showSetting(customPresetStepSizeSetting);
-            showSetting(customPresetSubdivisionsSetting);
-            showSetting(customPresetNoteLengthSetting);
-      }
-
-      public static void hideCustomPresetSettings() {
-            hideSetting(customPresetStepSizeSetting);
-            hideSetting(customPresetSubdivisionsSetting);
-            hideSetting(customPresetNoteLengthSetting);
-      }
-
 }

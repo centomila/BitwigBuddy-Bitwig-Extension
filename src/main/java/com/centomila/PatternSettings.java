@@ -171,35 +171,48 @@ public class PatternSettings {
             showPopup("Custom Preset selected: " + newValue.toString());
             setPatternString(pattern);
 
+            // Get preset values and store them
             String defaultNote = getCustomPresetDefaultNote(newValue.toString());
-            NoteDestinationSettings.setCustomPresetDefaultNoteAndOctave(defaultNote.isEmpty() ? "" : defaultNote);
-            if (getCustomPresetDefaultNoteToggle().equals("Preset Default Note")) {
-                NoteDestinationSettings.setNoteAndOctaveFromString(defaultNote);
-            }
-
             String stepSize = getCustomPresetStepSize(newValue.toString());
-            StepSizeSettings.setCustomStepSize(stepSize.isEmpty() ? "" : stepSize);
-            if (getCustomPresetStepSizeToggle().equals("From Preset") &&
-                    stepSize != null && !stepSize.trim().isEmpty()) {
-                StepSizeSettings.setStepSize(stepSize);
-            }
-
             String subdivisions = getCustomPresetSubdivisions(newValue.toString());
-            // setSubdivisionsString(subdivisions.isEmpty() ? "" : subdivisions);
-            StepSizeSettings.setCustomSubdivisions(subdivisions.isEmpty() ? "" : subdivisions);
-            if (getCustomPresetSubdivisionsToggle().equals("From Preset") &&
-                    subdivisions != null && !subdivisions.trim().isEmpty()) {
-                StepSizeSettings.setSubdivisions(subdivisions);
-            }
-
             String noteLength = getCustomPresetNoteLength(newValue.toString());
-            // setNoteLengthString(noteLength.isEmpty() ? "" : noteLength);
-            StepSizeSettings.setCustomNoteLength(noteLength.isEmpty() ? "" : noteLength);
-            if (getCustomPresetNoteLengthToggle().equals("From Preset") &&
-                    noteLength != null && !noteLength.trim().isEmpty()) {
-                StepSizeSettings.setNoteLength(noteLength);
-            }
+            
+            // Store preset values in the respective classes
+            NoteDestinationSettings.setCustomPresetDefaultNoteString(defaultNote);
+            StepSizeSettings.setCustomStepSize(stepSize);
+            StepSizeSettings.setCustomSubdivisions(subdivisions);
+            StepSizeSettings.setCustomNoteLength(noteLength);
+            
+            // Apply the values based on toggle settings
+            applySettingsBasedOnToggles(defaultNote, stepSize, subdivisions, noteLength);
         });
+    }
+
+    // New helper method to apply settings based on toggle states
+    private void applySettingsBasedOnToggles(String defaultNote, String stepSize, String subdivisions, String noteLength) {
+        // Apply note destination if toggle is set to "From Preset"
+        if (getCustomPresetDefaultNoteToggle().equals("From Preset") && 
+            defaultNote != null && !defaultNote.isEmpty()) {
+            NoteDestinationSettings.setNoteAndOctaveFromString(defaultNote);
+        }
+        
+        // Apply step size if toggle is set to "From Preset"
+        if (getCustomPresetStepSizeToggle().equals("From Preset") && 
+            stepSize != null && !stepSize.isEmpty()) {
+            StepSizeSettings.setStepSize(stepSize);
+        }
+        
+        // Apply subdivisions if toggle is set to "From Preset"
+        if (getCustomPresetSubdivisionsToggle().equals("From Preset") && 
+            subdivisions != null && !subdivisions.isEmpty()) {
+            StepSizeSettings.setSubdivisions(subdivisions);
+        }
+        
+        // Apply note length if toggle is set to "From Preset"
+        if (getCustomPresetNoteLengthToggle().equals("From Preset") && 
+            noteLength != null && !noteLength.isEmpty()) {
+            StepSizeSettings.setNoteLength(noteLength);
+        }
     }
 
     private void initCustomPresetPatternStringSetting(DocumentState documentState) {
@@ -327,7 +340,6 @@ public class PatternSettings {
                         reversePatternSetting,
                         customPresetDefaultNoteToggleSetting,
                         customPresetSaveBtnSignal,
-                        customPresetSaveBtnSignal,
                         customPresetSaveHeaderSetting,
                         customPresetSaveNamSetting,
                         customPresetDefaultNoteToggleSetting,
@@ -335,7 +347,6 @@ public class PatternSettings {
                         customPresetSubdivisionsToggleSetting,
                         customPresetNoteLengthToggleSetting };
                 Setting[] settingsToHideCustom = {
-                        // patternSelectorSetting,
                         ProgramPattern.programDensitySetting,
                         ProgramPattern.programMinVelocityVariationSetting,
                         ProgramPattern.programMaxVelocityVariationSetting,
@@ -343,18 +354,8 @@ public class PatternSettings {
                         ProgramPattern.programVelocitySettingShape };
                 showSetting(settingsToShowCustom);
                 hideSetting(settingsToHideCustom);
-
-                // if (lastCustomPresetUsed != null) {
-                // try {
-                // ((SettableEnumValue) customPresetSetting).set(lastCustomPresetUsed);
-                // } catch (Exception e) {
-                // showPopup("Custom Preset not found: " + lastCustomPresetUsed);
-                // lastCustomPresetUsed = "NO CUSTOM PRESETS";
-                // ((SettableEnumValue) customPresetSetting).set(lastCustomPresetUsed);
-                // }
-                // }
-
                 break;
+                
             case "Program":
                 Setting[] settingsToShowInProgramMode = {
                         ProgramPattern.programDensitySetting,
@@ -371,10 +372,6 @@ public class PatternSettings {
                         customRefreshPresetsSetting,
                         customPresetDefaultNoteToggleSetting,
                         customPresetSaveNamSetting,
-                        NoteDestinationSettings.customPresetDefaultNoteSetting,
-                        StepSizeSettings.customPresetStepSizeSetting,
-                        StepSizeSettings.customPresetSubdivisionsSetting,
-                        StepSizeSettings.customPresetNoteLengthSetting,
                         customPresetDefaultNoteToggleSetting,
                         customPresetStepSizeToggleSetting,
                         customPresetSubdivisionsToggleSetting,
@@ -384,6 +381,7 @@ public class PatternSettings {
                 hideSetting(settingsToHideInProgramMode);
                 break;
         }
+        
         // Reset the note destination setting for custom presets
         toggleCustomPresetNoteDestinationSelectorSetting(getCustomPresetDefaultNoteToggle());
         toggleCustomPresetNoteLengthSetting(getCustomPresetDefaultNoteToggle());
@@ -393,71 +391,63 @@ public class PatternSettings {
 
     public static void toggleCustomPresetNoteDestinationSelectorSetting(String newValue) {
         if (newValue.equals("From Preset")) {
-            hideSetting(NoteDestinationSettings.noteDestinationSetting);
-            hideSetting(NoteDestinationSettings.noteOctaveSetting);
-            showSetting(NoteDestinationSettings.customPresetDefaultNoteSetting);
-            hideSetting(NoteDestinationSettings.noteChannelSetting);
+            disableSetting(NoteDestinationSettings.noteDestinationSetting);
+            disableSetting(NoteDestinationSettings.noteOctaveSetting);
+            disableSetting(NoteDestinationSettings.noteChannelSetting);
 
-            // update the value of the note destination setting
-            // if not empty
+            // Apply the stored preset default note if available
             String defaultNoteString = NoteDestinationSettings.getCustomPresetDefaultNoteString();
             if (defaultNoteString != null && !defaultNoteString.isEmpty()) {
                 NoteDestinationSettings.setNoteAndOctaveFromString(defaultNoteString);
             }
-
         } else {
-            showSetting(NoteDestinationSettings.noteDestinationSetting);
-            showSetting(NoteDestinationSettings.noteOctaveSetting);
-            hideSetting(NoteDestinationSettings.customPresetDefaultNoteSetting);
+            enableSetting(NoteDestinationSettings.noteDestinationSetting);
+            enableSetting(NoteDestinationSettings.noteOctaveSetting);
             if (GlobalPreferences.showChannelDestinationPref.get()) {
-                showSetting(NoteDestinationSettings.noteChannelSetting);
+                enableSetting(NoteDestinationSettings.noteChannelSetting);
             }
         }
     }
 
     public static void toggleCustomPresetStepSizeSetting() {
-
         if (getCustomPresetStepSizeToggle().equals("From Preset")) {
-            showSetting(StepSizeSettings.customPresetStepSizeSetting);
-            hideSetting(StepSizeSettings.stepSizSetting);
-
-            if (!StepSizeSettings.getStepSize().isEmpty()) {
-                StepSizeSettings.setStepSize(StepSizeSettings.getStepSize());
+            disableSetting(StepSizeSettings.stepSizSetting);
+            
+            // Apply the stored preset step size if available
+            String customStepSize = StepSizeSettings.getCustomStepSize();
+            if (customStepSize != null && !customStepSize.isEmpty()) {
+                StepSizeSettings.setStepSize(customStepSize);
             }
-
         } else {
-            hideSetting(StepSizeSettings.customPresetStepSizeSetting);
-            showSetting(StepSizeSettings.stepSizSetting);
+            enableSetting(StepSizeSettings.stepSizSetting);
         }
     }
 
     public static void toggleCustomPresetSubdivisionsSetting() {
-
         if (getCustomPresetSubdivisionsToggle().equals("From Preset")) {
-            showSetting(StepSizeSettings.customPresetSubdivisionsSetting);
-            hideSetting(StepSizeSettings.stepSizSubdivisionSetting);
-
-            if (!StepSizeSettings.getSubdivisions().isEmpty()) {
-                StepSizeSettings.setSubdivisions(StepSizeSettings.getSubdivisions());
+            disableSetting(StepSizeSettings.stepSizSubdivisionSetting);
+            
+            // Apply the stored preset subdivisions if available
+            String customSubdivisions = StepSizeSettings.getCustomSubdivisions();
+            if (customSubdivisions != null && !customSubdivisions.isEmpty()) {
+                StepSizeSettings.setSubdivisions(customSubdivisions);
             }
         } else {
-            hideSetting(StepSizeSettings.customPresetSubdivisionsSetting);
-            showSetting(StepSizeSettings.stepSizSubdivisionSetting);
+            enableSetting(StepSizeSettings.stepSizSubdivisionSetting);
         }
     }
 
     public static void toggleCustomPresetNoteLengthSetting(String newValue) {
-
         if (newValue.equals("From Preset")) {
-            showSetting(StepSizeSettings.customPresetNoteLengthSetting);
-            hideSetting(StepSizeSettings.noteLengthSetting);
-
-            if (!StepSizeSettings.getNoteLength().isEmpty()) {
-                StepSizeSettings.setNoteLength(StepSizeSettings.getNoteLength());
+            disableSetting(StepSizeSettings.noteLengthSetting);
+            
+            // Apply the stored preset note length if available
+            String customNoteLength = StepSizeSettings.getCustomNoteLength();
+            if (customNoteLength != null && !customNoteLength.isEmpty()) {
+                StepSizeSettings.setNoteLength(customNoteLength);
             }
         } else {
-            hideSetting(StepSizeSettings.customPresetNoteLengthSetting);
-            showSetting(StepSizeSettings.noteLengthSetting);
+            enableSetting(StepSizeSettings.noteLengthSetting);
         }
     }
 
