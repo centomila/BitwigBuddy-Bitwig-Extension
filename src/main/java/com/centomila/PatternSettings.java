@@ -294,7 +294,8 @@ public class PatternSettings {
                         customPresetDefaultNoteToggleSetting,
                         customPresetStepSizeToggleSetting,
                         customPresetSubdivisionsToggleSetting,
-                        customPresetNoteLengthToggleSetting };
+                        customPresetNoteLengthToggleSetting,
+                        customPresetHeaderToggles };
                 Setting[] settingsToHideCustom = {
                         ProgramPattern.programDensitySetting,
                         ProgramPattern.programMinVelocityVariationSetting,
@@ -324,7 +325,9 @@ public class PatternSettings {
                         customPresetDefaultNoteToggleSetting,
                         customPresetStepSizeToggleSetting,
                         customPresetSubdivisionsToggleSetting,
-                        customPresetNoteLengthToggleSetting
+                        customPresetNoteLengthToggleSetting,
+                        customPresetHeaderToggles
+                        
                 };
                 showSetting(settingsToShowInProgramMode);
                 hideSetting(settingsToHideInProgramMode);
@@ -402,7 +405,7 @@ public class PatternSettings {
 
     // Data setter utility methods
     private static void setPatternString(String patternByName) {
-        String patternType = ((EnumValue) patternTypeSetting).get();
+        String patternType = getPatternType();
         if (patternType.equals("Program")) {
             patternByName = new int[16].toString();
         } else {
