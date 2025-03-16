@@ -176,41 +176,42 @@ public class PatternSettings {
             String stepSize = getCustomPresetStepSize(newValue.toString());
             String subdivisions = getCustomPresetSubdivisions(newValue.toString());
             String noteLength = getCustomPresetNoteLength(newValue.toString());
-            
+
             // Store preset values in the respective classes
             NoteDestinationSettings.setCustomPresetDefaultNoteString(defaultNote);
             StepSizeSettings.setCustomStepSize(stepSize);
             StepSizeSettings.setCustomSubdivisions(subdivisions);
             StepSizeSettings.setCustomNoteLength(noteLength);
-            
+
             // Apply the values based on toggle settings
             applySettingsBasedOnToggles(defaultNote, stepSize, subdivisions, noteLength);
         });
     }
 
     // New helper method to apply settings based on toggle states
-    private void applySettingsBasedOnToggles(String defaultNote, String stepSize, String subdivisions, String noteLength) {
+    private void applySettingsBasedOnToggles(String defaultNote, String stepSize, String subdivisions,
+            String noteLength) {
         // Apply note destination if toggle is set to "From Preset"
-        if (getCustomPresetDefaultNoteToggle().equals("From Preset") && 
-            defaultNote != null && !defaultNote.isEmpty()) {
+        if (getCustomPresetDefaultNoteToggle().equals("From Preset") &&
+                defaultNote != null && !defaultNote.isEmpty()) {
             NoteDestinationSettings.setNoteAndOctaveFromString(defaultNote);
         }
-        
+
         // Apply step size if toggle is set to "From Preset"
-        if (getCustomPresetStepSizeToggle().equals("From Preset") && 
-            stepSize != null && !stepSize.isEmpty()) {
+        if (getCustomPresetStepSizeToggle().equals("From Preset") &&
+                stepSize != null && !stepSize.isEmpty()) {
             StepSizeSettings.setStepSize(stepSize);
         }
-        
+
         // Apply subdivisions if toggle is set to "From Preset"
-        if (getCustomPresetSubdivisionsToggle().equals("From Preset") && 
-            subdivisions != null && !subdivisions.isEmpty()) {
+        if (getCustomPresetSubdivisionsToggle().equals("From Preset") &&
+                subdivisions != null && !subdivisions.isEmpty()) {
             StepSizeSettings.setSubdivisions(subdivisions);
         }
-        
+
         // Apply note length if toggle is set to "From Preset"
-        if (getCustomPresetNoteLengthToggle().equals("From Preset") && 
-            noteLength != null && !noteLength.isEmpty()) {
+        if (getCustomPresetNoteLengthToggle().equals("From Preset") &&
+                noteLength != null && !noteLength.isEmpty()) {
             StepSizeSettings.setNoteLength(noteLength);
         }
     }
@@ -355,7 +356,7 @@ public class PatternSettings {
                 showSetting(settingsToShowCustom);
                 hideSetting(settingsToHideCustom);
                 break;
-                
+
             case "Program":
                 Setting[] settingsToShowInProgramMode = {
                         ProgramPattern.programDensitySetting,
@@ -381,7 +382,7 @@ public class PatternSettings {
                 hideSetting(settingsToHideInProgramMode);
                 break;
         }
-        
+
         // Reset the note destination setting for custom presets
         toggleCustomPresetNoteDestinationSelectorSetting(getCustomPresetDefaultNoteToggle());
         toggleCustomPresetNoteLengthSetting(getCustomPresetDefaultNoteToggle());
@@ -412,7 +413,7 @@ public class PatternSettings {
     public static void toggleCustomPresetStepSizeSetting() {
         if (getCustomPresetStepSizeToggle().equals("From Preset")) {
             disableSetting(StepSizeSettings.stepSizSetting);
-            
+
             // Apply the stored preset step size if available
             String customStepSize = StepSizeSettings.getCustomStepSize();
             if (customStepSize != null && !customStepSize.isEmpty()) {
@@ -426,7 +427,7 @@ public class PatternSettings {
     public static void toggleCustomPresetSubdivisionsSetting() {
         if (getCustomPresetSubdivisionsToggle().equals("From Preset")) {
             disableSetting(StepSizeSettings.stepSizSubdivisionSetting);
-            
+
             // Apply the stored preset subdivisions if available
             String customSubdivisions = StepSizeSettings.getCustomSubdivisions();
             if (customSubdivisions != null && !customSubdivisions.isEmpty()) {
@@ -440,7 +441,7 @@ public class PatternSettings {
     public static void toggleCustomPresetNoteLengthSetting(String newValue) {
         if (newValue.equals("From Preset")) {
             disableSetting(StepSizeSettings.noteLengthSetting);
-            
+
             // Apply the stored preset note length if available
             String customNoteLength = StepSizeSettings.getCustomNoteLength();
             if (customNoteLength != null && !customNoteLength.isEmpty()) {
