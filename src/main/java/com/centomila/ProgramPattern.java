@@ -19,6 +19,7 @@ public class ProgramPattern {
         public static Setting programDensitySetting;
         public static Setting programVelocitySettingShape;
         public static Setting programStepQtySetting;
+        public static Setting programSkipStep;
         public static Setting[] allSettings;
 
         public static void init(BitwigBuddyExtension extension) {
@@ -65,10 +66,25 @@ public class ProgramPattern {
                                 "Steps",
                                 16);
 
+                programSkipStep = (Setting) createNumberSetting(
+                                "Skip a Step Every",
+                                "Generate Pattern",
+                                0,
+                                128,
+                                1,
+                                "",
+                                0);
+
                 // init observers
                 initiObserver(extension);
-                allSettings = new Setting[] { programMinVelocityVariationSetting, programMaxVelocityVariationSetting,
-                                programDensitySetting, programVelocitySettingShape, programStepQtySetting };
+                allSettings = new Setting[] {
+                                programMinVelocityVariationSetting,
+                                programMaxVelocityVariationSetting,
+                                programDensitySetting,
+                                programVelocitySettingShape,
+                                programStepQtySetting,
+                                programSkipStep
+                };
         }
 
         // Observers
@@ -144,6 +160,22 @@ public class ProgramPattern {
 
                 pattern = velocityPattern;
 
+                // Apply skip step
+                int skipStepValue = (int) Math.round(((SettableRangedValue) programSkipStep).getRaw());
+                if (skipStepValue > 0) {
+                        for (int i = 0; i < pattern.length; i++) {
+                                // if 1 skip all the odd steps
+                                if (skipStepValue == 1) {
+                                        if ((i + 2) % 2 == 0) {
+                                                pattern[i] = 0;
+                                        }
+
+                                } else if ((i + 1) % (skipStepValue) == 0) { // other case
+                                        pattern[i] = 0;
+                                }
+                        }
+                }
+
                 // Count how many steps are > 0 and show a popup
                 int count = 0;
                 for (int i = 0; i < pattern.length; i++) {
@@ -151,7 +183,7 @@ public class ProgramPattern {
                                 count++;
                         }
                 }
-                showPopup("Random Pattern has filled " + count + " steps out of " + stepsQty + " Density: " + density);
+                showPopup("Program Pattern has filled " + count + " steps out of " + stepsQty + " Density: " + density);
 
                 String patternString = Arrays.toString(pattern).replaceAll("[\\[\\]]", "");
                 ((SettableStringValue) PatternSettings.presetPatternStringSetting).set(patternString);

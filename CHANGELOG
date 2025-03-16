@@ -3,7 +3,12 @@
 ## 1.0.0 | **PRERELASE CHANGELOG**. Available only via source code!!!
 - [X] 📙 Manual!
   - The manual is available in the repository and in the zip file
-- [X] 🥁 Learn Note from selected drum pad
+- [X] **Skip Step Every X** in Program Mode
+  - Skip a step every X steps
+  - Example: Set Density at 100% and Skip Step Every X at 1 to create a 50% density pattern skipping all the odd steps
+  - Example: Set Density at 100% and Skip Step Every X at 2 to create a 50% density pattern skipping all the even steps
+  - Example: Set Density at 100% and Skip Step Every X at 3 to skip every third step in a pattern
+- [X] 🥁 **Learn Note from selected drum pad**
   - Select _DM_ from the _Learn Note_ selection and click on a drum pad to set the note destination.
   - Works on any Bitwig Drum Machine device in tracks from 1 to 128.
 - [X] **Presets and Custom are a single thing now**.
