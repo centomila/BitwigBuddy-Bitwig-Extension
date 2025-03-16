@@ -23,7 +23,7 @@ public class PatternSettings {
     // Static constants
     private static final String CATEGORY_GENERATE_PATTERN = "3 Generate Pattern";
     private static final String CATEGORY_CUSTOM_PATTERN_TOGGLE = "Custom Pattern Toggle";
-    private static final String CATEGORY_CUSTOM_PATTERN_SAVE = "99 Custom Pattern Save";
+    // Remove CATEGORY_CUSTOM_PATTERN_SAVE constant as it's now in CustomPresetSaver
 
     // // Static state variables
     // private static String lastDefaultPresetUsed = "Kick: Four on the Floor";
@@ -47,11 +47,6 @@ public class PatternSettings {
     public static Setting customPresetStepSizeToggleSetting;
     public static Setting customPresetSubdivisionsToggleSetting;
     public static Setting customPresetNoteLengthToggleSetting;
-
-    // UI Settings - Save Presets
-    public static Setting customPresetSaveHeaderSetting;
-    public static Setting customPresetSaveBtnSignal;
-    public static Setting customPresetSaveNamSetting;
 
     // All settings collection
     public static Setting[] allSettings;
@@ -96,7 +91,8 @@ public class PatternSettings {
         initCustomPresetSubdivisionsToggleSetting(documentState);
         initCustomPresetNoteLengthToggleSetting(documentState);
 
-        initCustomSavePresetSetting(documentState);
+        // Remove the initialization of save settings here - will be done in BitwigBuddyExtension
+        
         allSettings = new Setting[] {
                 headerGenerate,
                 generateBtnSignalSetting,
@@ -111,11 +107,8 @@ public class PatternSettings {
                 customPresetDefaultNoteToggleSetting,
                 customPresetStepSizeToggleSetting,
                 customPresetSubdivisionsToggleSetting,
-                customPresetNoteLengthToggleSetting,
-
-                customPresetSaveBtnSignal,
-                customPresetSaveNamSetting,
-                customPresetSaveHeaderSetting
+                customPresetNoteLengthToggleSetting
+                // Remove save settings from here
         };
     }
 
@@ -231,51 +224,6 @@ public class PatternSettings {
         });
     }
 
-    private void initCustomSavePresetSetting(DocumentState documentState) {
-        customPresetSaveHeaderSetting = (Setting) documentState.getStringSetting(
-                titleWithLine("SAVE THIS PRESET"),
-                CATEGORY_CUSTOM_PATTERN_SAVE, 0,
-                "---------------------------------------------------");
-        disableSetting(customPresetSaveHeaderSetting);
-
-        customPresetSaveBtnSignal = (Setting) documentState.getSignalSetting("Save Custom Preset",
-                CATEGORY_CUSTOM_PATTERN_SAVE, "Save Custom Preset");
-
-        ((Signal) customPresetSaveBtnSignal).addSignalObserver(() -> {
-            String presetName = ((EnumValue) customPresetSetting).get();
-            String patternString = ((SettableStringValue) presetPatternStringSetting).get().trim();
-            int[] patternIntArray = Arrays.stream(patternString.split(","))
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .mapToInt(Integer::parseInt)
-                    .toArray();
-            String defaultNote;
-            if (getCustomPresetDefaultNoteToggle().equals("From Preset")) {
-                defaultNote = NoteDestinationSettings.getCustomPresetDefaultNoteString();
-            } else {
-                defaultNote = NoteDestinationSettings.getCurrentNoteAsString();
-            }
-
-            String stepSize;
-            if (getCustomPresetStepSizeToggle().equals("From Preset")) {
-                stepSize = StepSizeSettings.getCustomStepSize();
-            } else {
-                stepSize = StepSizeSettings.getStepSize();
-            }
-            String subdivisions = ((SettableEnumValue) StepSizeSettings.stepSizSubdivisionSetting).get();
-            String noteLength = ((SettableEnumValue) StepSizeSettings.noteLengthSetting).get();
-            CustomPreset preset = new CustomPreset(presetName, presetName, defaultNote, patternIntArray, stepSize,
-                    subdivisions, noteLength);
-            CustomPresetsHandler.saveCustomPreset(preset, extension.preferences, extension.getHost());
-            showPopup("Custom Preset saved: " + presetName);
-            extension.restart();
-        });
-
-        customPresetSaveNamSetting = (Setting) documentState.getStringSetting("Preset Name",
-                CATEGORY_CUSTOM_PATTERN_SAVE, 0,
-                "New Custom Preset");
-    }
-
     // Toggle initialization methods
     private void initCustomPresetDefaultNoteToggleSetting(DocumentState documentState) {
         customPresetHeaderToggles = (Setting) createStringSetting(
@@ -340,9 +288,9 @@ public class PatternSettings {
                         customRefreshPresetsSetting,
                         reversePatternSetting,
                         customPresetDefaultNoteToggleSetting,
-                        customPresetSaveBtnSignal,
-                        customPresetSaveHeaderSetting,
-                        customPresetSaveNamSetting,
+                        CustomPresetSaver.getCustomPresetSaveBtnSignal(),
+                        CustomPresetSaver.getCustomPresetSaveHeaderSetting(),
+                        CustomPresetSaver.getCustomPresetSaveNameSetting(),
                         customPresetDefaultNoteToggleSetting,
                         customPresetStepSizeToggleSetting,
                         customPresetSubdivisionsToggleSetting,
@@ -364,15 +312,15 @@ public class PatternSettings {
                         ProgramPattern.programMaxVelocityVariationSetting,
                         ProgramPattern.programStepQtySetting,
                         ProgramPattern.programVelocitySettingShape,
-                        customPresetSaveBtnSignal,
-                        customPresetSaveHeaderSetting,
-                        customPresetSaveNamSetting };
+                        CustomPresetSaver.getCustomPresetSaveBtnSignal(),
+                        CustomPresetSaver.getCustomPresetSaveHeaderSetting(),
+                        CustomPresetSaver.getCustomPresetSaveNameSetting() };
                 Setting[] settingsToHideInProgramMode = {
                         customPresetSetting,
                         reversePatternSetting,
                         customRefreshPresetsSetting,
                         customPresetDefaultNoteToggleSetting,
-                        customPresetSaveNamSetting,
+                        CustomPresetSaver.getCustomPresetSaveNameSetting(),
                         customPresetDefaultNoteToggleSetting,
                         customPresetStepSizeToggleSetting,
                         customPresetSubdivisionsToggleSetting,

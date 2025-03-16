@@ -292,7 +292,7 @@ public class CustomPresetsHandler {
         presetsDir = new File(presetsDir, subdir);
 
         // Ensure filename has .txt extension
-        String presetName = ((StringValue) PatternSettings.customPresetSaveNamSetting).get();
+        String presetName = ((StringValue) CustomPresetSaver.customPresetSaveNameSetting).get();
         String fileName = presetName;
         if (!fileName.toLowerCase().endsWith(".txt")) {
             fileName = fileName + ".txt";

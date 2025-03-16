@@ -199,6 +199,15 @@ public class BitwigBuddyExtension extends ControllerExtension {
       
       DeviceMatcherDrumMachine.initializeDeviceMatcherDM(this, host);
       
+      // Initialize save section last to position it at the bottom of the GUI
+      CustomPresetSaver.initCustomSavePresetSetting(documentState, this);
+      
+      // After all settings are initialized, set initial visibility based on current mode
+      String patternType = PatternSettings.getPatternType();
+      if (patternType != null) {
+         PatternSettings.generatorTypeSelector(patternType);
+      }
+      
       ModeSelectSettings.gotoGenerateMode();
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BitwigBuddy Initialized! Have fun!");
