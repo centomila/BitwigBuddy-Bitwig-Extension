@@ -23,7 +23,7 @@ public class PatternSettings {
     // Static constants
     private static final String CATEGORY_GENERATE_PATTERN = "3 Generate Pattern";
     private static final String CATEGORY_CUSTOM_PATTERN_TOGGLE = "Custom Pattern Toggle";
-    private static final String CATEGORY_CUSTOM_PATTERN_SAVE = "Custom Pattern Save";
+    private static final String CATEGORY_CUSTOM_PATTERN_SAVE = "99 Custom Pattern Save";
 
     // // Static state variables
     // private static String lastDefaultPresetUsed = "Kick: Four on the Floor";
