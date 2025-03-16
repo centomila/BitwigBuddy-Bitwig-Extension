@@ -107,6 +107,8 @@ public class PatternSettings {
                 customRefreshPresetsSetting,
                 reversePatternSetting,
 
+                customPresetHeaderToggles,
+                customPresetDefaultNoteToggleSetting,
                 customPresetStepSizeToggleSetting,
                 customPresetSubdivisionsToggleSetting,
                 customPresetNoteLengthToggleSetting,
