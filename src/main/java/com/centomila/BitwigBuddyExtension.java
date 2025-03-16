@@ -183,7 +183,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       // Initialize settings in correct order for GUI layout
       ModeSelectSettings.init(this);
       MacroActionSettings.init(this);
-      MacroActionSettings.hideMacroSettings();
+      MacroActionSettings.hideAllSettings();
       EditClipSettings.init(this);
       PatternSettings.init(this);
       ProgramPattern.init(this);

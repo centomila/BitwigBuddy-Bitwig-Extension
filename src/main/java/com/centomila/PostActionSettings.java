@@ -21,7 +21,7 @@ public class PostActionSettings {
         public static void init(BitwigBuddyExtension extension) {
                 // Initialize spacer for "Post Actions"
                 Setting spacerPostActions = (Setting) createStringSetting(
-                                titleWithLine("POST ACTIONS"),
+                                titleWithLine("POST ACTIONS ----------------------------"),
                                 CATEGORY_POST_ACTIONS,
                                 9999,
                                 "---------------------------------------------------");
@@ -76,12 +76,12 @@ public class PostActionSettings {
         private static void setupPostActionsObserver(BitwigBuddyExtension extension) {
 
                 ((EnumValue) postActionsToggleCategorySetting).addValueObserver(newValue -> {
-                        showPostActionsSettings();
+                        toggleVisibilityPostActionsSettings();
                 });
         }
 
-        public static void showPostActionsSettings() {
-                String showPostActionToggle = ((EnumValue) postActionsToggleCategorySetting).get();
+        public static void toggleVisibilityPostActionsSettings() {
+                String showPostActionToggle = getPostActionsToggleCategorySetting();
 
                 // Array with all settings to be hidden
                 Setting[] settingsToHideAndShow = {
@@ -98,5 +98,18 @@ public class PostActionSettings {
                 } else {
                         showSetting(settingsToHideAndShow);
                 }
+        }
+
+        // getter for toggle visibility post actions setting
+        public static String getPostActionsToggleCategorySetting() {
+                return ((EnumValue) postActionsToggleCategorySetting).get();
+        }
+
+        public static void showPostActionAllSettings() {
+                showSetting(allSettings);
+        }
+
+        public static void hideAllSettings() {
+                hideSetting(allSettings);
         }
 }

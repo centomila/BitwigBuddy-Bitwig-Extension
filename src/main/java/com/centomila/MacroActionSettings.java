@@ -110,7 +110,7 @@ public class MacroActionSettings {
      */
     private static void initMacroActionSettings() {
         // Create header first
-        macroHeaderSetting = (Setting) createStringSetting(titleWithLine("MACRO"),
+        macroHeaderSetting = (Setting) createStringSetting(titleWithLine("MACRO ---------------------------------------"),
                 "Macro", 0, "---------------------------------------------------");
         disableSetting(macroHeaderSetting);
 
@@ -206,7 +206,7 @@ public class MacroActionSettings {
 
         // STOP Section
         // Add spacer title STOP
-        macroSpacerSetting = (Setting) createStringSetting(titleWithLine("STOP MACRO"),
+        macroSpacerSetting = (Setting) createStringSetting(titleWithLine("STOP MACRO -------------------------------"),
                 "Macro Control", 0, "---------------------------------------------------");
         disableSetting(macroSpacerSetting);
         settingsList.add(macroSpacerSetting);
@@ -358,7 +358,7 @@ public class MacroActionSettings {
                         break;
                 }
             } else {
-                hideMacroSettings();
+                hideAllSettings();
                 hideInstantMacro();
             }
         });
@@ -810,7 +810,7 @@ public class MacroActionSettings {
     /**
      * Hides all macro-related settings in the UI.
      */
-    public static void hideMacroSettings() {
+    public static void hideAllSettings() {
          hideSetting(allSettings);
         // Be sure to hide everything related to macro settings
         hideInstantMacro();

@@ -1,7 +1,7 @@
 package com.centomila;
 
 import static com.centomila.utils.PopupUtils.showPopup;
-import static com.centomila.utils.SettingsHelper.disableSetting;
+import static com.centomila.utils.SettingsHelper.*;
 
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.Setting;
@@ -48,7 +48,7 @@ public class CustomPresetSaver {
      */
     public static Setting[] initCustomSavePresetSetting(DocumentState documentState, BitwigBuddyExtension extension) {
         customPresetSaveHeaderSetting = (Setting) SettingsHelper.createStringSetting(
-                SettingsHelper.titleWithLine("SAVE THIS PRESET"),
+                SettingsHelper.titleWithLine("SAVE THIS PRESET -------------------------"),
                 CATEGORY_CUSTOM_PATTERN_SAVE, 0,
                 "---------------------------------------------------");
 
@@ -151,5 +151,23 @@ public class CustomPresetSaver {
      */
     public static Setting getCustomPresetSaveNameSetting() {
         return customPresetSaveNameSetting;
+    }
+
+    // Show / Hide settings
+    public static void showAllSettings() {
+        showSetting(allSettings);
+    }
+
+    public static void hideAllSettings() {
+        hideSetting(allSettings);
+    }
+
+    public static void hideAndDisableAllSettings() {
+        hideAndDisableSetting(allSettings);
+    }
+
+    public static void showAndEnableAllSettings() {
+        showAndEnableSetting(allSettings);
+        disableSetting(customPresetSaveHeaderSetting);
     }
 }

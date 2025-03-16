@@ -176,7 +176,8 @@ public class SettingsHelper {
         // remove the title length from the line string characters (if the title is 4 caracters long, remove 4 characters from the line)
         line = line.substring(0, line.length() - titleLength/2);
 
-        return title + " " + line;
+        // return title + " " + line;
+        return title.toUpperCase();
         
     }
 

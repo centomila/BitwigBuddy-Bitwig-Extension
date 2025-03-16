@@ -61,7 +61,7 @@ public class MoveStepsHandler {
     private void initializeMoveRotateSetting(DocumentState documentState) {
         // Spacer
         spacerMoveSteps = (Setting) SettingsHelper.createStringSetting(
-                SettingsHelper.titleWithLine("MOVE - ROTATE STEPS"),
+                SettingsHelper.titleWithLine("MOVE / ROTATE STEPS -------------------"),
                 CATEGORY_MOVE_STEPS,
                 0,
                 "---------------------------------------------------");
@@ -143,5 +143,14 @@ public class MoveStepsHandler {
             extension.getHost().errorln("Failed to move steps: " + e.getMessage());
             showPopup("Error: " + e.getMessage());
         }
+    }
+
+    // Show / Hide Settings
+    public static void showAllSettings() {
+        SettingsHelper.showSetting(allSettings);
+    }
+
+    public static void hideAllSettings() {
+        SettingsHelper.hideSetting(allSettings);
     }
 }

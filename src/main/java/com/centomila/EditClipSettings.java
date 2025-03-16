@@ -4,6 +4,8 @@ import static com.centomila.utils.PopupUtils.showPopup;
 import static com.centomila.utils.SettingsHelper.createSignalSetting;
 import static com.centomila.utils.SettingsHelper.createStringSetting;
 import static com.centomila.utils.SettingsHelper.disableSetting;
+import static com.centomila.utils.SettingsHelper.hideSetting;
+import static com.centomila.utils.SettingsHelper.showSetting;
 import static com.centomila.utils.SettingsHelper.titleWithLine;
 
 import com.bitwig.extension.controller.api.Clip;
@@ -23,7 +25,7 @@ public class EditClipSettings {
     }
 
     private static void initEditClipSettings() {
-        editClipSpacer = (Setting) createStringSetting(titleWithLine("EDIT CLIP"), CATEGORY_EDIT_CLIP,9999,
+        editClipSpacer = (Setting) createStringSetting(titleWithLine("EDIT CLIP ------------------------------------"), CATEGORY_EDIT_CLIP,9999,
                 "---------------------------------------------------");
         disableSetting(editClipSpacer);
 
@@ -61,16 +63,12 @@ public class EditClipSettings {
 
     }
 
-    public static void showEditClipSettings() {
-        for (Setting setting : allSettings) {
-            setting.show();
-        }
+    public static void showAllSettings() {
+        showSetting(allSettings);
     }
 
-    public static void hideEditClipSettings() {
-        for (Setting setting : allSettings) {
-            setting.hide();
-        }
+    public static void hideAllSettings() {
+        hideSetting(allSettings);
     }
 
 }

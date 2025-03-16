@@ -131,7 +131,7 @@ public class PatternSettings {
     // Initialize the toggle for hiding/showing custom preset toggles
     private void initCustomTogglesToggle(DocumentState documentState) {
         customPresetHeaderToggles = (Setting) createStringSetting(
-                titleWithLine("FROM PRESET / CUSTOM OPTIONS"),
+                titleWithLine("FROM PRESET / CUSTOM OPTIONS ----"),
                 CATEGORY_CUSTOM_PATTERN_TOGGLE, 0,
                 "---------------------------------------------------");
         disableSetting(customPresetHeaderToggles);
@@ -168,7 +168,7 @@ public class PatternSettings {
     // Base UI element initialization methods
     private void initSpacer(DocumentState documentState) {
         headerGenerate = (Setting) createStringSetting(
-                titleWithLine("GENERATE PATTERN"),
+                titleWithLine("GENERATE PATTERN ----------------------"),
                 CATEGORY_GENERATE_PATTERN, 0,
                 "---------------------------------------------------");
         disableSetting(headerGenerate); // Spacers are always disabled
@@ -350,10 +350,10 @@ public class PatternSettings {
     // Static utility methods for UI state management
     public static void generatorTypeSelector(String newValue) {
         switch (newValue) {
-            
+
             // Preset mode
             case PATTERN_TYPE_PRESET:
-                Setting[] settingsToShowCustom = {
+                Setting[] settingsToShowInPresetMode = {
                         customPresetSetting,
                         customRefreshPresetsSetting,
                         reversePatternSetting,
@@ -362,14 +362,9 @@ public class PatternSettings {
                         CustomPresetSaver.getCustomPresetSaveHeaderSetting(),
                         CustomPresetSaver.getCustomPresetSaveNameSetting(),
                         customPresetHeaderToggles };
-                Setting[] settingsToHideCustom = {
-                        ProgramPattern.programDensitySetting,
-                        ProgramPattern.programMinVelocityVariationSetting,
-                        ProgramPattern.programMaxVelocityVariationSetting,
-                        ProgramPattern.programStepQtySetting,
-                        ProgramPattern.programVelocitySettingShape };
-                showSetting(settingsToShowCustom);
-                hideSetting(settingsToHideCustom);
+                showSetting(settingsToShowInPresetMode);
+                
+                ProgramPattern.hideAndDisableAllSettings();
 
                 // Update visibility of toggle settings based on the current toggle state
                 updateCustomTogglesVisibility();
@@ -377,23 +372,11 @@ public class PatternSettings {
 
             // Program mode
             case PATTERN_TYPE_PROGRAM:
-                Setting[] settingsToShowInProgramMode = {
-                        ProgramPattern.programDensitySetting,
-                        ProgramPattern.programMinVelocityVariationSetting,
-                        ProgramPattern.programMaxVelocityVariationSetting,
-                        ProgramPattern.programStepQtySetting,
-                        ProgramPattern.programVelocitySettingShape,
-                        CustomPresetSaver.getCustomPresetSaveBtnSignal(),
-                        CustomPresetSaver.getCustomPresetSaveHeaderSetting(),
-                        CustomPresetSaver.getCustomPresetSaveNameSetting(),
-                        NoteDestinationSettings.noteDestinationSetting,
-                        NoteDestinationSettings.noteOctaveSetting,
-                        NoteDestinationSettings.noteChannelSetting,
-                        StepSizeSettings.stepSizSetting,
-                        StepSizeSettings.stepSizSubdivisionSetting,
-                        StepSizeSettings.noteLengthSetting
+                ProgramPattern.showAndEnableAllSettings();
+                CustomPresetSaver.showAllSettings();
+                NoteDestinationSettings.showAndEnableAllSettings();
+                StepSizeSettings.showAndEnableAllSettings();
 
-                };
                 Setting[] settingsToHideInProgramMode = {
                         customPresetSetting,
                         reversePatternSetting,
@@ -405,8 +388,7 @@ public class PatternSettings {
                         customPresetNoteLengthToggleSetting,
                         customPresetHeaderToggles
                 };
-                showAndEnableSetting(settingsToShowInProgramMode);
-                disableSetting(CustomPresetSaver.customPresetSaveHeaderSetting);
+
                 hideSetting(settingsToHideInProgramMode);
                 break;
         }
@@ -577,5 +559,14 @@ public class PatternSettings {
     // Getter for pattern replace/add toggle
     public static String getPatternReplaceAddMode() {
         return ((EnumValue) patternReplaceAddToggle).get();
+    }
+
+    // Show and hide settings
+    public static void showAllSettings() {
+        showSetting(allSettings);
+    }
+
+    public static void hideAllSettings() {
+        hideSetting(allSettings);
     }
 }

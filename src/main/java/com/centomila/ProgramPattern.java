@@ -191,11 +191,11 @@ public class ProgramPattern {
                 return pattern;
         }
 
-        public static void showProgramPatternSettings() {
+        public static void showAndEnableAllSettings() {
                 showAndEnableSetting(allSettings);
         }
 
-        public static void hideProgramPatternSettings() {
+        public static void hideAndDisableAllSettings() {
                 hideAndDisableSetting(allSettings);
         }
 

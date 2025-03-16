@@ -69,7 +69,7 @@ public class NoteDestinationSettings {
 
       // Setup spacer
       Setting spacerNoteDestination = (Setting) createStringSetting(
-            titleWithLine("NOTE DESTINATION"),
+            titleWithLine("NOTE DESTINATION ----------------------"),
             CATEGORY_NOTE_DESTINATION,
             0,
             "---------------------------------------------------");
@@ -358,13 +358,21 @@ public class NoteDestinationSettings {
 
    // Hide and show settings
 
-   public static void hideNoteDestinationSettings() {
+   public static void hideAllSettings() {
       hideSetting(allSettings);
    }
+   public static void hideAndDisableAllSettings() {
+       hideAndDisableSetting(allSettings);
+   }
 
-   public static void showNoteDestinationSettings() {
+   public static void showAllSettings() {
       showSetting(allSettings);
    }
+
+   public static void showAndEnableAllSettings() {
+       showAndEnableSetting(allSettings);
+   }
+
 
    public static void hideCustomPresetDefaultNoteSetting() {
       // No longer needed as customPresetDefaultNote is now a class variable

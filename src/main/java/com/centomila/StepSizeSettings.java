@@ -22,7 +22,7 @@ public class StepSizeSettings {
 
       public static void init(BitwigBuddyExtension extension) {
             Setting spacerStepSize = (Setting) createStringSetting(
-                        titleWithLine("STEP SIZE - NOTE LENGTH"),
+                        titleWithLine("STEP SIZE - NOTE LENGTH --------------"),
                         CATEGORY_CLIP, 0,
                         "---------------------------------------------------");
 
@@ -123,11 +123,20 @@ public class StepSizeSettings {
 
       // Hide and show settings
 
-      public static void hideAllStepSizeSettings() {
+      public static void hideAllSettings() {
             hideSetting(allSettings);
       }
+      public static void hideAndDisableAllSettings() {
+            hideAndDisableSetting(allSettings);
+      }
 
-      public static void showAllStepSizeSettings() {
+      public static void showAllSettings() {
             showSetting(allSettings);
       }
+
+      public static void showAndEnableAllSettings() {
+            showAndEnableSetting(allSettings);
+      }
+
+
 }

@@ -27,12 +27,11 @@ public class ModeSelectSettings {
 
         // Set up observers
         initToggleModeObservers();
-
-        // Remove the hideMacroSettings() call from here
     }
 
     private static void initModeSelectSettings(String[] MODE_SELECT_OPTIONS) {
-        spacerSelectModSetting = (Setting) createStringSetting(titleWithLine("MODE SELECT"),
+        spacerSelectModSetting = (Setting) createStringSetting(
+                titleWithLine("MODE SELECT ------------------------------"),
                 CATEGORY_MODE_SELECT, 0,
                 "---------------------------------------------------");
         disableSetting(spacerSelectModSetting);
@@ -86,90 +85,59 @@ public class ModeSelectSettings {
     }
 
     private static void gotoEditMode() {
-        // Hide generate settings
-        // RandomPattern.hideSettings();
-        // for each Setting in RandomPattern.allSettings, hideSetting(setting);
+        
+        ProgramPattern.hideAndDisableAllSettings();
+        PatternSettings.hideAllSettings();
+        MoveStepsHandler.hideAllSettings();
+        CustomPresetSaver.hideAllSettings();
+        PostActionSettings.hideAllSettings();
+        StepSizeSettings.hideAllSettings();
+        NoteDestinationSettings.hideAllSettings();
 
-        for (Setting setting : ProgramPattern.allSettings) {
-            hideSetting(setting);
-        }
-
-        for (Setting setting : MoveStepsHandler.allSettings) {
-            hideSetting(setting);
-        }
-
-        for (Setting setting : PatternSettings.allSettings) {
-            hideSetting(setting);
-        }
-
-        for (Setting setting : PostActionSettings.allSettings) {
-            hideSetting(setting);
-        }
-
-        for (Setting setting : NoteDestinationSettings.allSettings) {
-            hideSetting(setting);
-        }
-
-        for (Setting setting : StepSizeSettings.allSettings) {
-            hideSetting(setting);
-        }
-
-        ProgramPattern.showProgramPatternSettings();
-
-        EditClipSettings.showEditClipSettings();
-
-        NoteDestinationSettings.noteDestinationSetting.hide();
-        NoteDestinationSettings.noteChannelSetting.hide();
-        ProgramPattern.programStepQtySetting.hide();
-        ProgramPattern.programDensitySetting.hide();
-
-        MacroActionSettings.hideMacroSettings();
         MacroActionSettings.showMacroSlots(false, false, false, false);
-        MacroActionSettings.hideInstantMacro();
+        MacroActionSettings.hideAllSettings(); // Hide all macro-related settings
+        
+        // Show edit settings
+        ProgramPattern.showAndEnableAllSettings(); // Show all
+        ProgramPattern.programStepQtySetting.hide(); // Hide step qty setting
+        ProgramPattern.programDensitySetting.hide(); // Hide density setting
+        ProgramPattern.programSkipStep.hide(); // Hide skip step setting
 
+        ClipUtils.showAllSettings();
+        EditClipSettings.showAllSettings();
     }
 
     // GENERATE MODE
     public static void gotoGenerateMode() {
-
-        // Show generate settings
-        for (Setting setting : MoveStepsHandler.allSettings) {
-            setting.show();
-        }
-
-        // hide PatternSettings
-        for (Setting setting : PatternSettings.allSettings) {
-            setting.show();
-        }
-
-        for (Setting setting : NoteDestinationSettings.allSettings) {
-            setting.show();
-        }
-
-        for (Setting setting : StepSizeSettings.allSettings) {
-            setting.show();
-        }
+        ProgramPattern.hideAndDisableAllSettings();
 
         // get the value from GlobalPreferences of showChannelDestination
         if (!GlobalPreferences.showChannelDestinationPref.get()) {
-
             hideSetting(NoteDestinationSettings.noteChannelSetting);
         }
 
-        PatternSettings.generatorTypeSelector(((EnumValue) PatternSettings.patternTypeSetting).get());
-
-        showSetting(PostActionSettings.allSettings);
-        PostActionSettings.showPostActionsSettings();
-
         // Hide all macro-related settings
         // First, hide all macro-related settings before showing generate settings
-        MacroActionSettings.hideMacroSettings();
+        MacroActionSettings.hideAllSettings();
         MacroActionSettings.showMacroSlots(false, false, false, false);
         MacroActionSettings.hideInstantMacro();
         MacroActionSettings.macroHeaderSetting.hide();
         MacroActionSettings.macroViewSelectorSetting.hide();
 
-        EditClipSettings.hideEditClipSettings();
+        EditClipSettings.hideAllSettings();
+
+        // Show generate settings
+        PatternSettings.showAllSettings();
+        NoteDestinationSettings.showAllSettings();
+        StepSizeSettings.showAllSettings();
+        MoveStepsHandler.showAllSettings();
+        ClipUtils.showAllSettings();
+        showSetting(PostActionSettings.allSettings);
+        
+        
+        
+        PostActionSettings.toggleVisibilityPostActionsSettings();
+        PatternSettings.generatorTypeSelector(PatternSettings.getPatternType());
 
     }
 
@@ -177,23 +145,16 @@ public class ModeSelectSettings {
         // Hide all other settings first
 
         hideSetting(ProgramPattern.allSettings);
-
         hideSetting(MoveStepsHandler.allSettings);
-
         hideSetting(PatternSettings.allSettings);
-
         hideSetting(PostActionSettings.allSettings);
-
         hideSetting(NoteDestinationSettings.allSettings);
-
         hideSetting(StepSizeSettings.allSettings);
-
         hideSetting(ClipUtils.allSettings);
-
         hideSetting(CustomPresetSaver.allSettings);
 
-        ProgramPattern.hideProgramPatternSettings();
-        EditClipSettings.hideEditClipSettings();
+        ProgramPattern.hideAndDisableAllSettings();
+        EditClipSettings.hideAllSettings();
 
         // Show macro header and view selector
         MacroActionSettings.macroHeaderSetting.show();

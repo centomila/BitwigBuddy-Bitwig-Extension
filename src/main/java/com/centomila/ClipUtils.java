@@ -31,7 +31,7 @@ public class ClipUtils {
     public static void init(BitwigBuddyExtension extension) {
         ;
         Setting spacerOther = (Setting) createStringSetting(
-                titleWithLine("OTHER"),
+                titleWithLine("OTHER ---------------------------------------"),
                 CATEGORY_OTHER,
                 0,
                 "---------------------------------------------------");
@@ -245,9 +245,9 @@ public class ClipUtils {
     public static List<NoteStep> getSelectedNotes(BitwigBuddyExtension extension) {
         Clip clip = extension.getLauncherOrArrangerAsClip();
         int channel = NoteDestinationSettings.getCurrentChannelAsInt();
-        
+
         List<NoteStep> selectedSteps = new ArrayList<>();
-        
+
         // Collect all selected steps across all notes
         for (int i = 0; i < 128; i++) {
             for (int note = 0; note < 128; note++) {
@@ -257,10 +257,21 @@ public class ClipUtils {
                 }
             }
         }
-        
+
         // Sort steps by x position
         selectedSteps.sort(Comparator.comparingInt(NoteStep::x));
-        
+
         return selectedSteps;
+    }
+
+    /**
+     * Shows/Hide all settings created by the ClipUtils class.
+     */
+    public static void showAllSettings() {
+        showSetting(allSettings);
+    }
+
+    public static void hideClipUtilsSettings() {
+        hideSetting(allSettings);
     }
 }

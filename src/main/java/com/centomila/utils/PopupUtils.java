@@ -20,4 +20,11 @@ public class PopupUtils {
             host.showPopupNotification(message);
         }
     }
+
+    // Console message
+    public static void console(String message) {
+        if (host != null) {
+            host.println(message);
+        }
+    }
 }
