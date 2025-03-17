@@ -37,6 +37,8 @@ public class MacroActionSettings {
     public static final String VIEW_SLOT2 = "2";
     public static final String VIEW_SLOT3 = "3";
     public static final String VIEW_SLOT4 = "4";
+    public static final String VIEW_SLOT1_2 = "1+2";  // New constant
+    public static final String VIEW_SLOT3_4 = "3+4";  // New constant
     public static final String VIEW_IM = "Instant Macro";
     public static final String VIEW_ALL_IM = "All + Instant Macro";
     public static final String VIEW_COMPACT = "Compact";
@@ -121,6 +123,8 @@ public class MacroActionSettings {
                 VIEW_SLOT2,
                 VIEW_SLOT3,
                 VIEW_SLOT4,
+                VIEW_SLOT1_2,  // New view option
+                VIEW_SLOT3_4,  // New view option
                 VIEW_ALL,
                 VIEW_ALL_IM,
                 VIEW_COMPACT // Add new option
@@ -343,6 +347,14 @@ public class MacroActionSettings {
                         break;
                     case VIEW_SLOT4:
                         showMacroSlots(false, false, false, true);
+                        hideInstantMacro();
+                        break;
+                    case VIEW_SLOT1_2:  // New case for showing slots 1 and 2
+                        showMacroSlots(true, true, false, false);
+                        hideInstantMacro();
+                        break;
+                    case VIEW_SLOT3_4:  // New case for showing slots 3 and 4
+                        showMacroSlots(false, false, true, true);
                         hideInstantMacro();
                         break;
                     case VIEW_IM:
