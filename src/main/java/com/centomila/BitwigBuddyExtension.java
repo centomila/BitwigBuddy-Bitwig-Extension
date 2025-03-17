@@ -182,10 +182,12 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
       // Initialize settings in correct order for GUI layout
       ModeSelectSettings.init(this);
+      moveStepsHandler = new MoveStepsHandler(this);
+      moveStepsHandler.init(documentState);
+      PatternSettings.init(this);
+      EditClipSettings.init(this);
       MacroActionSettings.init(this);
       MacroActionSettings.hideAllSettings();
-      EditClipSettings.init(this);
-      PatternSettings.init(this);
       ProgramPattern.init(this);
       NoteDestinationSettings.init(this);
       StepSizeSettings.init(this);
@@ -194,8 +196,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
       ClipUtils.init(this);
       
       
-      moveStepsHandler = new MoveStepsHandler(this);
-      moveStepsHandler.init(documentState);
       
       DeviceMatcherDrumMachine.initializeDeviceMatcherDM(this, host);
       

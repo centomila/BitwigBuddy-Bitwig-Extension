@@ -40,7 +40,7 @@ public class PatternSettings {
 
     // UI Settings - Custom Presets
     public static Setting customPresetSetting;
-    public static Setting customRefreshPresetsSetting;
+    // Removed customRefreshPresetsSetting declaration
 
     // UI Settings - Custom Preset Toggles
     public static Setting customPresetHeaderToggles;
@@ -78,15 +78,15 @@ public class PatternSettings {
     // Main initialization method
     private void initPatternSetting() {
         DocumentState documentState = extension.getDocumentState();
-        initPatternTypeSetting(documentState);
-        initSpacer(documentState);
-        initGenerateButton(documentState);
+        initSpacer(documentState); // Initialize spacer header
+        initPatternTypeSetting(documentState); // Initialize pattern type setting (preset/program)
+        initGenerateButton(documentState); // Initialize generate button
         initPatternReplaceAddToggle(documentState); // Initialize new toggle
+        initReversePatternSetting(documentState); // Initialize reverse pattern setting
 
         initCustomPresetParams(documentState);
         initCustomPresetPatternStringSetting(documentState);
-        initRefreshCustomPresetsSetting(documentState);
-        initReversePatternSetting(documentState);
+        // Removed initRefreshCustomPresetsSetting call
 
         // Initialize toggle for showing/hiding custom preset toggles
         initCustomTogglesToggle(documentState);
@@ -104,7 +104,7 @@ public class PatternSettings {
 
                 customPresetSetting,
                 presetPatternStringSetting,
-                customRefreshPresetsSetting,
+                // Removed customRefreshPresetsSetting from array
                 reversePatternSetting,
 
                 customPresetHeaderToggles,
@@ -131,13 +131,13 @@ public class PatternSettings {
     // Initialize the toggle for hiding/showing custom preset toggles
     private void initCustomTogglesToggle(DocumentState documentState) {
         customPresetHeaderToggles = (Setting) createStringSetting(
-                titleWithLine("FROM PRESET / CUSTOM OPTIONS ----"),
+                titleWithLine("SETTINGS FROM PRESET / CUSTOM ----"),
                 CATEGORY_CUSTOM_PATTERN_TOGGLE, 0,
                 "---------------------------------------------------");
         disableSetting(customPresetHeaderToggles);
 
         customTogglesToggle = (Setting) createEnumSetting(
-                "From Preset / Custom Options",
+                "Settings From Preset / Custom",
                 CATEGORY_CUSTOM_PATTERN_TOGGLE,
                 new String[] { "Show", "Hide" },
                 "Hide");
@@ -183,7 +183,7 @@ public class PatternSettings {
 
     public void initPatternTypeSetting(DocumentState documentState) {
         String[] options = { PATTERN_TYPE_PRESET, PATTERN_TYPE_PROGRAM };
-        patternTypeSetting = (Setting) documentState.getEnumSetting("Pattern Type", CATEGORY_GENERATE_PATTERN,
+        patternTypeSetting = (Setting) documentState.getEnumSetting("Preset / Program", CATEGORY_GENERATE_PATTERN,
                 options, PATTERN_TYPE_PRESET);
 
         ((EnumValue) patternTypeSetting).addValueObserver(newValue -> {
@@ -268,20 +268,13 @@ public class PatternSettings {
                 lastStringPatternUsed);
     }
 
-    private void initRefreshCustomPresetsSetting(DocumentState documentState) {
-        customRefreshPresetsSetting = (Setting) documentState.getSignalSetting("Refresh Custom Files",
-                CATEGORY_GENERATE_PATTERN, "Refresh Custom Files");
-        ((Signal) customRefreshPresetsSetting).addSignalObserver(() -> {
-
-            extension.restart();
-        });
-    }
+    // Removed initRefreshCustomPresetsSetting method - moving to CustomPresetSaver
 
     // Toggle initialization methods
     private void initCustomPresetDefaultNoteToggleSetting(DocumentState documentState) {
 
         customPresetDefaultNoteToggleSetting = (Setting) createEnumSetting(
-                "Note Destination Preset/Custom",
+                "Note Destination Preset / Custom",
                 CATEGORY_CUSTOM_PATTERN_TOGGLE,
                 new String[] { TOGGLE_FROM_PRESET, TOGGLE_CUSTOM },
                 TOGGLE_FROM_PRESET);
@@ -298,7 +291,7 @@ public class PatternSettings {
 
     private void initCustomPresetStepSizeToggleSetting(DocumentState documentState) {
         customPresetStepSizeToggleSetting = (Setting) createEnumSetting(
-                "Step Size Preset/Custom",
+                "Step Size Preset / Custom",
                 CATEGORY_CUSTOM_PATTERN_TOGGLE,
                 new String[] { TOGGLE_FROM_PRESET, TOGGLE_CUSTOM },
                 TOGGLE_FROM_PRESET);
@@ -315,7 +308,7 @@ public class PatternSettings {
 
     private void initCustomPresetSubdivisionsToggleSetting(DocumentState documentState) {
         customPresetSubdivisionsToggleSetting = (Setting) createEnumSetting(
-                "Subdivisions Preset/Custom",
+                "Subdivisions Preset / Custom",
                 CATEGORY_CUSTOM_PATTERN_TOGGLE,
                 new String[] { TOGGLE_FROM_PRESET, TOGGLE_CUSTOM },
                 TOGGLE_FROM_PRESET);
@@ -332,7 +325,7 @@ public class PatternSettings {
 
     private void initCustomPresetNoteLengthToggleSetting(DocumentState documentState) {
         customPresetNoteLengthToggleSetting = (Setting) createEnumSetting(
-                "Note Length Preset/Custom",
+                "Note Length Preset / Custom",
                 CATEGORY_CUSTOM_PATTERN_TOGGLE,
                 new String[] { TOGGLE_FROM_PRESET, TOGGLE_CUSTOM },
                 TOGGLE_FROM_PRESET);
@@ -355,12 +348,13 @@ public class PatternSettings {
             case PATTERN_TYPE_PRESET:
                 Setting[] settingsToShowInPresetMode = {
                         customPresetSetting,
-                        customRefreshPresetsSetting,
+                        // Removed customRefreshPresetsSetting from array
                         reversePatternSetting,
                         customTogglesToggle,
                         CustomPresetSaver.getCustomPresetSaveBtnSignal(),
                         CustomPresetSaver.getCustomPresetSaveHeaderSetting(),
                         CustomPresetSaver.getCustomPresetSaveNameSetting(),
+                        CustomPresetSaver.getCustomRefreshPresetsSetting(), // Add reference to CustomPresetSaver's refresh
                         customPresetHeaderToggles };
                 showSetting(settingsToShowInPresetMode);
                 
@@ -376,11 +370,12 @@ public class PatternSettings {
                 CustomPresetSaver.showAllSettings();
                 NoteDestinationSettings.showAndEnableAllSettings();
                 StepSizeSettings.showAndEnableAllSettings();
+                MoveStepsHandler.showAllSettings();
 
                 Setting[] settingsToHideInProgramMode = {
                         customPresetSetting,
                         reversePatternSetting,
-                        customRefreshPresetsSetting,
+                        // Removed customRefreshPresetsSetting from array
                         customTogglesToggle,
                         customPresetDefaultNoteToggleSetting,
                         customPresetStepSizeToggleSetting,
@@ -388,6 +383,7 @@ public class PatternSettings {
                         customPresetNoteLengthToggleSetting,
                         customPresetHeaderToggles
                 };
+                
 
                 hideSetting(settingsToHideInProgramMode);
                 break;

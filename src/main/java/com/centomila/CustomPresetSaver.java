@@ -18,12 +18,13 @@ import java.util.Arrays;
  */
 public class CustomPresetSaver {
     // Static constants
-    private static final String CATEGORY_CUSTOM_PATTERN_SAVE = "99 Custom Pattern Save";
+    public static final String CATEGORY_CUSTOM_PATTERN_SAVE = "99 Custom Pattern Save";
 
     // UI Settings - Save Presets
     public static Setting customPresetSaveHeaderSetting;
     public static Setting customPresetSaveBtnSignal;
     public static Setting customPresetSaveNameSetting;
+    public static Setting customRefreshPresetsSetting; // Added refresh setting
     public static Setting[] allSettings;
 
     // Constructor and main initialization methods
@@ -66,21 +67,16 @@ public class CustomPresetSaver {
                     .mapToInt(Integer::parseInt)
                     .toArray();
                     
-            String defaultNote;
-            if (PatternSettings.getCustomPresetDefaultNoteToggle().equals("From Preset")) {
-                defaultNote = NoteDestinationSettings.getCustomPresetDefaultNoteString();
-            } else {
-                defaultNote = NoteDestinationSettings.getCurrentNoteAsString();
-            }
-
-            String stepSize;
-            if (PatternSettings.getCustomPresetStepSizeToggle().equals("From Preset")) {
-                stepSize = StepSizeSettings.getCustomStepSize();
-            } else {
-                stepSize = StepSizeSettings.getStepSize();
-            }
-            String subdivisions = ((SettableEnumValue) StepSizeSettings.stepSizSubdivisionSetting).get();
-            String noteLength = ((SettableEnumValue) StepSizeSettings.noteLengthSetting).get();
+            // Always use current note value
+            String defaultNote = NoteDestinationSettings.getCurrentNoteAsString();
+            
+            // Always use current step size
+            String stepSize = StepSizeSettings.getStepSize();
+            
+            // Always use current subdivisions and note length
+            String subdivisions = StepSizeSettings.getSubdivisions();
+            String noteLength = StepSizeSettings.getNoteLength();
+            
             CustomPreset preset = new CustomPreset(presetName, presetName, defaultNote, patternIntArray, stepSize,
                     subdivisions, noteLength);
             CustomPresetsHandler.saveCustomPreset(preset, extension.preferences, extension.getHost());
@@ -100,6 +96,13 @@ public class CustomPresetSaver {
         customPresetSaveNameSetting = (Setting) documentState.getStringSetting("Preset Name",
                 CATEGORY_CUSTOM_PATTERN_SAVE, 0,
                 "New Custom Preset");
+        
+        // Add refresh custom presets setting
+        customRefreshPresetsSetting = (Setting) documentState.getSignalSetting("Refresh Custom Files",
+                CATEGORY_CUSTOM_PATTERN_SAVE, "Refresh Custom Files");
+        ((Signal) customRefreshPresetsSetting).addSignalObserver(() -> {
+            extension.restart();
+        });
                 
         // Apply initial visibility based on current pattern type
         String patternType = PatternSettings.getPatternType();
@@ -108,13 +111,15 @@ public class CustomPresetSaver {
                 SettingsHelper.showSetting(new Setting[] {
                     customPresetSaveHeaderSetting,
                     customPresetSaveBtnSignal,
-                    customPresetSaveNameSetting
+                    customPresetSaveNameSetting,
+                    customRefreshPresetsSetting
                 });
             } else if (patternType.equals("Program")) {
                 SettingsHelper.showSetting(new Setting[] {
                     customPresetSaveHeaderSetting,
                     customPresetSaveBtnSignal,
-                    customPresetSaveNameSetting
+                    customPresetSaveNameSetting,
+                    customRefreshPresetsSetting
                 });
             }
         }
@@ -122,13 +127,15 @@ public class CustomPresetSaver {
         allSettings = new Setting[] {
             customPresetSaveHeaderSetting,
             customPresetSaveBtnSignal,
-            customPresetSaveNameSetting
+            customPresetSaveNameSetting,
+            customRefreshPresetsSetting
         };
                 
         return new Setting[] {
             customPresetSaveHeaderSetting,
             customPresetSaveBtnSignal,
-            customPresetSaveNameSetting
+            customPresetSaveNameSetting,
+            customRefreshPresetsSetting
         };
     }
     
@@ -151,6 +158,13 @@ public class CustomPresetSaver {
      */
     public static Setting getCustomPresetSaveNameSetting() {
         return customPresetSaveNameSetting;
+    }
+
+    /**
+     * Gets the refresh presets setting
+     */
+    public static Setting getCustomRefreshPresetsSetting() {
+        return customRefreshPresetsSetting;
     }
 
     // Show / Hide settings

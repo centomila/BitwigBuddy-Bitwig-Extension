@@ -30,11 +30,11 @@ public class ModeSelectSettings {
     }
 
     private static void initModeSelectSettings(String[] MODE_SELECT_OPTIONS) {
-        spacerSelectModSetting = (Setting) createStringSetting(
-                titleWithLine("MODE SELECT ------------------------------"),
-                CATEGORY_MODE_SELECT, 0,
-                "---------------------------------------------------");
-        disableSetting(spacerSelectModSetting);
+        // spacerSelectModSetting = (Setting) createStringSetting(
+        //         titleWithLine("MODE SELECT ------------------------------"),
+        //         CATEGORY_MODE_SELECT, 0,
+        //         "---------------------------------------------------");
+        // disableSetting(spacerSelectModSetting);
 
         modeGenerateEditToggleSetting = (Setting) createEnumSetting("Generate/Edit Mode", CATEGORY_MODE_SELECT,
                 MODE_SELECT_OPTIONS,

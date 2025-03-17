@@ -68,7 +68,7 @@ public class MoveStepsHandler {
         SettingsHelper.disableSetting(spacerMoveSteps);
         // Replace direct call with SettingsHelper
         moveRotateStepsSetting = (Setting) SettingsHelper.createEnumSetting(
-                "Move/Rotate",
+                "Move / Rotate",
                 CATEGORY_MOVE_STEPS,
                 MOVE_MODES,
                 DEFAULT_MOVE_MODE);
