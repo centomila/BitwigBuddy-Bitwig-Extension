@@ -858,6 +858,10 @@ public class MacroActionSettings {
         }
         executeInstantMacroSignal.show();
         clearAllInstantMacroLines.show();
+        
+        // Always show stop controls when Instant Macro is visible
+        macroSpacerSetting.show();
+        macroStopBtnSignalSetting.show();
     }
 
     public static void hideInstantMacro() {
@@ -894,13 +898,13 @@ public class MacroActionSettings {
             macroDescriptionSettings[i].hide();
             macroAuthorSettings[i].hide();
         }
+        // Hide instant macro section
+        hideInstantMacro();
 
         // Show stop button
         macroSpacerSetting.show();
         macroStopBtnSignalSetting.show();
 
-        // Hide instant macro section
-        hideInstantMacro();
     }
 
     /**
