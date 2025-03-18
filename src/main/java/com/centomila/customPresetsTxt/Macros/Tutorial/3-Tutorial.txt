@@ -3,8 +3,7 @@ Description: ""
 Author: "Centomila"
 
 // This force to hide the BitwigBuddy Panel to avoid Bitwig focus issues
-Full screen
-Full screen
+BB Close Panel
 Message ("I will delete all the tracks... now!")
 Wait (1000)
 Message ("First. Let's go to Mixer mode")

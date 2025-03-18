@@ -245,6 +245,7 @@ public class ExecuteBBMacros {
             case "Message":
                 handleMessage(params);
                 break;
+            case "BB Macro":
             case "Macro":
                 handleMacro(params, extension);
                 break;
@@ -257,9 +258,13 @@ public class ExecuteBBMacros {
             case "BB Toggle Launcher Arranger Mode":
                 handleToggleLauncherArrangerMode(extension);
                 break;
+            case "BB Close Panel":
+                handleCloseBBPanel(extension);
+                break;
             case "Transport Position":
                 handleTransportPosition(params, extension);
                 break;
+            
             default:
                 throw new IllegalArgumentException("Unknown action: " + actionId);
         }
@@ -706,5 +711,12 @@ public class ExecuteBBMacros {
             trackIndex = 0;
         }
         return trackIndex;
+    }
+
+    private static void handleCloseBBPanel(BitwigBuddyExtension extension) {
+        // Using actions, open the export audio panel and then send escape (still with bitwig actions)
+        
+        extension.getApplication().getAction("Export Audio").invoke();
+        extension.getApplication().escape();
     }
 }

@@ -54,7 +54,8 @@
 
 | **Bitwig Buddy Panel**                       | Description                                                   | Example                                    |
 |----------------------------------------------|---------------------------------------------------------------|--------------------------------------------|
-| **BB Macro**                                 | Execute a Bitwig Buddy Macro                                  |_BB Macro Message ("My Message")_           |
+| **BB Macro**                                 | Execute a BitwigBuddy Macro                                   |_BB Macro Message ("My Message")_           |
+| **BB Close Panel **                          | Close the BitwigBuddy Panel to avoid problems on focusing     |_BB Close Panel_                            |
 | **BB Arranger Mode**                         | Switches Bitwig Buddy to Arranger                             |                                            |
 | **BB Launcher Mode**                         | Switches Bitwig Buddy to Launcher                             |                                            |
 | **BB Toggle Launcher Arranger Mode**         | Toggles Bitwig Buddy between Launcher and Arranger Mode       |                                            |

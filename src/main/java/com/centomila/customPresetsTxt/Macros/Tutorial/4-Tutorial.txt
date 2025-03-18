@@ -27,4 +27,3 @@ arranger_zoom_to_fit
 Wait (3000)
 Message ("I have your attention now? :)")
 Wait (3000)
-Message ("END OF PATREON DEMO")
