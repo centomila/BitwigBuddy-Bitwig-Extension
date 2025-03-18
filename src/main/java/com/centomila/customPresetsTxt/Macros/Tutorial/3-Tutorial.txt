@@ -20,8 +20,12 @@ Select All
 Wait (1000)
 Message ("Aaaand... delete!")
 Wait (3000)
-Message ("I said... Delete! (Macro commands are Case Sensitive!)")
+Message ("Nothing happened? Maybe commands are Case Sensitive?")
+Wait (3000)
+Message ("I said... Delete!")
 Wait(1000)
 Delete
 Wait(3000)
 Message ("Tadaaa!")
+Wait(1000)
+Macro ("Tutorial/4-Tutorial")

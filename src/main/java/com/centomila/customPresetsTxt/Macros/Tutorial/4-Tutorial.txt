@@ -1,0 +1,30 @@
+Macro: "4-Tutorial"
+Description: ""
+Author: "Centomila"
+
+
+Message ("You are not entertained?" Let me show off a bit...)
+Wait (1000)
+Message ("First. Let's go to other view")
+Wait (1000)
+Switch to Mode 1
+Wait
+Message ("We need some tracks...")
+Wait (1000)
+focus_track_header_area
+Wait (1000)
+Message ("Let's do it!")
+Macro ("Create 8 Tracks")
+Wait (1000)
+Message ("Much better!")
+Wait (1000)
+Message ("Now let's add some cue markers")
+Wait (1000)
+Macro ("Arrangement/Arrangement - Melodic Techno Original Mix")
+Wait (1000)
+Message ("Zoom to Fit the arranger...")
+arranger_zoom_to_fit
+Wait (3000)
+Message ("I have your attention now? :)")
+Wait (3000)
+Message ("END OF PATREON DEMO")
