@@ -83,7 +83,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.sceneBank = host.createSceneBank(128);
 
       // Device Matcher
-      this.trackBank = host.createTrackBank(128, 0, 128);
+      this.trackBank = host.createTrackBank(128, 0, 128); // Evaluate to change to createMainTrackBank in the future
       this.deviceBank = this.cursorTrack.createDeviceBank(1);
       this.drumPadBank = deviceBank.getDevice(0).createDrumPadBank(128);
 

@@ -50,10 +50,11 @@
 | **Step Selected Repeat Count**               | Sets the repeat count for selected notes                      | _Step Selected Repeat Count (4)_           |
 | **Step Selected Repeat Curve**               | Sets the repeat timing curve for selected notes               | _Step Selected Repeat Curve (0.5)_         |
 | **Step Selected Repeat Velocity Curve**      | Sets the repeat velocity curve for selected notes            | _Step Selected Repeat Velocity Curve (0.3)_ |
-| **Step Selected Repeat Velocity End**        | Sets the end velocity for note repeats                       | _Step Selected Repeat Velocity End (0.4)_  |
+| **Step Selected Repeat Velocity End**        | Sets the end velocity for note repeats                       | _Step Selected Repeat Velocity End (0.4)_   |
 
 | **Bitwig Buddy Panel**                       | Description                                                   | Example                                    |
 |----------------------------------------------|---------------------------------------------------------------|--------------------------------------------|
+| **BB Macro**                                 | Execute a Bitwig Buddy Macro                                  |_BB Macro Message ("My Message")_           |
 | **BB Arranger Mode**                         | Switches Bitwig Buddy to Arranger                             |                                            |
 | **BB Launcher Mode**                         | Switches Bitwig Buddy to Launcher                             |                                            |
 | **BB Toggle Launcher Arranger Mode**         | Toggles Bitwig Buddy between Launcher and Arranger Mode       |                                            |

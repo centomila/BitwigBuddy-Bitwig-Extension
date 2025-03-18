@@ -24,7 +24,7 @@ Follow these steps to install BitwigBuddy:
 BitwigBuddy comes with numerous predefined rhythmic and melodic presets for quick pattern generation.
 
 #### Preset Mode Panels
-
+![alt text](GenerateEditMacro.png)
 - **Generate/Edit/Macro Mode:** Set this to "Generate" to create patterns.
 - **Destination:**
   - **Launcher:** Generated pattern is placed in the Clip Launcher view.
@@ -103,33 +103,66 @@ Note Length: 1/16
 
 ### 🎼 What is a Macro?
 
-Macros in BitwigBuddy automate sequences of native Bitwig actions combined with custom commands, streamlining complex or repetitive tasks.
+Macros in BitwigBuddy automate sequences of native Bitwig actions combined with custom commands, streamlining complex or repetitive tasks. Bitwig Actions correspond almost entirely to the list of Bitwig keyboard shortcut commands, including the not mapped ones.
 
 #### Macro Panels
 
-- **Select Macro:** Choose macro sequences to execute.
+
+##### Macro 1-4
+
+Macros stored in the `BitwigBuddy/Macros` folder.
+
+![alt text](Images/Macro1.png)
+
+- **Show Slots** Change slot view, switch to Instant Macro mode or hybrid mode.
+- **Select Macro 1** Choose macro sequences to execute.
+- **Open Macro 1 File** Open the selected macro file in the default text editor.
+  - You can edit your file and save it to apply changes. No need to restart BitwigBuddy.
+- **Macro 1 Description** Display the description of the selected macro.
+- **Macro 1 Author** Display the author of the selected macro.
+- **Execute Macro 1** Execute the selected macro.
+- **Stop All Macros** Stop the execution of all macros.
+
+
+##### Instant Macro
+
+Define up to 8 quick-execute actions.
+
 - **Instant Macro:** Define up to 8 quick-execute actions.
-- **Macro Execution Controls:** Execute, stop, or manage macros.
+- 
 
 #### Preset Folder
-Store macros as `.txt` files in the `BitwigBuddy/Macros` folder.
 
-#### Example Macros Included
-
-- **Create 8 Tracks:** Quickly sets up instrument and audio tracks.
-- **Arrangement - Pop:** Auto-generates pop music structure cue markers.
-- **Rename Loop Incremental:** Automatically renames multiple tracks incrementally.
+Store macros as `.txt` files in the `BitwigBuddy/Macros` folder. You can also use subfolders for organization.
 
 #### Macro Syntax
 
-Macros are written as commands, each line is an action. Commands with parameters require parentheses:
+Macros are written as commands, each line is an action. Commands include all Bitwig Actions and additional functions specifically made for this mode.
+
+Notes:
+- Commands are case-sensitive.
+- Many additional commands require parameters in parentheses.
+  - Parameters can be "Strings", Int (-1, 0, 1, 2, 3 etc), Float (-2.5, 0.0, 1.2, 420.42 etc), or Boolean (true/false).
+- Some actions require the correct Bitwig view to be in focus (For example "Select All" has a different effect in the Arranger and Clip Launcher).
+  - To automatically close the BitwigBuddy Panel, launch the command "Full screen". You can also send it two times to go back to the previous window mode.
+
+Every Macro starts with some meta tags that define the name and description of the macro. These are not commands and are used to identify the macro in the list.
+
+```MyMacro.txt
+Macro: "Macro Name"
+Description: "Macro Description/Instruction/Notes"
+Author: "Author Name"
+```
+
+
 
 Single parameter example:
+
 ```
 Message ("Hello World")
 ```
 
-Multiple parameters separated by commas:
+Multiple parameters separated by commas example:
 
 ```
 Insert File (3,"C:\midi\file.mid")
