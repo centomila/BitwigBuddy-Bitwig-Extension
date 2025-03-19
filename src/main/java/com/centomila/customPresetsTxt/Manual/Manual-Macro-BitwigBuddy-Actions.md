@@ -23,6 +23,7 @@
 | **Track Select**                             | Selects a track by index                                      |                                            |
 | **Insert Device**                            | Inserts a Bitwig device on the current track as last          |_Insert Device (Drum Machine)_              |
 | **Insert VST3**                              | Inserts a VST3 on the current track as last                   |_Insert VST3 (Drum Machine)_                |
+| **Insert Drum Bank**                         | Inserts a blank drum bank in the selected drum machine device |_Insert Drum Bank ("C#2")_                  |
 | **Arranger Loop Start**                      | Sets the arranger loop start position                         |                                            |
 | **Arranger Loop End**                        | Sets the arranger loop duration                               |                                            |
 | **Time Signature**                           | Sets the time signature                                       |_Time Signature (3/4)_                      |

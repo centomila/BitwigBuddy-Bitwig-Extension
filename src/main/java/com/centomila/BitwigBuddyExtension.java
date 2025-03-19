@@ -89,6 +89,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.trackBank = host.createTrackBank(128, 0, 128); // Evaluate to change to createMainTrackBank in the future
       this.deviceBank = this.cursorTrack.createDeviceBank(128);
       this.drumPadBank = deviceBank.getDevice(0).createDrumPadBank(128);
+      
 
       this.cursorDeviceSlot = cursorTrack.createCursorDevice();
       
@@ -96,6 +97,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       // This makes sure the track bank tracks the selected track in Bitwig
       this.trackBank.followCursorTrack(cursorTrack);
       
+         
       
       this.deviceBank.getDeviceChain().name().markInterested();
       this.deviceBank.getDeviceChain().exists().markInterested();
@@ -135,6 +137,12 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.sceneBank.cursorIndex().markInterested();
       this.sceneBank.scrollPosition().markInterested();
 
+      this.drumPadBank.scrollPosition().markInterested();
+      this.drumPadBank.itemCount().markInterested();
+      this.drumPadBank.cursorIndex().markInterested();
+      this.drumPadBank.exists().markInterested();
+
+
       this.cueMarkerBank.subscribe();
       for (int i = 0; i < 128; i++) {
          this.cueMarkerBank.getItemAt(i).name().markInterested();
@@ -162,6 +170,12 @@ public class BitwigBuddyExtension extends ControllerExtension {
          this.deviceBank.getItemAt(i).position().markInterested();
          this.deviceBank.getItemAt(i).getCursorSlot().name().markInterested();
          this.deviceBank.getItemAt(i).getCursorSlot().exists().markInterested();
+
+         this.drumPadBank.getItemAt(i).name().markInterested();
+         this.drumPadBank.getItemAt(i).exists().markInterested();
+         this.drumPadBank.getItemAt(i).color().markInterested();
+         
+
 
       }
 

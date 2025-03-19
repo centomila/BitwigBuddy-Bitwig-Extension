@@ -6,6 +6,8 @@ import static com.centomila.utils.PopupUtils.showPopup;
 import com.centomila.BitwigBuddyExtension;
 import com.centomila.ClipUtils;
 import com.centomila.ModeSelectSettings;
+import com.centomila.NoteDestinationSettings;
+import com.centomila.Utils;
 import com.bitwig.extension.controller.api.*;
 import com.bitwig.extension.api.Color;
 import com.centomila.MacroActionSettings;
@@ -229,6 +231,9 @@ public class ExecuteBBMacros {
                 break;
             case "Insert File":
                 handleInsertFile(params, extension, currentTrack);
+                break;
+            case "Insert Drum Bank":
+                handleCreateDrumBank(params, extension);
                 break;
             case "Arranger Loop Start":
                 handleArrangerLoopStart(params, extension);
@@ -719,9 +724,21 @@ public class ExecuteBBMacros {
         return trackIndex;
     }
 
+    private static void handleCreateDrumBank(String[] params, BitwigBuddyExtension extension) {
+        String noteNameFull = params[0].trim();
+        // Create a new drum pad bank with the given number of pads
+        String[] noteOctaveNoteSeparated = NoteDestinationSettings.getKeyAndOctaveFromNoteName(noteNameFull);
+        String noteName = noteOctaveNoteSeparated[0];
+        int octave = Integer.parseInt(noteOctaveNoteSeparated[1]);
+        int midiNote = Utils.getMIDINoteNumberFromStringAndOctave(noteName, octave);
+        extension.drumPadBank.scrollPosition().set(0);
+        // Load the preset in the current device
+        extension.drumPadBank.getItemAt(midiNote).insertionPoint().browse();
+        extension.application.getAction("Dialog: OK").invoke();
+    }
+
     private static void handleCloseBBPanel(BitwigBuddyExtension extension) {
-        // Using actions, open the export audio panel and then send escape (still with
-        // bitwig actions)
+        // Using actions, open the export audio panel and then send escape (still with bitwig actions)
 
         extension.getApplication().getAction("Export Audio").invoke();
         extension.getApplication().escape();
