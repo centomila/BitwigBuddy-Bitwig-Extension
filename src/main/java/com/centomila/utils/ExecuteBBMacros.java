@@ -275,6 +275,9 @@ public class ExecuteBBMacros {
             case "Transport Position":
                 handleTransportPosition(params, extension);
                 break;
+            case "Insert File In Drum Pad":
+                handleInsertFileInDrumPad(params, extension);
+                break;
 
             default:
                 throw new IllegalArgumentException("Unknown action: " + actionId);
@@ -787,5 +790,24 @@ public class ExecuteBBMacros {
 
         extension.getApplication().getAction("Export Audio").invoke();
         extension.getApplication().escape();
+    }
+
+    /**
+     * Handles inserting a file into a specific drum pad in Bitwig Studio.
+     *
+     * @param params An array of string parameters with the following elements:
+     *               - params[0]: The note name (e.g., "C3", "F#4") to identify the drum pad position
+     *               - params[1]: The file path to insert into the drum pad
+     * @param extension The BitwigBuddyExtension instance providing access to Bitwig's API
+     */
+    private static void handleInsertFileInDrumPad(String[] params, BitwigBuddyExtension extension) {
+        String noteNameFull = params[0].trim();
+        // Use the utility function to get the MIDI note number directly
+        int midiNote = Utils.getMIDINoteNumberFromString(noteNameFull);
+        extension.drumPadBank.scrollPosition().set(0);
+
+        String filePath = params[1].trim();
+        extension.drumPadBank.getItemAt(midiNote).insertionPoint().insertFile(filePath);
+        extension.getHost().println("Inserted file into drum pad: " + noteNameFull + " with file: " + filePath);
     }
 }
