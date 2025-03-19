@@ -232,11 +232,14 @@ public class ExecuteBBMacros {
             case "Insert File":
                 handleInsertFile(params, extension, currentTrack);
                 break;
-            case "Insert Drum Bank":
-                handleCreateDrumBank(params, extension);
+            case "Insert Drum Pad":
+                handleCreateDrumPad(params, extension);
                 break;
-            case "Select Drum Bank":
-                handleCreateDrumBank(params, extension);
+            case "Insert Device In Drum Pad":
+            handleInsertBitwigDeviceInDrumPad(params, extension);
+                break;
+            case "Select Drum Pad":
+                handleSelectDrumPad(params, extension);
                 break;
             case "Arranger Loop Start":
                 handleArrangerLoopStart(params, extension);
@@ -338,7 +341,7 @@ public class ExecuteBBMacros {
         extension.getLauncherOrArrangerAsClip().clipLauncherSlot().duplicateClip();
         int clipPosition = extension.getLauncherOrArrangerAsClip().clipLauncherSlot().sceneIndex().get();
         extension.sceneBank.scrollIntoView(clipPosition);
-        
+
     }
 
     private static void handleClipLoopOff(BitwigBuddyExtension extension) {
@@ -388,8 +391,8 @@ public class ExecuteBBMacros {
             extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().getItemAt(slotIndex).deleteObject();
             extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank()
                     .createEmptyClip(slotIndex, clipLength);
-                    extension.trackBank.getItemAt(currentTrack).makeVisibleInMixer();
-                    extension.trackBank.getItemAt(currentTrack).makeVisibleInArranger();
+            extension.trackBank.getItemAt(currentTrack).makeVisibleInMixer();
+            extension.trackBank.getItemAt(currentTrack).makeVisibleInArranger();
             extension.getHost().println("Created empty clip with length: " + clipLength);
         } else {
             extension.getHost().println("No clip slot selected. Please select a clip slot first.");
@@ -727,18 +730,60 @@ public class ExecuteBBMacros {
         return trackIndex;
     }
 
-    private static void handleCreateDrumBank(String[] params, BitwigBuddyExtension extension) {
+    /**
+     * @param params
+     * @param extension
+     */
+    /**
+     * Handles the creation and configuration of a drum pad in Bitwig Studio.
+     *
+     * @param params An array of string parameters with the following elements:
+     *               - params[0]: The note name (e.g., "C3", "F#4") to identify the drum pad position
+     *               - params[1]: The name to assign to the drum bank/pad
+     *               - params[2]: The hexadecimal color value (e.g., "#FF0000" for red)
+     * @param extension The BitwigBuddyExtension instance providing access to Bitwig's API
+     */
+    private static void handleCreateDrumPad(String[] params, BitwigBuddyExtension extension) {
+        String noteNameFull = params[0].trim();
+        // Use the new utility function to get the MIDI note number directly
+        int midiNote = Utils.getMIDINoteNumberFromString(noteNameFull);
+        extension.drumPadBank.scrollPosition().set(0);
+        // Open the browser and then escape to create an empty drum pad
+        extension.drumPadBank.getItemAt(midiNote).insertionPoint().browse();
+        extension.application.getAction("Dialog: OK").invoke();
+        String drumBankName = params[1].trim();
+        extension.drumPadBank.getItemAt(midiNote).name().set(drumBankName);
+        String drumBankColor = params[2].trim();
+        Color color = Color.fromHex(drumBankColor);
+        extension.drumPadBank.getItemAt(midiNote).color().set(color);
+    }
+    private static void handleInsertBitwigDeviceInDrumPad(String[] params, BitwigBuddyExtension extension) {
+        String noteNameFull = params[0].trim();
+        // Use the new utility function to get the MIDI note number directly
+        int midiNote = Utils.getMIDINoteNumberFromString(noteNameFull);
+        extension.drumPadBank.scrollPosition().set(0);
+        UUID deviceUUID = getDeviceUUID(params[1].trim());
+        if (deviceUUID != null) {
+            extension.drumPadBank.getItemAt(midiNote).insertionPoint().insertBitwigDevice(deviceUUID);
+        } else {
+            extension.getHost().println("Device not found: " + params[1]);
+            showPopup("Device not found: " + params[1]);
+        }
+    }
+
+    private static void handleSelectDrumPad(String[] params, BitwigBuddyExtension extension) {
         String noteNameFull = params[0].trim();
         // Use the new utility function to get the MIDI note number directly
         int midiNote = Utils.getMIDINoteNumberFromString(noteNameFull);
         extension.drumPadBank.scrollPosition().set(0);
         // Load the preset in the current device
-        extension.drumPadBank.getItemAt(midiNote).insertionPoint().browse();
-        extension.application.getAction("Dialog: OK").invoke();
+        extension.drumPadBank.getItemAt(midiNote).selectInEditor();
+        
     }
 
     private static void handleCloseBBPanel(BitwigBuddyExtension extension) {
-        // Using actions, open the export audio panel and then send escape (still with bitwig actions)
+        // Using actions, open the export audio panel and then send escape (still with
+        // bitwig actions)
 
         extension.getApplication().getAction("Export Audio").invoke();
         extension.getApplication().escape();

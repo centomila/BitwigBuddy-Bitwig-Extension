@@ -3,7 +3,7 @@ package com.centomila;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.CueMarker;
 import com.bitwig.extension.controller.api.CueMarkerBank;
-import com.bitwig.extension.controller.api.CursorDeviceSlot;
+import com.bitwig.extension.controller.api.CursorRemoteControlsPage;
 import com.bitwig.extension.controller.api.CursorTrack;
 import com.bitwig.extension.controller.api.DeviceBank;
 import com.bitwig.extension.controller.ControllerExtension;
@@ -15,6 +15,7 @@ import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.DrumPadBank;
 import com.bitwig.extension.controller.api.PinnableCursorDevice;
 import com.bitwig.extension.controller.api.Project;
+import com.bitwig.extension.controller.api.RemoteControl;
 import com.bitwig.extension.controller.api.SceneBank;
 import com.bitwig.extension.controller.api.TimeSignatureValue;
 import com.bitwig.extension.controller.api.TrackBank;
@@ -38,6 +39,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public Clip cursorClip;
    public Clip arrangerClip;
    public CursorTrack cursorTrack;
+   public RemoteControl remoteControl;
+   public CursorRemoteControlsPage cursorRemoteControlsPage;
    public DeviceBank deviceBank;
    public PinnableCursorDevice cursorDeviceSlot;
    public DrumPadBank drumPadBank;
@@ -90,14 +93,18 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.deviceBank = this.cursorTrack.createDeviceBank(128);
       this.drumPadBank = deviceBank.getDevice(0).createDrumPadBank(128);
       
-
       this.cursorDeviceSlot = cursorTrack.createCursorDevice();
-      
+
+      this.cursorRemoteControlsPage = this.cursorDeviceSlot.createCursorRemoteControlsPage(1);
+      this.cursorRemoteControlsPage.getParameter(0).markInterested();
+
+      this.remoteControl = cursorRemoteControlsPage.getParameter(0);
       
       // This makes sure the track bank tracks the selected track in Bitwig
       this.trackBank.followCursorTrack(cursorTrack);
       
-         
+      this.remoteControl.markInterested();
+      
       
       this.deviceBank.getDeviceChain().name().markInterested();
       this.deviceBank.getDeviceChain().exists().markInterested();
