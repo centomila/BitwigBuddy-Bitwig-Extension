@@ -48,6 +48,35 @@ public class Utils {
         return (octave + 2) * 12 + note;
     }
 
+    /**
+     * Converts a note string (e.g., "C1", "D#3", "G#-2") into a MIDI note number.
+     * 
+     * @param noteString the note string in the format "<Note><Octave>" (e.g., "C1", "D#3", "G#-2")
+     * @return the MIDI note number corresponding to the given note string
+     * @throws IllegalArgumentException if the note string is invalid
+     */
+    public static int getMIDINoteNumberFromString(String noteString) {
+        if (noteString == null || noteString.isEmpty()) {
+            throw new IllegalArgumentException("Invalid note string: " + noteString);
+        }
+
+        // Use a regular expression to extract the note name and octave
+        String regex = "^([A-Ga-g]#?|[A-Ga-g])(\\-?\\d+)$";
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regex);
+        java.util.regex.Matcher matcher = pattern.matcher(noteString);
+
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Invalid note string format: " + noteString);
+        }
+
+        // Extract the note name and octave
+        String noteName = matcher.group(1).toUpperCase(); // Group 1 is the note name
+        int octave = Integer.parseInt(matcher.group(2));  // Group 2 is the octave
+
+        // Use the existing method to calculate the MIDI note number
+        return getMIDINoteNumberFromStringAndOctave(noteName, octave);
+    }
+
     public static String[] STEPSIZE_OPTIONS = new String[] {
             "1/1", "1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1/128"
     };

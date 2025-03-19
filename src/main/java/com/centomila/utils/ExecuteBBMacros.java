@@ -235,6 +235,9 @@ public class ExecuteBBMacros {
             case "Insert Drum Bank":
                 handleCreateDrumBank(params, extension);
                 break;
+            case "Select Drum Bank":
+                handleCreateDrumBank(params, extension);
+                break;
             case "Arranger Loop Start":
                 handleArrangerLoopStart(params, extension);
                 break;
@@ -726,11 +729,8 @@ public class ExecuteBBMacros {
 
     private static void handleCreateDrumBank(String[] params, BitwigBuddyExtension extension) {
         String noteNameFull = params[0].trim();
-        // Create a new drum pad bank with the given number of pads
-        String[] noteOctaveNoteSeparated = NoteDestinationSettings.getKeyAndOctaveFromNoteName(noteNameFull);
-        String noteName = noteOctaveNoteSeparated[0];
-        int octave = Integer.parseInt(noteOctaveNoteSeparated[1]);
-        int midiNote = Utils.getMIDINoteNumberFromStringAndOctave(noteName, octave);
+        // Use the new utility function to get the MIDI note number directly
+        int midiNote = Utils.getMIDINoteNumberFromString(noteNameFull);
         extension.drumPadBank.scrollPosition().set(0);
         // Load the preset in the current device
         extension.drumPadBank.getItemAt(midiNote).insertionPoint().browse();
