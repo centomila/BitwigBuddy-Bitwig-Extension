@@ -172,7 +172,9 @@ public class ReturnVST3StringID {
             { "Massive", "5653544E694D616D6173736976650000" },
             { "Pigments", "41727475415649534B61743150726F63" },
             { "Reason Rack Plugin", "D75F65D1581F203A8D793B3C01583323" },
-            { "Reason Rack Plugin Effect", "C64E2730B0614A6EAEFC432F9CF6151A" }
+            { "Reason Rack Plugin Effect", "C64E2730B0614A6EAEFC432F9CF6151A" },
+            { "Serum", "56535458667358736572756D00000000" },
+            { "Serum 2", "56534558667350736572756D20320000" }
     };
 
     // Create a method that returns the string of a device given its name

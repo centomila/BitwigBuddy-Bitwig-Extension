@@ -232,14 +232,20 @@ public class ExecuteBBMacros {
             case "Insert File":
                 handleInsertFile(params, extension, currentTrack);
                 break;
-            case "Insert Drum Pad":
+            case "Drum Pad Insert Empty":
                 handleCreateDrumPad(params, extension);
                 break;
-            case "Insert Device In Drum Pad":
-            handleInsertBitwigDeviceInDrumPad(params, extension);
+            case "Drum Pad Insert Device":
+                handleInsertBitwigDeviceInDrumPad(params, extension);
                 break;
-            case "Select Drum Pad":
+            case "Drum Pad Insert File":
+                handleInsertFileInDrumPad(params, extension);
+                break;
+            case "Drum Pad Select":
                 handleSelectDrumPad(params, extension);
+                break;
+            case "Drum Pad Insert VST3":
+                handleInsertVST3InDrumPad(params, extension);
                 break;
             case "Arranger Loop Start":
                 handleArrangerLoopStart(params, extension);
@@ -274,9 +280,6 @@ public class ExecuteBBMacros {
                 break;
             case "Transport Position":
                 handleTransportPosition(params, extension);
-                break;
-            case "Insert File In Drum Pad":
-                handleInsertFileInDrumPad(params, extension);
                 break;
 
             default:
@@ -740,11 +743,14 @@ public class ExecuteBBMacros {
     /**
      * Handles the creation and configuration of a drum pad in Bitwig Studio.
      *
-     * @param params An array of string parameters with the following elements:
-     *               - params[0]: The note name (e.g., "C3", "F#4") to identify the drum pad position
-     *               - params[1]: The name to assign to the drum bank/pad
-     *               - params[2]: The hexadecimal color value (e.g., "#FF0000" for red)
-     * @param extension The BitwigBuddyExtension instance providing access to Bitwig's API
+     * @param params    An array of string parameters with the following elements:
+     *                  - params[0]: The note name (e.g., "C3", "F#4") to identify
+     *                  the drum pad position
+     *                  - params[1]: The name to assign to the drum bank/pad
+     *                  - params[2]: The hexadecimal color value (e.g., "#FF0000"
+     *                  for red)
+     * @param extension The BitwigBuddyExtension instance providing access to
+     *                  Bitwig's API
      */
     private static void handleCreateDrumPad(String[] params, BitwigBuddyExtension extension) {
         String noteNameFull = params[0].trim();
@@ -760,6 +766,7 @@ public class ExecuteBBMacros {
         Color color = Color.fromHex(drumBankColor);
         extension.drumPadBank.getItemAt(midiNote).color().set(color);
     }
+
     private static void handleInsertBitwigDeviceInDrumPad(String[] params, BitwigBuddyExtension extension) {
         String noteNameFull = params[0].trim();
         // Use the new utility function to get the MIDI note number directly
@@ -781,7 +788,7 @@ public class ExecuteBBMacros {
         extension.drumPadBank.scrollPosition().set(0);
         // Load the preset in the current device
         extension.drumPadBank.getItemAt(midiNote).selectInEditor();
-        
+
     }
 
     private static void handleCloseBBPanel(BitwigBuddyExtension extension) {
@@ -795,10 +802,12 @@ public class ExecuteBBMacros {
     /**
      * Handles inserting a file into a specific drum pad in Bitwig Studio.
      *
-     * @param params An array of string parameters with the following elements:
-     *               - params[0]: The note name (e.g., "C3", "F#4") to identify the drum pad position
-     *               - params[1]: The file path to insert into the drum pad
-     * @param extension The BitwigBuddyExtension instance providing access to Bitwig's API
+     * @param params    An array of string parameters with the following elements:
+     *                  - params[0]: The note name (e.g., "C3", "F#4") to identify
+     *                  the drum pad position
+     *                  - params[1]: The file path to insert into the drum pad
+     * @param extension The BitwigBuddyExtension instance providing access to
+     *                  Bitwig's API
      */
     private static void handleInsertFileInDrumPad(String[] params, BitwigBuddyExtension extension) {
         String noteNameFull = params[0].trim();
@@ -809,5 +818,31 @@ public class ExecuteBBMacros {
         String filePath = params[1].trim();
         extension.drumPadBank.getItemAt(midiNote).insertionPoint().insertFile(filePath);
         extension.getHost().println("Inserted file into drum pad: " + noteNameFull + " with file: " + filePath);
+    }
+
+    /**
+     * Handles inserting a VST3 plugin into a specific drum pad in Bitwig Studio.
+     *
+     * @param params    An array of string parameters with the following elements:
+     *                  - params[0]: The note name (e.g., "C3", "F#4") to identify the drum pad position
+     *                  - params[1]: The name of the VST3 plugin to insert
+     * @param extension The BitwigBuddyExtension instance providing access to Bitwig's API
+     */
+    private static void handleInsertVST3InDrumPad(String[] params, BitwigBuddyExtension extension) {
+        String noteNameFull = params[0].trim();
+        // Use the utility function to get the MIDI note number directly
+        int midiNote = Utils.getMIDINoteNumberFromString(noteNameFull);
+        extension.drumPadBank.scrollPosition().set(0);
+
+        String vst3Name = params[1].trim();
+        String vst3StringID = ReturnVST3StringID.getVST3StringID(vst3Name);
+
+        if (vst3StringID != null) {
+            extension.drumPadBank.getItemAt(midiNote).insertionPoint().insertVST3Device(vst3StringID);
+            extension.getHost().println("Inserted VST3 into drum pad: " + noteNameFull + " with VST3: " + vst3Name);
+        } else {
+            extension.getHost().println("VST3 not found: " + vst3Name);
+            showPopup("VST3 not found: " + vst3Name);
+        }
     }
 }
