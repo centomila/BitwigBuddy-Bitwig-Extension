@@ -264,7 +264,7 @@ public class ExecuteBBMacros {
             case "Transport Position":
                 handleTransportPosition(params, extension);
                 break;
-            
+
             default:
                 throw new IllegalArgumentException("Unknown action: " + actionId);
         }
@@ -323,10 +323,14 @@ public class ExecuteBBMacros {
 
     private static void handleClipSelect(BitwigBuddyExtension extension) {
         extension.getLauncherOrArrangerAsClip().clipLauncherSlot().select();
+
     }
 
     private static void handleClipDuplicate(BitwigBuddyExtension extension) {
         extension.getLauncherOrArrangerAsClip().clipLauncherSlot().duplicateClip();
+        int clipPosition = extension.getLauncherOrArrangerAsClip().clipLauncherSlot().sceneIndex().get();
+        extension.sceneBank.scrollIntoView(clipPosition);
+        
     }
 
     private static void handleClipLoopOff(BitwigBuddyExtension extension) {
@@ -376,6 +380,8 @@ public class ExecuteBBMacros {
             extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().getItemAt(slotIndex).deleteObject();
             extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank()
                     .createEmptyClip(slotIndex, clipLength);
+                    extension.trackBank.getItemAt(currentTrack).makeVisibleInMixer();
+                    extension.trackBank.getItemAt(currentTrack).makeVisibleInArranger();
             extension.getHost().println("Created empty clip with length: " + clipLength);
         } else {
             extension.getHost().println("No clip slot selected. Please select a clip slot first.");
@@ -714,8 +720,9 @@ public class ExecuteBBMacros {
     }
 
     private static void handleCloseBBPanel(BitwigBuddyExtension extension) {
-        // Using actions, open the export audio panel and then send escape (still with bitwig actions)
-        
+        // Using actions, open the export audio panel and then send escape (still with
+        // bitwig actions)
+
         extension.getApplication().getAction("Export Audio").invoke();
         extension.getApplication().escape();
     }

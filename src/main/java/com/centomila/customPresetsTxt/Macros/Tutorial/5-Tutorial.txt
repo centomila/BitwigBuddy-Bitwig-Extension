@@ -3,5 +3,15 @@ Description: ""
 Author: "Centomila"
 
 
-Message ("Weeeeeeeeeeeeeee!")
+Message ("Let's have some fun!")
+BB Close Panel
+toggle_arranger
+focus_track_header_area
+Right
 Wait (1000)
+Clip Create (1, 16)
+Wait (1000)
+Clip Select
+Message ("Weeeeeeeeeeeeeee!")
+Wait (50)
+Macro ("Rainbow Clip")

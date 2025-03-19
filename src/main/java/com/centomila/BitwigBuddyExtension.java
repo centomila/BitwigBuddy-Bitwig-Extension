@@ -3,6 +3,7 @@ package com.centomila;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.CueMarker;
 import com.bitwig.extension.controller.api.CueMarkerBank;
+import com.bitwig.extension.controller.api.CursorDeviceSlot;
 import com.bitwig.extension.controller.api.CursorTrack;
 import com.bitwig.extension.controller.api.DeviceBank;
 import com.bitwig.extension.controller.ControllerExtension;
@@ -12,6 +13,7 @@ import com.bitwig.extension.controller.api.Clip;
 import com.bitwig.extension.controller.api.ClipLauncherSlot;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.DrumPadBank;
+import com.bitwig.extension.controller.api.PinnableCursorDevice;
 import com.bitwig.extension.controller.api.Project;
 import com.bitwig.extension.controller.api.SceneBank;
 import com.bitwig.extension.controller.api.TimeSignatureValue;
@@ -37,6 +39,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public Clip arrangerClip;
    public CursorTrack cursorTrack;
    public DeviceBank deviceBank;
+   public PinnableCursorDevice cursorDeviceSlot;
    public DrumPadBank drumPadBank;
    public Arranger arranger;
    public Transport transport;
@@ -80,15 +83,26 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.project = host.getProject();
       this.clipLauncherSlot = cursorClip.clipLauncherSlot();
       this.timeSignature = transport.timeSignature();
-      this.sceneBank = host.createSceneBank(128);
+      this.sceneBank = host.createSceneBank(1);
 
       // Device Matcher
       this.trackBank = host.createTrackBank(128, 0, 128); // Evaluate to change to createMainTrackBank in the future
-      this.deviceBank = this.cursorTrack.createDeviceBank(1);
+      this.deviceBank = this.cursorTrack.createDeviceBank(128);
       this.drumPadBank = deviceBank.getDevice(0).createDrumPadBank(128);
 
+      this.cursorDeviceSlot = cursorTrack.createCursorDevice();
+      
+      
       // This makes sure the track bank tracks the selected track in Bitwig
       this.trackBank.followCursorTrack(cursorTrack);
+      
+      
+      this.deviceBank.getDeviceChain().name().markInterested();
+      this.deviceBank.getDeviceChain().exists().markInterested();
+      this.deviceBank.cursorIndex().markInterested();
+      this.deviceBank.scrollPosition().markInterested();
+      this.deviceBank.itemCount().markInterested();
+      this.deviceBank.exists().markInterested();
       
 
       this.cueMarkerBank = arranger.createCueMarkerBank(128);
@@ -128,7 +142,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
          this.cueMarkerBank.getItemAt(i).exists().markInterested();
          this.cueMarkerBank.getItemAt(i).position().markInterested();
          
-
          this.trackBank.getItemAt(i).name().markInterested();
          this.trackBank.getItemAt(i).color().markInterested();
          this.trackBank.getItemAt(i).exists().markInterested();
@@ -138,16 +151,17 @@ public class BitwigBuddyExtension extends ControllerExtension {
          this.trackBank.getItemAt(i).arm().markInterested();
          this.trackBank.getItemAt(i).volume().markInterested();
          this.trackBank.getItemAt(i).pan().markInterested();
-
          
          this.trackBank.getItemAt(i).clipLauncherSlotBank().cursorIndex().markInterested();
          this.trackBank.getItemAt(i).clipLauncherSlotBank().scrollPosition().markInterested();
          this.trackBank.getItemAt(i).clipLauncherSlotBank().itemCount().markInterested();
          this.trackBank.getItemAt(i).clipLauncherSlotBank().exists().markInterested();
 
-         
-
-
+         this.deviceBank.getItemAt(i).name().markInterested();
+         this.deviceBank.getItemAt(i).exists().markInterested();
+         this.deviceBank.getItemAt(i).position().markInterested();
+         this.deviceBank.getItemAt(i).getCursorSlot().name().markInterested();
+         this.deviceBank.getItemAt(i).getCursorSlot().exists().markInterested();
 
       }
 

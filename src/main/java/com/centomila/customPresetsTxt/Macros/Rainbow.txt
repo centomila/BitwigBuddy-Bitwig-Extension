@@ -1,198 +1,199 @@
 Macro: "Rainbow Clip"
-Descritpion: "Duplicate the selected clip 64 times with rainbow colors"
+Descritpion: "Clip Duplicate the selected clip 64 times with rainbow colors"
 Author: "Centomila"
 
+BB Close Panel
 Clip Rename (FF0000 - Red)
 Clip Color (FF0000)
-Duplicate
+Clip Duplicate
 Clip Rename (FF1100 - Red)
 Clip Color (FF1100)
-Duplicate
+Clip Duplicate
 Clip Rename (FF2200 - Red)
 Clip Color (FF2200)
-Duplicate
+Clip Duplicate
 Clip Rename (FF3300 - Red)
 Clip Color (FF3300)
-Duplicate
+Clip Duplicate
 Clip Rename (FF4400 - Red)
 Clip Color (FF4400)
-Duplicate
+Clip Duplicate
 Clip Rename (FF5500 - Red)
 Clip Color (FF5500)
-Duplicate
+Clip Duplicate
 Clip Rename (FF6600 - Orange)
 Clip Color (FF6600)
-Duplicate
+Clip Duplicate
 Clip Rename (FF7700 - Orange)
 Clip Color (FF7700)
-Duplicate
+Clip Duplicate
 Clip Rename (FF8800 - Orange)
 Clip Color (FF8800)
-Duplicate
+Clip Duplicate
 Clip Rename (FF9900 - Orange)
 Clip Color (FF9900)
-Duplicate
+Clip Duplicate
 Clip Rename (FFAA00 - Orange)
 Clip Color (FFAA00)
-Duplicate
+Clip Duplicate
 Clip Rename (FFBB00 - Orange)
 Clip Color (FFBB00)
-Duplicate
+Clip Duplicate
 Clip Rename (FFCC00 - Orange)
 Clip Color (FFCC00)
-Duplicate
+Clip Duplicate
 Clip Rename (FFDD00 - Yellow)
 Clip Color (FFDD00)
-Duplicate
+Clip Duplicate
 Clip Rename (FFEE00 - Yellow)
 Clip Color (FFEE00)
-Duplicate
+Clip Duplicate
 Clip Rename (FFFF00 - Yellow)
 Clip Color (FFFF00)
-Duplicate
+Clip Duplicate
 Clip Rename (EEFF00 - Yellow)
 Clip Color (EEFF00)
-Duplicate
+Clip Duplicate
 Clip Rename (DDFF00 - Yellow)
 Clip Color (DDFF00)
-Duplicate
+Clip Duplicate
 Clip Rename (CCFF00 - Yellow)
 Clip Color (CCFF00)
-Duplicate
+Clip Duplicate
 Clip Rename (BBFF00 - Yellow)
 Clip Color (BBFF00)
-Duplicate
+Clip Duplicate
 Clip Rename (AAFF00 - Yellow)
 Clip Color (AAFF00)
-Duplicate
+Clip Duplicate
 Clip Rename (99FF00 - Green)
 Clip Color (99FF00)
-Duplicate
+Clip Duplicate
 Clip Rename (88FF00 - Green)
 Clip Color (88FF00)
-Duplicate
+Clip Duplicate
 Clip Rename (77FF00 - Green)
 Clip Color (77FF00)
-Duplicate
+Clip Duplicate
 Clip Rename (66FF00 - Green)
 Clip Color (66FF00)
-Duplicate
+Clip Duplicate
 Clip Rename (55FF00 - Green)
 Clip Color (55FF00)
-Duplicate
+Clip Duplicate
 Clip Rename (44FF00 - Green)
 Clip Color (44FF00)
-Duplicate
+Clip Duplicate
 Clip Rename (33FF00 - Green)
 Clip Color (33FF00)
-Duplicate
+Clip Duplicate
 Clip Rename (22FF00 - Green)
 Clip Color (22FF00)
-Duplicate
+Clip Duplicate
 Clip Rename (11FF00 - Green)
 Clip Color (11FF00)
-Duplicate
+Clip Duplicate
 Clip Rename (00FF00 - Green)
 Clip Color (00FF00)
-Duplicate
+Clip Duplicate
 Clip Rename (00FF11 - Green)
 Clip Color (00FF11)
-Duplicate
+Clip Duplicate
 Clip Rename (00FF22 - Green)
 Clip Color (00FF22)
-Duplicate
+Clip Duplicate
 Clip Rename (00FF33 - Green)
 Clip Color (00FF33)
-Duplicate
+Clip Duplicate
 Clip Rename (00FF44 - Green)
 Clip Color (00FF44)
-Duplicate
+Clip Duplicate
 Clip Rename (00FF55 - Green)
 Clip Color (00FF55)
-Duplicate
+Clip Duplicate
 Clip Rename (00FF66 - Green)
 Clip Color (00FF66)
-Duplicate
+Clip Duplicate
 Clip Rename (00FF77 - Green)
 Clip Color (00FF77)
-Duplicate
+Clip Duplicate
 Clip Rename (00FF88 - Green)
 Clip Color (00FF88)
-Duplicate
+Clip Duplicate
 Clip Rename (00FF99 - Green)
 Clip Color (00FF99)
-Duplicate
+Clip Duplicate
 Clip Rename (00FFAA - Green)
 Clip Color (00FFAA)
-Duplicate
+Clip Duplicate
 Clip Rename (00FFBB - Green)
 Clip Color (00FFBB)
-Duplicate
+Clip Duplicate
 Clip Rename (00FFCC - Green)
 Clip Color (00FFCC)
-Duplicate
+Clip Duplicate
 Clip Rename (00FFDD - Green)
 Clip Color (00FFDD)
-Duplicate
+Clip Duplicate
 Clip Rename (00FFEE - Green)
 Clip Color (00FFEE)
-Duplicate
+Clip Duplicate
 Clip Rename (00FFFF - Cyan)
 Clip Color (00FFFF)
-Duplicate
+Clip Duplicate
 Clip Rename (00EEFF - Cyan)
 Clip Color (00EEFF)
-Duplicate
+Clip Duplicate
 Clip Rename (00DDFF - Cyan)
 Clip Color (00DDFF)
-Duplicate
+Clip Duplicate
 Clip Rename (00CCFF - Cyan)
 Clip Color (00CCFF)
-Duplicate
+Clip Duplicate
 Clip Rename (00BBFF - Cyan)
 Clip Color (00BBFF)
-Duplicate
+Clip Duplicate
 Clip Rename (00AAFF - Cyan)
 Clip Color (00AAFF)
-Duplicate
+Clip Duplicate
 Clip Rename (0099FF - Cyan)
 Clip Color (0099FF)
-Duplicate
+Clip Duplicate
 Clip Rename (0088FF - Cyan)
 Clip Color (0088FF)
-Duplicate
+Clip Duplicate
 Clip Rename (0077FF - Cyan)
 Clip Color (0077FF)
-Duplicate
+Clip Duplicate
 Clip Rename (0066FF - Cyan)
 Clip Color (0066FF)
-Duplicate
+Clip Duplicate
 Clip Rename (0055FF - Cyan)
 Clip Color (0055FF)
-Duplicate
+Clip Duplicate
 Clip Rename (0044FF - Cyan)
 Clip Color (0044FF)
-Duplicate
+Clip Duplicate
 Clip Rename (0033FF - Cyan)
 Clip Color (0033FF)
-Duplicate
+Clip Duplicate
 Clip Rename (0022FF - Cyan)
 Clip Color (0022FF)
-Duplicate
+Clip Duplicate
 Clip Rename (0011FF - Cyan)
 Clip Color (0011FF)
-Duplicate
+Clip Duplicate
 Clip Rename (0000FF - Blue)
 Clip Color (0000FF)
-Duplicate
+Clip Duplicate
 Clip Rename (1100FF - Blue)
 Clip Color (1100FF)
-Duplicate
+Clip Duplicate
 Clip Rename (2200FF - Blue)
 Clip Color (2200FF)
-Duplicate
+Clip Duplicate
 Clip Rename (3300FF - Blue)
 Clip Color (3300FF)
-Duplicate
+Clip Duplicate
 
 Message ("Macro Finished")
