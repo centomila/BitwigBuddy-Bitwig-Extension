@@ -24,6 +24,7 @@ public class DeviceMatcherDrumMachine {
             drumPad.playingNotes().markInterested();
             
             
+            
             final int drumPadIndex = i;
             // popup the selected drumpad
             drumPad.addIsSelectedInEditorObserver((isSelected) -> {
@@ -41,6 +42,8 @@ public class DeviceMatcherDrumMachine {
         ((EnumValue) NoteDestinationSettings.learnNoteSetting).addValueObserver(value -> {
             if (value.equals(NoteDestinationSettings.LEARN_NOTE_OPTIONS[2])) {
                 device.subscribe();
+                extension.drumPadBank.scrollPosition().set(0);
+
             } else {
                 if (device.isSubscribed()) {
                     device.unsubscribe();

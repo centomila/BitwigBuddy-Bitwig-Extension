@@ -92,6 +92,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.trackBank = host.createTrackBank(128, 0, 128); // Evaluate to change to createMainTrackBank in the future
       this.deviceBank = this.cursorTrack.createDeviceBank(128);
       this.drumPadBank = deviceBank.getDevice(0).createDrumPadBank(128);
+      this.drumPadBank.scrollPosition().set(0);
       
       this.cursorDeviceSlot = cursorTrack.createCursorDevice();
 
