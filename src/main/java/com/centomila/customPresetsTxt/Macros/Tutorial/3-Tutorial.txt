@@ -4,25 +4,24 @@ Author: "Centomila"
 
 // This force to hide the BitwigBuddy Panel to avoid Bitwig focus issues
 BB Close Panel
-Message ("I will delete all the tracks... now!")
-Wait (1000)
 Message ("First. Let's go to Mixer mode")
 Wait (1000)
 Switch to Mode 2
 Wait
-Message ("Then i focus the track header area")
+Message ("Then I focus the track header area")
 Wait (1000)
 focus_track_header_area
 Wait (1000)
-Message ("I select all the tracks")
+Message ("... select all the tracks ...")
 Select All
-Wait (1000)
-Message ("Aaaand... delete!")
+Wait (1500)
+delete
+Message ("... aaaand... delete!")
 Wait (3000)
 Message ("Nothing happened? Maybe commands are Case Sensitive?")
 Wait (3000)
 Message ("I said... Delete!")
-Wait(1000)
+Wait(1500)
 Delete
 Wait(3000)
 Message ("Tadaaa!")

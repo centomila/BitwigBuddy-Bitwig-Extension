@@ -461,7 +461,7 @@ public class MacroActionSettings {
      * @param index     The current index in the commands array
      * @param extension The Bitwig extension
      */
-    private static void scheduleCommands(String[] commands, int index, BitwigBuddyExtension extension) {
+    public static void scheduleCommands(String[] commands, int index, BitwigBuddyExtension extension) {
         if (index >= commands.length || stopExecution) {
             synchronized (executionLock) {
                 if (stopExecution) {

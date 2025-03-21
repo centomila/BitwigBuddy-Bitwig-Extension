@@ -3,15 +3,9 @@ Description: ""
 Author: "Centomila"
 
 
-Message ("Let's have some fun!")
-BB Close Panel
-toggle_arranger
-focus_track_header_area
-Right
-Wait (1000)
+Message ("We need some sounds to play with")
+Drum Pad Insert Device ("C1", "V0 Kick")
+Wait (1500)
+Message ("A new clip in the arranger")
+BB Arranger Mode
 Clip Create (1, 16)
-Wait (1000)
-Clip Select
-Message ("Weeeeeeeeeeeeeee!")
-Wait (50)
-Macro ("Rainbow Clip")

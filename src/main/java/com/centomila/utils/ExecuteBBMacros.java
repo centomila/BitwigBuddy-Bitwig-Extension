@@ -388,7 +388,7 @@ public class ExecuteBBMacros {
     }
 
     private static void handleClipCreate(String[] params, BitwigBuddyExtension extension, int currentTrack) {
-
+        // case "Clip Create":
         int clipLength = 4;
         if (params.length > 1) {
             try {
@@ -399,15 +399,34 @@ public class ExecuteBBMacros {
         }
 
         int slotIndex = Integer.parseInt(params[0].trim()) - 1;
-        if (slotIndex >= 0) {
-            extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().getItemAt(slotIndex).deleteObject();
-            extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank()
-                    .createEmptyClip(slotIndex, clipLength);
-            extension.trackBank.getItemAt(currentTrack).makeVisibleInMixer();
-            extension.trackBank.getItemAt(currentTrack).makeVisibleInArranger();
-            extension.getHost().println("Created empty clip with length: " + clipLength);
+        if (ModeSelectSettings.getCurrentLauncherArrangerToggleString().equals("Arranger")) {
+            // Schedule the actions sequentially
+            List<String> actions = new ArrayList<>();
+            actions.add("select_start_of_selection_range"); // Action 1
+            for (int i = 0; i < clipLength; i++) {
+                actions.add("extend_time_selection_range_to_next_step"); // Action 2
+            }
+            actions.add("Consolidate"); // Action 3
+
+            // Use the scheduler from MacroActionSettings to execute the actions
+            MacroActionSettings.scheduleCommands(
+                actions.toArray(new String[0]), // Convert the list to an array
+                0, // Start from the first action
+                extension // Pass the extension instance
+            );
+
         } else {
-            extension.getHost().println("No clip slot selected. Please select a clip slot first.");
+
+            if (slotIndex >= 0) {
+                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().getItemAt(slotIndex).deleteObject();
+                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank()
+                        .createEmptyClip(slotIndex, clipLength);
+                extension.trackBank.getItemAt(currentTrack).makeVisibleInMixer();
+                extension.trackBank.getItemAt(currentTrack).makeVisibleInArranger();
+                extension.getHost().println("Created empty clip with length: " + clipLength);
+            } else {
+                extension.getHost().println("No clip slot selected. Please select a clip slot first.");
+            }
         }
     }
 

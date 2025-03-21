@@ -3,9 +3,9 @@ Description: ""
 Author: "Centomila"
 
 Message ("This is a Bitwig Buddy Macro")
-Wait (2000)
+Wait (3000)
 Message ("Now I will clean the project to show you what I can do")
-Wait (2000)
+Wait (3000)
 Message ("You have 5 seconds to stop me")
 Wait (5000)
 Macro ("Tutorial/3-Tutorial")

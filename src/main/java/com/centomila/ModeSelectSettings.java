@@ -198,4 +198,8 @@ public class ModeSelectSettings {
         return ((EnumValue) modeGenerateEditToggleSetting).get();
     }
 
+    public static String getCurrentLauncherArrangerToggleString() {
+        return ((EnumValue) toggleLauncherArrangerSetting).get();
+    }
+
 }
