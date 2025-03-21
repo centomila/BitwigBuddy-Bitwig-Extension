@@ -151,6 +151,9 @@ public class ExecuteBBMacros {
             case "Clip Move":
                 handleClipMove(params, extension, currentTrack);
                 break;
+            case "Clip Offset":
+                handleClipOffset(params, extension, currentTrack);
+                break;
             case "Step Selected Length":
                 handleStepSelectedLength(params, extension);
                 break;
@@ -407,19 +410,16 @@ public class ExecuteBBMacros {
             extension.getHost().println("No clip slot selected. Please select a clip slot first.");
         }
     }
+
     private static void handleClipMove(String[] params, BitwigBuddyExtension extension, int currentTrack) {
-        // Move the selected clip to the right if the number is positive, to the left if negative. I'm working in the arranger, not the clip launcher
-        
+        // Move the selected clip to the right if the number is positive, to the left if
+        // negative. I'm working in the arranger, not the clip launcher
+
         // 1. Set the playback start equal to the starting point of the clip
         // 3. Move the cursor to the desired position (right or left).
 
-        int moveAmount = Integer.parseInt(params[0].trim());
+        double moveAmount = Double.parseDouble(params[0].trim());
 
-        
-        // 1. Set the playback start equal to the starting point of the clip
-        Double newPosition = extension.transport.getPosition().get() + moveAmount;
-
-        
         // 3. Move the cursor to the desired position (right or left).
         // action nudge_events_one_step_earlier or nudge_events_one_step_later
         // Use moveAmount as multiplier for clip length movements
@@ -431,17 +431,23 @@ public class ExecuteBBMacros {
             for (int i = 0; i < Math.abs(actualMoveAmount); i++) {
                 extension.getApplication().getAction("nudge_events_one_step_later").invoke();
                 // Add a small wait to ensure commands are processed
-                // try { Thread.sleep(150); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+                // try { Thread.sleep(150); } catch (InterruptedException e) {
+                // Thread.currentThread().interrupt(); }
             }
         } else if (actualMoveAmount < 0) {
             for (int i = 0; i < Math.abs(actualMoveAmount); i++) {
                 extension.getApplication().getAction("nudge_events_one_step_earlier").invoke();
                 // Add a small wait to ensure commands are processed
-                // try { Thread.sleep(150); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+                // try { Thread.sleep(150); } catch (InterruptedException e) {
+                // Thread.currentThread().interrupt(); }
             }
         }
 
-        
+    }
+
+    private static void handleClipOffset(String[] params, BitwigBuddyExtension extension, int currentTrack) {
+        extension.getLauncherOrArrangerAsClip().getPlayStart().set(Double.parseDouble(params[0].trim()));
+
     }
 
     private static void handleStepSelectedLength(String[] params, BitwigBuddyExtension extension) {
@@ -863,9 +869,11 @@ public class ExecuteBBMacros {
      * Handles inserting a VST3 plugin into a specific drum pad in Bitwig Studio.
      *
      * @param params    An array of string parameters with the following elements:
-     *                  - params[0]: The note name (e.g., "C3", "F#4") to identify the drum pad position
+     *                  - params[0]: The note name (e.g., "C3", "F#4") to identify
+     *                  the drum pad position
      *                  - params[1]: The name of the VST3 plugin to insert
-     * @param extension The BitwigBuddyExtension instance providing access to Bitwig's API
+     * @param extension The BitwigBuddyExtension instance providing access to
+     *                  Bitwig's API
      */
     private static void handleInsertVST3InDrumPad(String[] params, BitwigBuddyExtension extension) {
         String noteNameFull = params[0].trim();

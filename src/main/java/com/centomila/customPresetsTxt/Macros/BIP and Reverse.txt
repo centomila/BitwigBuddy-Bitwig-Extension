@@ -2,6 +2,7 @@ Macro: "BIP And Reverse"
 Description: "Bounce in place of Time Selection and Reverse 1 bar earlier"
 Author: "Centomila"
 
+BB Arranger Mode
 BB Close Panel
 select_time_selection_tool
 bounce_in_place
@@ -11,4 +12,5 @@ select_object_selection_tool
 reverse
 Clip Move (-4)
 Right
-// Add something to change the the offset of the clip
+Clip Move (-1)
+Clip Offset (0)
