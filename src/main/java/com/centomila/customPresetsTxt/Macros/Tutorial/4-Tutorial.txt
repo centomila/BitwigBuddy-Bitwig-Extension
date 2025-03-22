@@ -3,28 +3,25 @@ Description: ""
 Author: "Centomila"
 
 
-Message ("You are not entertained?" Let me show off a bit...)
-Wait (1000)
-Message ("First. Let's go to other view")
-Wait (1000)
-Switch to Mode 1
-Wait
-Message ("We need some tracks...")
+
+Message ("We need some sounds to play with")
+BB Close Panel
+Track Select (2)
+Drum Pad Insert Device ("C1", "V0 Kick")
 Wait (1500)
-focus_track_header_area
-Wait (1500)
-Message ("Let's do it!")
-Macro ("Create 8 Tracks")
-Wait (1500)
-Message ("Much better!")
-Wait (1500)
-Message ("Now let's add some cue markers")
+Message ("A new clip in the arranger")
+BB Arranger Mode
+focus_or_toggle_arranger
+toggle_clip_launcher
+Down
+
+Clip Create (0, 16)
 Wait (1000)
-Macro ("Arrangement/Arrangement - Melodic Techno Original Mix")
+
+Message ("Ops. I left the two initial tracks")
+
+Track Delete (1)
+Track Delete (9)
+Track Select (1)
 Wait (1000)
-Message ("Zoom to Fit the arranger...")
-arranger_zoom_to_fit
-Wait (3000)
-Message ("I have your attention now? :)")
-Wait (3000)
-Macro ("Tutorial/5-Tutorial")
+switch_between_event_and_time_selection

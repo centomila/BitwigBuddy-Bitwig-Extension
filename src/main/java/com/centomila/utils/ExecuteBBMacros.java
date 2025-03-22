@@ -721,11 +721,41 @@ public class ExecuteBBMacros {
     }
 
     private static void handleInsertFile(String[] params, BitwigBuddyExtension extension, int currentTrack) {
-        int slotIndexInsertFile = Integer.parseInt(params[0].trim()) - 1;
-        extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank()
-                .createEmptyClip(slotIndexInsertFile, 4);
-        extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank()
-                .getItemAt(slotIndexInsertFile).replaceInsertionPoint().insertFile(params[1]);
+        int slotIndexInsertFile = Integer.parseInt(params[0].trim());
+        String filePath = params[1].trim();
+        // if the filePath ends with bwpreset, then insert a Bitwig preset
+        if (filePath.endsWith(".bwpreset")) {
+            if (slotIndexInsertFile == 0) {
+                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().getItemAt(0).replaceInsertionPoint()
+                        .insertFile(filePath);
+            }
+
+            if (slotIndexInsertFile > 0) {
+                extension.trackBank.getItemAt(currentTrack).endOfDeviceChainInsertionPoint().insertFile(filePath);
+            }
+
+            if (slotIndexInsertFile < 0) {
+                extension.trackBank.getItemAt(currentTrack).startOfDeviceChainInsertionPoint().insertFile(filePath);
+            }
+
+            return;
+        }
+
+        // if launcher mode
+        if (ModeSelectSettings.getCurrentLauncherArrangerToggleString().equals("Launcher")) {
+            slotIndexInsertFile = slotIndexInsertFile - 1;
+
+            extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank()
+                    .createEmptyClip(slotIndexInsertFile, 4);
+            extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().getItemAt(slotIndexInsertFile)
+                    .replaceInsertionPoint().insertFile(filePath);
+            return;
+        } else if (ModeSelectSettings.getCurrentLauncherArrangerToggleString().equals("Arranger")) {
+            // Not available in arranger mode
+            showPopup("I can't insert files in the arranger. Launcher only.");
+            return;
+        }
+
     }
 
     private static void handleArrangerLoopStart(String[] params, BitwigBuddyExtension extension) {
