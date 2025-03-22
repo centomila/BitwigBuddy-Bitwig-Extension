@@ -13,14 +13,16 @@ focus_or_toggle_arranger
 toggle_clip_launcher
 Down
 // Wait (1000)
-move_time_selection_one_event_later
+move_time_selection_one_step_later
 
-Clip Create (0, 16)
+Clip Create (0, 1)
 Wait (1000)
 switch_between_event_and_time_selection
 Wait (100)
 BB Preset ("Kick Four on the Floor")
+BB Post Action AutoResize ("Off")
 BB Generate
+Wait (1000)
 
 switch_between_event_and_time_selection
 move_time_selection_one_event_earlier

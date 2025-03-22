@@ -4,6 +4,7 @@ import static com.centomila.utils.SettingsHelper.*;
 
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.SettableEnumValue;
 
 public class PostActionSettings {
         // Post actions settings
@@ -112,4 +113,26 @@ public class PostActionSettings {
         public static void hideAllSettings() {
                 hideSetting(allSettings);
         }
+
+        // Setters
+        public static void setAutoResizeLoopLengthSetting(String value) {
+                ((SettableEnumValue) autoResizeLoopLengthSetting).set(value);
+        }
+
+        public static void setZoomToFitAfterGenerateSetting(String value) {
+                ((SettableEnumValue) zoomToFitAfterGenerateSetting).set(value);
+        }
+
+        public static void setSwitchToEditLayoutSetting(String value) {
+                ((SettableEnumValue) switchToEditLayoutSetting).set(value);
+        }
+
+        public static void setDuplicateClipSetting(String value) {
+                ((SettableEnumValue) duplicateClipSetting).set(value);
+        }
+
+        public static void setLaunchClipSetting(String value) {
+                ((SettableEnumValue) launchClipSetting).set(value);
+        }
+
 }

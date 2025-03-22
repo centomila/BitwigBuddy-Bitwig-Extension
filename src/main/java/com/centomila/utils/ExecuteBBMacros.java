@@ -9,6 +9,7 @@ import com.centomila.GlobalPreferences;
 import com.centomila.ModeSelectSettings;
 import com.centomila.NoteDestinationSettings;
 import com.centomila.PatternSettings;
+import com.centomila.PostActionSettings;
 import com.centomila.Utils;
 import com.bitwig.extension.controller.api.*;
 import com.bitwig.extension.api.Color;
@@ -297,6 +298,9 @@ public class ExecuteBBMacros {
                 break;
             case "BB Preset":
                 handleBBPreset(params, extension);
+                break;
+            case "BB Post Action AutoResize":
+                handleBBPostActionAutoResize(params, extension);
                 break;
             case "Transport Position":
                 handleTransportPosition(params, extension);
@@ -928,6 +932,16 @@ public class ExecuteBBMacros {
         // case "BB Preset":
         PatternSettings.setCustomPreset(params[0]);
     }
+    private static void handleBBPostActionAutoResize(String[] params, BitwigBuddyExtension extension) {
+        // case "BB Post Action AutoResize":
+        // convert true or false strings to "On" or "Off"
+        if (params[0].equals("true") || params[0].equals("On")) {
+            PostActionSettings.setAutoResizeLoopLengthSetting("On");
+        } else {
+            PostActionSettings.setAutoResizeLoopLengthSetting("Off");
+        }
+
+            }
 
     private static void handlePrintActions(BitwigBuddyExtension extension) {
         // case "BB Preset":
