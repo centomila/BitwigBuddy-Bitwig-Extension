@@ -3,9 +3,20 @@ Description: ""
 Author: "Centomila"
 
 
+
 Message ("We need some sounds to play with")
+BB Close Panel
 Drum Pad Insert Device ("C1", "V0 Kick")
 Wait (1500)
 Message ("A new clip in the arranger")
 BB Arranger Mode
-Clip Create (1, 16)
+focus_or_toggle_arranger
+toggle_clip_launcher
+Track Select (2)
+Down
+Wait (2000)
+Clip Create (0, 16)
+Wait (2000)
+Message ("Ops. I left the two initial tracks")
+Track Delete (1)
+Track Delete (9)

@@ -229,6 +229,9 @@ public class ExecuteBBMacros {
             case "Track Select":
                 handleTrackSelect(params, extension);
                 break;
+            case "Track Delete":
+                handleTrackDelete(params, extension);
+                break;
             case "Insert Device":
                 handleInsertDevice(params, extension, currentTrack);
                 break;
@@ -401,7 +404,10 @@ public class ExecuteBBMacros {
         int slotIndex = Integer.parseInt(params[0].trim()) - 1;
         if (ModeSelectSettings.getCurrentLauncherArrangerToggleString().equals("Arranger")) {
             // Schedule the actions sequentially
+            extension.application.setPanelLayout("ARRANGE");
+
             List<String> actions = new ArrayList<>();
+            // actions.add("extend_time_selection_range_to_last_item"); // Action 1
             actions.add("select_start_of_selection_range"); // Action 1
             for (int i = 0; i < clipLength; i++) {
                 actions.add("extend_time_selection_range_to_next_step"); // Action 2
@@ -410,9 +416,9 @@ public class ExecuteBBMacros {
 
             // Use the scheduler from MacroActionSettings to execute the actions
             MacroActionSettings.scheduleCommands(
-                actions.toArray(new String[0]), // Convert the list to an array
-                0, // Start from the first action
-                extension // Pass the extension instance
+                    actions.toArray(new String[0]), // Convert the list to an array
+                    0, // Start from the first action
+                    extension // Pass the extension instance
             );
 
         } else {
@@ -684,6 +690,11 @@ public class ExecuteBBMacros {
         extension.trackBank.getItemAt(trackIndex).selectInMixer();
         extension.trackBank.getItemAt(trackIndex).makeVisibleInArranger();
         extension.trackBank.getItemAt(trackIndex).makeVisibleInMixer();
+    }
+
+    private static void handleTrackDelete(String[] params, BitwigBuddyExtension extension) {
+        int trackIndex = Integer.parseInt(params[0].trim()) - 1;
+        extension.trackBank.getItemAt(trackIndex).deleteObject();
     }
 
     private static void handleInsertDevice(String[] params, BitwigBuddyExtension extension, int currentTrack) {

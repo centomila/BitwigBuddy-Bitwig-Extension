@@ -4,11 +4,7 @@ Author: "Centomila"
 
 // This force to hide the BitwigBuddy Panel to avoid Bitwig focus issues
 BB Close Panel
-Message ("First. Let's go to Mixer mode")
-Wait (1000)
-Switch to Mode 2
-Wait
-Message ("Then I focus the track header area")
+Message ("First, I focus the track header area")
 Wait (1000)
 focus_track_header_area
 Wait (1000)
