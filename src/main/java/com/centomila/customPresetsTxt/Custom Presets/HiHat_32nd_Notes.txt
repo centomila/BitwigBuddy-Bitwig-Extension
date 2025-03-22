@@ -1,4 +1,4 @@
-Name: "HiHat Closed 32nd Roll [32 | 1/32 | Straight | 1/32]"
+Name: "HiHat Closed 32nd Roll"
 DefaultNote: "D1"
 Pattern: [80, 60, 80, 60, 80, 60, 80, 60, 80, 60, 80, 60, 80, 60, 80, 60, 80, 60, 80, 60, 80, 60, 80, 60, 80, 60, 80, 60, 80, 60, 80, 60]
 StepSize: "1/32"

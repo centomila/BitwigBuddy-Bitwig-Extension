@@ -1,4 +1,4 @@
-Name: "Kick Half Notes [4 | 1/2 | Straight | 1/2]"
+Name: "Kick Half Notes"
 DefaultNote: "C1"
 Pattern: [100, 80, 100, 80]
 StepSize: "1/2"

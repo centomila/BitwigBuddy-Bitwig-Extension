@@ -1,4 +1,4 @@
-Name: "HiHat Closed Eighth Accented [16 | 1/8 | Straight | 1/8]"
+Name: "HiHat Closed Eighth Accented"
 DefaultNote: "D1"
 Pattern: [100, 60, 100, 60, 100, 60, 100, 60, 100, 60, 100, 60, 100, 60, 100, 60]
 StepSize: "1/8"

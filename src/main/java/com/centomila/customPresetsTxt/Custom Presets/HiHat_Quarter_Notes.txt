@@ -1,4 +1,4 @@
-Name: "HiHat Closed Quarter Notes [16 | 1/16 | Straight | 1/16]"
+Name: "HiHat Closed Quarter Notes"
 DefaultNote: "D1"
 Pattern: [80, 0, 0, 0, 80, 0, 0, 0, 80, 0, 0, 0, 80, 0, 0, 0]
 StepSize: "1/16"

@@ -1,6 +1,0 @@
-Name: "Various 8th Decreasing Velocity [16 | 1/16 | Straight | 1/16]"
-DefaultNote: "C1"
-Pattern: [115, 0, 97, 0, 81, 0, 65, 0, 49, 0, 33, 0, 17, 0, 3, 0]
-StepSize: "1/16"
-Subdivisions: "Straight"
-NoteLength: "1/16"

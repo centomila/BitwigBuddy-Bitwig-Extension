@@ -1,4 +1,4 @@
-Name: "Snare 16th Ghost Notes [16 | 1/16 | Straight | 1/16]"
+Name: "Snare 16th Ghost Notes"
 DefaultNote: "C#1"
 Pattern: [20, 0, 20, 0, 100, 0, 20, 0, 20, 0, 20, 0, 100, 0, 20, 0]
 StepSize: "1/16"

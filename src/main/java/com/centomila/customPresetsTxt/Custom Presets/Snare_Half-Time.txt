@@ -1,4 +1,4 @@
-Name: "Snare Half-Time (3) [16 | 1/16 | Straight | 1/16]"
+Name: "Snare Single Hit Half-Time"
 DefaultNote: "C#1"
 Pattern: [0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0]
 StepSize: "1/16"

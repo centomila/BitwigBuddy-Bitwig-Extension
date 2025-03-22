@@ -1,4 +1,4 @@
-Name: "Kick 1 and 3 [16 | 1/16 | Straight | 1/16]"
+Name: "Kick 1 and 3"
 DefaultNote: "C1"
 Pattern: [100, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0]
 StepSize: "1/16"

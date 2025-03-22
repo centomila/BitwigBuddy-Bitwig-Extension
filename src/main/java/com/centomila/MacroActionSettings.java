@@ -509,7 +509,7 @@ public class MacroActionSettings {
         // Schedule next command with delay
         extension.getHost().scheduleTask(() -> {
             scheduleCommands(commands, index + 1, extension);
-        }, 50); // Increased delay to 50ms for better reliability
+        }, 60); // Increased delay to 50ms for better reliability
     }
 
     /**

@@ -1,4 +1,4 @@
-Name: "HiHat Closed Triplet Accented [18 | 1/8 | 3t | 1/8]"
+Name: "HiHat Closed Triplet Accented 18 Step"
 DefaultNote: "D1"
 Pattern: [80, 20, 60, 20, 80, 20, 60, 20, 80, 20, 60, 20, 80, 20, 60, 20, 80, 20]
 StepSize: "1/8"

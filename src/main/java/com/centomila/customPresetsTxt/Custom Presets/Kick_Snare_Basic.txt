@@ -1,7 +1,0 @@
-Name: "Kick Basic Beat [16 | 1/16 | Straight | 1/16]"
-DefaultNote: "C1"
-Pattern: [100, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0]
-StepSize: "1/16"
-Subdivisions: "Straight"
-NoteLength: "1/16"
-Notes: "Use with Snare Backbeat 2 and 4 pattern for basic beat"

@@ -1,4 +1,4 @@
-Name: "HiHat Closed Triplet Basic [18 | 1/8 | 3t | 1/8]"
+Name: "HiHat Closed Triplet Basic 18 Step"
 DefaultNote: "D1"
 Pattern: [80, 0, 80, 0, 80, 0, 80, 0, 80, 0, 80, 0, 80, 0, 80, 0, 80, 0]
 StepSize: "1/8"

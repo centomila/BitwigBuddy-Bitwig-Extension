@@ -1,4 +1,4 @@
-Name: "HiHat Closed Accent on Downbeat [16 | 1/16 | Straight | 1/16]"
+Name: "HiHat Closed Accent on Downbeat"
 DefaultNote: "D1"
 Pattern: [80, 0, 40, 0, 80, 0, 40, 0, 80, 0, 40, 0, 80, 0, 40, 0]
 StepSize: "1/16"
