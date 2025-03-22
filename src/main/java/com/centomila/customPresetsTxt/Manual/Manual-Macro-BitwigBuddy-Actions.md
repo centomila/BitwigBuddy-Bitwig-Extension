@@ -63,10 +63,12 @@
 | **Step Selected Repeat Velocity End**   | Sets the end velocity for note repeats                        | _Step Selected Repeat Velocity End (0.4)_         |
 | **Transport Position**                  | Sets the transport position                                   | _Transport Position (16.0)_                       |
 
-| **Bitwig Buddy Panel**               | Description                                              | Example                            |
-| ------------------------------------ | -------------------------------------------------------- | ---------------------------------- |
-| **BB Macro**                         | Executes a BitwigBuddy Macro                             | _BB Macro ("My Macro")_            |
-| **BB Close Panel**                   | Closes the BitwigBuddy Panel to avoid focus issues       | _BB Close Panel_                   |
-| **BB Arranger Mode**                 | Switches Bitwig Buddy to Arranger mode                   | _BB Arranger Mode_                 |
-| **BB Launcher Mode**                 | Switches Bitwig Buddy to Launcher mode                   | _BB Launcher Mode_                 |
-| **BB Toggle Launcher Arranger Mode** | Toggles Bitwig Buddy between Launcher and Arranger modes | _BB Toggle Launcher Arranger Mode_ |
+| **Bitwig Buddy Panel**               | Description                                             | Example                            |
+| ------------------------------------ | ------------------------------------------------------- | ---------------------------------- |
+| **BB Macro**                         | Executes a BitwigBuddy Macro                            | _BB Macro ("My Macro")_            |
+| **BB Close Panel**                   | Closes the BitwigBuddy Panel to avoid focus issues      | _BB Close Panel_                   |
+| **BB Arranger Mode**                 | Switches BitwigBuddy to Arranger mode                   | _BB Arranger Mode_                 |
+| **BB Launcher Mode**                 | Switches BitwigBuddy to Launcher mode                   | _BB Launcher Mode_                 |
+| **BB Toggle Launcher Arranger Mode** | Toggles BitwigBuddy between Launcher and Arranger modes | _BB Toggle Launcher Arranger Mode_ |
+| **BB Generate**                      | Press the BitwigBuddy Generate Preset Button            | _BB Generate_                      |
+| **BB Preset**                      | Press the BitwigBuddy Generate Preset Button            | _BB Generate_                      |

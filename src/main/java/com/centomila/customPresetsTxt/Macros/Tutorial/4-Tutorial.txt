@@ -2,8 +2,6 @@ Macro: "4-Tutorial"
 Description: ""
 Author: "Centomila"
 
-
-
 Message ("We need some sounds to play with")
 BB Close Panel
 Track Select (2)
@@ -14,14 +12,23 @@ BB Arranger Mode
 focus_or_toggle_arranger
 toggle_clip_launcher
 Down
+// Wait (1000)
+move_time_selection_one_event_later
 
 Clip Create (0, 16)
 Wait (1000)
+switch_between_event_and_time_selection
+Wait (100)
+BB Preset ("Kick Four on the Floor")
+BB Generate
+
+switch_between_event_and_time_selection
+move_time_selection_one_event_earlier
+extend_time_selection_range_to_next_step
 
 Message ("Ops. I left the two initial tracks")
 
 Track Delete (1)
 Track Delete (9)
+Wait (100)
 Track Select (1)
-Wait (1000)
-switch_between_event_and_time_selection

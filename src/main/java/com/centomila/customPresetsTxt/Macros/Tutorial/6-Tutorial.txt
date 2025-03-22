@@ -5,6 +5,7 @@ Author: "Centomila"
 
 Message ("Let's have some fun!")
 BB Close Panel
+BB Launcher Mode
 toggle_arranger
 focus_track_header_area
 Right

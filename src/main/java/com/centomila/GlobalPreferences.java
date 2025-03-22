@@ -45,7 +45,7 @@ public class GlobalPreferences {
 
     private String defaultPresetsPath;
     private Preferences preferences;
-    private SettableStringValue presetsPath;
+    private static SettableStringValue presetsPath;
     private Signal openPresetsFolder;
     private Signal browseFolderButton;
     private Signal resetToDefaultButton;
@@ -414,5 +414,9 @@ public class GlobalPreferences {
         } else {
             showPopup("Default presets folder not found: " + defaultPath);
         }
+    }
+
+    public static String getCurrentPresetsPath() {
+        return presetsPath.get();
     }
 }

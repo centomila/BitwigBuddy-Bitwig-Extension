@@ -5,13 +5,18 @@ import static com.centomila.utils.PopupUtils.showPopup;
 
 import com.centomila.BitwigBuddyExtension;
 import com.centomila.ClipUtils;
+import com.centomila.GlobalPreferences;
 import com.centomila.ModeSelectSettings;
 import com.centomila.NoteDestinationSettings;
+import com.centomila.PatternSettings;
 import com.centomila.Utils;
 import com.bitwig.extension.controller.api.*;
 import com.bitwig.extension.api.Color;
 import com.centomila.MacroActionSettings;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -287,8 +292,17 @@ public class ExecuteBBMacros {
             case "BB Close Panel":
                 handleCloseBBPanel(extension);
                 break;
+            case "BB Generate":
+                handleGenerateBBPreset(extension);
+                break;
+            case "BB Preset":
+                handleBBPreset(params, extension);
+                break;
             case "Transport Position":
                 handleTransportPosition(params, extension);
+                break;
+            case "Print Actions":
+                handlePrintActions(extension);
                 break;
 
             default:
@@ -772,6 +786,7 @@ public class ExecuteBBMacros {
 
     private static void handleWait(String[] params, BitwigBuddyExtension extension) {
         int waitTime = params.length > 0 ? Integer.parseInt(params[0]) : 50;
+
         try {
             Thread.sleep(waitTime);
 
@@ -902,6 +917,39 @@ public class ExecuteBBMacros {
 
         extension.getApplication().getAction("Export Audio").invoke();
         extension.getApplication().escape();
+    }
+
+    private static void handleGenerateBBPreset(BitwigBuddyExtension extension) {
+        // case "BB Genreate":
+        extension.generateDrumPattern();
+    }
+
+    private static void handleBBPreset(String[] params, BitwigBuddyExtension extension) {
+        // case "BB Preset":
+        PatternSettings.setCustomPreset(params[0]);
+    }
+
+    private static void handlePrintActions(BitwigBuddyExtension extension) {
+        // case "BB Preset":
+        int actionsQty = extension.application.getActions().length;
+        for (int i = 0; i < actionsQty; i++) {
+            extension.getHost().println(extension.application.getActions()[i].getName());
+        }
+        // open console
+        extension.getApplication().getAction("show_controller_script_console").invoke();
+
+        // save as txt file in the desktop
+        String path = GlobalPreferences.getCurrentPresetsPath() + "/Actions.txt";
+        try {
+            PrintWriter writer = new PrintWriter(path, "UTF-8");
+            for (int i = 0; i < actionsQty; i++) {
+                writer.println(extension.application.getActions()[i].getId() + "  |  " + extension.application.getActions()[i].getName());
+            }
+            writer.close();
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**

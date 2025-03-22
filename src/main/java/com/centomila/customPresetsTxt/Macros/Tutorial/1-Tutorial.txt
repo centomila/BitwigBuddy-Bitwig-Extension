@@ -3,5 +3,5 @@ Description: ""
 Author: "Centomila"
 
 Message ("Hello!")
-Wait(3000)
+Wait(2000)
 Macro ("Tutorial/2-Tutorial")

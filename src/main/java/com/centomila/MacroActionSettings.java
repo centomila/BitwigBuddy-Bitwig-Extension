@@ -487,6 +487,25 @@ public class MacroActionSettings {
         host.println("Executing command " + (index + 1) + "/" + commands.length + ": " + command);
 
         try {
+            // Handle the "Wait" command explicitly
+            if (command.startsWith("Wait")) {
+                // Match the "Wait" command with a parameter in parentheses
+                java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("Wait\\s*\\(\\s*(\\d+)\\s*\\)");
+                java.util.regex.Matcher matcher = pattern.matcher(command);
+
+                if (matcher.matches()) {
+                    int waitTime = Integer.parseInt(matcher.group(1));
+                    host.println("Waiting for " + waitTime + "ms...");
+                    extension.getHost().scheduleTask(() -> {
+                        scheduleCommands(commands, index + 1, extension);
+                    }, waitTime);
+                    return; // Exit early to respect the wait time
+                } else {
+                    host.errorln("Invalid Wait command format. Use: Wait (milliseconds)");
+                    return; // Stop execution for invalid format
+                }
+            }
+
             // Try executing via ExecuteBitwigAction first
             boolean handled = ExecuteBBMacros.executeBitwigAction(command, extension);
 
@@ -506,10 +525,11 @@ public class MacroActionSettings {
         host.println("Completed command " + (index + 1) + "/" + commands.length + ": " + command +
                 " after " + (System.currentTimeMillis() - startTime) + "ms");
 
-        // Schedule next command with delay
+        // Schedule next command with a default delay
+        int defaultDelay = 60; // Default delay in milliseconds
         extension.getHost().scheduleTask(() -> {
             scheduleCommands(commands, index + 1, extension);
-        }, 60); // Increased delay to 50ms for better reliability
+        }, defaultDelay);
     }
 
     /**

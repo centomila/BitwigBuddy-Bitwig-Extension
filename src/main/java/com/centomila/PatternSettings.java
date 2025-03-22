@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
@@ -17,6 +18,7 @@ import com.centomila.CustomPresetsHandler.CustomPreset;
  * random, and custom patterns.
  */
 public class PatternSettings {
+    public static String[] allPresets = { "NO CUSTOM PRESETS" };
     // Static constants
     private static final String CATEGORY_GENERATE_PATTERN = "3 Generate Pattern";
     private static final String CATEGORY_CUSTOM_PATTERN_TOGGLE = "Custom Pattern Toggle";
@@ -470,13 +472,24 @@ public class PatternSettings {
         }
     }
 
+    // Set current pattern item in the dropdown menu
+    public static void setCustomPreset(String presetName) {
+        // Check if the preset exists in the String[] allPresets
+        if (Arrays.asList(allPresets).contains(presetName)) {
+            ((SettableEnumValue) customPresetSetting).set(presetName);
+        } else {
+            showPopup("Preset not found: " + presetName + ". Using first preset.");
+            ((SettableEnumValue) customPresetSetting).set(allPresets[0]);
+        }
+    }
+
     // Custom preset data retrieval methods
     private String[] getCustomPresetsContentNameStrings() {
-        String[] presets = Arrays.stream(extension.preferences.getCustomPresets())
+        allPresets = Arrays.stream(extension.preferences.getCustomPresets())
                 .map(CustomPreset::getName)
                 .sorted((a, b) -> Utils.naturalCompare(a, b))
                 .toArray(String[]::new);
-        return presets.length == 0 ? new String[] { "NO CUSTOM PRESETS" } : presets;
+        return allPresets.length == 0 ? new String[] { "NO CUSTOM PRESETS" } : allPresets;
     }
 
     private String[] getCustomPresetsContentPatternStrings(String presetName) {

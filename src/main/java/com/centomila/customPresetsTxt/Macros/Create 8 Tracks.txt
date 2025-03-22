@@ -4,68 +4,43 @@ Author: "Centomila"
 
 // Track 1: Drums (Red)
 Create Instrument Track
-Wait
 Track Color (D32F2F)
-Wait
 Track Rename ("Drums")
-Wait
 Insert Device ("Drum Machine")
-Wait
 
 // Track 2: Bass (Green)
 Create Instrument Track
-Wait
 Track Color (43A047)
-Wait
 Track Rename ("Bass")
-Wait
 
 // Track 3: Bass 2 (Teal)
 Create Instrument Track
-Wait
 Track Color (00897B)
-Wait
 Track Rename ("Bass 2")
-Wait
 
 // Track 4: Pad (Violet)
 Create Instrument Track
-Wait
 Track Color (7B1FA2)
-Wait
 Track Rename ("Pad")
-Wait
 
 // Track 5: Keys (Yellow)
 Create Instrument Track
-Wait
 Track Color (F9A825)
-Wait
 Track Rename ("Keys")
-Wait
 
 // Track 6: Lead (Cyan)
 Create Instrument Track
-Wait
 Track Color (00ACC1)
-Wait
 Track Rename ("Lead")
-Wait
 
 // Track 7: Arp (Fuchsia)
 Create Instrument Track
-Wait
 Track Color (C2185B)
-Wait
 Track Rename ("Arp")
-Wait
 
 // Track 8: Vocals (Pink)
 Create Audio Track
-Wait
 Track Color (EC407A)
-Wait
 Track Rename ("Vocals")
-Wait
 
 Track Select (1)
