@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
+import com.bitwig.extension.controller.api.RangedValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Setting;
@@ -37,6 +38,7 @@ public class PatternSettings {
     public static Setting generateBtnSignalSetting;
     public static Setting patternTypeSetting;
     public static Setting reversePatternSetting;
+    public static Setting repeatPatternSetting; // New setting for pattern repetition
     public static Setting patternReplaceAddToggle; // New setting for replace/add toggle
     public static Setting presetPatternStringSetting;
 
@@ -85,6 +87,7 @@ public class PatternSettings {
         initGenerateButton(documentState); // Initialize generate button
         initPatternReplaceAddToggle(documentState); // Initialize new toggle
         initReversePatternSetting(documentState); // Initialize reverse pattern setting
+        initRepeatPatternSetting(documentState); // Initialize repeat pattern setting
 
         initCustomPresetParams(documentState);
         initCustomPresetPatternStringSetting(documentState);
@@ -103,11 +106,13 @@ public class PatternSettings {
                 generateBtnSignalSetting,
                 patternTypeSetting,
                 patternReplaceAddToggle, // Add to settings array
+                repeatPatternSetting, // Add new setting to array
 
                 customPresetSetting,
                 presetPatternStringSetting,
                 // Removed customRefreshPresetsSetting from array
                 reversePatternSetting,
+                repeatPatternSetting,
 
                 customPresetHeaderToggles,
                 customTogglesToggle,
@@ -199,6 +204,16 @@ public class PatternSettings {
                 CATEGORY_GENERATE_PATTERN,
                 new String[] { "Normal", "Reverse" },
                 "Normal");
+    }
+
+    // Initialize the Repeat Pattern setting - a ranged integer from 1 to 8
+    private void initRepeatPatternSetting(DocumentState documentState) {
+        repeatPatternSetting = (Setting) createNumberSetting(
+                "Repeat Pattern",
+                CATEGORY_GENERATE_PATTERN,
+                1, 8, 1, 
+                "", // Unit
+                1); // Step size
     }
 
     // Custom preset initialization methods
@@ -568,6 +583,11 @@ public class PatternSettings {
     // Getter for pattern replace/add toggle
     public static String getPatternReplaceAddMode() {
         return ((EnumValue) patternReplaceAddToggle).get();
+    }
+
+    // Getter for repeat pattern setting
+    public static int getRepeatPattern() {
+        return (int) ((RangedValue) repeatPatternSetting).getRaw();
     }
 
     // Show and hide settings

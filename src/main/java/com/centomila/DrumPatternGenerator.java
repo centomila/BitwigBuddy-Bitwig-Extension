@@ -2,6 +2,7 @@ package com.centomila;
 
 // import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.PostActionSettings.*;
+import static com.centomila.utils.PopupUtils.showPopup;
 
 import java.util.Arrays;
 import com.bitwig.extension.controller.api.Clip;
@@ -20,18 +21,18 @@ public class DrumPatternGenerator {
     /**
      * Generates and applies a drum pattern to the specified clip.
      * 
-     * @param extension                 The BitwigBuddy extension instance
-     * @param clip                      Target clip for pattern generation
+     * @param extension The BitwigBuddy extension instance
+     * @param clip      Target clip for pattern generation
      * 
-     *                                  Process:
-     *                                  1. Configures note length and step size
-     *                                  2. Clears existing pattern
-     *                                  3. Generates new pattern based on
-     *                                  selected type
-     *                                  4. Applies pattern to clip with optional
-     *                                  reversal
-     *                                  5. Adjusts loop length and zoom if
-     *                                  enabled
+     *                  Process:
+     *                  1. Configures note length and step size
+     *                  2. Clears existing pattern
+     *                  3. Generates new pattern based on
+     *                  selected type
+     *                  4. Applies pattern to clip with optional
+     *                  reversal
+     *                  5. Adjusts loop length and zoom if
+     *                  enabled
      */
     public static void generatePattern(BitwigBuddyExtension extension,
             Clip clip) {
@@ -56,7 +57,7 @@ public class DrumPatternGenerator {
         // Get channel and note destination values
         int channel = NoteDestinationSettings.getCurrentChannelAsInt();
         int noteDestination = NoteDestinationSettings.getCurrentNoteDestinationAsInt();
-        
+
         // Only clear steps if in "Replace" mode
         if (PatternSettings.getPatternReplaceAddMode().equals("Replace")) {
             clip.clearStepsAtY(channel, noteDestination);
@@ -78,6 +79,8 @@ public class DrumPatternGenerator {
         if (((EnumValue) PatternSettings.reversePatternSetting).get().equals("Reverse")) {
             reversePattern(pattern);
         }
+
+        pattern = repeatPattern(pattern);
 
         // Apply pattern to the clip
         applyPatternToClip(clip, pattern, channel, noteDestination, duration);
@@ -109,17 +112,17 @@ public class DrumPatternGenerator {
         }
         // Launch Clip
         if (((EnumValue) launchClipSetting).get().equals("On")) {
-            
+
             // if (!clip.clipLauncherSlot().isPlaying().get()) {
-                extension.getHost().scheduleTask(() -> {
-                    // Get the duplicated clip and launch it
-                    clip.clipLauncherSlot().select();
-                    clip.clipLauncherSlot().launch();
-                    
-                 }, 200); // Small delay to ensure duplication is complete
-                
+            extension.getHost().scheduleTask(() -> {
+                // Get the duplicated clip and launch it
+                clip.clipLauncherSlot().select();
+                clip.clipLauncherSlot().launch();
+
+            }, 200); // Small delay to ensure duplication is complete
+
             // }
-         
+
         }
 
         // Switch to edit view layout if enabled
@@ -140,6 +143,23 @@ public class DrumPatternGenerator {
             pattern[i] = pattern[pattern.length - 1 - i];
             pattern[pattern.length - 1 - i] = temp;
         }
+    }
+
+    private static int[] repeatPattern(int[] pattern) {
+        int repeat = PatternSettings.getRepeatPattern();
+        showPopup("Repeat: " + repeat);
+        // if the array is like [1, 2, 3, 4] and repeat is 2 then the array will be [1,
+        // 2, 3, 4, 1, 2, 3, 4]
+        if (repeat <= 1) {
+            return pattern;
+        }
+        
+        int[] repeatedPattern = new int[pattern.length * repeat];
+        for (int i = 0; i < repeat; i++) {
+            System.arraycopy(pattern, 0, repeatedPattern, i * pattern.length, pattern.length);
+        }
+        
+        return repeatedPattern;
     }
 
     /**
