@@ -1,6 +1,7 @@
 package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
+import static com.centomila.utils.PopupUtils.*;
 import com.centomila.utils.ExecuteBBMacros;
 import com.centomila.utils.LoopProcessor;
 import com.bitwig.extension.controller.api.Setting;
@@ -239,7 +240,7 @@ public class MacroActionSettings {
 
             // Launch button observer
             ((Signal) macroLaunchBtnSignalSettings[i]).addSignalObserver(() -> {
-                host.println("Signal triggered for Macro " + (slotIndex + 1) + " at " +
+                console("Signal triggered for Macro " + (slotIndex + 1) + " at " +
                         new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new java.util.Date()));
 
                 long currentTime = System.currentTimeMillis();
@@ -251,7 +252,7 @@ public class MacroActionSettings {
                         executeMacro(macro, extension);
                     }
                 } else {
-                    host.println("Ignoring rapid signal trigger, wait " + DEBOUNCE_MS + "ms between triggers");
+                    console("Ignoring rapid signal trigger, wait " + DEBOUNCE_MS + "ms between triggers");
                 }
             });
 
@@ -277,7 +278,7 @@ public class MacroActionSettings {
         ((Signal) executeInstantMacroSignal).addSignalObserver(() -> {
             synchronized (executionLock) {
                 if (isExecuting) {
-                    host.println("Cannot start instant macro - execution in progress from: " + currentExecutionSource);
+                    console("Cannot start instant macro - execution in progress from: " + currentExecutionSource);
                     host.showPopupNotification("Cannot start - execution in progress");
                     return;
                 }
@@ -311,7 +312,7 @@ public class MacroActionSettings {
         // Add this in initMacroActionObservers after other signal observers
         ((Signal) macroStopBtnSignalSetting).addSignalObserver(() -> {
             stopExecution = true;
-            host.println("Macro execution stop requested");
+            console("Macro execution stop requested");
             host.showPopupNotification("Stopping macro execution...");
         });
 
@@ -386,7 +387,7 @@ public class MacroActionSettings {
     private static void executeMacro(MacroBB macro, BitwigBuddyExtension extension) {
         synchronized (executionLock) {
             if (isExecuting) {
-                host.println("Another execution is in progress from: " + currentExecutionSource);
+                console("Another execution is in progress from: " + currentExecutionSource);
                 host.showPopupNotification("Cannot start macro - execution in progress");
                 return;
             }
@@ -397,16 +398,16 @@ public class MacroActionSettings {
                 executionStartTime = System.currentTimeMillis();
                 stopExecution = false;
 
-                host.println("=== MACRO EXECUTION START: "
+                console("=== MACRO EXECUTION START: "
                         + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
-                host.println("Processing macro: " + macro.getTitle());
+                console("Processing macro: " + macro.getTitle());
 
                 // Flatten macro commands
                 List<String> flattenedCommands = flattenMacroCommands(macro, extension, new HashSet<>());
 
-                host.println("Commands sequence (total " + flattenedCommands.size() + "):");
+                console("Commands sequence (total " + flattenedCommands.size() + "):");
                 for (int i = 0; i < flattenedCommands.size(); i++) {
-                    host.println((i + 1) + ": " + flattenedCommands.get(i));
+                    console((i + 1) + ": " + flattenedCommands.get(i));
                 }
 
                 scheduleCommands(flattenedCommands.toArray(new String[0]), 0, extension);
@@ -465,11 +466,11 @@ public class MacroActionSettings {
         if (index >= commands.length || stopExecution) {
             synchronized (executionLock) {
                 if (stopExecution) {
-                    host.println("=== MACRO EXECUTION STOPPED BY USER ===");
+                    console("=== MACRO EXECUTION STOPPED BY USER ===");
                     host.showPopupNotification("Macro execution stopped");
                     stopExecution = false;
                 } else {
-                    host.println("=== MACRO EXECUTION END: "
+                    console("=== MACRO EXECUTION END: "
                             + new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(new java.util.Date()) + " ===");
                 }
 
@@ -477,14 +478,14 @@ public class MacroActionSettings {
                 isExecuting = false;
                 currentExecutionSource = null;
                 long duration = System.currentTimeMillis() - executionStartTime;
-                host.println("Total execution time: " + duration + "ms");
+                console("Total execution time: " + duration + "ms");
             }
             return;
         }
 
         String command = commands[index];
         final long startTime = System.currentTimeMillis();
-        host.println("Executing command " + (index + 1) + "/" + commands.length + ": " + command);
+        console("Executing command " + (index + 1) + "/" + commands.length + ": " + command);
 
         try {
             // Handle the "Wait" command explicitly
@@ -495,7 +496,7 @@ public class MacroActionSettings {
 
                 if (matcher.matches()) {
                     int waitTime = Integer.parseInt(matcher.group(1));
-                    host.println("Waiting for " + waitTime + "ms...");
+                    console("Waiting for " + waitTime + "ms...");
                     extension.getHost().scheduleTask(() -> {
                         scheduleCommands(commands, index + 1, extension);
                     }, waitTime);
@@ -522,7 +523,7 @@ public class MacroActionSettings {
             host.errorln("Error executing command '" + command + "': " + e.getMessage());
         }
 
-        host.println("Completed command " + (index + 1) + "/" + commands.length + ": " + command +
+        console("Completed command " + (index + 1) + "/" + commands.length + ": " + command +
                 " after " + (System.currentTimeMillis() - startTime) + "ms");
 
         // Schedule next command with a default delay
@@ -702,7 +703,7 @@ public class MacroActionSettings {
 
     @SuppressWarnings("unused")
     private static void printAllAvailableActions(BitwigBuddyExtension extension) {
-        host.println("Collecting available actions...");
+        console("Collecting available actions...");
 
         // Prepare the content
         StringBuilder content = new StringBuilder();
@@ -718,7 +719,7 @@ public class MacroActionSettings {
                         category.getName()));
 
                 // Also print to console
-                host.println(action.getId() + " | " + action.getName());
+                console(action.getId() + " | " + action.getName());
             }
         }
 
@@ -729,7 +730,7 @@ public class MacroActionSettings {
 
         try {
             java.nio.file.Files.write(outputFile.toPath(), content.toString().getBytes());
-            host.println("Actions list saved to: " + outputFile.getAbsolutePath());
+            console("Actions list saved to: " + outputFile.getAbsolutePath());
         } catch (IOException e) {
             host.errorln("Failed to save actions list: " + e.getMessage());
         }
@@ -780,7 +781,7 @@ public class MacroActionSettings {
                             try {
                                 desktop.open(macroFile);
                                 opened = true;
-                                host.println("Opening macro file: " + macroFile.getAbsolutePath());
+                                console("Opening macro file: " + macroFile.getAbsolutePath());
                             } catch (Exception e) {
                                 host.errorln("Desktop API failed: " + e.getMessage());
                             }
@@ -823,7 +824,7 @@ public class MacroActionSettings {
                         }
 
                         pb.start();
-                        host.println("Opening macro file using system command: " + macroFile.getAbsolutePath());
+                        console("Opening macro file using system command: " + macroFile.getAbsolutePath());
                     }
                 } else {
                     host.errorln("Macro file not found: " + macroFile.getAbsolutePath());

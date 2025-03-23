@@ -13,7 +13,7 @@ public class PopupUtils {
     }
 
     /**
-     * @param message
+     * @param message // The message to display
      */
     public static void showPopup(String message) {
         if (host != null) {

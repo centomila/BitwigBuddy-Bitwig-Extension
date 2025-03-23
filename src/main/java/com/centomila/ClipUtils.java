@@ -70,8 +70,8 @@ public class ClipUtils {
      * @param cursorClip    The Launcher (cursor) Clip.
      * @return The selected Clip object.
      */
-    public static Clip getLauncherOrArrangerAsClip(Setting toggleSetting, Clip arrangerClip, Clip cursorClip) {
-        String launcherArrangerSelection = ((EnumValue) toggleSetting).get();
+    public static Clip getLauncherOrArrangerAsClip(Clip arrangerClip, Clip cursorClip) {
+        String launcherArrangerSelection = ModeSelectSettings.getCurrentLauncherArrangerToggleString();
         return launcherArrangerSelection.equals("Arranger") ? arrangerClip : cursorClip;
     }
 

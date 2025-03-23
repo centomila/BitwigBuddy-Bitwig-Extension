@@ -6,6 +6,9 @@ import com.bitwig.extension.controller.api.CueMarkerBank;
 import com.bitwig.extension.controller.api.CursorRemoteControlsPage;
 import com.bitwig.extension.controller.api.CursorTrack;
 import com.bitwig.extension.controller.api.DeviceBank;
+
+import static com.centomila.utils.PopupUtils.showPopup;
+
 import com.bitwig.extension.controller.ControllerExtension;
 import com.bitwig.extension.controller.api.Application;
 import com.bitwig.extension.controller.api.Arranger;
@@ -54,7 +57,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public ClipLauncherSlot clipLauncherSlot;
    public SceneBank sceneBank;
    public Channel channel;
-   
 
    DocumentState documentState;
 
@@ -77,43 +79,82 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
       // Initialize API objects
       this.application = host.createApplication();
+
       this.cursorClip = host.createLauncherCursorClip((16 * 8), 128);
       this.arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
-      this.cursorTrack = host.createCursorTrack(0, 128);
+      // CursorTrack createCursorTrack(String id,
+      // String name,
+      // int numSends,
+      // int numScenes,
+      // boolean shouldFollowSelection)
+      this.cursorTrack = host.createCursorTrack("cursorTrack", "Cursor Track", 0, 128, true);
       this.documentState = host.getDocumentState();
       this.transport = host.createTransport();
-      this.arranger = host.createArranger();
-      this.project = host.getProject();
       this.clipLauncherSlot = cursorClip.clipLauncherSlot();
       this.timeSignature = transport.timeSignature();
-      this.sceneBank = host.createSceneBank(1);
+      this.sceneBank = host.createSceneBank(128);
+      this.arranger = host.createArranger();
+      this.project = host.getProject();
+      this.cursorDeviceSlot = cursorTrack.createCursorDevice();
 
+      this.timeSignature.subscribe();
+      this.sceneBank.subscribe();
+      this.cursorClip.subscribe();
+      this.arrangerClip.subscribe();
+      this.cursorTrack.subscribe();
+      this.transport.subscribe();
+      this.clipLauncherSlot.subscribe();
+
+      // Arranger
+      this.arranger.isClipLauncherVisible().markInterested();
+      this.arranger.areCueMarkersVisible().markInterested();
+      this.arranger.isPlaybackFollowEnabled().markInterested();
+      this.arranger.isTimelineVisible().markInterested();
+      this.arranger.hasDoubleRowTrackHeight().markInterested();
       // Device Matcher
       this.trackBank = host.createTrackBank(128, 0, 128); // Evaluate to change to createMainTrackBank in the future
       this.deviceBank = this.cursorTrack.createDeviceBank(128);
       this.drumPadBank = deviceBank.getDevice(0).createDrumPadBank(128);
       this.drumPadBank.scrollPosition().set(0);
-      
-      this.cursorDeviceSlot = cursorTrack.createCursorDevice();
 
+      this.cursorDeviceSlot.exists().markInterested();
+      this.cursorDeviceSlot.isWindowOpen().markInterested();
+      this.cursorDeviceSlot.isEnabled().markInterested();
+      this.cursorDeviceSlot.isPinned().markInterested();
+      this.cursorDeviceSlot.name().markInterested();
+      this.cursorDeviceSlot.isExpanded().markInterested();
+
+      // Remote Controls
       this.cursorRemoteControlsPage = this.cursorDeviceSlot.createCursorRemoteControlsPage(1);
       this.cursorRemoteControlsPage.getParameter(0).markInterested();
-
       this.remoteControl = cursorRemoteControlsPage.getParameter(0);
-      
+
       // This makes sure the track bank tracks the selected track in Bitwig
       this.trackBank.followCursorTrack(cursorTrack);
-      
+      this.trackBank.setShouldShowClipLauncherFeedback(true);
+
+      this.sceneBank.setIndication(true);
+
+      // Mark interested for all properties
+      this.cursorTrack.name().markInterested();
+      this.cursorTrack.color().markInterested();
+      this.cursorTrack.getIsPreFader().markInterested();
+      this.cursorTrack.clipLauncherSlotBank().cursorIndex().markInterested();
+      this.cursorTrack.clipLauncherSlotBank().scrollPosition().markInterested();
+      this.cursorTrack.clipLauncherSlotBank().itemCount().markInterested();
+      this.cursorTrack.clipLauncherSlotBank().exists().markInterested();
+      this.cursorTrack.volume().markInterested();
+
       this.remoteControl.markInterested();
-      
-      
+
+      this.application.displayProfile().markInterested();
+
       this.deviceBank.getDeviceChain().name().markInterested();
       this.deviceBank.getDeviceChain().exists().markInterested();
       this.deviceBank.cursorIndex().markInterested();
       this.deviceBank.scrollPosition().markInterested();
       this.deviceBank.itemCount().markInterested();
       this.deviceBank.exists().markInterested();
-      
 
       this.cueMarkerBank = arranger.createCueMarkerBank(128);
       this.transport.playStartPosition().markInterested();
@@ -130,7 +171,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.transport.isMetronomeEnabled().markInterested();
       this.transport.tempo().markInterested();
       this.transport.timeSignature().markInterested();
-      
 
       this.trackBank.cursorIndex().markInterested();
       this.trackBank.channelCount().markInterested();
@@ -141,7 +181,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.trackBank.sceneBank().cursorIndex().markInterested();
       this.trackBank.sceneBank().scrollPosition().markInterested();
       this.trackBank.sceneBank().itemCount().markInterested();
-      
+
       this.sceneBank.cursorIndex().markInterested();
       this.sceneBank.scrollPosition().markInterested();
 
@@ -150,14 +190,13 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.drumPadBank.cursorIndex().markInterested();
       this.drumPadBank.exists().markInterested();
 
-
       this.cueMarkerBank.subscribe();
       for (int i = 0; i < 128; i++) {
          this.cueMarkerBank.getItemAt(i).name().markInterested();
          this.cueMarkerBank.getItemAt(i).getColor().markInterested();
          this.cueMarkerBank.getItemAt(i).exists().markInterested();
          this.cueMarkerBank.getItemAt(i).position().markInterested();
-         
+
          this.trackBank.getItemAt(i).name().markInterested();
          this.trackBank.getItemAt(i).color().markInterested();
          this.trackBank.getItemAt(i).exists().markInterested();
@@ -167,7 +206,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
          this.trackBank.getItemAt(i).arm().markInterested();
          this.trackBank.getItemAt(i).volume().markInterested();
          this.trackBank.getItemAt(i).pan().markInterested();
-         
+
          this.trackBank.getItemAt(i).clipLauncherSlotBank().cursorIndex().markInterested();
          this.trackBank.getItemAt(i).clipLauncherSlotBank().scrollPosition().markInterested();
          this.trackBank.getItemAt(i).clipLauncherSlotBank().itemCount().markInterested();
@@ -182,9 +221,13 @@ public class BitwigBuddyExtension extends ControllerExtension {
          this.drumPadBank.getItemAt(i).name().markInterested();
          this.drumPadBank.getItemAt(i).exists().markInterested();
          this.drumPadBank.getItemAt(i).color().markInterested();
-         
 
-
+         this.sceneBank.getItemAt(i).name().markInterested();
+         this.sceneBank.getItemAt(i).color().markInterested();
+         this.sceneBank.getItemAt(i).exists().markInterested();
+         this.sceneBank.getItemAt(i).clipCount().markInterested();
+         this.sceneBank.getItemAt(i).exists().markInterested();
+         this.sceneBank.getItemAt(i).sceneIndex().markInterested();
       }
 
       this.cueMarkerBank.scrollPosition().markInterested();
@@ -192,12 +235,12 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
       this.application.panelLayout().markInterested();
 
+      this.cursorClip.exists().markInterested();
       this.cursorClip.getLoopLength().markInterested();
       this.cursorClip.getLoopStart().markInterested();
       this.cursorClip.getPlayStart().markInterested();
       this.cursorClip.getPlayStop().markInterested();
-      this.cursorClip.clipLauncherSlot().isPlaying().markInterested();
-      
+
       this.arrangerClip.getLoopLength().markInterested();
       this.arrangerClip.getLoopStart().markInterested();
       this.arrangerClip.getPlayStart().markInterested();
@@ -210,8 +253,10 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.clipLauncherSlot.exists().markInterested();
       this.clipLauncherSlot.hasContent().markInterested();
       this.clipLauncherSlot.sceneIndex().markInterested();
-      this.clipLauncherSlot.sceneIndex().markInterested();
-
+      this.clipLauncherSlot.isRecording().markInterested();
+      this.clipLauncherSlot.isRecordingQueued().markInterested();
+      this.clipLauncherSlot.isStopQueued().markInterested();
+      this.clipLauncherSlot.isPlaybackQueued().markInterested();
 
       // Initialize settings
       SettingsHelper.init(this);
@@ -230,21 +275,21 @@ public class BitwigBuddyExtension extends ControllerExtension {
       PostActionSettings.init(this);
       ModeSelectSettings.hideMacroSettings();
       ClipUtils.init(this);
-      
-      
-      
+
       DeviceMatcherDrumMachine.initializeDeviceMatcherDM(this, host);
-      
+
       // Initialize save section last to position it at the bottom of the GUI
       CustomPresetSaver.initCustomSavePresetSetting(documentState, this);
-      
-      // After all settings are initialized, set initial visibility based on current mode
+
+      // After all settings are initialized, set initial visibility based on current
+      // mode
       String patternType = PatternSettings.getPatternType();
       if (patternType != null) {
          PatternSettings.generatorTypeSelector(patternType);
       }
-      
+
       ModeSelectSettings.gotoGenerateMode();
+
       // Show a notification to confirm initialization
       PopupUtils.showPopup("BitwigBuddy Initialized! Have fun!");
    }
@@ -267,8 +312,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
     * @return The active Clip object (either launcher or arranger clip)
     */
    public Clip getLauncherOrArrangerAsClip() {
-      return ClipUtils.getLauncherOrArrangerAsClip(ModeSelectSettings.toggleLauncherArrangerSetting, arrangerClip,
-            cursorClip);
+      return ClipUtils.getLauncherOrArrangerAsClip(arrangerClip, cursorClip);
    }
 
    @Override

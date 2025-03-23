@@ -1,13 +1,12 @@
 package com.centomila.utils;
 
 import static com.centomila.utils.ReturnBitwigDeviceUUID.getDeviceUUID;
-import static com.centomila.utils.PopupUtils.showPopup;
+import static com.centomila.utils.PopupUtils.*;
 
 import com.centomila.BitwigBuddyExtension;
 import com.centomila.ClipUtils;
 import com.centomila.GlobalPreferences;
 import com.centomila.ModeSelectSettings;
-import com.centomila.NoteDestinationSettings;
 import com.centomila.PatternSettings;
 import com.centomila.PostActionSettings;
 import com.centomila.Utils;
@@ -26,11 +25,11 @@ public class ExecuteBBMacros {
 
     public static boolean executeBitwigAction(String actionId, BitwigBuddyExtension extension) {
         ControllerHost host = extension.getHost();
-        host.println("Executing Bitwig action: " + actionId);
+        console("Executing Bitwig action: " + actionId);
 
         // If this line is a comment, show it and skip
         if (actionId.startsWith("//")) {
-            host.println("Skipping comment line: " + actionId);
+            console("Skipping comment line: " + actionId);
             return true;
         }
 
@@ -82,7 +81,7 @@ public class ExecuteBBMacros {
             params = new String[0];
         }
 
-        host.println("Executing Bitwig action: " + actionId);
+        console("Executing Bitwig action: " + actionId);
 
         try {
             handleAction(actionId, params, extension);
@@ -466,24 +465,46 @@ public class ExecuteBBMacros {
         // 3. Move the cursor to the desired position (right or left).
         // action nudge_events_one_step_earlier or nudge_events_one_step_later
         // Use moveAmount as multiplier for clip length movements
-        double clipLength = extension.getLauncherOrArrangerAsClip().getLoopLength().get();
-        double actualMoveAmount = clipLength * moveAmount;
+        // double clipLength = extension.getLauncherOrArrangerAsClip().getLoopLength().get();
+        // double actualMoveAmount = clipLength * moveAmount;
 
-        // Use Bitwig actions to move the selected clip
-        if (actualMoveAmount > 0) {
-            for (int i = 0; i < Math.abs(actualMoveAmount); i++) {
-                extension.getApplication().getAction("nudge_events_one_step_later").invoke();
-                // Add a small wait to ensure commands are processed
-                // try { Thread.sleep(150); } catch (InterruptedException e) {
-                // Thread.currentThread().interrupt(); }
+        if (ModeSelectSettings.getCurrentLauncherArrangerToggleString().equals("Arranger")) {
+            // Use Bitwig actions to move the selected clip
+            if (moveAmount > 0) {
+                for (int i = 0; i < moveAmount; i++) {
+                    extension.getApplication().getAction("nudge_events_one_step_later").invoke();
+                }
+            } else if (moveAmount < 0) {
+                for (int i = 0; i < Math.abs(moveAmount); i++) {
+                    extension.getApplication().getAction("nudge_events_one_step_earlier").invoke();
+                }
             }
-        } else if (actualMoveAmount < 0) {
-            for (int i = 0; i < Math.abs(actualMoveAmount); i++) {
-                extension.getApplication().getAction("nudge_events_one_step_earlier").invoke();
-                // Add a small wait to ensure commands are processed
-                // try { Thread.sleep(150); } catch (InterruptedException e) {
-                // Thread.currentThread().interrupt(); }
+        } else {
+            // In Launcher mode
+            ClipLauncherSlot sourceSlot = extension.getLauncherOrArrangerAsClip().clipLauncherSlot();
+            SceneBank sceneBank = extension.sceneBank;
+
+            // sceneBank.scrollPosition().set(sourceSlot.sceneIndex().get());
+
+            int sourceSlotIndex = sourceSlot.sceneIndex().get();
+            int targetSlotIndex = sourceSlotIndex + (int) moveAmount;
+            showPopup("Source slot index: " + sourceSlotIndex + " Target slot index: " + targetSlotIndex);
+
+            if (targetSlotIndex >= 0 && targetSlotIndex < 128) {
+                // Create a new clip in the target slot
+                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().getItemAt(targetSlotIndex)
+                        .replaceInsertionPoint().moveSlotsOrScenes(sourceSlot);
+                ;
+
+                // Select the target clip
+                extension.trackBank.getItemAt(currentTrack).clipLauncherSlotBank().getItemAt(targetSlotIndex).select();
+                extension.sceneBank.cursorIndex().set(targetSlotIndex);
+                // Scroll to the target slot
+                // extension.sceneBank.scrollPosition().set(targetSlotIndex);
+            } else {
+                showPopup("Invalid target slot index: " + targetSlotIndex);
             }
+
         }
 
     }
@@ -932,6 +953,7 @@ public class ExecuteBBMacros {
         // case "BB Preset":
         PatternSettings.setCustomPreset(params[0]);
     }
+
     private static void handleBBPostActionAutoResize(String[] params, BitwigBuddyExtension extension) {
         // case "BB Post Action AutoResize":
         // convert true or false strings to "On" or "Off"
@@ -941,7 +963,7 @@ public class ExecuteBBMacros {
             PostActionSettings.setAutoResizeLoopLengthSetting("Off");
         }
 
-            }
+    }
 
     private static void handlePrintActions(BitwigBuddyExtension extension) {
         // case "BB Preset":
@@ -957,7 +979,8 @@ public class ExecuteBBMacros {
         try {
             PrintWriter writer = new PrintWriter(path, "UTF-8");
             for (int i = 0; i < actionsQty; i++) {
-                writer.println(extension.application.getActions()[i].getId() + "  |  " + extension.application.getActions()[i].getName());
+                writer.println(extension.application.getActions()[i].getId() + "  |  "
+                        + extension.application.getActions()[i].getName());
             }
             writer.close();
         } catch (FileNotFoundException | UnsupportedEncodingException e) {

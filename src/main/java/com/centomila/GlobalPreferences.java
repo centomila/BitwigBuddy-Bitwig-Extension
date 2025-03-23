@@ -168,7 +168,7 @@ public class GlobalPreferences {
 
         // Add observer for channel destination
         showChannelDestinationPref.addValueObserver(value -> {
-            host.println("Show Channel Destination: " + value);
+            console("Show Channel Destination: " + value);
             if (value) {
                 showSetting(NoteDestinationSettings.noteChannelSetting);
                 showPopup("Channel Destination enabled");
@@ -244,13 +244,13 @@ public class GlobalPreferences {
         String userHome = System.getProperty("user.home");
         Path extensionsFolder = Paths.get(userHome, "Documents", "Bitwig Studio", "Extensions");
         if (isValidPresetsFolder(extensionsFolder)) {
-            host.println("Using Bitwig Extensions folder: " + extensionsFolder);
+            console("Using Bitwig Extensions folder: " + extensionsFolder);
             return extensionsFolder;
         }
 
         // Fallback to user home
         Path homeFolder = Paths.get(userHome);
-        host.println("Using home folder: " + homeFolder);
+        console("Using home folder: " + homeFolder);
         return homeFolder;
     }
 
@@ -357,7 +357,7 @@ public class GlobalPreferences {
                 } else {
                     // Fallback for Linux without zenity
                     showPopup("Directory selection requires zenity to be installed");
-                    host.println("Directory selection requires zenity on Linux");
+                    console("Directory selection requires zenity on Linux");
                     return;
                 }
             }
@@ -370,13 +370,13 @@ public class GlobalPreferences {
                 if (isValidPresetsFolder(selectedPath)) {
                     setPresetsPath(selectedPath.toString());
                     showPopup("Presets folder set to: " + selectedPath);
-                    host.println("Presets folder set to: " + selectedPath);
+                    console("Presets folder set to: " + selectedPath);
                 } else {
                     showPopup("Selected folder is not valid: " + selectedPath);
-                    host.println("Selected folder is not valid: " + selectedPath);
+                    console("Selected folder is not valid: " + selectedPath);
                 }
             } else {
-                host.println("Folder selection was canceled or returned empty result");
+                console("Folder selection was canceled or returned empty result");
             }
             
         } catch (Exception e) {
@@ -397,7 +397,7 @@ public class GlobalPreferences {
             
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                host.println("Process exited with code " + exitCode);
+                console("Process exited with code " + exitCode);
             }
             
             return output.toString();
