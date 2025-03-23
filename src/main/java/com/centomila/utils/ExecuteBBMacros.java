@@ -298,6 +298,9 @@ public class ExecuteBBMacros {
             case "BB Preset":
                 handleBBPreset(params, extension);
                 break;
+            case "BB Pattern Repeat":
+                handleBBPatternRepeat(params, extension);
+                break;
             case "BB Post Action AutoResize":
                 handleBBPostActionAutoResize(params, extension);
                 break;
@@ -306,6 +309,9 @@ public class ExecuteBBMacros {
                 break;
             case "Print Actions":
                 handlePrintActions(extension);
+                break;
+            case "Test":
+                handleTestFunction(extension);
                 break;
 
             default:
@@ -370,9 +376,13 @@ public class ExecuteBBMacros {
     }
 
     private static void handleClipDuplicate(BitwigBuddyExtension extension) {
-        extension.getLauncherOrArrangerAsClip().clipLauncherSlot().duplicateClip();
-        int clipPosition = extension.getLauncherOrArrangerAsClip().clipLauncherSlot().sceneIndex().get();
-        extension.sceneBank.scrollIntoView(clipPosition);
+        if (ModeSelectSettings.getCurrentLauncherArrangerToggleString().equals("Arranger")) {
+            extension.application.duplicate();
+        } else {
+            extension.getLauncherOrArrangerAsClip().clipLauncherSlot().duplicateClip();
+            int clipPosition = extension.getLauncherOrArrangerAsClip().clipLauncherSlot().sceneIndex().get();
+            extension.sceneBank.scrollIntoView(clipPosition);
+        }
 
     }
 
@@ -423,6 +433,8 @@ public class ExecuteBBMacros {
             // Schedule the actions sequentially
             extension.application.setPanelLayout("ARRANGE");
 
+            extension.arrangerClip.clipLauncherSlot().showInEditor();
+
             List<String> actions = new ArrayList<>();
             // actions.add("extend_time_selection_range_to_last_item"); // Action 1
             actions.add("select_start_of_selection_range"); // Action 1
@@ -430,6 +442,7 @@ public class ExecuteBBMacros {
                 actions.add("extend_time_selection_range_to_next_step"); // Action 2
             }
             actions.add("Consolidate"); // Action 3
+            actions.add("switch_between_event_and_time_selection"); // Action 4
 
             // Use the scheduler from MacroActionSettings to execute the actions
             MacroActionSettings.scheduleCommands(
@@ -437,6 +450,7 @@ public class ExecuteBBMacros {
                     0, // Start from the first action
                     extension // Pass the extension instance
             );
+            extension.arrangerClip.isLoopEnabled().set(true);
 
         } else {
 
@@ -465,7 +479,8 @@ public class ExecuteBBMacros {
         // 3. Move the cursor to the desired position (right or left).
         // action nudge_events_one_step_earlier or nudge_events_one_step_later
         // Use moveAmount as multiplier for clip length movements
-        // double clipLength = extension.getLauncherOrArrangerAsClip().getLoopLength().get();
+        // double clipLength =
+        // extension.getLauncherOrArrangerAsClip().getLoopLength().get();
         // double actualMoveAmount = clipLength * moveAmount;
 
         if (ModeSelectSettings.getCurrentLauncherArrangerToggleString().equals("Arranger")) {
@@ -954,6 +969,13 @@ public class ExecuteBBMacros {
         PatternSettings.setCustomPreset(params[0]);
     }
 
+    private static void handleBBPatternRepeat(String[] params, BitwigBuddyExtension extension) {
+        // case "BB Pattern Repeat":
+        int repeatQty = Integer.parseInt(params[0]);
+
+        PatternSettings.setRepeatPattern(repeatQty);
+    }
+
     private static void handleBBPostActionAutoResize(String[] params, BitwigBuddyExtension extension) {
         // case "BB Post Action AutoResize":
         // convert true or false strings to "On" or "Off"
@@ -986,6 +1008,12 @@ public class ExecuteBBMacros {
         } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+
+    }
+
+    private static void handleTestFunction(BitwigBuddyExtension extension) {
+        // case "Test":
+        showPopup(extension.getSnapSizeGrid());
 
     }
 

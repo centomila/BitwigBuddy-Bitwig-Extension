@@ -10,11 +10,15 @@ bounce_in_place
 switch_between_event_and_time_selection
 select_object_selection_tool
 reverse
+Wait (100)
 
 Clip Move (-4)
+Wait (100)
 
 Right
+Wait (100)
 
 Clip Move (-4)
+Wait (100)
 
 Clip Offset (0)

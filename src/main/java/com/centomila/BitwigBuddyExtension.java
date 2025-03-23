@@ -3,6 +3,7 @@ package com.centomila;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.CueMarker;
 import com.bitwig.extension.controller.api.CueMarkerBank;
+import com.bitwig.extension.controller.api.CursorChannel;
 import com.bitwig.extension.controller.api.CursorRemoteControlsPage;
 import com.bitwig.extension.controller.api.CursorTrack;
 import com.bitwig.extension.controller.api.DeviceBank;
@@ -24,6 +25,7 @@ import com.bitwig.extension.controller.api.TimeSignatureValue;
 import com.bitwig.extension.controller.api.TrackBank;
 import com.bitwig.extension.controller.api.Transport;
 import com.bitwig.extension.controller.api.Channel;
+import com.bitwig.extension.controller.api.Cursor;
 import com.centomila.utils.PopupUtils;
 import com.centomila.utils.SettingsHelper;
 import com.centomila.utils.DeviceMatcherDrumMachine;
@@ -57,6 +59,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public ClipLauncherSlot clipLauncherSlot;
    public SceneBank sceneBank;
    public Channel channel;
+   public CursorChannel cursorChannel;
+   public Cursor cursor;
 
    DocumentState documentState;
 
@@ -81,7 +85,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.application = host.createApplication();
 
       this.cursorClip = host.createLauncherCursorClip((16 * 8), 128);
-      this.arrangerClip = host.createArrangerCursorClip((16 * 8), 128);
+      this.arrangerClip = host.createArrangerCursorClip(256, 128);
       // CursorTrack createCursorTrack(String id,
       // String name,
       // int numSends,
@@ -105,6 +109,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.transport.subscribe();
       this.clipLauncherSlot.subscribe();
 
+      this.application.recordQuantizationGrid().markInterested();
       // Arranger
       this.arranger.isClipLauncherVisible().markInterested();
       this.arranger.areCueMarkersVisible().markInterested();
@@ -132,7 +137,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
       // This makes sure the track bank tracks the selected track in Bitwig
       this.trackBank.followCursorTrack(cursorTrack);
       this.trackBank.setShouldShowClipLauncherFeedback(true);
-
       this.sceneBank.setIndication(true);
 
       // Mark interested for all properties
@@ -228,6 +232,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
          this.sceneBank.getItemAt(i).clipCount().markInterested();
          this.sceneBank.getItemAt(i).exists().markInterested();
          this.sceneBank.getItemAt(i).sceneIndex().markInterested();
+
+         this.channel = this.trackBank.getItemAt(i);
       }
 
       this.cueMarkerBank.scrollPosition().markInterested();
@@ -313,6 +319,18 @@ public class BitwigBuddyExtension extends ControllerExtension {
     */
    public Clip getLauncherOrArrangerAsClip() {
       return ClipUtils.getLauncherOrArrangerAsClip(arrangerClip, cursorClip);
+   }
+
+   public String getRecordQuantizationGridSize() {
+      return this.application.recordQuantizationGrid().get();
+   }
+
+   public void setRecordQuantizationGridSize(String size) {
+      this.application.recordQuantizationGrid().set(size);
+   }
+
+   public String getSnapSizeGrid() {
+      return this.timeSignature.get();
    }
 
    @Override

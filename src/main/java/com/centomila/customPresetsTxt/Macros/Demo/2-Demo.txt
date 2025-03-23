@@ -1,10 +1,10 @@
-Macro: "2-Tutorial"
+Macro: "2-Demo"
 Description: ""
 Author: "Centomila"
 
 Message ("This is a Bitwig Buddy Macro")
 Wait (3000)
-Message ("Now I will clean the project to show you what I can do")
+Message ("Now I will mess up with this project to show you what I can do")
 Wait (3000)
 Message ("You have 5 seconds to stop me")
 Wait (1000)
@@ -17,4 +17,4 @@ Wait (1000)
 Message ("2")
 Wait (1000)
 Message ("1")
-Macro ("Tutorial/3-Tutorial")
+Macro ("Demo/3-Demo")

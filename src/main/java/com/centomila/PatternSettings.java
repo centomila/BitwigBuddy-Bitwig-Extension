@@ -9,6 +9,8 @@ import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.EnumValue;
 import com.bitwig.extension.controller.api.RangedValue;
 import com.bitwig.extension.controller.api.SettableEnumValue;
+import com.bitwig.extension.controller.api.SettableIntegerValue;
+import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
@@ -589,6 +591,10 @@ public class PatternSettings {
     public static int getRepeatPattern() {
         return (int) ((RangedValue) repeatPatternSetting).getRaw();
     }
+    public static void setRepeatPattern(int repeatQty) {
+        ((SettableRangedValue) repeatPatternSetting).setRaw(repeatQty);
+    }
+
 
     // Show and hide settings
     public static void showAllSettings() {

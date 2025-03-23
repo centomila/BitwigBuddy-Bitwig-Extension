@@ -194,10 +194,16 @@ public class ModeSelectSettings {
         }
     }
 
+    /**
+     * @return the current mode as a string
+     */
     public static String getCurrentMode() {
         return ((EnumValue) modeGenerateEditToggleSetting).get();
     }
 
+    /**
+     * @return the current launcher/arranger toggle setting as a string
+     */
     public static String getCurrentLauncherArrangerToggleString() {
         return ((EnumValue) toggleLauncherArrangerSetting).get();
     }

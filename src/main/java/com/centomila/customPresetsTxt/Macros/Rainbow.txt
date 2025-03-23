@@ -3,6 +3,7 @@ Descritpion: "Clip Duplicate the selected clip 64 times with rainbow colors"
 Author: "Centomila"
 
 BB Close Panel
+Wait (100)
 Clip Rename (FF0000 - Red)
 Clip Color (FF0000)
 Clip Duplicate

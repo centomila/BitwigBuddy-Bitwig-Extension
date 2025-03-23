@@ -1,0 +1,31 @@
+Macro: "5-Demo"
+Description: ""
+Author: "Centomila"
+
+Zoom to Selection
+play_from_time_selection
+Wait (2000)
+Stop Transport
+
+// Select the first note
+switch_between_event_and_time_selection
+move_time_selection_one_event_earlier
+extend_time_selection_range_to_next_item
+extend_time_selection_range_to_next_item
+
+Macro ("BIP And Reverse")
+Wait (100)
+Left
+Play Transport
+Wait (2000)
+Stop Transport
+
+Message ("Ops. I left the two initial tracks")
+
+Track Delete (1)
+Track Delete (9)
+Wait (100)
+Track Select (1)
+Wait (1000)
+Play Transport
+Macro ("Demo/6-Demo")

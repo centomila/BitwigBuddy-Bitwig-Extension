@@ -1,9 +1,9 @@
-Macro: "3-Tutorial"
+Macro: "3-Demo"
 Description: ""
 Author: "Centomila"
 
 
-Message ("We need some tracks...")
+Message ("First, we need some tracks...")
 Wait (1500)
 focus_track_header_area
 Macro ("Create 8 Tracks")
@@ -17,4 +17,4 @@ Wait (1500)
 Message ("Zoom to Fit the arranger...")
 arranger_zoom_to_fit
 Wait (3000)
-Macro ("Tutorial/4-Tutorial")
+Macro ("Demo/4-Demo")

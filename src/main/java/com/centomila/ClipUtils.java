@@ -274,4 +274,6 @@ public class ClipUtils {
     public static void hideClipUtilsSettings() {
         hideSetting(allSettings);
     }
+
+
 }

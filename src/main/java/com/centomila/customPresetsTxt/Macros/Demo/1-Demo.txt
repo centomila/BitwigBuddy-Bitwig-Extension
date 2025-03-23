@@ -1,7 +1,7 @@
-Macro: "1-Tutorial"
+Macro: "1-Demo"
 Description: ""
 Author: "Centomila"
 
 Message ("Hello!")
 Wait(2000)
-Macro ("Tutorial/2-Tutorial")
+Macro ("Demo/2-Demo")

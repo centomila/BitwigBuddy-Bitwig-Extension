@@ -158,6 +158,14 @@ public class DrumPatternGenerator {
         for (int i = 0; i < repeat; i++) {
             System.arraycopy(pattern, 0, repeatedPattern, i * pattern.length, pattern.length);
         }
+
+        // if the lenght of the array is > 128 steps, then we need to truncate it
+        if (repeatedPattern.length > 128) {
+            int[] truncatedPattern = new int[128];
+            System.arraycopy(repeatedPattern, 0, truncatedPattern, 0, 128);
+            showPopup("Max 128 steps. Truncated steps: " + (repeatedPattern.length - 128));
+            return truncatedPattern;
+        }
         
         return repeatedPattern;
     }

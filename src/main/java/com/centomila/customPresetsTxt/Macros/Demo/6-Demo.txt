@@ -1,0 +1,19 @@
+Macro: "6-Demo"
+Description: ""
+Author: "Centomila"
+
+switch_between_event_and_time_selection
+Right
+Down
+Track Select (2)
+move_time_selection_one_event_earlier
+Clip Create (1, 4)
+Wait (200)
+Clip Select
+Message ("Weeeeeeeeeeeeeee!")
+Macro ("Rainbow Clip")
+Select All
+zoom_to_fit_selection_or_all
+// Wait (50)
+Stop Transport
+Message ("Bye bye!")
