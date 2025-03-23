@@ -17,4 +17,6 @@ Wait (1000)
 Message ("2")
 Wait (1000)
 Message ("1")
+Wait (1000)
+BB Close Panel
 Macro ("Demo/3-Demo")

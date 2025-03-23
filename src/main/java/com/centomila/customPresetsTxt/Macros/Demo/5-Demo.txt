@@ -8,7 +8,6 @@ Wait (2000)
 Stop Transport
 
 // Select the first note
-switch_between_event_and_time_selection
 move_time_selection_one_event_earlier
 extend_time_selection_range_to_next_item
 extend_time_selection_range_to_next_item
