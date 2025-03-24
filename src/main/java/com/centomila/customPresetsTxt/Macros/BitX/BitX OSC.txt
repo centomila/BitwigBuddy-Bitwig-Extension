@@ -1,0 +1,6 @@
+Macro: "BitX OSC (Send OSC Message)"
+Descritpion: "Sends an OSC message (Requires BitX). Usage: ()OSC /address arg1 arg2 ..."
+Author: "Centomila"
+
+Clip Color ("C5CA30")
+Clip Rename ("()OSC /example/address 1 "string arg" 3.14")

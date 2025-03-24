@@ -408,7 +408,8 @@ public class ExecuteBBMacros {
     }
 
     private static void handleClipRename(String[] params, BitwigBuddyExtension extension) {
-        extension.getLauncherOrArrangerAsClip().setName(params[0]);
+        String newName = params[0].trim();
+        extension.getLauncherOrArrangerAsClip().setName(newName);
     }
 
     private static void handleClipColor(String[] params, BitwigBuddyExtension extension) {

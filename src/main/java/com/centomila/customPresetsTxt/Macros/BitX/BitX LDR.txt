@@ -1,0 +1,6 @@
+Macro: "BitX LDR (Load Drum Rack)"
+Descritpion: "Load a drum rack preset (Requires BitX)"
+Author: "Centomila"
+
+Clip Color ("FF924C")
+Clip Rename ("()LDR Electronic Kit")

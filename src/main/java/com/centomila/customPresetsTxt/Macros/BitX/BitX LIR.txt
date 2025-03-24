@@ -1,0 +1,6 @@
+Macro: "BitX LIR (Load Instrument)"
+Descritpion: "Load an instrument preset (Requires BitX)"
+Author: "Centomila"
+
+Clip Color ("FFCA3A")
+Clip Rename ("()LIR Synth Lead:3")

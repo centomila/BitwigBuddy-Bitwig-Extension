@@ -1,0 +1,6 @@
+Macro: "BitX SMW (Setting Message)"
+Descritpion: "Display a message about setting up (Requires BitX)"
+Author: "Centomila"
+
+Clip Color ("52A675")
+Clip Rename ("()SMW Setting up drum sounds")

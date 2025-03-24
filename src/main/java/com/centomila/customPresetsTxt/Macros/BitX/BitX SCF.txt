@@ -1,0 +1,6 @@
+Macro: "BitX SCF (Scale Function)"
+Descritpion: "Set Channel filter - Will get the first channel filter on the track and set the channels (Requires BitX). Usage: ()SCF 1:5:9"
+Author: "Centomila"
+
+Clip Color ("8AC926")
+Clip Rename ("()SCF 1:3:5")

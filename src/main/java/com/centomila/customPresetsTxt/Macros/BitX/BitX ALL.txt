@@ -1,0 +1,33 @@
+Macro: "BitX All"
+Descritpion: "Change the track tempo (Requires BitX)"
+Author: "Centomila"
+
+Clip Create (1, 16)
+Macro ("BitX/BitX BPM (Tempo)")
+Clip Duplicate
+Select next item
+Macro ("BitX/BitX LDR (Load Drum Rack)")
+Select next item
+Clip Duplicate
+Macro ("BitX/BitX LIR (Load Instrument)")
+Select next item
+Clip Duplicate
+Macro ("BitX/BitX OSC (Send OSC Message)")
+Select next item
+Clip Duplicate
+Macro ("BitX/BitX SCF (Scale Function)")
+Select next item
+Clip Duplicate
+Macro ("BitX/BitX SMW (Setting Message)")
+Select next item
+Clip Duplicate
+Macro ("BitX/BitX SNF (Set Note Filter)")
+Select next item
+Clip Duplicate
+Macro ("BitX/BitX SNT (Set Note Transform)")
+Select next item
+Clip Duplicate
+Macro ("BitX/BitX SPN (Assign Name)")
+Select next item
+Clip Duplicate
+Macro ("BitX/BitX STS (Set Time Signature)")

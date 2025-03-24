@@ -1,0 +1,6 @@
+Macro: "BitX SNF (Set Note Filter)"
+Descritpion: "Set Note Filter - Change the key range for the note filter device (Requires BitX). Usage: ()SNF D1:E5"
+Author: "Centomila"
+
+Clip Color ("1982C4")
+Clip Rename ("()SNF C2:C5")

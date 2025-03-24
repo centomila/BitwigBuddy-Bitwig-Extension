@@ -1,0 +1,6 @@
+Macro: "BitX STS (Set Time Signature)"
+Descritpion: "Set Time Signature for the track (Requires BitX). Usage: ()STS 4:8"
+Author: "Centomila"
+
+Clip Color ("B5A6C9")
+Clip Rename ("()STS 4:8")

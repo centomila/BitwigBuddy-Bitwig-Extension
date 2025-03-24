@@ -1,0 +1,6 @@
+Macro: "BitX SNT (Set Note Transform)"
+Descritpion: "Set Note Transpose - Adjusts octave, coarse and fine tuning (Requires BitX). Usage: ()SNT octave:coarse:fine e.g. ()SNT 2:30:-40"
+Author: "Centomila"
+
+Clip Color ("4267AC")
+Clip Rename ("()SNT 1:20:-10")
