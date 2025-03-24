@@ -16,6 +16,11 @@
 - [X] **Replace/Add Toggle**
   - Instead of erasing the current pattern, the new pattern is added to the existing pattern.
   - Try with program on low density + Post Action Duplicate Clip for interesting results.
+- [X] **Repeat Pattern X Times**
+  - Repeat the pattern X times (1 to 8 times)
+  - Default: 1
+  - Example: If a pattern is 16 steps and you set Repeat Pattern to 2, the pattern will be 32 steps long.
+  - Note: Max 128 steps! If the pattern is longer than 128 steps, the pattern will be truncated to 128 steps.
 - [X] 💾 **Save Custom Presets**
   - Save the current pattern as a custom preset.
   - The custom presets are stored in the Custom Presets folder inside the BitwigBuddy folder as .txt files. 📃

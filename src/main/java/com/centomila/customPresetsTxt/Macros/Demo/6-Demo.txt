@@ -14,6 +14,8 @@ Message ("Weeeeeeeeeeeeeee!")
 Macro ("Rainbow Clip")
 Select All
 zoom_to_fit_selection_or_all
-// Wait (50)
 Stop Transport
+Wait (1000)
+Message ("End of demo!")
+Wait (2000)
 Message ("Bye bye!")
