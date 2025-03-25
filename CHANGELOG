@@ -3,7 +3,7 @@
 ## 1.0.0 | **PRERELASE CHANGELOG**. Available only via source code!!!
 - [X] 📙 Manual!
   - The manual is available in the repository and in the zip file
-- [X] **Skip Step Every X** in Program Mode
+- [X] 🦘 **Skip Step Every X** in Program Mode
   - Skip a step every X steps
   - Example: Set Density at 100% and Skip Step Every X at 1 to create a 50% density pattern skipping all the odd steps
   - Example: Set Density at 100% and Skip Step Every X at 2 to create a 50% density pattern skipping all the even steps
@@ -11,12 +11,12 @@
 - [X] 🥁 **Learn Note from selected drum pad**
   - Select _DM_ from the _Learn Note_ selection and click on a drum pad to set the note destination.
   - Works on any Bitwig Drum Machine device in tracks from 1 to 128.
-- [X] **Presets and Custom are a single thing now**.
+- [X] 🪢 **Presets and Custom are a single thing now**.
   - All default presets are txt files like the Custom Presets folder.
-- [X] **Replace/Add Toggle**
+- [X] ➕ **Replace/Add Toggle**
   - Instead of erasing the current pattern, the new pattern is added to the existing pattern.
   - Try with program on low density + Post Action Duplicate Clip for interesting results.
-- [X] **Repeat Pattern X Times**
+- [X] 🔁 **Repeat Pattern X Times**
   - Repeat the pattern X times (1 to 8 times)
   - Default: 1
   - Example: If a pattern is 16 steps and you set Repeat Pattern to 2, the pattern will be 32 steps long.
@@ -25,10 +25,14 @@
   - Save the current pattern as a custom preset.
   - The custom presets are stored in the Custom Presets folder inside the BitwigBuddy folder as .txt files. 📃
   - The custom presets can be selected from the Custom Preset dropdown.
-- [X] New Default Patterns
-  - 35 new patterns fully customizable from txt files.
-- [X] **Save Custom Pattern from Program Mode**
+- [X] 💾 **Save Custom Pattern from Program Mode**
   - Now it's easy to save the current pattern as a custom preset when in Program mode.
+- [X] 🥁 **New Default Patterns**
+  - 35 new patterns fully customizable from txt files.
+- [X] 💻 **Open Bitwig Console** button
+  - Open the Bitwig Console from the BitwigBuddy Settings (Bitwig Dashboard > Settings > Controllers).
+- [X] 👁️ **Show Advanced GPU Settings** button
+  - This is a hidden Bitwig Setting that allows you to change the GPU settings. Useful if you have visual artifacts or performance issues.
 - [X] 🤖 **Macros!** Yes. Macros. 🤖
   - Now you can execute pre-defined sequences of actions using macros. These macros are stored as text files and can include both native Bitwig actions and additional custom actions provided by BitwigBuddy.
   - Automate multiple sequence of actions like: Insert a Drum Machine, Insert a Midi File, Insert a Sample, Add Cue Markers, Rename Clips, Change Colors, Duplicate, Cursor Keys...

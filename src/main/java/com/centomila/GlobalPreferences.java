@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.utils.SettingsHelper.*;
 
+import com.centomila.utils.ExecuteBBMacros;
 import com.centomila.utils.ExtensionPath;
 import com.centomila.utils.OpenWebUrl;
 
@@ -37,6 +38,7 @@ public class GlobalPreferences {
     }
     private static final String PRESETS_SETTING_CATEGORY = "Preset Path";
     private static final String SUPPORT_CATEGORY = "Support";
+    private static final String UTILITIES_CATEGORY = "Utilities";
     private static final int MAX_PATH_LENGTH = 10000;
     private static final String PATREON_URL = "https://www.patreon.com/Centomila";
     private static final String GITHUB_URL = "https://github.com/centomila/BitwigBuddy-Bitwig-Extension";
@@ -51,10 +53,12 @@ public class GlobalPreferences {
     private Signal resetToDefaultButton;
     public static BooleanValue showChannelDestinationPref;
     private ControllerHost host;
+    private BitwigBuddyExtension extension;
     
     private CustomPresetsHandler presetsHandler;
 
     private Signal openPatreon, openGitHub, openCentomila;
+    private Signal openBitwigConsoleButton, openBitwigAdvancedGPUSettings;
     
 
     /**
@@ -66,6 +70,7 @@ public class GlobalPreferences {
         this.host = host;
         this.defaultPresetsPath = ExtensionPath.getExstensionsSubfolderPath("BitwigBuddy");
         this.preferences = host.getPreferences();
+        this.extension = extension;
 
         // Initialize all settings first
         initPreferencesSettings();
@@ -158,6 +163,17 @@ public class GlobalPreferences {
                 "Visit Centomila Website",
                 SUPPORT_CATEGORY,
                 "Go to Centomila.com");
+
+        // Utilities settings
+        this.openBitwigConsoleButton = preferences.getSignalSetting(
+                "Opens the Bitwig Studio Console window",
+                UTILITIES_CATEGORY,
+                "Open Bitwig Console");
+
+        this.openBitwigAdvancedGPUSettings = preferences.getSignalSetting(
+                "Opens the Bitwig Studio Advanced GPU Settings",
+                UTILITIES_CATEGORY,
+                "Open GPU Settings");
     }
 
     private void initPreferencesObservers() {
@@ -183,6 +199,10 @@ public class GlobalPreferences {
         this.openPatreon.addSignalObserver(this::openPatreonPage);
         this.openGitHub.addSignalObserver(this::openGitHubPage);
         this.openCentomila.addSignalObserver(this::openCentomilaPage);
+
+        // Add observers for utility buttons
+        this.openBitwigConsoleButton.addSignalObserver(this::openBitwigConsole);
+        this.openBitwigAdvancedGPUSettings.addSignalObserver(this::openBitwigGPUSettings);
     }
 
     /**
@@ -414,6 +434,18 @@ public class GlobalPreferences {
         } else {
             showPopup("Default presets folder not found: " + defaultPath);
         }
+    }
+
+    private void openBitwigConsole() {
+        
+        extension.getApplication().getAction("show_controller_script_console").invoke();
+        
+    }
+    
+    private void openBitwigGPUSettings() {
+        extension.getApplication().getAction("show_advanced_settings").invoke();
+        
+        
     }
 
     public static String getCurrentPresetsPath() {

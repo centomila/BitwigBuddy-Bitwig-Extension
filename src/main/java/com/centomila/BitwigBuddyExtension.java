@@ -350,6 +350,10 @@ public class BitwigBuddyExtension extends ControllerExtension {
       return application;
    }
 
+   public BitwigBuddyExtension getBitwigBuddyExtension() {
+      return this;
+   }
+
    public DocumentState getDocumentState() {
       return documentState;
    }
