@@ -2,6 +2,8 @@ package com.centomila;
 
 import static com.centomila.utils.SettingsHelper.*;
 import static com.centomila.utils.PopupUtils.*;
+import com.centomila.macro.MacroExecutor;
+import com.centomila.macro.processor.MacroProcessor;
 import com.centomila.utils.ExecuteBBMacros;
 import com.centomila.utils.LoopProcessor;
 import com.bitwig.extension.controller.api.Setting;
@@ -507,8 +509,8 @@ public class MacroActionSettings {
                 }
             }
 
-            // Try executing via ExecuteBitwigAction first
-            boolean handled = ExecuteBBMacros.executeBitwigAction(command, extension);
+            // Try executing via MacroExecutor
+            boolean handled = MacroExecutor.executeCommand(command, extension);
 
             // If not handled, try default Bitwig action
             if (!handled) {
@@ -1000,7 +1002,7 @@ public class MacroActionSettings {
 
         visitedMacros.add(macro.getTitle());
 
-        // Process commands through LoopProcessor first
+        // Process commands through LoopProcessor
         LoopProcessor loopProcessor = new LoopProcessor();
         List<String> processedCommands = loopProcessor.processLoop(Arrays.asList(macro.getCommands()));
 
@@ -1026,7 +1028,7 @@ public class MacroActionSettings {
                             break;
                         }
                     }
-
+                    
                     if (!macroFound) {
                         extension.getHost().errorln("Referenced macro not found: " + macroName);
                     }

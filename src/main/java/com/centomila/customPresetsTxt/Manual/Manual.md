@@ -154,21 +154,95 @@ Description: "Macro Description/Instruction/Notes"
 Author: "Author Name"
 ```
 
+#### Variables and Loops
 
+BitwigBuddy macros support variables and loops for more advanced automation:
 
-Single parameter example:
+##### Variables
 
-```
-Message ("Hello World")
-```
-
-Multiple parameters separated by commas example:
+Variables can be defined and used throughout your macro:
 
 ```
-Insert File (3,"C:\midi\file.mid")
+var clipLength = 4
+var trackName = "Drums"
+var basePosition = 2
+
+// Use variables in commands with ${varName}
+Clip Create(${basePosition}, ${clipLength})
+Track Rename(${trackName})
 ```
 
-This inserts the MIDI file `file.mid` into clip slot number 3.
+##### For Loops
+
+For loops allow you to repeat commands with an incrementing counter:
+
+```
+// Basic for loop syntax
+for (i = 1 to 4) {
+    Clip Create(${i}, 4)
+    Clip Color(#FF0000)
+}
+```
+
+The loop above will create 4 clips in positions 1, 2, 3, and 4, all with length 4 and colored red.
+
+##### Math Expressions
+
+You can perform calculations within variable references using standard math operators:
+
+```
+var baseLength = 2
+
+// Create clips with increasing lengths
+for (i = 1 to 8) {
+    // Create clip where position = i, length = i * baseLength
+    Clip Create(${i}, ${i*baseLength})
+}
+```
+
+Supported operators: 
+- Addition: `+`  
+- Subtraction: `-`
+- Multiplication: `*`
+- Division: `/`
+
+The result will be automatically rounded to integers when needed by commands.
+
+##### Nested Loops
+
+Loops can be nested for more complex patterns:
+
+```
+// Create a drum grid across multiple tracks and positions
+var baseNote = 36
+for (track = 1 to 4) {
+    Track Select(${track})
+    for (pos = 1 to 8) {
+        Clip Create(${pos}, 1)
+        Step Selected Velocity(${80 + track*10})
+        Step Selected Note(${baseNote + track*4})
+    }
+}
+```
+
+##### Tips for Working with Loops
+
+1. Make sure opening `{` and closing `}` braces are properly matched
+2. Variables defined outside loops are accessible inside loops
+3. Loop counter variables (like `i` in the examples) are only valid inside the loop
+4. Use debug mode for troubleshooting: `BB Macro(myMacro, debug)`
+5. You can use comments (`//`) both inside and outside loops, they will be ignored during execution
+
+```
+// Example with comments
+var baseNote = 36
+
+// This is a loop with comments inside
+for (i = 1 to 4) {
+    // This comment inside the loop is ignored
+    Clip Create(${i}, 4)
+}
+```
 
 ### 📂 Preset Folder
 
