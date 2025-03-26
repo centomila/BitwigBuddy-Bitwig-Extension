@@ -1,7 +1,9 @@
 package com.centomila.utils.commands;
 
 import com.centomila.BitwigBuddyExtension;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,5 +56,14 @@ public class CommandFactory {
      */
     public static boolean hasCommand(String commandName) {
         return commandRegistry.containsKey(commandName);
+    }
+    
+    /**
+     * Gets all registered command names
+     * 
+     * @return List of command names
+     */
+    public static List<String> getAllCommandNames() {
+        return new ArrayList<>(commandRegistry.keySet());
     }
 }

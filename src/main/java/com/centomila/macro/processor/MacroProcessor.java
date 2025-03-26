@@ -1,4 +1,4 @@
-package com.centomila.utils;
+package com.centomila.macro.processor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,30 +8,40 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Stack;
 
-public class LoopProcessor {
-    // Modified regex patterns to better handle tabs and spaces
+/**
+ * Processes macro scripts with support for variables, loops, and mathematical expressions.
+ */
+public class MacroProcessor {
+    // Regular expressions for syntax parsing
     private static final Pattern LOOP_START = Pattern.compile("\\s*for\\s*\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*=\\s*(\\d+)\\s+to\\s+(\\d+)\\s*\\)\\s*\\{\\s*");
     private static final Pattern LOOP_END = Pattern.compile("\\s*\\}\\s*");
     private static final Pattern VAR_ASSIGNMENT = Pattern.compile("\\s*var\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*=\\s*(.+)\\s*");
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{([^}]+)\\}");
     
-    // Add debug flag to help diagnose regex issues
+    // Debug flag for troubleshooting
     private boolean debug = false;
+    
+    // Variables storage
+    private final Map<String, Object> variables = new HashMap<>();
     
     public void setDebug(boolean debug) {
         this.debug = debug;
     }
     
-    private final Map<String, Object> variables = new HashMap<>();
-    
-    public List<String> processLoop(List<String> commands) {
+    /**
+     * Processes a list of macro commands, handling loops, variables, and expressions.
+     * 
+     * @param commands List of raw command strings from the macro file
+     * @return List of processed command strings ready for execution
+     */
+    public List<String> processCommands(List<String> commands) {
         List<String> result = new ArrayList<>();
         int i = 0;
         
         while (i < commands.size()) {
             String command = commands.get(i);
             
-            // Debug output to identify issue with regex matching
+            // Debug output to identify issues with regex matching
             if (debug) {
                 System.out.println("Processing line " + i + ": " + command);
             }
@@ -40,67 +50,15 @@ public class LoopProcessor {
             Matcher varMatcher = VAR_ASSIGNMENT.matcher(command);
             
             if (loopMatcher.matches()) {
-                // Debug output
-                if (debug) {
-                    System.out.println("Loop match found: var=" + loopMatcher.group(1) + 
-                                       " start=" + loopMatcher.group(2) + 
-                                       " end=" + loopMatcher.group(3));
-                }
-                
-                // Extract loop parameters
-                String varName = loopMatcher.group(1);
-                int start = Integer.parseInt(loopMatcher.group(2));
-                int end = Integer.parseInt(loopMatcher.group(3));
-                
-                // Find matching loop end
-                int loopEndIndex = findLoopEnd(commands, i + 1);
-                if (loopEndIndex == -1) {
-                    throw new RuntimeException("No matching closing brace '}' found for loop starting at line " + (i + 1));
-                }
-                
-                // Extract loop body
-                List<String> loopBody = new ArrayList<>(commands.subList(i + 1, loopEndIndex));
-                
-                // Execute loop
-                for (int j = start; j <= end; j++) {
-                    variables.put(varName, j);
-                    result.addAll(replaceVariables(loopBody));
-                }
-                
-                i = loopEndIndex + 1;
+                // Handle loop construct
+                processLoop(commands, loopMatcher, i, result);
+                i = findLoopEnd(commands, i + 1) + 1;
             } else if (varMatcher.matches()) {
-                // Debug output
-                if (debug) {
-                    System.out.println("Variable assignment found: var=" + varMatcher.group(1) + 
-                                       " value=" + varMatcher.group(2));
-                }
-                
-                // Process variable assignment
-                String varName = varMatcher.group(1);
-                String valueStr = varMatcher.group(2).trim();
-                
-                // Parse the variable value based on its format
-                Object value;
-                if (valueStr.startsWith("\"") && valueStr.endsWith("\"")) {
-                    // String value
-                    value = valueStr.substring(1, valueStr.length() - 1);
-                } else {
-                    try {
-                        // Try to parse as number
-                        if (valueStr.contains(".")) {
-                            value = Double.parseDouble(valueStr);
-                        } else {
-                            value = Integer.parseInt(valueStr);
-                        }
-                    } catch (NumberFormatException e) {
-                        // If not a number, treat as string without quotes
-                        value = valueStr;
-                    }
-                }
-                
-                variables.put(varName, value);
+                // Handle variable assignment
+                processVariableAssignment(varMatcher);
                 i++;
             } else {
+                // Process regular command with variable substitution
                 result.add(replaceVariablesInLine(command));
                 i++;
             }
@@ -109,6 +67,74 @@ public class LoopProcessor {
         return result;
     }
     
+    /**
+     * Processes a loop construct in the macro
+     */
+    private void processLoop(List<String> commands, Matcher loopMatcher, int startIndex, List<String> result) {
+        if (debug) {
+            System.out.println("Loop match found: var=" + loopMatcher.group(1) + 
+                               " start=" + loopMatcher.group(2) + 
+                               " end=" + loopMatcher.group(3));
+        }
+        
+        // Extract loop parameters
+        String varName = loopMatcher.group(1);
+        int start = Integer.parseInt(loopMatcher.group(2));
+        int end = Integer.parseInt(loopMatcher.group(3));
+        
+        // Find matching loop end
+        int loopEndIndex = findLoopEnd(commands, startIndex + 1);
+        if (loopEndIndex == -1) {
+            throw new RuntimeException("No matching closing brace '}' found for loop starting at line " + (startIndex + 1));
+        }
+        
+        // Extract loop body
+        List<String> loopBody = new ArrayList<>(commands.subList(startIndex + 1, loopEndIndex));
+        
+        // Execute loop
+        for (int j = start; j <= end; j++) {
+            variables.put(varName, j);
+            result.addAll(replaceVariables(loopBody));
+        }
+    }
+    
+    /**
+     * Processes a variable assignment in the macro
+     */
+    private void processVariableAssignment(Matcher varMatcher) {
+        if (debug) {
+            System.out.println("Variable assignment found: var=" + varMatcher.group(1) + 
+                               " value=" + varMatcher.group(2));
+        }
+        
+        String varName = varMatcher.group(1);
+        String valueStr = varMatcher.group(2).trim();
+        
+        // Parse the variable value based on its format
+        Object value;
+        if (valueStr.startsWith("\"") && valueStr.endsWith("\"")) {
+            // String value
+            value = valueStr.substring(1, valueStr.length() - 1);
+        } else {
+            try {
+                // Try to parse as number
+                if (valueStr.contains(".")) {
+                    value = Double.parseDouble(valueStr);
+                } else {
+                    value = Integer.parseInt(valueStr);
+                }
+            } catch (NumberFormatException e) {
+                // If not a number, treat as string without quotes
+                value = valueStr;
+            }
+        }
+        
+        variables.put(varName, value);
+    }
+    
+    /**
+     * Finds the matching end of a loop construct
+     */
     private int findLoopEnd(List<String> commands, int startIndex) {
         int nestedCount = 0;
         
@@ -126,6 +152,9 @@ public class LoopProcessor {
         return -1;
     }
     
+    /**
+     * Replaces variables in a list of commands
+     */
     private List<String> replaceVariables(List<String> commands) {
         List<String> result = new ArrayList<>();
         for (String command : commands) {
@@ -139,6 +168,9 @@ public class LoopProcessor {
         return result;
     }
     
+    /**
+     * Replaces variables in a single command line
+     */
     private String replaceVariablesInLine(String line) {
         // Find all expressions in the format ${...}
         Matcher exprMatcher = EXPRESSION_PATTERN.matcher(line);
@@ -154,10 +186,10 @@ public class LoopProcessor {
         return result.toString();
     }
     
+    // ...existing code for expression evaluation...
+    
     /**
      * Evaluates a simple expression that can contain variables and basic arithmetic.
-     * @param expression Expression to evaluate (e.g., "i+3", "bpm*2")
-     * @return Result of the evaluation
      */
     private Object evaluateExpression(String expression) {
         // For simple variable reference with no operations, return the variable directly
@@ -176,7 +208,6 @@ public class LoopProcessor {
     
     /**
      * Evaluates a simple arithmetic expression with variables.
-     * Supports +, -, *, / operations with proper precedence.
      */
     private Object evaluateArithmeticExpression(String expression) {
         // First replace all variables with their values
@@ -191,7 +222,6 @@ public class LoopProcessor {
     
     /**
      * Simple mathematical expression evaluator.
-     * Handles +, -, *, / with proper precedence.
      */
     private Object evaluateMathExpression(String expression) {
         // Remove all spaces

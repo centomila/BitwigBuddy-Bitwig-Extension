@@ -28,15 +28,39 @@ public class ClipCreateCommand extends BaseCommand {
         
         // Parse parameters
         int clipLength = 4; // Default value
-        if (params.length > 1) {
-            try {
-                clipLength = Integer.parseInt(params[1].trim());
-            } catch (NumberFormatException e) {
-                extension.getHost().println("Invalid clip length parameter, using default of 4 beats");
+        int slotIndex;
+        
+        try {
+            // Parse first parameter (slot index) - handle potential floating point values
+            String slotParam = params[0].trim();
+            if (slotParam.contains(".")) {
+                // If it's a floating point, round to nearest integer
+                double slotDouble = Double.parseDouble(slotParam);
+                slotIndex = (int) Math.round(slotDouble);
+                extension.getHost().println("Rounded slot index from " + slotDouble + " to " + slotIndex);
+            } else {
+                slotIndex = Integer.parseInt(slotParam);
             }
+            
+            // Adjust to 0-based index
+            slotIndex = slotIndex - 1;
+            
+            // Parse second parameter (clip length) if available
+            if (params.length > 1) {
+                String lengthParam = params[1].trim();
+                if (lengthParam.contains(".")) {
+                    // If it's a floating point, round to nearest integer
+                    double lengthDouble = Double.parseDouble(lengthParam);
+                    clipLength = (int) Math.round(lengthDouble);
+                    extension.getHost().println("Rounded clip length from " + lengthDouble + " to " + clipLength);
+                } else {
+                    clipLength = Integer.parseInt(lengthParam);
+                }
+            }
+        } catch (NumberFormatException e) {
+            reportError("Invalid parameter format: " + e.getMessage(), extension);
+            return;
         }
-
-        int slotIndex = Integer.parseInt(params[0].trim()) - 1;
         
         // Execute command based on mode
         if (ModeSelectSettings.getCurrentLauncherArrangerToggleString().equals("Arranger")) {

@@ -1,8 +1,8 @@
-package com.centomila.utils.commands.utility;
+package com.centomila.macro.commands;
 
 import com.centomila.BitwigBuddyExtension;
-import com.centomila.utils.ExecuteBBMacros;
-import com.centomila.utils.LoopProcessor;
+import com.centomila.macro.MacroExecutor;
+import com.centomila.macro.processor.MacroProcessor;
 import com.centomila.utils.PopupUtils;
 import com.centomila.utils.commands.BaseCommand;
 
@@ -35,33 +35,25 @@ public class MacroCommand extends BaseCommand {
 
             List<String> macroLines = Files.readAllLines(macroPath);
             
-            // Normalize indentation to avoid tab issues
-            List<String> normalizedLines = new ArrayList<>();
-            for (String line : macroLines) {
-                // Convert all whitespace sequences (including tabs) to single spaces
-                // except for spaces around braces and within expressions
-                normalizedLines.add(line);
-            }
-            
             // Process loops and variables
-            LoopProcessor loopProcessor = new LoopProcessor();
+            MacroProcessor macroProcessor = new MacroProcessor();
             
             // Enable debug if a debug parameter is passed
             if (params.length > 1 && params[1].equalsIgnoreCase("debug")) {
-                loopProcessor.setDebug(true);
+                macroProcessor.setDebug(true);
                 extension.getHost().println("Debug mode enabled for macro processing");
             }
             
             List<String> processedLines;
             try {
-                processedLines = loopProcessor.processLoop(normalizedLines);
+                processedLines = macroProcessor.processCommands(macroLines);
             } catch (RuntimeException e) {
                 reportError("Error parsing macro: " + e.getMessage(), extension);
                 
                 // Print the lines for debugging
                 extension.getHost().println("Macro content:");
-                for (int i = 0; i < normalizedLines.size(); i++) {
-                    extension.getHost().println(i + ": " + normalizedLines.get(i));
+                for (int i = 0; i < macroLines.size(); i++) {
+                    extension.getHost().println(i + ": " + macroLines.get(i));
                 }
                 return;
             }
@@ -74,7 +66,7 @@ public class MacroCommand extends BaseCommand {
                     !line.startsWith("var ") && !line.matches("\\s*\\}\\s*")) {
                     
                     // Execute the actual Bitwig command
-                    boolean success = ExecuteBBMacros.executeBitwigAction(line, extension);
+                    boolean success = MacroExecutor.executeCommand(line, extension);
                     
                     if (!success && !line.trim().startsWith("//")) {
                         // Only report errors for non-comment lines

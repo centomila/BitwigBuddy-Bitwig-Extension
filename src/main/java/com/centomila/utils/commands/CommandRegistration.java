@@ -11,9 +11,12 @@ import com.centomila.utils.commands.step.*;
 import com.centomila.utils.commands.track.*;
 import com.centomila.utils.commands.transport.*;
 import com.centomila.utils.commands.utility.*;
+import com.centomila.macro.commands.MacroCommand;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Centralizes command registration for all command implementations.
@@ -117,6 +120,8 @@ public class CommandRegistration {
         CommandFactory.registerCommand("Message", new MessageCommand());
         CommandFactory.registerCommand("Wait", new WaitCommand());
         CommandFactory.registerCommand("Print Actions", new PrintActionsCommand());
+        
+        // Macro commands
         CommandFactory.registerCommand("BB Macro", new MacroCommand());
         CommandFactory.registerCommand("Macro", new MacroCommand());
     }
@@ -144,5 +149,13 @@ public class CommandRegistration {
         commandDocs.put("Macro", "Executes another macro. Parameters: [macro_name]");
         
         return commandDocs;
+    }
+
+    /**
+     * Returns a list of all registered command names.
+     * Useful for debugging.
+     */
+    public static List<String> getAllRegisteredCommands() {
+        return new ArrayList<>(CommandFactory.getAllCommandNames());
     }
 }

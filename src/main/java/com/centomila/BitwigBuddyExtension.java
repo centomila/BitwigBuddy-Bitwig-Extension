@@ -362,6 +362,10 @@ public class BitwigBuddyExtension extends ControllerExtension {
       return moveStepsHandler;
    }
 
+   public String getMacrosFolder() {
+      return preferences.getPresetsPath() + "/Macros";
+   }
+
    public void setMoveStepsHandler(MoveStepsHandler moveStepsHandler) {
       this.moveStepsHandler = moveStepsHandler;
    }

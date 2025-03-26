@@ -23,8 +23,34 @@ Author: "Centomila"
 // Go to the first track
 select_track1
 
-Loop to rename for 8 tracks
-[Loop i=1 to 8]
-Track Rename ("My Track n. ${i}")
-Select next track
-[End Loop]
+// Loop to rename for 8 tracks
+// [Loop i=1 to 8]
+// Track Rename ("My Track n. ${i}")
+// Select next track
+// [End Loop]
+
+// Set variables
+var bpm = 120
+var trackName = "Drums"
+var clipLength = 4
+
+// Use the variables in commands
+Bpm(${bpm})
+Track Rename(${trackName})
+
+// Use loops with the variables
+for (i = 1 to 4) {
+    Clip Create(${i}, ${clipLength})
+    Clip Color("#FF00${i}0")
+}
+
+// Example with math expressions
+var clipLength = 4
+var basePosition = 4
+
+// Create clips with calculated positions and lengths
+for (i = 1 to 4) {
+    // This is a comment!
+    Clip Create(${i+basePosition}, ${clipLength*i/2})
+    Clip Color(#FF0000)
+}
