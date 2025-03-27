@@ -118,6 +118,7 @@ public class CommandRegistration {
         
         // Utility commands
         CommandFactory.registerCommand("Message", new MessageCommand());
+        CommandFactory.registerCommand("Console", new ConsoleCommand());
         CommandFactory.registerCommand("Wait", new WaitCommand());
         CommandFactory.registerCommand("Print Actions", new PrintActionsCommand());
         
@@ -146,6 +147,7 @@ public class CommandRegistration {
         commandDocs.put("Step Selected Length", "Sets length for selected notes. Parameters: [length]");
         commandDocs.put("Wait", "Waits for specified milliseconds. Parameters: [time_ms]");
         commandDocs.put("Message", "Shows a popup message. Parameters: [message_text]");
+        commandDocs.put("Console", "Writes a message to the Bitwig console. Parameters: [message_text]");
         commandDocs.put("Macro", "Executes another macro. Parameters: [macro_name]");
         
         return commandDocs;

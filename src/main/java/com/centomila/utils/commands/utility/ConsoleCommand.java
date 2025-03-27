@@ -1,22 +1,18 @@
 package com.centomila.utils.commands.utility;
 
 import com.centomila.BitwigBuddyExtension;
-import com.centomila.macro.processor.MacroProcessor;
 import com.centomila.macro.state.BitwigStateProvider;
 import com.centomila.macro.state.DefaultBitwigStateProvider;
-import com.centomila.utils.PopupUtils;
 import com.centomila.utils.commands.BaseCommand;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Shows a popup message to the user.
+ * Writes a message to the Bitwig Studio console.
  * Supports variable and function expression interpolation.
  */
-public class MessageCommand extends BaseCommand {
+public class ConsoleCommand extends BaseCommand {
     // Match function calls in both formats: direct and wrapped in ${}
     private static final Pattern FUNCTION_CALL_DIRECT = Pattern.compile("([a-zA-Z_][a-zA-Z0-9_]*)\\(\\)");
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{([^}]+)\\}");
@@ -33,8 +29,8 @@ public class MessageCommand extends BaseCommand {
         // Process any expressions within the message
         message = processExpressions(message, extension);
         
-        // Show the message
-        PopupUtils.showPopup(message);
+        // Write the message to the Bitwig console
+        extension.getHost().println("[BeatBuddy] " + message);
     }
     
     /**

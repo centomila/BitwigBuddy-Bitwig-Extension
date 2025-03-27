@@ -11,6 +11,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import com.centomila.macro.state.BitwigStateProvider;
+
 /**
  * Processes macro scripts with support for variables, loops, and mathematical expressions.
  */
@@ -20,6 +22,7 @@ public class MacroProcessor {
     private static final Pattern LOOP_END = Pattern.compile("\\s*\\}\\s*");
     private static final Pattern VAR_ASSIGNMENT = Pattern.compile("\\s*var\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*=\\s*(.+)\\s*");
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{([^}]+)\\}");
+    private static final Pattern FUNCTION_CALL = Pattern.compile("([a-zA-Z_][a-zA-Z0-9_]*)\\(\\)");
     
     // Debug flag for troubleshooting
     private boolean debug = false;
@@ -29,6 +32,23 @@ public class MacroProcessor {
     
     // Script engine for expression evaluation
     private final ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("JavaScript");
+    
+    // Bitwig state provider for function calls
+    private BitwigStateProvider stateProvider;
+    
+    /**
+     * Default constructor without state provider (limited functionality)
+     */
+    public MacroProcessor() {
+        this.stateProvider = null;
+    }
+    
+    /**
+     * Constructor with state provider for Bitwig integration
+     */
+    public MacroProcessor(BitwigStateProvider stateProvider) {
+        this.stateProvider = stateProvider;
+    }
     
     public void setDebug(boolean debug) {
         this.debug = debug;
@@ -118,6 +138,15 @@ public class MacroProcessor {
         String varName = varMatcher.group(1);
         String valueStr = varMatcher.group(2).trim();
         
+        // Check if the value is a function call
+        Matcher functionMatcher = FUNCTION_CALL.matcher(valueStr);
+        if (functionMatcher.matches()) {
+            String functionName = functionMatcher.group(1);
+            Object value = processFunctionCall(functionName);
+            variables.put(varName, value);
+            return;
+        }
+        
         // Parse the variable value based on its format
         Object value;
         if (valueStr.startsWith("\"") && valueStr.endsWith("\"")) {
@@ -138,6 +167,24 @@ public class MacroProcessor {
         }
         
         variables.put(varName, value);
+    }
+    
+    /**
+     * Processes a function call and returns its result
+     */
+    private Object processFunctionCall(String functionName) {
+        if (stateProvider != null && stateProvider.supportsMethod(functionName)) {
+            Object result = stateProvider.callMethod(functionName);
+            if (debug) {
+                System.out.println("Called function " + functionName + " with result: " + result);
+            }
+            return result;
+        } else {
+            if (debug) {
+                System.out.println("Function not supported: " + functionName);
+            }
+            return "Function not supported: " + functionName;
+        }
     }
     
     /**
@@ -202,6 +249,13 @@ public class MacroProcessor {
      * Evaluates a simple expression that can contain variables and basic arithmetic.
      */
     private Object evaluateExpression(String expression) {
+        // Check if the expression is a function call
+        Matcher functionMatcher = FUNCTION_CALL.matcher(expression);
+        if (functionMatcher.matches()) {
+            String functionName = functionMatcher.group(1);
+            return processFunctionCall(functionName);
+        }
+        
         // For simple variable reference with no operations, return the variable directly
         if (variables.containsKey(expression)) {
             return variables.get(expression);

@@ -3,6 +3,8 @@ package com.centomila.macro.commands;
 import com.centomila.BitwigBuddyExtension;
 import com.centomila.macro.MacroExecutor;
 import com.centomila.macro.processor.MacroProcessor;
+import com.centomila.macro.state.BitwigStateProvider;
+import com.centomila.macro.state.DefaultBitwigStateProvider;
 import com.centomila.utils.PopupUtils;
 import com.centomila.utils.commands.BaseCommand;
 
@@ -36,7 +38,9 @@ public class MacroCommand extends BaseCommand {
             List<String> macroLines = Files.readAllLines(macroPath);
             
             // Process loops and variables
-            MacroProcessor macroProcessor = new MacroProcessor();
+            // Create a BitwigStateProvider for the macro processor
+            BitwigStateProvider stateProvider = new DefaultBitwigStateProvider(extension);
+            MacroProcessor macroProcessor = new MacroProcessor(stateProvider);
             
             // Enable debug if a debug parameter is passed
             if (params.length > 1 && params[1].equalsIgnoreCase("debug")) {

@@ -346,6 +346,30 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
    // Getters and Setters
 
+   public CursorTrack getCursorTrack() {
+      return cursorTrack;
+   }
+   
+   public PinnableCursorDevice getCursorDevice() {
+      return cursorDeviceSlot;
+   }
+   
+   public Transport getTransport() {
+      return transport;
+   }
+   
+   public DeviceBank getDeviceBank() {
+      return deviceBank;
+   }
+   
+   public TrackBank getTrackBank() {
+      return trackBank;
+   }
+   
+   public DrumPadBank getDrumPadBank() {
+      return drumPadBank;
+   }
+   
    public Application getApplication() {
       return application;
    }
