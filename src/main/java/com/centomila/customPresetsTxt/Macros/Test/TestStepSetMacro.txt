@@ -1,0 +1,6 @@
+Macro: "Test Step Set"
+Description: "This macro tests the 'Step Set' command by setting a step in the currently selected clip."
+Author: "Centomila"
+
+// Parameters: channel, stepIndex, noteDestination, velocity, duration
+Step Set(0, 4, 60, 100, 0.25)

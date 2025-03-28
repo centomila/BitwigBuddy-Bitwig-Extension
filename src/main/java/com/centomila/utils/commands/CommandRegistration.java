@@ -79,6 +79,8 @@ public class CommandRegistration {
         CommandFactory.registerCommand("Step Selected Repeat Curve", new StepSelectedRepeatCurveCommand());
         CommandFactory.registerCommand("Step Selected Repeat Velocity Curve", new StepSelectedRepeatVelocityCurveCommand());
         CommandFactory.registerCommand("Step Selected Repeat Velocity End", new StepSelectedRepeatVelocityEndCommand());
+        // Register the new Step Set command
+        CommandFactory.registerCommand("Step Set", new StepSetCommand());
         
         // Track commands
         CommandFactory.registerCommand("Track Select", new TrackSelectCommand());
