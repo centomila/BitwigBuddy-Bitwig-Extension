@@ -1,6 +1,11 @@
 Macro: "Test Step Set"
-Description: "This macro tests the 'Step Set' command by setting a step in the currently selected clip."
+Description: "This macro tests the 'Step Set' command by setting alternating steps in the currently selected clip using a for loop and math."
 Author: "Centomila"
 
 // Parameters: channel, stepIndex, noteDestination, velocity, duration
-Step Set(0, 4, 60, 100, 0.25)
+for (i = 0 to 7) {
+    var velocity = ${i} * 10
+    var stepIndex = ${i}*2
+    Step Set(0, ${stepIndex}, 60, ${velocity}, 0.25)
+    Message ("${i}")
+}
