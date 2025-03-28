@@ -110,6 +110,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.clipLauncherSlot.subscribe();
 
       this.application.recordQuantizationGrid().markInterested();
+      this.application.panelLayout().markInterested();
+      this.application.projectName().markInterested();
       // Arranger
       this.arranger.isClipLauncherVisible().markInterested();
       this.arranger.areCueMarkersVisible().markInterested();
@@ -225,6 +227,11 @@ public class BitwigBuddyExtension extends ControllerExtension {
          this.drumPadBank.getItemAt(i).name().markInterested();
          this.drumPadBank.getItemAt(i).exists().markInterested();
          this.drumPadBank.getItemAt(i).color().markInterested();
+         this.drumPadBank.getItemAt(i).exists().markInterested();
+         this.drumPadBank.getItemAt(i).solo().markInterested();
+         this.drumPadBank.getItemAt(i).mute().markInterested();
+         this.drumPadBank.getItemAt(i).volume().markInterested();
+         this.drumPadBank.getItemAt(i).pan().markInterested();
 
          this.sceneBank.getItemAt(i).name().markInterested();
          this.sceneBank.getItemAt(i).color().markInterested();
@@ -238,8 +245,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
       this.cueMarkerBank.scrollPosition().markInterested();
       this.cueMarkerBank.itemCount().markInterested();
-
-      this.application.panelLayout().markInterested();
 
       this.cursorClip.exists().markInterested();
       this.cursorClip.getLoopLength().markInterested();

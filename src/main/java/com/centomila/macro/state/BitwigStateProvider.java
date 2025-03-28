@@ -5,43 +5,50 @@ package com.centomila.macro.state;
  * Allows macro scripts to access runtime values from the DAW.
  */
 public interface BitwigStateProvider {
-    /**
-     * Get the name of the currently selected track.
-     */
+    // Track related methods
     String getCurrentTrackName();
-    
-    /**
-     * Get the number/index of the currently selected track.
-     */
     int getCurrentTrackNumber();
+    String getCurrentTrackColor();
+    boolean isCurrentTrackMuted();
+    boolean isCurrentTrackSoloed();
+    boolean isCurrentTrackArmed();
+    double getCurrentTrackVolume();
+    double getCurrentTrackPan();
+    int getTrackCount();
     
-    /**
-     * Get the name of the currently selected device.
-     */
+    // Device related methods
     String getCurrentDeviceName();
+    boolean isCurrentDeviceEnabled();
+    boolean isCurrentDeviceWindowOpen();
+    int getDeviceCount();
     
-    /**
-     * Get the current project BPM.
-     */
+    // Clip related methods
+    String getCurrentClipName();
+    String getCurrentClipColor();
+    boolean isCurrentClipLooping();
+    double getCurrentClipLength();
+    boolean isCurrentClipPlaying();
+    boolean isCurrentClipRecording();
+    boolean isCurrentClipSelected();
+    
+    // Transport related methods
     double getCurrentBpm();
-    
-    /**
-     * Get the current time signature numerator.
-     */
     int getTimeSignatureNumerator();
-    
-    /**
-     * Get the current time signature denominator.
-     */
     int getTimeSignatureDenominator();
+    boolean isPlaying();
+    boolean isRecording();
+    double getPlayPosition();
+    boolean isMetronomeEnabled();
+    boolean isArrangerLoopEnabled();
     
-    /**
-     * Check if a method is supported by this provider.
-     */
+    // Project related methods
+    String getProjectName();
+    
+    // Scene related methods
+    int getCurrentSceneIndex();
+    String getCurrentSceneName();
+    
+    // Utility methods
     boolean supportsMethod(String methodName);
-    
-    /**
-     * Call a method by name with no arguments.
-     */
     Object callMethod(String methodName);
 }
