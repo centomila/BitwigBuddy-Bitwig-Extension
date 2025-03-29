@@ -44,7 +44,7 @@ public class MacroCommand extends BaseCommand {
             }
             
             // Process loops and variables
-            LoopProcessor loopProcessor = new LoopProcessor();
+            LoopProcessor loopProcessor = new LoopProcessor(extension.getStateProvider());
             
             // Enable debug if a debug parameter is passed
             if (params.length > 1 && params[1].equalsIgnoreCase("debug")) {

@@ -1,0 +1,38 @@
+Macro: "Rename Loop Incremental"
+Description: "This is just for testing looping"
+Author: "Centomila"
+
+// Go to the first track
+select_track1
+
+
+// Set variables
+var trackName = "My Track"
+var clipLength = 4
+var basePosition = 4
+
+// Loop to rename for 8 tracks
+for (i=1 to 8) {
+    Track Rename ("${trackName} n. ${i}")
+    Select next track
+}
+
+select_track1
+
+
+// Use loops with the variables
+for (i = 1 to 4) {
+    Clip Create(${i}, ${clipLength})
+    Clip Rename ("${trackName} n. ${i}")
+    Clip Color("#${i*2}F0000")
+}
+
+
+
+// Create clips with calculated positions and lengths
+for (i = 1 to 4) {
+    // This is a comment!
+    Clip Create(${i+basePosition}, ${clipLength*i/2})
+    Clip Rename ("${trackName} n. ${i+basePosition}")
+    Clip Color("#FF1${i+1*2}${i*4}0")
+}

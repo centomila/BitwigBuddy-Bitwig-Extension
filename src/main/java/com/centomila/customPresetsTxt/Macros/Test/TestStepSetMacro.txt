@@ -1,4 +1,4 @@
-Macro: "Test Step Set"
+Macro: "Test Step Set For Loop"
 Description: "This macro tests the 'Step Set' command by setting alternating steps in the currently selected clip using a for loop and math."
 Author: "Centomila"
 

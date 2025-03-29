@@ -1,7 +1,6 @@
 package com.centomila.macro.state;
 
 import com.centomila.BitwigBuddyExtension;
-import com.bitwig.extension.api.Color;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;

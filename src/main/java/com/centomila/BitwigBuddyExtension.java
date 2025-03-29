@@ -30,6 +30,8 @@ import com.centomila.utils.PopupUtils;
 import com.centomila.utils.SettingsHelper;
 import com.centomila.utils.DeviceMatcherDrumMachine;
 import com.centomila.utils.ExtensionPath;
+import com.centomila.macro.state.BitwigStateProvider;
+import com.centomila.macro.state.DefaultBitwigStateProvider;
 
 /**
  * BitwigBuddy Extension for Bitwig Studio.
@@ -68,6 +70,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
    private MoveStepsHandler moveStepsHandler;
 
    GlobalPreferences preferences;
+
+   private BitwigStateProvider stateProvider;
 
    protected BitwigBuddyExtension(final BitwigBuddyExtensionDefinition definition, final ControllerHost host) {
       super(definition, host);
@@ -401,6 +405,13 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
    public void restart() {
       getHost().restart();
+   }
+
+   public BitwigStateProvider getStateProvider() {
+      if (stateProvider == null) {
+         stateProvider = new DefaultBitwigStateProvider(this);
+      }
+      return stateProvider;
    }
 
 }

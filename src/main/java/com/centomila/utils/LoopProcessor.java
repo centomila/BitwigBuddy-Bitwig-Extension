@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Stack;
+import com.centomila.macro.state.BitwigStateProvider;
 
 public class LoopProcessor {
     private static final Pattern LOOP_START = Pattern.compile("\\s*for\\s*\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*=\\s*(\\d+)\\s+to\\s+(\\d+)\\s*\\)\\s*\\{\\s*");
@@ -21,6 +22,15 @@ public class LoopProcessor {
     }
 
     private final Map<String, Object> globalVariables = new HashMap<>();
+    private final BitwigStateProvider stateProvider;
+
+    public LoopProcessor() {
+        this.stateProvider = null;
+    }
+
+    public LoopProcessor(BitwigStateProvider stateProvider) {
+        this.stateProvider = stateProvider;
+    }
 
     public List<String> processLoop(List<String> commands) {
         List<String> result = new ArrayList<>();
@@ -100,18 +110,6 @@ public class LoopProcessor {
         return -1;
     }
 
-    private List<String> replaceVariables(List<String> commands, Map<String, Object> variables) {
-        List<String> result = new ArrayList<>();
-        for (String command : commands) {
-            if (command.trim().startsWith("//")) {
-                result.add(command);
-            } else {
-                result.add(replaceVariablesInLine(command, variables));
-            }
-        }
-        return result;
-    }
-
     // Ensure that all commands are trimmed of leading and trailing whitespaces before processing
     private String replaceVariablesInLine(String line, Map<String, Object> variables) {
         line = line.trim(); // Trim whitespaces
@@ -136,6 +134,16 @@ public class LoopProcessor {
     }
 
     private Object evaluateExpression(String expression, Map<String, Object> variables) {
+        // Check if the expression is a function call
+        if (expression.endsWith("()")) {
+            String functionName = expression.substring(0, expression.length() - 2);
+            if (stateProvider != null && stateProvider.supportsMethod(functionName)) {
+                return stateProvider.callMethod(functionName);
+            } else {
+                throw new IllegalArgumentException("Unsupported function call: " + functionName);
+            }
+        }
+
         if (variables.containsKey(expression)) {
             return variables.get(expression);
         }

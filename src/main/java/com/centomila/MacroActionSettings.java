@@ -1003,7 +1003,7 @@ public class MacroActionSettings {
         visitedMacros.add(macro.getTitle());
 
         // Process commands through LoopProcessor
-        LoopProcessor loopProcessor = new LoopProcessor();
+        LoopProcessor loopProcessor = new LoopProcessor(extension.getStateProvider());
         List<String> processedCommands = loopProcessor.processLoop(Arrays.asList(macro.getCommands()));
 
         for (String command : processedCommands) {

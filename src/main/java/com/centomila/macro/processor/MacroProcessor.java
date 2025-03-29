@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Stack;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -173,17 +172,27 @@ public class MacroProcessor {
      * Processes a function call and returns its result
      */
     private Object processFunctionCall(String functionName) {
-        if (stateProvider != null && stateProvider.supportsMethod(functionName)) {
-            Object result = stateProvider.callMethod(functionName);
+        if (stateProvider != null) {
             if (debug) {
-                System.out.println("Called function " + functionName + " with result: " + result);
+                System.out.println("Checking if stateProvider supports method: " + functionName);
             }
-            return result;
+            if (stateProvider.supportsMethod(functionName)) {
+                Object result = stateProvider.callMethod(functionName);
+                if (debug) {
+                    System.out.println("Called function " + functionName + " with result: " + result);
+                }
+                return result;
+            } else {
+                if (debug) {
+                    System.out.println("Function not supported: " + functionName);
+                }
+                return "Function not supported: " + functionName;
+            }
         } else {
             if (debug) {
-                System.out.println("Function not supported: " + functionName);
+                System.out.println("StateProvider is null. Cannot call function: " + functionName);
             }
-            return "Function not supported: " + functionName;
+            return "StateProvider is not initialized";
         }
     }
     
