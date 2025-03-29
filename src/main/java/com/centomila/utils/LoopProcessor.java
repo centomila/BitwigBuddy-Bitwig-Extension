@@ -112,7 +112,9 @@ public class LoopProcessor {
         return result;
     }
 
+    // Ensure that all commands are trimmed of leading and trailing whitespaces before processing
     private String replaceVariablesInLine(String line, Map<String, Object> variables) {
+        line = line.trim(); // Trim whitespaces
         Matcher exprMatcher = EXPRESSION_PATTERN.matcher(line);
         StringBuffer result = new StringBuffer();
 
@@ -139,14 +141,28 @@ public class LoopProcessor {
         }
 
         try {
+            // Replace variable names in the expression with their values
             for (Map.Entry<String, Object> var : variables.entrySet()) {
                 String pattern = "\\b" + var.getKey() + "\\b";
                 expression = expression.replaceAll(pattern, var.getValue().toString());
             }
 
+            // Infer type from the format of the expression
+            if (expression.startsWith("\"") && expression.endsWith("\"")) {
+                // String type
+                return expression.substring(1, expression.length() - 1);
+            } else if (expression.matches("^-?\\d+$")) {
+                // Integer type
+                return Integer.parseInt(expression);
+            } else if (expression.matches("^-?\\d+\\.\\d+$")) {
+                // Double type
+                return Double.parseDouble(expression);
+            }
+
+            // Evaluate as a mathematical expression if no type matches
             return evaluateMathExpression(expression);
         } catch (Exception e) {
-            return expression;
+            throw new IllegalArgumentException("Invalid parameter format: " + expression, e);
         }
     }
 

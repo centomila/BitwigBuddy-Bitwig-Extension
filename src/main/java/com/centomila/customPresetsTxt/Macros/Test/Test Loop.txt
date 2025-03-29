@@ -14,43 +14,36 @@ Author: "Centomila"
 // Insert File (2, "c:\Users\Bach\AppData\Local\Bitwig Studio\installed-packages\5.0\Bitwig\Bitwig Drum Machines\Dub Techno Beat 2 126bpm.bwclip")
 // Insert VST3 ("Reason Rack Plugin")
 
-// [Loop i=1 to 8]
-// Delete
-// Right
-// Right
-// [End Loop]
 
 // Go to the first track
 select_track1
 
-// Loop to rename for 8 tracks
-// [Loop i=1 to 8]
-// Track Rename ("My Track n. ${i}")
-// Select next track
-// [End Loop]
 
 // Set variables
-var bpm = 120
-var trackName = "Drums"
+var trackName = "My Track"
 var clipLength = 4
+var basePosition = 4
 
-// Use the variables in commands
-Bpm(${bpm})
-Track Rename(${trackName})
+// Loop to rename for 8 tracks
+for (i=1 to 8) {
+    Track Rename ("${trackName} n. ${i}")
+    Select next track
+}
+
 
 // Use loops with the variables
 for (i = 1 to 4) {
     Clip Create(${i}, ${clipLength})
-    Clip Color("#FF00${i}0")
+    Clip Rename ("${trackName} n. ${i}")
+    Clip Color("#FF00${i+1}0")
 }
 
-// Example with math expressions
-var clipLength = 4
-var basePosition = 4
+
 
 // Create clips with calculated positions and lengths
 for (i = 1 to 4) {
     // This is a comment!
     Clip Create(${i+basePosition}, ${clipLength*i/2})
-    Clip Color(#FF0000)
+    Clip Rename ("${trackName} n. ${i+basePosition}")
+    Clip Color("#FF00${i+1}")
 }
