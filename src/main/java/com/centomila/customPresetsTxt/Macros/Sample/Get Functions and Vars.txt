@@ -1,5 +1,5 @@
-Macro: "Variables"
-Description: "This is just for testing"
+Macro: "Get Functions and Variables"
+Description: "Examples of get functions."
 Author: "Centomila"
 
 // Track and project information example

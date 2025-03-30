@@ -1,8 +1,6 @@
-Macro: "Test"
+Macro: "Insert VST3"
 Description: "This is just for testing"
 Author: "Centomila"
-
-// show_controller_script_console
 
 // Time Signature (3/4)
 // Clip Loop On
@@ -11,17 +9,8 @@ Author: "Centomila"
 // Clip Accent (0.752)
 // Insert File (2, "c:\Program Files\Common Files\Native Instruments\Kontakt 8\Content\Tools\Phrases\Library Data\MIDI Files\ZA_Last_Dance_Phrases_E_Ionian_Flat_2\06_Last Dance_E_Phrygian Dom_E_Phrygian Dom.mid")
 // Insert File (2, "c:\Users\Bach\AppData\Local\Bitwig Studio\installed-packages\5.0\Bitwig\Bitwig Drum Machines\Dub Techno Beat 2 126bpm.bwclip")
-// Insert VST3 ("Reason Rack Plugin")
 
-Message ("Colors in 3")
 
-Message ("2")
+Insert VST3 ("Serum 2")
+Insert VST3 ("Valhalla Supermassive")
 
-Message ("1")
-Wait
-
-Macro ("Rainbow Clip")
-
-Message ("Provona")
-
-Macro ("Create 8 Tracks")

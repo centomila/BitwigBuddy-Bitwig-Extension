@@ -1,4 +1,4 @@
-Macro: "BIP And Reverse"
+Macro: "Bounce In Place>Reverse"
 Description: "Bounce in place of Time Selection and Reverse 1 bar earlier"
 Author: "Centomila"
 

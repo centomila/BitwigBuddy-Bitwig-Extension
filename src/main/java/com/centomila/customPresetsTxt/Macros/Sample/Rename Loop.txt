@@ -1,5 +1,5 @@
 Macro: "Rename Loop Incremental"
-Description: "This is just for testing looping"
+Description: "Example of using loops and vars to rename tracks and clips"
 Author: "Centomila"
 
 // Go to the first track

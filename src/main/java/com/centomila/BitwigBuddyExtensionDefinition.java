@@ -53,7 +53,7 @@ public class BitwigBuddyExtensionDefinition extends ControllerExtensionDefinitio
    /** {@inheritDoc} */
    @Override
    public String getHelpFilePath() {
-      return "https://github.com/centomila/BitwigBuddy-Bitwig-Extension";
+      return "https://bitwigbuddy.centomila.com/";
    }
 
    @Override

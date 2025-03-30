@@ -44,6 +44,7 @@ public class GlobalPreferences {
     private static final String GITHUB_URL = "https://github.com/centomila/BitwigBuddy-Bitwig-Extension";
 
     private static final String CENTOMILA_URL = "https://centomila.com";
+    private static final String BITWIGBUDDY_URL = "https://bitwigbuddy.centomila.com";
 
     private String defaultPresetsPath;
     private Preferences preferences;
@@ -57,7 +58,7 @@ public class GlobalPreferences {
     
     private CustomPresetsHandler presetsHandler;
 
-    private Signal openPatreon, openGitHub, openCentomila;
+    private Signal openPatreon, openGitHub, openCentomila, openBitwigBuddyWebsite;
     private Signal openBitwigConsoleButton, openBitwigAdvancedGPUSettings;
     
 
@@ -164,6 +165,11 @@ public class GlobalPreferences {
                 SUPPORT_CATEGORY,
                 "Go to Centomila.com");
 
+        this.openBitwigBuddyWebsite = preferences.getSignalSetting(
+                "Visit BitwigBuddy Website",
+                SUPPORT_CATEGORY,
+                "Go to BitwigBuddy Website");
+
         // Utilities settings
         this.openBitwigConsoleButton = preferences.getSignalSetting(
                 "Opens the Bitwig Studio Console window",
@@ -199,6 +205,7 @@ public class GlobalPreferences {
         this.openPatreon.addSignalObserver(this::openPatreonPage);
         this.openGitHub.addSignalObserver(this::openGitHubPage);
         this.openCentomila.addSignalObserver(this::openCentomilaPage);
+        this.openBitwigBuddyWebsite.addSignalObserver(this::openBitwigBuddyPage);
 
         // Add observers for utility buttons
         this.openBitwigConsoleButton.addSignalObserver(this::openBitwigConsole);
@@ -244,6 +251,10 @@ public class GlobalPreferences {
 
     private void openCentomilaPage() {
         OpenWebUrl.openUrl(host, CENTOMILA_URL, "Centomila");
+    }
+
+    private void openBitwigBuddyPage() {
+        OpenWebUrl.openUrl(host, BITWIGBUDDY_URL, "BitwigBuddy Website");
     }
 
     private boolean isValidPresetsFolder(Path folder) {
