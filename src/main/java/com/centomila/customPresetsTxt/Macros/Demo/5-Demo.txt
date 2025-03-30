@@ -12,7 +12,7 @@ move_time_selection_one_event_earlier
 extend_time_selection_range_to_next_item
 extend_time_selection_range_to_next_item
 
-Macro ("BIP And Reverse")
+Macro ("Bounce In Place then Reverse")
 Wait (100)
 Left
 Play Transport

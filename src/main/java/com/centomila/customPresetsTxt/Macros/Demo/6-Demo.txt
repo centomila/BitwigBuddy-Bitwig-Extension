@@ -11,7 +11,7 @@ Clip Create (1, 4)
 Wait (200)
 Clip Select
 Message ("Weeeeeeeeeeeeeee!")
-Macro ("Rainbow Clip")
+Macro ("Samples/Rainbow Clip")
 Select All
 zoom_to_fit_selection_or_all
 Stop Transport
