@@ -1,7 +1,7 @@
 package com.centomila.utils.commands.utility;
 
 import com.centomila.BitwigBuddyExtension;
-import com.centomila.utils.ExecuteBBMacros;
+import com.centomila.macro.MacroExecutor;
 import com.centomila.utils.LoopProcessor;
 import com.centomila.utils.PopupUtils;
 import com.centomila.utils.commands.BaseCommand;
@@ -74,7 +74,7 @@ public class MacroCommand extends BaseCommand {
                     !line.startsWith("var ") && !line.matches("\\s*\\}\\s*")) {
                     
                     // Execute the actual Bitwig command
-                    boolean success = ExecuteBBMacros.executeBitwigAction(line, extension);
+                    boolean success = MacroExecutor.executeCommand(line, extension);
                     
                     if (!success && !line.trim().startsWith("//")) {
                         // Only report errors for non-comment lines

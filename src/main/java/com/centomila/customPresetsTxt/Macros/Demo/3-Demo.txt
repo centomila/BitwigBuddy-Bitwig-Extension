@@ -4,8 +4,10 @@ Author: "Centomila"
 
 
 Message ("First, we need some tracks...")
+Track Select (1)
 Wait (1500)
 focus_track_header_area
+Wait (500)
 Macro ("Create 8 Tracks")
 Wait (1500)
 Message ("Much better!")

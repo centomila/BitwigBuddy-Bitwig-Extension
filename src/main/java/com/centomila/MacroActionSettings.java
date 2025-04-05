@@ -4,7 +4,6 @@ import static com.centomila.utils.SettingsHelper.*;
 import static com.centomila.utils.PopupUtils.*;
 import com.centomila.macro.MacroExecutor;
 import com.centomila.macro.processor.MacroProcessor;
-import com.centomila.utils.ExecuteBBMacros;
 import com.centomila.utils.LoopProcessor;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;

@@ -8,9 +8,9 @@ import java.nio.file.Paths;
 import static com.centomila.utils.PopupUtils.*;
 import static com.centomila.utils.SettingsHelper.*;
 
-import com.centomila.utils.ExecuteBBMacros;
 import com.centomila.utils.ExtensionPath;
 import com.centomila.utils.OpenWebUrl;
+import com.centomila.macro.MacroExecutor;
 
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.Preferences;

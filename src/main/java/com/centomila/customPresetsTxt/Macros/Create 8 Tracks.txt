@@ -6,6 +6,7 @@ Author: "Centomila"
 Create Instrument Track
 Track Color ("D32F2F")
 Track Rename ("Drums")
+Wait (500)
 Insert Device ("Drum Machine")
 
 // Track 2: Bass (Green)
