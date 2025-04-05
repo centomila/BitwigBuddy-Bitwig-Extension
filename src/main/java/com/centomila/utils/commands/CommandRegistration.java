@@ -87,6 +87,8 @@ public class CommandRegistration {
         CommandFactory.registerCommand("Track Color", new TrackColorCommand());
         CommandFactory.registerCommand("Track Rename", new TrackRenameCommand());
         CommandFactory.registerCommand("Track Delete", new TrackDeleteCommand());
+        CommandFactory.registerCommand("Track Next", new TrackNextCommand());
+        CommandFactory.registerCommand("Track Prev", new TrackPrevCommand());
         
         // Device commands
         CommandFactory.registerCommand("Insert Device", new InsertDeviceCommand());
