@@ -184,7 +184,20 @@ public class LoopProcessor {
     }
 
     private Object evaluateExpression(String expression, Map<String, Object> variables) {
-        // Check if the expression is a function call
+        expression = expression.trim();
+
+        // Handle NOT operator
+        if (expression.startsWith("!")) {
+            String innerExpression = expression.substring(1).trim();
+            Object result = evaluateExpression(innerExpression, variables);
+            if (result instanceof Boolean) {
+                return !(Boolean) result;
+            } else {
+                throw new IllegalArgumentException("Expression '" + innerExpression + "' did not return a boolean value.");
+            }
+        }
+
+        // Handle function calls
         if (expression.endsWith("()")) {
             String functionName = expression.substring(0, expression.length() - 2);
             if (stateProvider != null && stateProvider.supportsMethod(functionName)) {
@@ -199,6 +212,7 @@ public class LoopProcessor {
             }
         }
 
+        // Handle variables
         if (variables.containsKey(expression)) {
             return variables.get(expression);
         }
@@ -227,6 +241,24 @@ public class LoopProcessor {
             } else if (expression.contains("&&") || expression.contains("||") || expression.contains("!")) {
                 // Evaluate boolean expressions
                 return evaluateBooleanExpression(expression, variables);
+            } else if (expression.contains("==") || expression.contains("!=")) {
+                // Handle equality and inequality operators
+                String[] parts;
+                boolean isEquality = expression.contains("==");
+                if (isEquality) {
+                    parts = expression.split("==");
+                } else {
+                    parts = expression.split("!=");
+                }
+
+                if (parts.length == 2) {
+                    Object left = evaluateExpression(parts[0].trim(), variables);
+                    Object right = evaluateExpression(parts[1].trim(), variables);
+                    boolean comparisonResult = left.equals(right);
+                    return isEquality ? comparisonResult : !comparisonResult;
+                } else {
+                    throw new IllegalArgumentException("Invalid equality/inequality expression: " + expression);
+                }
             }
 
             // Evaluate as a mathematical expression if no type matches
