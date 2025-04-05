@@ -2,7 +2,7 @@
 
 ## 1.0.0 | **PRERELASE CHANGELOG**. Available only via source code!!!
 - [X] 📙 Manual!
-  - The manual is available in the repository and in the zip file
+  - The manual is available online at [bitwigbuddy.centomila.com](https://bitwigbuddy.centomila.com)
 - [X] 🦘 **Skip Step Every X** in Program Mode
   - Skip a step every X steps
   - Example: Set Density at 100% and Skip Step Every X at 1 to create a 50% density pattern skipping all the odd steps
