@@ -14,6 +14,8 @@ public class LoopProcessor {
     private static final Pattern LOOP_END = Pattern.compile("\\s*\\}\\s*");
     private static final Pattern VAR_ASSIGNMENT = Pattern.compile("\\s*var\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*=\\s*(.+)\\s*");
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{([^}]+)\\}");
+    private static final Pattern IF_START = Pattern.compile("\\s*if\\s*\\((.+)\\)\\s*\\{\\s*");
+    private static final Pattern ELSE_START = Pattern.compile("\\s*else\\s*\\{\\s*");
 
     private boolean debug = false;
 
@@ -44,6 +46,7 @@ public class LoopProcessor {
             }
 
             Matcher loopMatcher = LOOP_START.matcher(command);
+            Matcher ifMatcher = IF_START.matcher(command);
             Matcher varMatcher = VAR_ASSIGNMENT.matcher(command);
 
             if (loopMatcher.matches()) {
@@ -76,6 +79,35 @@ public class LoopProcessor {
                 }
 
                 i = loopEndIndex + 1;
+            } else if (ifMatcher.matches()) {
+                String condition = ifMatcher.group(1);
+                boolean conditionResult = (boolean) evaluateExpression(condition, globalVariables);
+
+                int ifEndIndex = findConditionalEnd(commands, i + 1);
+                if (ifEndIndex == -1) {
+                    throw new RuntimeException("No matching closing brace '}' found for if statement at line " + (i + 1));
+                }
+
+                List<String> ifBody = new ArrayList<>(commands.subList(i + 1, ifEndIndex));
+                List<String> elseBody = new ArrayList<>();
+
+                // Check for an else block
+                if (ifEndIndex + 1 < commands.size() && ELSE_START.matcher(commands.get(ifEndIndex + 1).trim()).matches()) {
+                    int elseEndIndex = findConditionalEnd(commands, ifEndIndex + 2);
+                    if (elseEndIndex == -1) {
+                        throw new RuntimeException("No matching closing brace '}' found for else statement at line " + (ifEndIndex + 2));
+                    }
+                    elseBody = new ArrayList<>(commands.subList(ifEndIndex + 2, elseEndIndex));
+                    ifEndIndex = elseEndIndex;
+                }
+
+                if (conditionResult) {
+                    result.addAll(processLoop(ifBody));
+                } else {
+                    result.addAll(processLoop(elseBody));
+                }
+
+                i = ifEndIndex + 1;
             } else if (varMatcher.matches()) {
                 String varName = varMatcher.group(1);
                 String valueStr = varMatcher.group(2).trim();
@@ -98,6 +130,24 @@ public class LoopProcessor {
         for (int i = startIndex; i < commands.size(); i++) {
             String command = commands.get(i).trim(); // Normalize whitespace
             if (LOOP_START.matcher(command).matches()) {
+                nestedCount++;
+            } else if (LOOP_END.matcher(command).matches()) {
+                if (nestedCount == 0) {
+                    return i;
+                }
+                nestedCount--;
+            }
+        }
+
+        return -1;
+    }
+
+    private int findConditionalEnd(List<String> commands, int startIndex) {
+        int nestedCount = 0;
+
+        for (int i = startIndex; i < commands.size(); i++) {
+            String command = commands.get(i).trim(); // Normalize whitespace
+            if (IF_START.matcher(command).matches() || LOOP_START.matcher(command).matches()) {
                 nestedCount++;
             } else if (LOOP_END.matcher(command).matches()) {
                 if (nestedCount == 0) {
@@ -138,7 +188,12 @@ public class LoopProcessor {
         if (expression.endsWith("()")) {
             String functionName = expression.substring(0, expression.length() - 2);
             if (stateProvider != null && stateProvider.supportsMethod(functionName)) {
-                return stateProvider.callMethod(functionName);
+                Object result = stateProvider.callMethod(functionName);
+                if (result == null) {
+                    System.err.println("Warning: Method '" + functionName + "' returned null. Defaulting to false.");
+                    return false;
+                }
+                return result;
             } else {
                 throw new IllegalArgumentException("Unsupported function call: " + functionName);
             }
@@ -156,7 +211,11 @@ public class LoopProcessor {
             }
 
             // Infer type from the format of the expression
-            if (expression.startsWith("\"") && expression.endsWith("\"")) {
+            if (expression.equalsIgnoreCase("true")) {
+                return true;
+            } else if (expression.equalsIgnoreCase("false")) {
+                return false;
+            } else if (expression.startsWith("\"") && expression.endsWith("\"")) {
                 // String type
                 return expression.substring(1, expression.length() - 1);
             } else if (expression.matches("^-?\\d+$")) {
@@ -165,6 +224,9 @@ public class LoopProcessor {
             } else if (expression.matches("^-?\\d+\\.\\d+$")) {
                 // Double type
                 return Double.parseDouble(expression);
+            } else if (expression.contains("&&") || expression.contains("||") || expression.contains("!")) {
+                // Evaluate boolean expressions
+                return evaluateBooleanExpression(expression, variables);
             }
 
             // Evaluate as a mathematical expression if no type matches
@@ -172,6 +234,30 @@ public class LoopProcessor {
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid parameter format: " + expression, e);
         }
+    }
+
+    private boolean evaluateBooleanExpression(String expression, Map<String, Object> variables) {
+        expression = expression.replaceAll("\\s+", ""); // Remove whitespace
+
+        // Handle NOT operator
+        if (expression.startsWith("!")) {
+            String innerExpression = expression.substring(1);
+            return !((boolean) evaluateExpression(innerExpression, variables));
+        }
+
+        // Handle AND and OR operators
+        String[] andParts = expression.split("&&");
+        boolean result = true;
+        for (String part : andParts) {
+            String[] orParts = part.split("\\|\\|");
+            boolean orResult = false;
+            for (String orPart : orParts) {
+                orResult = orResult || (boolean) evaluateExpression(orPart, variables);
+            }
+            result = result && orResult;
+        }
+
+        return result;
     }
 
     private Object evaluateMathExpression(String expression) {

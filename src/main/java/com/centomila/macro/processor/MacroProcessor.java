@@ -246,7 +246,7 @@ public class MacroProcessor {
         
         while (exprMatcher.find()) {
             String expression = exprMatcher.group(1);
-            Object value = evaluateExpression(expression);
+            Object value = evaluateExpression(expression, variables);
             exprMatcher.appendReplacement(result, value.toString().replace("$", "\\$"));
         }
         exprMatcher.appendTail(result);
@@ -257,49 +257,89 @@ public class MacroProcessor {
     /**
      * Evaluates a simple expression that can contain variables and basic arithmetic.
      */
-    private Object evaluateExpression(String expression) {
+    private Object evaluateExpression(String expression, Map<String, Object> variables) {
         // Check if the expression is a function call
-        Matcher functionMatcher = FUNCTION_CALL.matcher(expression);
-        if (functionMatcher.matches()) {
-            String functionName = functionMatcher.group(1);
-            return processFunctionCall(functionName);
+        if (expression.endsWith("()")) {
+            String functionName = expression.substring(0, expression.length() - 2);
+            if (stateProvider != null && stateProvider.supportsMethod(functionName)) {
+                Object result = stateProvider.callMethod(functionName);
+                if (result == null) {
+                    System.err.println("Warning: Method '" + functionName + "' returned null. Defaulting to false.");
+                    return false;
+                }
+                return result;
+            } else {
+                throw new IllegalArgumentException("Unsupported function call: " + functionName);
+            }
         }
-        
-        // For simple variable reference with no operations, return the variable directly
+
         if (variables.containsKey(expression)) {
             return variables.get(expression);
         }
-        
+
         try {
-            // Substitute variables in the expression
-            String preparedExpression = expression;
+            // Replace variable names in the expression with their values
             for (Map.Entry<String, Object> var : variables.entrySet()) {
                 String pattern = "\\b" + var.getKey() + "\\b";
-                Object value = var.getValue();
-                String replacement = value instanceof String ? 
-                    "'" + value.toString().replace("'", "\\'") + "'" : 
-                    value.toString();
-                preparedExpression = preparedExpression.replaceAll(pattern, replacement);
+                expression = expression.replaceAll(pattern, var.getValue().toString());
             }
-            
-            // Evaluate using ScriptEngine
-            Object result = scriptEngine.eval(preparedExpression);
-            
-            // Convert to integer if it's a whole number
-            if (result instanceof Number) {
-                double doubleValue = ((Number) result).doubleValue();
-                if (doubleValue == Math.floor(doubleValue) && !Double.isInfinite(doubleValue)) {
-                    return ((Number) result).intValue();
-                }
+
+            // Infer type from the format of the expression
+            if (expression.equalsIgnoreCase("true")) {
+                return true;
+            } else if (expression.equalsIgnoreCase("false")) {
+                return false;
+            } else if (expression.startsWith("\"") && expression.endsWith("\"")) {
+                // String type
+                return expression.substring(1, expression.length() - 1);
+            } else if (expression.matches("^-?\\d+$")) {
+                // Integer type
+                return Integer.parseInt(expression);
+            } else if (expression.matches("^-?\\d+\\.\\d+$")) {
+                // Double type
+                return Double.parseDouble(expression);
+            } else if (expression.contains("&&") || expression.contains("||") || expression.contains("!")) {
+                // Evaluate boolean expressions
+                return evaluateBooleanExpression(expression, variables);
             }
-            
-            return result;
-        } catch (ScriptException e) {
-            if (debug) {
-                System.out.println("Expression evaluation error: " + e.getMessage());
-            }
-            // If evaluation fails, return the original expression
-            return expression;
+
+            // Evaluate as a mathematical expression if no type matches
+            return evaluateMathExpression(expression);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid parameter format: " + expression, e);
         }
+    }
+
+    private Object evaluateMathExpression(String expression) {
+        try {
+            // Use JavaScript engine to evaluate mathematical expressions
+            return scriptEngine.eval(expression);
+        } catch (ScriptException e) {
+            throw new IllegalArgumentException("Invalid mathematical expression: " + expression, e);
+        }
+    }
+
+    private boolean evaluateBooleanExpression(String expression, Map<String, Object> variables) {
+        expression = expression.replaceAll("\\s+", ""); // Remove whitespace
+
+        // Handle NOT operator
+        if (expression.startsWith("!")) {
+            String innerExpression = expression.substring(1);
+            return !((boolean) evaluateExpression(innerExpression, variables));
+        }
+
+        // Handle AND and OR operators
+        String[] andParts = expression.split("&&");
+        boolean result = true;
+        for (String part : andParts) {
+            String[] orParts = part.split("\\|\\|");
+            boolean orResult = false;
+            for (String orPart : orParts) {
+                orResult = orResult || (boolean) evaluateExpression(orPart, variables);
+            }
+            result = result && orResult;
+        }
+
+        return result;
     }
 }

@@ -1,6 +1,10 @@
 package com.centomila.macro.state;
 
+import com.bitwig.extension.controller.api.SettableBooleanValue;
 import com.centomila.BitwigBuddyExtension;
+
+import static com.centomila.utils.PopupUtils.console;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,17 +57,20 @@ public class DefaultBitwigStateProvider implements BitwigStateProvider {
 
     @Override
     public boolean isCurrentTrackMuted() {
-        return extension.getCursorTrack().mute().get();
+        Boolean muted = extension.getCursorTrack().mute().get();
+        return muted != null ? muted : false;
     }
 
     @Override
     public boolean isCurrentTrackSoloed() {
-        return extension.getCursorTrack().solo().get();
+        Boolean soloed = extension.getCursorTrack().solo().get();
+        return soloed != null ? soloed : false;
     }
 
     @Override
     public boolean isCurrentTrackArmed() {
-        return extension.getCursorTrack().arm().get();
+        Boolean armed = extension.getTrackBank().getItemAt(extension.getTrackBank().cursorIndex().get()).arm().get();
+        return armed != null ? armed : false;
     }
 
     @Override
@@ -89,12 +96,14 @@ public class DefaultBitwigStateProvider implements BitwigStateProvider {
 
     @Override
     public boolean isCurrentDeviceEnabled() {
-        return extension.getCursorDevice().isEnabled().get();
+        Boolean enabled = extension.getCursorDevice().isEnabled().get();
+        return enabled != null ? enabled : false;
     }
 
     @Override
     public boolean isCurrentDeviceWindowOpen() {
-        return extension.getCursorDevice().isWindowOpen().get();
+        Boolean windowOpen = extension.getCursorDevice().isWindowOpen().get();
+        return windowOpen != null ? windowOpen : false;
     }
 
     @Override
@@ -118,8 +127,8 @@ public class DefaultBitwigStateProvider implements BitwigStateProvider {
 
     @Override
     public boolean isCurrentClipLooping() {
-        // Need to check which clip is active (launcher or arranger)
-        return extension.getLauncherOrArrangerAsClip().isLoopEnabled().get();
+        Boolean looping = extension.getLauncherOrArrangerAsClip().isLoopEnabled().get();
+        return looping != null ? looping : false;
     }
 
     @Override
@@ -129,17 +138,20 @@ public class DefaultBitwigStateProvider implements BitwigStateProvider {
 
     @Override
     public boolean isCurrentClipPlaying() {
-        return extension.clipLauncherSlot.isPlaying().get();
+        Boolean playing = extension.clipLauncherSlot.isPlaying().get();
+        return playing != null ? playing : false;
     }
 
     @Override
     public boolean isCurrentClipRecording() {
-        return extension.clipLauncherSlot.isRecording().get();
+        Boolean recording = extension.clipLauncherSlot.isRecording().get();
+        return recording != null ? recording : false;
     }
 
     @Override
     public boolean isCurrentClipSelected() {
-        return extension.clipLauncherSlot.isSelected().get();
+        Boolean selected = extension.clipLauncherSlot.isSelected().get();
+        return selected != null ? selected : false;
     }
 
     // Transport related methods
@@ -160,12 +172,14 @@ public class DefaultBitwigStateProvider implements BitwigStateProvider {
 
     @Override
     public boolean isPlaying() {
-        return extension.getTransport().isPlaying().get();
+        Boolean playing = extension.getTransport().isPlaying().get();
+        return playing != null ? playing : false;
     }
 
     @Override
     public boolean isRecording() {
-        return extension.getTransport().isArrangerRecordEnabled().get();
+        Boolean recording = extension.getTransport().isArrangerRecordEnabled().get();
+        return recording != null ? recording : false;
     }
 
     @Override
@@ -175,12 +189,14 @@ public class DefaultBitwigStateProvider implements BitwigStateProvider {
 
     @Override
     public boolean isMetronomeEnabled() {
-        return extension.getTransport().isMetronomeEnabled().get();
+        Boolean metronomeEnabled = extension.getTransport().isMetronomeEnabled().get();
+        return metronomeEnabled != null ? metronomeEnabled : false;
     }
 
     @Override
     public boolean isArrangerLoopEnabled() {
-        return extension.getTransport().isArrangerLoopEnabled().get();
+        Boolean arrangerLoopEnabled = extension.getTransport().isArrangerLoopEnabled().get();
+        return arrangerLoopEnabled != null ? arrangerLoopEnabled : false;
     }
 
     // Project related methods
@@ -211,7 +227,11 @@ public class DefaultBitwigStateProvider implements BitwigStateProvider {
         try {
             Method method = methodMap.get(methodName);
             if (method != null) {
-                return method.invoke(this);
+                Object result = method.invoke(this);
+                extension.getHost().println("Method '" + methodName + "' returned: " + result);
+                return result;
+            } else {
+                extension.getHost().errorln("Method not found: " + methodName);
             }
         } catch (Exception e) {
             extension.getHost().errorln("Error calling method " + methodName + ": " + e.getMessage());

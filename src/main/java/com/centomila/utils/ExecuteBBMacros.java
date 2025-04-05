@@ -5,23 +5,12 @@ import static com.centomila.utils.PopupUtils.*;
 import com.centomila.BitwigBuddyExtension;
 import com.centomila.utils.commands.CommandFactory;
 import com.centomila.utils.commands.CommandRegistration;
-import com.centomila.ModeSelectSettings;
-import com.centomila.ClipUtils;
-import com.centomila.GlobalPreferences;
-import com.centomila.PatternSettings;
-import com.centomila.PostActionSettings;
-import com.centomila.MacroActionSettings;
-import com.centomila.Utils;
 
 import com.bitwig.extension.controller.api.*;
-import com.bitwig.extension.api.Color;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 
 /**
  * Main class for executing commands in Bitwig Studio.
