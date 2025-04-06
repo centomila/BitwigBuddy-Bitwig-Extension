@@ -1,5 +1,5 @@
 Macro: "5-Demo"
-Description: ""
+Description: "Demonstrates Zoom to Selection and Bounce in Place operations."
 Author: "Centomila"
 
 Zoom to Selection

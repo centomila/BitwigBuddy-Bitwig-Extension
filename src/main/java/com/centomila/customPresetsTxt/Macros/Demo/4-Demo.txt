@@ -1,5 +1,5 @@
 Macro: "4-Demo"
-Description: ""
+Description: "Demonstrates track selection, device insertion, and clip creation."
 Author: "Centomila"
 
 Track Select (2)

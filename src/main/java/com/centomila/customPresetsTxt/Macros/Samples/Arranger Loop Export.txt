@@ -1,5 +1,5 @@
 Macro: "Export Loop Selection"
-Description: "Set the Arranger Loop position, go to export page and confirm with last used settings"
+Description: "Set the Arranger Loop position, go to export page and confirm with last used settings."
 Author: "Centomila"
 
 Arranger Loop Start (16.0)

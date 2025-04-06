@@ -1,5 +1,5 @@
 Macro: "Arrangement - Melodic Techno (Cue Markers)"
-Description: "Generate Cue Markers for a Melodic Techno Track"
+Description: "Generate Cue Markers for a Melodic Techno Track."
 Author: "Centomila"
 Bpm (124)
 Time Signature ("4/4")

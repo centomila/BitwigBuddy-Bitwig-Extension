@@ -1,5 +1,5 @@
 Macro: "Arrangement - Rock (Cue Markers)"
-Description: "Generate Cue Markers for a Rock Track"
+Description: "Generate Cue Markers for a Rock Track."
 Author: "Centomila"
 Bpm (140)
 Time Signature ("4/4")

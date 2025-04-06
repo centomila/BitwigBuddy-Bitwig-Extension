@@ -1,5 +1,5 @@
 Macro: "6-Demo"
-Description: ""
+Description: "Final part of the demo sequence with clip creation and selection."
 Author: "Centomila"
 
 switch_between_event_and_time_selection

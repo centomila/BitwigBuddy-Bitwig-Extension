@@ -1,5 +1,5 @@
 Macro: "Color Tracks in Group"
-Description: "Remove the color of all tracks in a group and heredit the color of the group track"
+Description: "Remove the color of all tracks in a group and inherit the color of the group track."
 Author: "Centomila"
 
 // Close the BitwigBuddy Panel

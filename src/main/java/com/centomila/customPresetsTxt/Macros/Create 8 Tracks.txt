@@ -1,5 +1,5 @@
 Macro: "Create 8 Tracks"
-Description: "Create Eight Tracks with Colors. Drums, Bass, Bass 2, Pad, Keys, Lead, Arp, and Vocals"
+Description: "Create eight tracks with colors: Drums, Bass, Bass 2, Pad, Keys, Lead, Arp, and Vocals."
 Author: "Centomila"
 
 // Track 1: Drums (Red)

@@ -1,5 +1,5 @@
 Macro: "Arrangement - Pop (Cue Markers)"
-Description: "Generate Cue Markers for a Pop Track"
+Description: "Generate Cue Markers for a Pop Track."
 Author: "Centomila"
 Bpm (120)
 Time Signature ("4/4")

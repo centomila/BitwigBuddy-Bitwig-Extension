@@ -1,5 +1,5 @@
 Macro: "Insert VST3"
-Description: "This is just for testing"
+Description: "This is just for testing."
 Author: "Centomila"
 
 // Time Signature (3/4)
