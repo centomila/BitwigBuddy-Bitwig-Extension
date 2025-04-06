@@ -80,7 +80,7 @@ public class NoteDestinationSettings {
 
       // Setup learn note setting
       learnNoteSetting = (Setting) createEnumSetting(
-            "Learn Note", CATEGORY_NOTE_DESTINATION, LEARN_NOTE_OPTIONS, "DM");
+            "Learn Note", CATEGORY_NOTE_DESTINATION, LEARN_NOTE_OPTIONS, "Manual");
 
       // Setup note and octave destination settings
       String[] noteDestinationOptions = Utils.NOTE_NAMES;

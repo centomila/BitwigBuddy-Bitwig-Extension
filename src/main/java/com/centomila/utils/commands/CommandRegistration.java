@@ -89,6 +89,7 @@ public class CommandRegistration {
         CommandFactory.registerCommand("Track Rename", new TrackRenameCommand());
         CommandFactory.registerCommand("Track Delete", new TrackDeleteCommand());
         CommandFactory.registerCommand("Track Next", new TrackNextCommand());
+        CommandFactory.registerCommand("Track Previous", new TrackPrevCommand());
         CommandFactory.registerCommand("Track Prev", new TrackPrevCommand());
         
         // Device commands

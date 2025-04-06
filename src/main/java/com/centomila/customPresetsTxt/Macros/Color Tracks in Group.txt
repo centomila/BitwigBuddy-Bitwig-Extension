@@ -2,14 +2,21 @@ Macro: "Color Tracks in Group"
 Description: "Remove the color of all tracks in a group and heredit the color of the group track"
 Author: "Centomila"
 
+// Close the BitwigBuddy Panel
+BB Close Panel
 // Enter the selected group track
 Enter Group
 
 // Assign color (0) to the group track. 0 means no color
 Track Color All (0)
+Wait (100)
+Track Select (1)
 
 // Wait 100 ms to ensure the color is applied
 Wait (100)
 
 // Exit the group track
 Exit Group
+
+// Go back to the group track
+Track Previous
