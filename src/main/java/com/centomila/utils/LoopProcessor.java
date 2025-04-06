@@ -15,7 +15,8 @@ public class LoopProcessor {
     private static final Pattern VAR_ASSIGNMENT = Pattern.compile("\\s*var\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*=\\s*(.+)\\s*");
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{([^}]+)\\}");
     private static final Pattern IF_START = Pattern.compile("\\s*if\\s*\\((.+)\\)\\s*\\{\\s*");
-    private static final Pattern ELSE_START = Pattern.compile("\\s*else\\s*\\{\\s*");
+    // Removed unused ELSE_START pattern
+    // private static final Pattern ELSE_START = Pattern.compile("\\s*else\\s*\\{\\s*");
 
     private boolean debug = false;
 
@@ -49,74 +50,89 @@ public class LoopProcessor {
             Matcher ifMatcher = IF_START.matcher(command);
             Matcher varMatcher = VAR_ASSIGNMENT.matcher(command);
 
-            if (loopMatcher.matches()) {
-                String varName = loopMatcher.group(1);
-                int start = Integer.parseInt(loopMatcher.group(2));
-                int end = Integer.parseInt(loopMatcher.group(3));
+            try {
+                if (loopMatcher.matches()) {
+                    String varName = loopMatcher.group(1);
+                    int start = Integer.parseInt(loopMatcher.group(2));
+                    int end = Integer.parseInt(loopMatcher.group(3));
 
-                int loopEndIndex = findLoopEnd(commands, i + 1);
-                if (loopEndIndex == -1) {
-                    throw new RuntimeException("No matching closing brace '}' found for loop starting at line " + (i + 1));
-                }
+                    int loopEndIndex = findLoopEnd(commands, i + 1);
+                    if (loopEndIndex == -1) {
+                        throw new RuntimeException("No matching closing brace '}' found for loop starting at line " + (i + 1));
+                    }
 
-                List<String> loopBody = new ArrayList<>(commands.subList(i + 1, loopEndIndex));
+                    List<String> loopBody = new ArrayList<>(commands.subList(i + 1, loopEndIndex));
 
-                for (int j = start; j <= end; j++) {
-                    Map<String, Object> localVariables = new HashMap<>(globalVariables);
-                    localVariables.put(varName, j);
+                    for (int j = start; j <= end; j++) {
+                        Map<String, Object> localVariables = new HashMap<>(globalVariables);
+                        localVariables.put(varName, j);
 
-                    for (String loopCommand : loopBody) {
-                        Matcher innerVarMatcher = VAR_ASSIGNMENT.matcher(loopCommand.trim());
-                        if (innerVarMatcher.matches()) {
-                            String innerVarName = innerVarMatcher.group(1);
-                            String valueStr = innerVarMatcher.group(2).trim();
-                            Object value = evaluateExpression(valueStr, localVariables);
-                            localVariables.put(innerVarName, value);
-                        } else {
-                            result.add(replaceVariablesInLine(loopCommand, localVariables));
+                        int k = 0;
+                        while (k < loopBody.size()) {
+                            String loopCommand = loopBody.get(k).trim();
+                            Matcher innerVarMatcher = VAR_ASSIGNMENT.matcher(loopCommand);
+                            Matcher innerIfMatcher = IF_START.matcher(loopCommand);
+
+                            if (innerVarMatcher.matches()) {
+                                String innerVarName = innerVarMatcher.group(1);
+                                String valueStr = innerVarMatcher.group(2).trim();
+                                Object value = evaluateExpression(valueStr, localVariables);
+                                localVariables.put(innerVarName, value);
+                                k++;
+                            } else if (innerIfMatcher.matches()) {
+                                String condition = innerIfMatcher.group(1);
+                                boolean conditionResult = (boolean) evaluateExpression(condition, localVariables);
+
+                                int ifEndIndex = findConditionalEnd(loopBody, k + 1);
+                                if (ifEndIndex == -1) {
+                                    throw new RuntimeException("No matching closing brace '}' found for if statement inside loop at line " + (i + 1));
+                                }
+
+                                List<String> ifBody = new ArrayList<>(loopBody.subList(k + 1, ifEndIndex));
+
+                                if (conditionResult) {
+                                    result.addAll(processLoop(ifBody));
+                                }
+
+                                k = ifEndIndex + 1; // Skip processed if block
+                            } else {
+                                result.add(replaceVariablesInLine(loopCommand, localVariables));
+                                k++;
+                            }
                         }
                     }
-                }
 
-                i = loopEndIndex + 1;
-            } else if (ifMatcher.matches()) {
-                String condition = ifMatcher.group(1);
-                boolean conditionResult = (boolean) evaluateExpression(condition, globalVariables);
+                    i = loopEndIndex + 1;
+                } else if (ifMatcher.matches()) {
+                    String condition = ifMatcher.group(1);
+                    boolean conditionResult = (boolean) evaluateExpression(condition, globalVariables);
 
-                int ifEndIndex = findConditionalEnd(commands, i + 1);
-                if (ifEndIndex == -1) {
-                    throw new RuntimeException("No matching closing brace '}' found for if statement at line " + (i + 1));
-                }
-
-                List<String> ifBody = new ArrayList<>(commands.subList(i + 1, ifEndIndex));
-                List<String> elseBody = new ArrayList<>();
-
-                // Check for an else block
-                if (ifEndIndex + 1 < commands.size() && ELSE_START.matcher(commands.get(ifEndIndex + 1).trim()).matches()) {
-                    int elseEndIndex = findConditionalEnd(commands, ifEndIndex + 2);
-                    if (elseEndIndex == -1) {
-                        throw new RuntimeException("No matching closing brace '}' found for else statement at line " + (ifEndIndex + 2));
+                    int ifEndIndex = findConditionalEnd(commands, i + 1);
+                    if (ifEndIndex == -1) {
+                        throw new RuntimeException("No matching closing brace '}' found for if statement at line " + (i + 1));
                     }
-                    elseBody = new ArrayList<>(commands.subList(ifEndIndex + 2, elseEndIndex));
-                    ifEndIndex = elseEndIndex;
-                }
 
-                if (conditionResult) {
-                    result.addAll(processLoop(ifBody));
+                    List<String> ifBody = new ArrayList<>(commands.subList(i + 1, ifEndIndex));
+
+                    if (conditionResult) {
+                        result.addAll(processLoop(ifBody));
+                    }
+
+                    i = ifEndIndex + 1;
+                } else if (varMatcher.matches()) {
+                    String varName = varMatcher.group(1);
+                    String valueStr = varMatcher.group(2).trim();
+
+                    Object value = evaluateExpression(valueStr, globalVariables);
+                    globalVariables.put(varName, value);
+                    i++;
                 } else {
-                    result.addAll(processLoop(elseBody));
+                    result.add(replaceVariablesInLine(command, globalVariables));
+                    i++;
                 }
-
-                i = ifEndIndex + 1;
-            } else if (varMatcher.matches()) {
-                String varName = varMatcher.group(1);
-                String valueStr = varMatcher.group(2).trim();
-
-                Object value = evaluateExpression(valueStr, globalVariables);
-                globalVariables.put(varName, value);
-                i++;
-            } else {
-                result.add(replaceVariablesInLine(command, globalVariables));
+            } catch (Exception e) {
+                System.err.println("Error processing command at line " + (i + 1) + ": " + e.getMessage());
+                result.add("// Error: " + e.getMessage());
                 i++;
             }
         }

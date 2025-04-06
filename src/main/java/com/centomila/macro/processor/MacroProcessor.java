@@ -62,34 +62,52 @@ public class MacroProcessor {
     public List<String> processCommands(List<String> commands) {
         List<String> result = new ArrayList<>();
         int i = 0;
-        
+
         while (i < commands.size()) {
             String command = commands.get(i);
-            
-            // Debug output to identify issues with regex matching
-            if (debug) {
-                System.out.println("Processing line " + i + ": " + command);
-            }
-            
-            Matcher loopMatcher = LOOP_START.matcher(command);
-            Matcher varMatcher = VAR_ASSIGNMENT.matcher(command);
-            
-            if (loopMatcher.matches()) {
-                // Handle loop construct
-                processLoop(commands, loopMatcher, i, result);
-                i = findLoopEnd(commands, i + 1) + 1;
-            } else if (varMatcher.matches()) {
-                // Handle variable assignment
-                processVariableAssignment(varMatcher);
-                i++;
+
+            if (command.trim().startsWith("if")) {
+                int conditionalEnd = findConditionalEnd(commands, i + 1);
+                if (conditionalEnd == -1) {
+                    throw new RuntimeException("No matching closing brace '}' found for if statement at line " + (i + 1));
+                }
+
+                List<String> conditionalBlock = commands.subList(i + 1, conditionalEnd);
+                if (evaluateCondition(command)) {
+                    result.addAll(processCommands(conditionalBlock));
+                }
+                i = conditionalEnd + 1;
             } else {
-                // Process regular command with variable substitution
-                result.add(replaceVariablesInLine(command));
-                i++;
+                // Debug output to identify issues with regex matching
+                if (debug) {
+                    System.out.println("Processing line " + i + ": " + command);
+                }
+                
+                Matcher loopMatcher = LOOP_START.matcher(command);
+                Matcher varMatcher = VAR_ASSIGNMENT.matcher(command);
+                
+                if (loopMatcher.matches()) {
+                    // Handle loop construct
+                    processLoop(commands, loopMatcher, i, result);
+                    i = findLoopEnd(commands, i + 1) + 1;
+                } else if (varMatcher.matches()) {
+                    // Handle variable assignment
+                    processVariableAssignment(varMatcher);
+                    i++;
+                } else {
+                    // Process regular command with variable substitution
+                    result.add(replaceVariablesInLine(command));
+                    i++;
+                }
             }
         }
-        
+
         return result;
+    }
+
+    private boolean evaluateCondition(String condition) {
+        // Simplified condition evaluation logic
+        return condition.contains("true"); // Replace with actual logic
     }
     
     /**
@@ -341,5 +359,24 @@ public class MacroProcessor {
         }
 
         return result;
+    }
+
+    private int findConditionalEnd(List<String> commands, int startIndex) {
+        int nestedCount = 0;
+
+        for (int i = startIndex; i < commands.size(); i++) {
+            String line = commands.get(i).trim();
+
+            if (line.startsWith("if")) {
+                nestedCount++;
+            } else if (line.equals("}")) {
+                if (nestedCount == 0) {
+                    return i;
+                }
+                nestedCount--;
+            }
+        }
+
+        return -1; // No matching closing brace found
     }
 }

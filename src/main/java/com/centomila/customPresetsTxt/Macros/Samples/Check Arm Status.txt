@@ -3,13 +3,14 @@ Description: "Pick the color of the group track and assign it to all child track
 Author: "Centomila"
 
 
-var trackName = getCurrentTrackName()
+for (i = 0 to 7) {
 
 if (isCurrentTrackArmed()) {
-    Message("${trackName} is ARMED for recording!")
+    Message("${getCurrentTrackName()} is ARMED for recording!")
 }
 
-// "!" is equal to "if not"
 if (!isCurrentTrackArmed()) {
-    Message("${trackName} IS NOT armed for recording!")
+    Message("${getCurrentTrackName()} IS NOT armed for recording!")
+}
+Track Next
 }
