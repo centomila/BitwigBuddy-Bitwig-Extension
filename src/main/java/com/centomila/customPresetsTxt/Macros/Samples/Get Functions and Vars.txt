@@ -22,11 +22,13 @@ var deviceName = getCurrentDeviceName()
 Message(Current device: ${deviceName})
 
 Wait (1500)
+
 // Get transport information
 var bpm = getCurrentBpm()
 Message("Project tempo: ${bpm} BPM")
 
 Wait (1500)
+
 // Time signature information
 var num = getTimeSignatureNumerator()
 var denom = getTimeSignatureDenominator() 
@@ -36,8 +38,10 @@ Message("Time signature: ${num}/${denom}")
 // Send information to the console for logging - both direct and wrapped syntax
 Console("== Bitwig State Information ==")
 Console("Track: ${trackName} (#${trackNumber})")
-// Direct function calls - should work after our fix
+
+// Direct function calls
 Console("Device: getCurrentDeviceName()")
 Console("Tempo: ${getCurrentBpm()} BPM")
+
 // Mixed syntax test
 Console("Time signature: ${getTimeSignatureNumerator()}/${getTimeSignatureDenominator()}")

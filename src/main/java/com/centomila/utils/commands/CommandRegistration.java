@@ -85,6 +85,7 @@ public class CommandRegistration {
         // Track commands
         CommandFactory.registerCommand("Track Select", new TrackSelectCommand());
         CommandFactory.registerCommand("Track Color", new TrackColorCommand());
+        CommandFactory.registerCommand("Track Color All", new TrackColorAllCommand());
         CommandFactory.registerCommand("Track Rename", new TrackRenameCommand());
         CommandFactory.registerCommand("Track Delete", new TrackDeleteCommand());
         CommandFactory.registerCommand("Track Next", new TrackNextCommand());
@@ -153,6 +154,8 @@ public class CommandRegistration {
         commandDocs.put("Message", "Shows a popup message. Parameters: [message_text]");
         commandDocs.put("Console", "Writes a message to the Bitwig console. Parameters: [message_text]");
         commandDocs.put("Macro", "Executes another macro. Parameters: [macro_name]");
+        commandDocs.put("Track Color", "Sets the color of the currently selected track. Parameters: [color_hex]");
+        commandDocs.put("Track Color All", "Sets the color of all tracks in the track bank. Parameters: [color_hex]");
         
         return commandDocs;
     }
