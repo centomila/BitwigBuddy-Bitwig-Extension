@@ -126,8 +126,10 @@ public class BitwigBuddyExtension extends ControllerExtension {
       // Device Matcher
       this.trackBank = host.createTrackBank(128, 0, 128); // Evaluate to change to createMainTrackBank in the future
       this.deviceBank = this.cursorTrack.createDeviceBank(128);
-      this.drumPadBank = deviceBank.getDevice(0).createDrumPadBank(128);
-      this.drumPadBank.scrollPosition().set(0);
+      
+      // Setup drumPadBank with a null reference initially
+      // It will be properly initialized by DeviceMatcherDrumMachine
+      this.drumPadBank = null;
 
       this.cursorDeviceSlot.exists().markInterested();
       this.cursorDeviceSlot.isWindowOpen().markInterested();
@@ -197,11 +199,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.sceneBank.cursorIndex().markInterested();
       this.sceneBank.scrollPosition().markInterested();
 
-      this.drumPadBank.scrollPosition().markInterested();
-      this.drumPadBank.itemCount().markInterested();
-      this.drumPadBank.cursorIndex().markInterested();
-      this.drumPadBank.exists().markInterested();
-
       this.cueMarkerBank.subscribe();
       for (int i = 0; i < 128; i++) {
          this.cueMarkerBank.getItemAt(i).name().markInterested();
@@ -229,14 +226,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
          this.deviceBank.getItemAt(i).position().markInterested();
          this.deviceBank.getItemAt(i).getCursorSlot().name().markInterested();
          this.deviceBank.getItemAt(i).getCursorSlot().exists().markInterested();
-
-         this.drumPadBank.getItemAt(i).name().markInterested();
-         this.drumPadBank.getItemAt(i).exists().markInterested();
-         this.drumPadBank.getItemAt(i).color().markInterested();
-         this.drumPadBank.getItemAt(i).solo().markInterested();
-         this.drumPadBank.getItemAt(i).mute().markInterested();
-         this.drumPadBank.getItemAt(i).volume().markInterested();
-         this.drumPadBank.getItemAt(i).pan().markInterested();
 
          this.sceneBank.getItemAt(i).name().markInterested();
          this.sceneBank.getItemAt(i).color().markInterested();

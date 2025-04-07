@@ -23,6 +23,14 @@ public class InsertBitwigDeviceInDrumPadCommand extends BaseCommand {
         }
 
         try {
+            int bankSize = extension.deviceBank.getSizeOfBank();
+            if (bankSize == 0) {
+                extension.getHost().println("No devices found in the bank.");
+                showPopup("No devices found in the bank.");
+                return;
+            }
+            // get the position in the bank of the device
+
             final Device device = extension.deviceBank.getDevice(0);
 
             if (!(NoteDestinationSettings.getLearnNoteSelectorAsString()).equals("DM")) {
