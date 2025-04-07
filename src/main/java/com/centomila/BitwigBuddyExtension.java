@@ -7,6 +7,7 @@ import com.bitwig.extension.controller.api.CursorChannel;
 import com.bitwig.extension.controller.api.CursorRemoteControlsPage;
 import com.bitwig.extension.controller.api.CursorTrack;
 import com.bitwig.extension.controller.api.DeviceBank;
+import com.bitwig.extension.controller.api.DeviceChain;
 
 import static com.centomila.utils.PopupUtils.showPopup;
 
@@ -63,6 +64,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public Channel channel;
    public CursorChannel cursorChannel;
    public Cursor cursor;
+   public DeviceChain deviceChain;
 
    DocumentState documentState;
 
@@ -90,11 +92,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
       this.cursorClip = host.createLauncherCursorClip((16 * 8), 128);
       this.arrangerClip = host.createArrangerCursorClip(256, 128);
-      // CursorTrack createCursorTrack(String id,
-      // String name,
-      // int numSends,
-      // int numScenes,
-      // boolean shouldFollowSelection)
+
       this.cursorTrack = host.createCursorTrack("cursorTrack", "Cursor Track", 0, 128, true);
       this.documentState = host.getDocumentState();
       this.transport = host.createTransport();
@@ -104,6 +102,7 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.arranger = host.createArranger();
       this.project = host.getProject();
       this.cursorDeviceSlot = cursorTrack.createCursorDevice();
+      this.deviceChain = cursorDeviceSlot.createCursorLayer();
 
       this.timeSignature.subscribe();
       this.sceneBank.subscribe();
@@ -112,6 +111,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.cursorTrack.subscribe();
       this.transport.subscribe();
       this.clipLauncherSlot.subscribe();
+      this.cursorDeviceSlot.subscribe();
+      this.deviceChain.subscribe();
 
       this.application.recordQuantizationGrid().markInterested();
       this.application.panelLayout().markInterested();
@@ -166,6 +167,9 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.deviceBank.itemCount().markInterested();
       this.deviceBank.exists().markInterested();
 
+      this.deviceChain.name().markInterested();
+      this.deviceChain.exists().markInterested();
+
       this.cueMarkerBank = arranger.createCueMarkerBank(128);
       this.transport.playStartPosition().markInterested();
       this.transport.playStartPositionInSeconds().markInterested();
@@ -186,8 +190,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.trackBank.channelCount().markInterested();
       this.trackBank.scrollPosition().markInterested();
       this.trackBank.itemCount().markInterested();
-      this.trackBank.cursorIndex().markInterested();
-      this.trackBank.channelCount().markInterested();
       this.trackBank.sceneBank().cursorIndex().markInterested();
       this.trackBank.sceneBank().scrollPosition().markInterested();
       this.trackBank.sceneBank().itemCount().markInterested();
@@ -231,7 +233,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
          this.drumPadBank.getItemAt(i).name().markInterested();
          this.drumPadBank.getItemAt(i).exists().markInterested();
          this.drumPadBank.getItemAt(i).color().markInterested();
-         this.drumPadBank.getItemAt(i).exists().markInterested();
          this.drumPadBank.getItemAt(i).solo().markInterested();
          this.drumPadBank.getItemAt(i).mute().markInterested();
          this.drumPadBank.getItemAt(i).volume().markInterested();
@@ -241,7 +242,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
          this.sceneBank.getItemAt(i).color().markInterested();
          this.sceneBank.getItemAt(i).exists().markInterested();
          this.sceneBank.getItemAt(i).clipCount().markInterested();
-         this.sceneBank.getItemAt(i).exists().markInterested();
          this.sceneBank.getItemAt(i).sceneIndex().markInterested();
 
          this.channel = this.trackBank.getItemAt(i);
@@ -271,7 +271,6 @@ public class BitwigBuddyExtension extends ControllerExtension {
       this.clipLauncherSlot.isRecording().markInterested();
       this.clipLauncherSlot.isRecordingQueued().markInterested();
       this.clipLauncherSlot.isStopQueued().markInterested();
-      this.clipLauncherSlot.isPlaybackQueued().markInterested();
 
       // Initialize settings
       SettingsHelper.init(this);
@@ -358,27 +357,27 @@ public class BitwigBuddyExtension extends ControllerExtension {
    public CursorTrack getCursorTrack() {
       return cursorTrack;
    }
-   
+
    public PinnableCursorDevice getCursorDevice() {
       return cursorDeviceSlot;
    }
-   
+
    public Transport getTransport() {
       return transport;
    }
-   
+
    public DeviceBank getDeviceBank() {
       return deviceBank;
    }
-   
+
    public TrackBank getTrackBank() {
       return trackBank;
    }
-   
+
    public DrumPadBank getDrumPadBank() {
       return drumPadBank;
    }
-   
+
    public Application getApplication() {
       return application;
    }
