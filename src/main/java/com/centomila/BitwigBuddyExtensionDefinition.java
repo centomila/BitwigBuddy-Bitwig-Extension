@@ -29,7 +29,7 @@ public class BitwigBuddyExtensionDefinition extends ControllerExtensionDefinitio
    @Override
    public String getVersion()
    {
-      return "1.0.0 alpha 1";
+      return "1.0.0 alpha 2";
    }
 
    @Override
