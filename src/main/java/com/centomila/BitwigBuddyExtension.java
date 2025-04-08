@@ -145,8 +145,8 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
       // This makes sure the track bank tracks the selected track in Bitwig
       this.trackBank.followCursorTrack(cursorTrack);
-      this.trackBank.setShouldShowClipLauncherFeedback(true);
-      this.sceneBank.setIndication(true);
+      this.trackBank.setShouldShowClipLauncherFeedback(false);
+      this.sceneBank.setIndication(false);
 
       // Mark interested for all properties
       this.cursorTrack.name().markInterested();

@@ -95,9 +95,6 @@ public class DeviceMatcherDrumMachine {
      * Scans the device chain for a drum machine and updates the drum pad bank accordingly
      */
     private static void scanForDrumMachine(BitwigBuddyExtension extension, ControllerHost host) {
-        // Show a notification that we're looking for a drum machine
-        PopupUtils.showPopup("Looking for Drum Machine...");
-        
         // We need to change the device matcher to find all devices first
         extension.deviceBank.setDeviceMatcher(null);
         
@@ -114,24 +111,21 @@ public class DeviceMatcherDrumMachine {
                 extension.drumPadBank.exists().markInterested();
                 
                 // Mark all the drum pads as interested
-                for (int j = 0; j < extension.drumPadBank.getSizeOfBank(); j++) {
-                    DrumPad drumPad = extension.drumPadBank.getItemAt(j);
-                    drumPad.name().markInterested();
-                    drumPad.exists().markInterested();
-                    drumPad.color().markInterested();
-                    drumPad.solo().markInterested();
-                    drumPad.mute().markInterested();
-                    drumPad.volume().markInterested();
-                    drumPad.pan().markInterested();
-                }
+                // for (int j = 0; j < extension.drumPadBank.getSizeOfBank(); j++) {
+                //     DrumPad drumPad = extension.drumPadBank.getItemAt(j);
+                //     drumPad.name().markInterested();
+                //     drumPad.exists().markInterested();
+                //     drumPad.color().markInterested();
+                //     drumPad.solo().markInterested();
+                //     drumPad.mute().markInterested();
+                //     drumPad.volume().markInterested();
+                //     drumPad.pan().markInterested();
+                // }
                 
-                PopupUtils.showPopup("Found Drum Machine: " + device.name().get());
                 return;
             }
         }
-        
-        // If we get here, we didn't find a drum machine
-        PopupUtils.showPopup("No Drum Machine found in current track");
+   
     }
     
     /**
