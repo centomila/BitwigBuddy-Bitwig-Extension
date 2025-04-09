@@ -1,11 +1,10 @@
 package com.centomila.utils.commands.drum;
 
 import com.bitwig.extension.controller.api.Device;
-import com.bitwig.extension.controller.api.DrumPad;
 import com.centomila.BitwigBuddyExtension;
-import com.centomila.NoteDestinationSettings;
-import com.centomila.utils.commands.BaseCommand;
 import com.centomila.Utils;
+import com.centomila.utils.commands.BaseCommand;
+import com.centomila.utils.DrumPadUtils;
 
 import java.util.UUID;
 
@@ -29,21 +28,9 @@ public class InsertBitwigDeviceInDrumPadCommand extends BaseCommand {
                 showPopup("No devices found in the bank.");
                 return;
             }
-            // get the position in the bank of the device
-
-            final Device device = extension.deviceBank.getDevice(0);
-
-            if (!(NoteDestinationSettings.getLearnNoteSelectorAsString()).equals("DM")) {
-
-                // Subscribe to the device and drum pads
-                device.subscribe();
-                extension.drumPadBank.scrollPosition().set(0);
-
-                for (int i = 0; i < extension.drumPadBank.getSizeOfBank(); i++) {
-                    DrumPad drumPad = extension.drumPadBank.getItemAt(i);
-                    drumPad.subscribe();
-                }
-            }
+            
+            // Subscribe to the device and drum pads if needed
+            final Device device = DrumPadUtils.subscribeToDrumPads(extension);
 
             String noteNameFull = params[0].trim();
             int midiNote = Utils.getMIDINoteNumberFromString(noteNameFull);
@@ -57,14 +44,8 @@ public class InsertBitwigDeviceInDrumPadCommand extends BaseCommand {
                 showPopup("Device not found: " + params[1]);
             }
 
-            // Unsubscribe from the device and drum pads
-            if (!(NoteDestinationSettings.getLearnNoteSelectorAsString()).equals("DM")) {
-                for (int i = 0; i < extension.drumPadBank.getSizeOfBank(); i++) {
-                    DrumPad drumPad = extension.drumPadBank.getItemAt(i);
-                    drumPad.unsubscribe();
-                }
-                device.unsubscribe();
-            }
+            // Unsubscribe from the device and drum pads if needed
+            DrumPadUtils.unsubscribeFromDrumPads(extension, device);
         } catch (Exception e) {
             reportError("Error inserting device in drum pad: " + e.getMessage(), extension);
         }

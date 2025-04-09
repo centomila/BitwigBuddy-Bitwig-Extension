@@ -69,23 +69,27 @@ public class DeviceMatcherDrumMachine {
         }
 
         ((EnumValue) NoteDestinationSettings.learnNoteSetting).addValueObserver(value -> {
-            if (value.equals(NoteDestinationSettings.LEARN_NOTE_OPTIONS[2])) {
+            boolean shouldSubscribe = value.equals(NoteDestinationSettings.LEARN_NOTE_OPTIONS[2]);
+            
+            if (shouldSubscribe) {
                 device.subscribe();
                 extension.drumPadBank.scrollPosition().set(0);
+                
+                // Subscribe to all drum pads
+                for (int i = 0; i < extension.drumPadBank.getSizeOfBank(); i++) {
+                    DrumPad drumPad = extension.drumPadBank.getItemAt(i);
+                    drumPad.subscribe();
+                }
             } else {
                 if (device.isSubscribed()) {
-                    device.unsubscribe();
-                }
-            }
-            // repeat for the drumpads
-            for (int i = 0; i < extension.drumPadBank.getSizeOfBank(); i++) {
-                DrumPad drumPad = extension.drumPadBank.getItemAt(i);
-                if (value.equals(NoteDestinationSettings.LEARN_NOTE_OPTIONS[2])) {
-                    drumPad.subscribe();
-                } else {
-                    if (drumPad.isSubscribed()) {
-                        drumPad.unsubscribe();
+                    // Unsubscribe from all drum pads
+                    for (int i = 0; i < extension.drumPadBank.getSizeOfBank(); i++) {
+                        DrumPad drumPad = extension.drumPadBank.getItemAt(i);
+                        if (drumPad.isSubscribed()) {
+                            drumPad.unsubscribe();
+                        }
                     }
+                    device.unsubscribe();
                 }
             }
         });
@@ -101,7 +105,7 @@ public class DeviceMatcherDrumMachine {
         // Now scan through all devices to find a drum machine
         for (int i = 0; i < extension.deviceBank.getSizeOfBank(); i++) {
             Device device = extension.deviceBank.getItemAt(i);
-            // Check if this is a drum machine (you may need to adjust this check)
+            // Check if this is a drum machine
             if (isDrumMachine(device)) {
                 // We found a drum machine, update the drum pad bank
                 extension.drumPadBank = device.createDrumPadBank(128);
@@ -109,23 +113,9 @@ public class DeviceMatcherDrumMachine {
                 extension.drumPadBank.itemCount().markInterested();
                 extension.drumPadBank.cursorIndex().markInterested();
                 extension.drumPadBank.exists().markInterested();
-                
-                // Mark all the drum pads as interested
-                // for (int j = 0; j < extension.drumPadBank.getSizeOfBank(); j++) {
-                //     DrumPad drumPad = extension.drumPadBank.getItemAt(j);
-                //     drumPad.name().markInterested();
-                //     drumPad.exists().markInterested();
-                //     drumPad.color().markInterested();
-                //     drumPad.solo().markInterested();
-                //     drumPad.mute().markInterested();
-                //     drumPad.volume().markInterested();
-                //     drumPad.pan().markInterested();
-                // }
-                
                 return;
             }
         }
-   
     }
     
     /**
