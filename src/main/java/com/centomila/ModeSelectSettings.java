@@ -14,7 +14,6 @@ public class ModeSelectSettings {
     private static final String DESTINATION_LAUNCHER = "Launcher";
     private static final String DESTINATION_ARRANGER = "Arranger";
 
-    private static Setting spacerSelectModSetting;
     public static Setting modeGenerateEditToggleSetting;
     public static Setting toggleLauncherArrangerSetting;
 

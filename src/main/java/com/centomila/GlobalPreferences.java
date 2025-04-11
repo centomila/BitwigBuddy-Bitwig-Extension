@@ -10,7 +10,6 @@ import static com.centomila.utils.SettingsHelper.*;
 
 import com.centomila.utils.ExtensionPath;
 import com.centomila.utils.OpenWebUrl;
-import com.centomila.macro.MacroExecutor;
 
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.Preferences;
@@ -121,7 +120,7 @@ public class GlobalPreferences {
 
     private void initPreferencesSettings() {
         // Presets path settings
-        this.presetsPath = preferences.getStringSetting(
+        GlobalPreferences.presetsPath = preferences.getStringSetting(
                 "Presets Path",
                 PRESETS_SETTING_CATEGORY,
                 MAX_PATH_LENGTH,

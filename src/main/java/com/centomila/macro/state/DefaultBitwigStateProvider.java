@@ -1,9 +1,6 @@
 package com.centomila.macro.state;
 
-import com.bitwig.extension.controller.api.SettableBooleanValue;
 import com.centomila.BitwigBuddyExtension;
-
-import static com.centomila.utils.PopupUtils.console;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

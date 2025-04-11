@@ -1,14 +1,11 @@
 package com.centomila.utils.commands.utility;
 
 import com.centomila.BitwigBuddyExtension;
-import com.centomila.macro.processor.MacroProcessor;
 import com.centomila.macro.state.BitwigStateProvider;
 import com.centomila.macro.state.DefaultBitwigStateProvider;
 import com.centomila.utils.PopupUtils;
 import com.centomila.utils.commands.BaseCommand;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

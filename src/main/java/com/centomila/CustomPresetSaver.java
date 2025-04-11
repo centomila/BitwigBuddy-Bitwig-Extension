@@ -6,7 +6,6 @@ import static com.centomila.utils.SettingsHelper.*;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.Setting;
 import com.bitwig.extension.controller.api.Signal;
-import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.SettableStringValue;
 import com.centomila.CustomPresetsHandler.CustomPreset;
 import com.centomila.utils.SettingsHelper;
