@@ -6,6 +6,7 @@ BB Arranger Mode
 BB Close Panel
 select_time_selection_tool
 bounce_in_place
+Wait (500)
 
 switch_between_event_and_time_selection
 select_object_selection_tool

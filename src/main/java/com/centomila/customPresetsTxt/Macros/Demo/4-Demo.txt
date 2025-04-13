@@ -3,6 +3,8 @@ Description: "Demonstrates track selection, device insertion, and clip creation.
 Author: "Centomila"
 
 Track Select (2)
+Insert Device ("Drum Machine")
+Wait (300)
 Message ("This Drum Machine needs a kick")
 BB Close Panel
 Drum Pad Insert Device ("C1", "V0 Kick")

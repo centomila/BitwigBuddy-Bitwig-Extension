@@ -147,7 +147,7 @@ public class DrumPatternGenerator {
 
     private static int[] repeatPattern(int[] pattern) {
         int repeat = PatternSettings.getRepeatPattern();
-        showPopup("Repeat: " + repeat);
+        // showPopup("Repeat: " + repeat);
         // if the array is like [1, 2, 3, 4] and repeat is 2 then the array will be [1,
         // 2, 3, 4, 1, 2, 3, 4]
         if (repeat <= 1) {
