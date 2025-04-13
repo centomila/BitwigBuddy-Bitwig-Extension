@@ -13,7 +13,8 @@ public class BBToggleLauncherArrangerModeCommand extends BaseCommand {
     
     @Override
     public void execute(String[] params, BitwigBuddyExtension extension) {
-        String currentMode = ((EnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).get();
+        // String currentMode = ((EnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).get();
+        String currentMode = ModeSelectSettings.getCurrentLauncherArrangerToggleString();
         String newMode = currentMode.equals("Launcher") ? "Arranger" : "Launcher";
         ((SettableEnumValue) ModeSelectSettings.toggleLauncherArrangerSetting).set(newMode);
     }

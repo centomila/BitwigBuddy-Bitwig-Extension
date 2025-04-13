@@ -53,6 +53,7 @@ public class CommandRegistration {
         CommandFactory.registerCommand("Clip Move", new ClipMoveCommand());
         CommandFactory.registerCommand("Clip Offset", new ClipOffsetCommand());
         CommandFactory.registerCommand("Clip Accent", new ClipAccentCommand());
+        CommandFactory.registerCommand("Clip Length", new ClipLengthCommand());
         
         // Project commands
         CommandFactory.registerCommand("Project Name", new ProjectNameCommand());
