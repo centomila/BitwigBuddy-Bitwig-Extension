@@ -128,10 +128,14 @@ public class CommandRegistration {
         CommandFactory.registerCommand("Console", new ConsoleCommand());
         CommandFactory.registerCommand("Wait", new WaitCommand());
         CommandFactory.registerCommand("Print Actions", new PrintActionsCommand());
+        CommandFactory.registerCommand("List Commands", new ListCommandsCommand());
         
         // Macro commands
         CommandFactory.registerCommand("BB Macro", new MacroCommand());
         CommandFactory.registerCommand("Macro", new MacroCommand());
+
+        // Debug commands
+        // getAllRegisteredCommands()
     }
     
     /**
@@ -158,6 +162,7 @@ public class CommandRegistration {
         commandDocs.put("Macro", "Executes another macro. Parameters: [macro_name]");
         commandDocs.put("Track Color", "Sets the color of the currently selected track. Parameters: [color_hex]");
         commandDocs.put("Track Color All", "Sets the color of all tracks in the track bank. Parameters: [color_hex]");
+        commandDocs.put("List Commands", "Lists all registered commands in the console. No parameters.");
         
         return commandDocs;
     }
