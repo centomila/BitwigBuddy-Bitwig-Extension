@@ -12,16 +12,14 @@
    3. **Linux:** `~/Bitwig Studio/Extensions`
 3. 🟧 In Bitwig, go to **Settings > Controller > Add Extension > Centomila > BitwigBuddy**  
 
+For more details, see https://bitwigbuddy.centomila.com/guide/bitwigbuddy/installation.html
+
 
 # Changelog
 
 All the notable changes to this project are documented in this file.
 
 📃 [View Changelog](CHANGELOG)
-
-# Installation
-
-Extract the content of the zip file in your *Bitwig Extensions* folder. Check dedicated documentation() for more details
 
 # 🚀 Coming Soon
 
