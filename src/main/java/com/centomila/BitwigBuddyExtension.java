@@ -199,41 +199,41 @@ public class BitwigBuddyExtension extends ControllerExtension {
 
       this.cueMarkerBank.subscribe();
       
-      // for (int i = 0; i < 128; i++) {
-      //    this.cueMarkerBank.getItemAt(i).name().markInterested();
-      //    this.cueMarkerBank.getItemAt(i).getColor().markInterested();
-      //    this.cueMarkerBank.getItemAt(i).exists().markInterested();
-      //    this.cueMarkerBank.getItemAt(i).position().markInterested();
+      for (int i = 0; i < 128; i++) {
+         this.cueMarkerBank.getItemAt(i).name().markInterested();
+         this.cueMarkerBank.getItemAt(i).getColor().markInterested();
+         this.cueMarkerBank.getItemAt(i).exists().markInterested();
+         this.cueMarkerBank.getItemAt(i).position().markInterested();
 
-      //    this.trackBank.getItemAt(i).name().markInterested();
-      //    this.trackBank.getItemAt(i).color().markInterested();
-      //    this.trackBank.getItemAt(i).exists().markInterested();
-      //    this.trackBank.getItemAt(i).position().markInterested();
-      //    this.trackBank.getItemAt(i).mute().markInterested();
-      //    this.trackBank.getItemAt(i).solo().markInterested();
-      //    this.trackBank.getItemAt(i).arm().markInterested();
-      //    this.trackBank.getItemAt(i).volume().markInterested();
-      //    this.trackBank.getItemAt(i).pan().markInterested();
+         this.trackBank.getItemAt(i).name().markInterested();
+         this.trackBank.getItemAt(i).color().markInterested();
+         this.trackBank.getItemAt(i).exists().markInterested();
+         this.trackBank.getItemAt(i).position().markInterested();
+         this.trackBank.getItemAt(i).mute().markInterested();
+         this.trackBank.getItemAt(i).solo().markInterested();
+         this.trackBank.getItemAt(i).arm().markInterested();
+         this.trackBank.getItemAt(i).volume().markInterested();
+         this.trackBank.getItemAt(i).pan().markInterested();
 
-      //    this.trackBank.getItemAt(i).clipLauncherSlotBank().cursorIndex().markInterested();
-      //    this.trackBank.getItemAt(i).clipLauncherSlotBank().scrollPosition().markInterested();
-      //    this.trackBank.getItemAt(i).clipLauncherSlotBank().itemCount().markInterested();
-      //    this.trackBank.getItemAt(i).clipLauncherSlotBank().exists().markInterested();
+         this.trackBank.getItemAt(i).clipLauncherSlotBank().cursorIndex().markInterested();
+         this.trackBank.getItemAt(i).clipLauncherSlotBank().scrollPosition().markInterested();
+         this.trackBank.getItemAt(i).clipLauncherSlotBank().itemCount().markInterested();
+         this.trackBank.getItemAt(i).clipLauncherSlotBank().exists().markInterested();
 
-      //    this.deviceBank.getItemAt(i).name().markInterested();
-      //    this.deviceBank.getItemAt(i).exists().markInterested();
-      //    this.deviceBank.getItemAt(i).position().markInterested();
-      //    this.deviceBank.getItemAt(i).getCursorSlot().name().markInterested();
-      //    this.deviceBank.getItemAt(i).getCursorSlot().exists().markInterested();
+         this.deviceBank.getItemAt(i).name().markInterested();
+         this.deviceBank.getItemAt(i).exists().markInterested();
+         this.deviceBank.getItemAt(i).position().markInterested();
+         this.deviceBank.getItemAt(i).getCursorSlot().name().markInterested();
+         this.deviceBank.getItemAt(i).getCursorSlot().exists().markInterested();
 
-      //    this.sceneBank.getItemAt(i).name().markInterested();
-      //    this.sceneBank.getItemAt(i).color().markInterested();
-      //    this.sceneBank.getItemAt(i).exists().markInterested();
-      //    this.sceneBank.getItemAt(i).clipCount().markInterested();
-      //    this.sceneBank.getItemAt(i).sceneIndex().markInterested();
+         this.sceneBank.getItemAt(i).name().markInterested();
+         this.sceneBank.getItemAt(i).color().markInterested();
+         this.sceneBank.getItemAt(i).exists().markInterested();
+         this.sceneBank.getItemAt(i).clipCount().markInterested();
+         this.sceneBank.getItemAt(i).sceneIndex().markInterested();
 
-      //    this.channel = this.trackBank.getItemAt(i);
-      // }
+         this.channel = this.trackBank.getItemAt(i);
+      }
 
       this.cueMarkerBank.scrollPosition().markInterested();
       this.cueMarkerBank.itemCount().markInterested();
