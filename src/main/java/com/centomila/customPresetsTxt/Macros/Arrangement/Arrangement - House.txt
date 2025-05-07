@@ -1,40 +1,101 @@
-Macro: "Arrangement - House (Cue Markers)"
-Description: "Generate Cue Markers for a House Track."
+Macro: "Arrangement - House (Detailed Cue Markers)"
+Description: "Generate Detailed Cue Markers for a House Track Arrangement."
 Author: "Centomila"
 Bpm (126)
 Time Signature ("4/4")
 
 DeleteAllCueMarkers
 
+// Start of track
 jump_to_beginning_of_arranger_window
+Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (1, Intro - Drums & FX)
+CueMarkerName (1, "Intro - Ambient")
 
+// 8 bars - Basic percussion begins
 jump_forward_8_bars
-jump_forward_8_bars
+Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (2, Build-Up)
+CueMarkerName (2, "Intro - Basic Percussion")
 
+// 8 bars - Full drum kit enters
 jump_forward_8_bars
-jump_forward_8_bars
+Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (3, Drop 1)
+CueMarkerName (3, "Intro - Full Drums")
 
+// 8 bars - Bass enters
 jump_forward_8_bars
-jump_forward_8_bars
+Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (4, Break)
+CueMarkerName (4, "Main Elements")
 
+// 8 bars - First build-up begins
 jump_forward_8_bars
-jump_forward_8_bars
+Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (5, Drop 2)
+CueMarkerName (5, "Build-Up 1")
 
-jump_forward_8_bars
-jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (6, Outro)
-
+// 4 bars - Pre-drop tension (using jump_to_beginning_of_next_bar x4)
 jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (6, "Pre-Drop")
 
-Message ("Macro Finished")
+// 4 bars - First drop (using jump_to_beginning_of_next_bar x4)
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (7, "Drop 1")
+
+// 16 bars - Main section continues
+jump_forward_8_bars
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (8, "Breakdown")
+
+// 8 bars - Minimal break section
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (9, "Break Elements")
+
+// 8 bars - Build-up to second drop
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (10, "Build-Up 2")
+
+// 8 bars - Second drop (main section) 
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (11, "Drop 2")
+
+// 16 bars - Extended drop section
+jump_forward_8_bars
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (12, "Final Section")
+
+// 8 bars - Elements removal begins
+jump_forward_8_bars 
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (13, "Outro - Elements Removal")
+
+// 8 bars - Final outro
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (14, "Outro - Final")
+
+Message ("House Arrangement Cue Markers Created")
