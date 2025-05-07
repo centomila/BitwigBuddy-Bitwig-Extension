@@ -6,112 +6,111 @@ Time Signature ("4/4")
 
 DeleteAllCueMarkers
 
-
-// 1
+// 1 - DJ-friendly intro
 jump_to_beginning_of_arranger_window
 Wait (200)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (1, "Intro - Pads & Atmos")
+CueMarkerName (1, "Intro - Ambient Pads & Textures")
 
-// 2
+// 2 - Basic percussion elements begin
 jump_forward_8_bars
 Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (2, "Percussion Layer Introduced")
+CueMarkerName (2, "Intro - Percussion Layer Added")
 
-// 3
+// 3 - Bassline enters
 jump_forward_8_bars
 Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (3, "Bassline Introduction")
+CueMarkerName (3, "Intro - Sub Bass & Percussion")
 
-// 4
+// 4 - Main kick drum enters
 jump_forward_8_bars
 Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (4, "Kick Drum Enters")
+CueMarkerName (4, "Main Elements - Kick Drum Enters")
 
-// 5
+// 5 - Hi-hats and fuller groove develops
 jump_forward_8_bars
 Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (5, "Hi-Hats & Groove Develops")
+CueMarkerName (5, "Main Elements - Hi-Hats & Full Rhythm")
 
-// 6
+// 6 - First synth elements added
 jump_forward_8_bars
 Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (6, "Synth Arps Introduced")
+CueMarkerName (6, "Main Elements - Synth Arpeggios Added")
 
-// 7
+// 7 - First breakdown begins
 jump_forward_8_bars
 Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (7, "First Break - Pads & FX")
+CueMarkerName (7, "First Break - Kick Removed, Pads & FX")
 
-// 8
-jump_forward_8_bars
-Wait (100)
-jump_to_beginning_of_next_bar
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (8, "Subtle Build-Up - Filtering Elements")
-
-// 9
+// 8 - Building back elements with filter sweeps
 jump_forward_8_bars
 Wait (100)
 jump_to_beginning_of_next_bar
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (9, "Drop 1 - Full Groove")
+CueMarkerName (8, "Build-Up - Filter Sweeps & Rising Tension")
 
-// 10
-jump_forward_8_bars
-Wait (100)
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (10, "Melody Layer Progression")
-
-// 11
-jump_forward_8_bars
-Wait (100)
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (11, "Breakdown - Pads & Reverb Tails")
-
-// 12
+// 9 - First main drop with all elements
 jump_forward_8_bars
 Wait (100)
 jump_to_beginning_of_next_bar
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (12, "Tension Build - Snare Rolls & Riser FX")
+CueMarkerName (9, "Drop 1 - Full Groove & Energy")
 
-// 13
+// 10 - Melodic section develops further
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (10, "Main Section - Lead Melody Introduced")
+
+// 11 - Main breakdown begins
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (11, "Main Breakdown - Percussion Removed")
+
+// 12 - Rising tension with FX and build elements
 jump_forward_8_bars
 Wait (100)
 jump_to_beginning_of_next_bar
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (13, "Drop 2 - Peak Energy")
+CueMarkerName (12, "Main Build-Up - Risers & Tension Elements")
 
-// 14
-jump_forward_8_bars
-Wait (100)
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (14, "Sub Bass Groove Variation")
-
-// 15
-jump_forward_8_bars
-Wait (100)
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (15, "Outro Part 1 - Elements Fade Out")
-
-// 16
+// 13 - Main peak drop section
 jump_forward_8_bars
 Wait (100)
 jump_to_beginning_of_next_bar
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (16, "Outro Part 2 - Pads & FX Only")
+CueMarkerName (13, "Main Drop - Peak Energy & Full Mix")
 
-// 17
+// 14 - Variation with focus on bass elements
 jump_forward_8_bars
 Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (17, "Track End - Silence")
+CueMarkerName (14, "Main Drop Variation - Bass Focus")
 
-// Message ("Macro Finished")
+// 15 - Beginning of outro elements removal
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (15, "Outro Part 1 - Main Elements Fading")
+
+// 16 - DJ-friendly outro section
+jump_forward_8_bars
+Wait (100)
+jump_to_beginning_of_next_bar
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (16, "Outro Part 2 - Only Pads & Atmosphere")
+
+// 17 - Fade to silence
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (17, "Track End - Final Reverb Tails")
+
+Message ("Melodic Techno Original Mix Arrangement Complete")

@@ -1,0 +1,129 @@
+Macro: "Arrangement - Raw Deep Techno Extended Mix"
+Description: "Cue Markers for a Raw Deep Techno extended mix."
+Author: "Centomila"
+Bpm (132)
+Time Signature ("4/4")
+
+DeleteAllCueMarkers
+
+// 1 - Beatless industrial atmosphere
+jump_to_beginning_of_arranger_window
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (1, "Intro - Industrial Atmosphere")
+
+// 2 - First deep texture elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (2, "Intro - Dark Textures")
+
+// 3 - Basic percussive elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (3, "Intro - Basic Percussion")
+
+// 4 - Deep sub bass enters
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (4, "Main Elements - Sub Bass Added")
+
+// 5 - Kick drum enters
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (5, "Main Elements - Raw Kick Added")
+
+// 6 - Full drum pattern established
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (6, "Main Elements - Full Drums")
+
+// 7 - First phase with all elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (7, "Main Section 1 - Full Elements")
+
+// 8 - Metallic percussion focus
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (8, "Main Section 1 - Metallic Percussion")
+
+// 9 - First dark breakdown
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (9, "First Breakdown - Raw Textures")
+
+// 10 - First tension build
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (10, "Build-Up 1 - Industrial Elements")
+
+// 11 - Main drop section
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (11, "Main Section 2 - Hard Drop")
+
+// 12 - Sustained groove with acid elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (12, "Main Section 2 - Acid Elements")
+
+// 13 - Second main section
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (13, "Main Section 2 - Full Energy")
+
+// 14 - Main deep breakdown
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (14, "Main Breakdown - Deep Atmosphere")
+
+// 15 - Main tension build
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (15, "Main Build-Up - Dark Risers")
+
+// 16 - Peak energy section
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (16, "Peak Section - Maximum Impact")
+
+// 17 - Sustained energy with variations
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (17, "Peak Section - Rhythm Variations")
+
+// 18 - Beginning of outro
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (18, "Outro - Element Reduction")
+
+// 19 - Final percussion
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (19, "DJ Outro - Raw Percussion")
+
+// 20 - Final atmospherics
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (20, "Track End - Dark Atmosphere")
+
+Message ("Raw Deep Techno Extended Mix Arrangement Complete")

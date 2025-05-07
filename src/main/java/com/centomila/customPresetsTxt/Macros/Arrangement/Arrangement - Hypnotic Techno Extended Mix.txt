@@ -1,0 +1,135 @@
+Macro: "Arrangement - Hypnotic Techno Extended Mix"
+Description: "Cue Markers for a Hypnotic Techno extended mix."
+Author: "Centomila"
+Bpm (135)
+Time Signature ("4/4")
+
+DeleteAllCueMarkers
+
+// 1 - Atmospheric hypnotic intro
+jump_to_beginning_of_arranger_window
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (1, "Intro - Ethereal Atmosphere")
+
+// 2 - First rhythmic elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (2, "Intro - Rhythmic Patterns")
+
+// 3 - Initial repetitive elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (3, "Intro - Repetitive Synth Motif")
+
+// 4 - First percussion additions
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (4, "Main Elements - Basic Percussion")
+
+// 5 - Main kick enters
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (5, "Main Elements - Kick Added")
+
+// 6 - First development of main pattern
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (6, "Main Elements - Pattern Development")
+
+// 7 - First subtle evolution
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (7, "Main Section 1 - Subtle Evolution")
+
+// 8 - Bass pattern intensifies
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (8, "Main Section 1 - Bass Focus")
+
+// 9 - Main repetitive section
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (9, "Main Section 1 - Hypnotic State")
+
+// 10 - First variation with acid elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (10, "Variation 1 - Acid Elements")
+
+// 11 - First minimalist breakdown
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (11, "First Breakdown - Reduced Elements")
+
+// 12 - First tension build
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (12, "Build-Up 1 - Rising Repetition")
+
+// 13 - Second main hypnotic section
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (13, "Main Section 2 - Full Hypnotic Elements")
+
+// 14 - Sustained groove with modulation
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (14, "Main Section 2 - Pattern Modulation")
+
+// 15 - Main breakdown with focal synth
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (15, "Main Breakdown - Focus Synth Element")
+
+// 16 - Main tension build
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (16, "Main Build-Up - Rhythmic Tension")
+
+// 17 - Peak energy section
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (17, "Peak Section - Maximum Hypnotic State")
+
+// 18 - Sustained energy with subtle variations
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (18, "Peak Section - Subtle Evolving Variations")
+
+// 19 - Beginning of outro elements reduction
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (19, "Outro - Gradual Reduction")
+
+// 20 - Final pattern loop
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (20, "DJ Outro - Minimal Loop")
+
+// 21 - Final atmospheric elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (21, "Track End - Ethereal Fade")
+
+Message ("Hypnotic Techno Extended Mix Arrangement Complete")

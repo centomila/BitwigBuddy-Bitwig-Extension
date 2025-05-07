@@ -1,0 +1,123 @@
+Macro: "Arrangement - Minimal Techno Extended Mix"
+Description: "Cue Markers for a Minimal Techno extended mix."
+Author: "Centomila"
+Bpm (130)
+Time Signature ("4/4")
+
+DeleteAllCueMarkers
+
+// 1 - Silent intro for DJ mixing
+jump_to_beginning_of_arranger_window
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (1, "DJ Intro - Silent")
+
+// 2 - Initial minimal elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (2, "Intro - Textural Elements")
+
+// 3 - First percussion elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (3, "Intro - Minimal Percussion")
+
+// 4 - Basic rhythm pattern starts
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (4, "Main Elements - Basic Rhythm")
+
+// 5 - Kick drum enters
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (5, "Main Elements - Kick Added")
+
+// 6 - Groove development
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (6, "Main Elements - Full Groove")
+
+// 7 - First subtle change
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (7, "Variation 1 - Subtle Change")
+
+// 8 - First main section
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (8, "Main Section 1 - Added Bass Elements")
+
+// 9 - First minimal breakdown
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (9, "Minimal Breakdown - Kick Removed")
+
+// 10 - Percussion focus
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (10, "Build-Up - Percussion Focus")
+
+// 11 - Main groove returns with variations
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (11, "Main Section 2 - Kick Returns")
+
+// 12 - Main section intensifies
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (12, "Main Section 2 - Added Elements")
+
+// 13 - Second breakdown with atmospherics
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (13, "Main Breakdown - Sparse Elements")
+
+// 14 - Main tension build
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (14, "Main Build-Up - Rising Tension")
+
+// 15 - Peak energy section
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (15, "Peak Section - All Elements")
+
+// 16 - Sustained groove section
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (16, "Main Section 3 - Groove Focus")
+
+// 17 - Beginning of outro
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (17, "Outro - Element Reduction")
+
+// 18 - DJ-friendly outro
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (18, "DJ Outro - Percussion Only")
+
+// 19 - Final elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (19, "Track End - Final Elements")
+
+Message ("Minimal Techno Extended Mix Arrangement Complete")

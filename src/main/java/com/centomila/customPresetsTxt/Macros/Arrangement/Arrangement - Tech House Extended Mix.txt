@@ -1,0 +1,135 @@
+Macro: "Arrangement - Tech House Extended Mix"
+Description: "Cue Markers for a Tech House extended mix."
+Author: "Centomila"
+Bpm (130)
+Time Signature ("4/4")
+
+DeleteAllCueMarkers
+
+// 1 - DJ-friendly intro
+jump_to_beginning_of_arranger_window
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (1, "DJ Intro - Minimal Loop")
+
+// 2 - First percussion elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (2, "Intro - Percussion & FX")
+
+// 3 - Bass elements begin
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (3, "Intro - Bass Elements")
+
+// 4 - Kick drum enters
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (4, "Main Elements - Kick Added")
+
+// 5 - Hi-hats and rhythm development
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (5, "Main Elements - Hi-Hats & Rhythm")
+
+// 6 - Full groove established
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (6, "Main Elements - Full Groove")
+
+// 7 - First vocal/sample elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (7, "Main Section 1 - Vocal Samples Added")
+
+// 8 - First main section evolves
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (8, "Main Section 1 - Full Energy")
+
+// 9 - First breakdown (house influenced)
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (9, "First Breakdown - House Elements")
+
+// 10 - First tension build
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (10, "Build-Up 1 - Rising Tension")
+
+// 11 - First drop with rolling bassline
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (11, "Drop 1 - Rolling Bass")
+
+// 12 - Main groove continues with variations
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (12, "Main Section 2 - Groove Variations")
+
+// 13 - Additional vocal/sample elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (13, "Main Section 2 - Added Hooks")
+
+// 14 - Main breakdown with filter sweeps
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (14, "Main Breakdown - Filter Sweeps")
+
+// 15 - Main build-up section
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (15, "Main Build-Up - Rising Elements")
+
+// 16 - Peak energy section with full mix
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (16, "Main Drop - Full Energy")
+
+// 17 - Peak section with tech elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (17, "Main Drop - Tech Focus")
+
+// 18 - Sustained groove with house elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (18, "Main Drop - House Elements")
+
+// 19 - Beginning of outro section
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (19, "Outro - Element Reduction")
+
+// 20 - DJ-friendly outro section
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (20, "DJ Outro - Rhythm & Bass")
+
+// 21 - Final percussion elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (21, "Track End - Final Elements")
+
+Message ("Tech House Extended Mix Arrangement Complete")

@@ -1,50 +1,86 @@
-Macro: "Arrangement - Melodic Techno (Cue Markers)"
-Description: "Generate Cue Markers for a Melodic Techno Track."
+Macro: "Arrangement - Melodic Techno (Detailed Cue Markers)"
+Description: "Cue Markers for a Melodic Techno Track."
 Author: "Centomila"
 Bpm (124)
 Time Signature ("4/4")
 
 DeleteAllCueMarkers
+Wait (200)
 
+// Atmospheric intro
 jump_to_beginning_of_arranger_window
+Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (1, Intro - Pads & Atmos)
+CueMarkerName (1, "Intro - Pads & Atmos")
 
+// 16 bars - Kick & basic bass elements enter
 jump_forward_8_bars
 jump_forward_8_bars
+Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (2, Kick & Bass Intro)
+CueMarkerName (2, "Kick & Bass Intro")
 
+// 16 bars - Main groove with percussion fills
 jump_forward_8_bars
 jump_forward_8_bars
+Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (3, Main Groove Begins)
+CueMarkerName (3, "Main Groove")
 
+// 16 bars - First build-up section
 jump_forward_8_bars
 jump_forward_8_bars
+Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (4, Build-Up)
+CueMarkerName (4, "Build-Up")
 
+// 16 bars - First main section with lead elements
 jump_forward_8_bars
 jump_forward_8_bars
+Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (5, Drop 1)
+CueMarkerName (5, "First Main Section")
 
+// 16 bars - Breakdown with atmospheric elements
 jump_forward_8_bars
 jump_forward_8_bars
+Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (6, Break - Atmospheric Pads)
+CueMarkerName (6, "Breakdown")
 
+// 16 bars - Tension building section
 jump_forward_8_bars
 jump_forward_8_bars
+Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (7, Drop 2 - Peak Energy)
+CueMarkerName (7, "Second Build-Up")
 
+// 16 bars - Second main section (climax)
 jump_forward_8_bars
 jump_forward_8_bars
+Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (8, Outro - Fade & FX)
+CueMarkerName (8, "Main Peak Section")
 
-jump_to_beginning_of_next_bar
+// 16 bars - Energy sustain section
+jump_forward_8_bars
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (9, "Sustain Section")
 
-Message ("Macro Finished")
+// 16 bars - Gradual elements removal
+jump_forward_8_bars
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (10, "Elements Removal")
+
+// 16 bars - Outro with pad and atmosphere
+jump_forward_8_bars
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (11, "Outro")
+
+Message ("Melodic Techno Arrangement Complete")

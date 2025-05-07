@@ -1,49 +1,111 @@
-Macro: "Arrangement - Pop (Cue Markers)"
-Description: "Generate Cue Markers for a Pop Track."
+Macro: "Arrangement - Modern Pop (Detailed Cue Markers)"
+Description: "Generate Detailed Cue Markers for a Modern Pop Track Arrangement."
 Author: "Centomila"
-Bpm (120)
+Bpm (100)
 Time Signature ("4/4")
 
 DeleteAllCueMarkers
 
+// Start with a short intro
 jump_to_beginning_of_arranger_window
+Wait (100)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (1, Intro)
+CueMarkerName (1, "Intro - Atmospheric")
 
-jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (2, Verse 1)
-
-jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (3, Pre-Chorus)
-
-jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (4, Chorus 1)
-
-jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (5, Verse 2)
-
-jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (6, Pre-Chorus)
-
-jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (7, Chorus 2)
-
-jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (8, Bridge)
-
-jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (9, Chorus 3)
-
-jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (10, Outro)
-
+// 4 bars - Vocal intro or hook teaser
 jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (2, "Intro - Vocal Hook")
+
+// 8 bars - First verse starts
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (3, "Verse 1")
+
+// 4 bars - Pre-chorus build
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (4, "Pre-Chorus 1")
+
+// 8 bars - Chorus with hook
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (5, "Chorus 1")
+
+// 4 bars - Post-chorus hook section
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (6, "Post-Chorus")
+
+// 8 bars - Second verse
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (7, "Verse 2")
+
+// 4 bars - Pre-chorus build
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (8, "Pre-Chorus 2")
+
+// 8 bars - Second chorus
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (9, "Chorus 2")
+
+// 4 bars - Post-chorus hook section
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (10, "Post-Chorus 2")
+
+// 8 bars - Bridge/breakdown section
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (11, "Bridge")
+
+// 4 bars - Build to final chorus
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (12, "Build-Up")
+
+// 8 bars - Final chorus (often extended or with variations)
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (13, "Final Chorus")
+
+// 8 bars - Outro with hook elements
+jump_forward_8_bars
+Wait (100)
+insert_arranger_cue_marker_at_play_position
+CueMarkerName (14, "Outro")
+
+Message ("Modern Pop Arrangement Cue Markers Created")
