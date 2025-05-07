@@ -1,51 +1,130 @@
 Macro: "Arrangement - Rock (Cue Markers)"
-Description: "Generate Cue Markers for a Rock Track."
+Description: "Generate Cue Markers for a Complete Rock Track."
 Author: "Centomila"
 Bpm (140)
 Time Signature ("4/4")
 
+BB Close Panel
 DeleteAllCueMarkers
+Wait (200)
 
 jump_to_beginning_of_arranger_window
+Wait (200)
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (1, Intro)
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (1, "Intro")
+
+// 4-bar intro
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+insert_arranger_cue_marker_at_play_position
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (2, "Verse 1")
 
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (2, Verse 1)
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (3, "Pre-Chorus")
+
+// 4-bar pre-chorus
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+insert_arranger_cue_marker_at_play_position
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (4, "Chorus 1")
 
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (3, Pre-Chorus)
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (5, "Post-Chorus")
+
+// 4-bar post-chorus
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+insert_arranger_cue_marker_at_play_position
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (6, "Verse 2")
 
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (4, Chorus 1)
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (7, "Pre-Chorus")
+
+// 4-bar pre-chorus
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+insert_arranger_cue_marker_at_play_position
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (8, "Chorus 2")
 
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (5, Verse 2)
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (9, "Bridge")
 
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (6, Pre-Chorus)
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (10, "Breakdown")
+
+// 4-bar breakdown
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+insert_arranger_cue_marker_at_play_position
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (11, "Guitar Solo")
 
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (7, Chorus 2)
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (12, "Build-up")
+
+// 2-bar build-up
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+insert_arranger_cue_marker_at_play_position
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (13, "Chorus 3")
 
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (8, Guitar Solo)
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (14, "Final Chorus")
 
 jump_forward_8_bars
 insert_arranger_cue_marker_at_play_position
-CueMarkerName (9, Chorus 3)
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_prev_bar
+CueMarkerName (15, "Outro")
 
-jump_forward_8_bars
-insert_arranger_cue_marker_at_play_position
-CueMarkerName (10, Outro)
-
+// 4-bar outro
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
+jump_to_beginning_of_next_bar
 jump_to_beginning_of_next_bar
 
-Message ("Macro Finished")
+Message ("Rock Arrangement Complete")
